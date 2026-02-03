@@ -1,0 +1,23 @@
+- image: /images/Certifications/dante.png
+  title: Dante
+  description: Dante Completion Certificate
+
+- image: /images/Certifications/poo.png
+  title: P.O.O
+  description: P.O.O Completion Certificate
+
+- image: /images/Certifications/heron.png
+  title: Heron
+  description: Heron Completion Certificate
+
+- image: /images/Certifications/tea.png
+  title: Tea
+  description: Tea Completion Certificate
+
+- image: /images/Certifications/tengu.png
+  title: Tengu
+  description: Tengu Completion Certificate
+
+- image: /images/Certifications/intercept.png
+  title: Intercept
+  description: Intercept Completion Certificate
