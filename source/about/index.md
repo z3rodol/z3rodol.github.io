@@ -7,6 +7,11 @@ date: 2025-12-11 09:33:27
 
 Salut! Moi c'est **Délalom Wilfried TELLI** (aka *z3rodol*), étudiant en Bachelor admin réseau & secops à l'IPSSI de Lyon. Grand passionné de cybersécurité, je passe mon temps libre sur des forums cyber ainsi que des CTF dans l'optique d'en apprendre toujours plus.
 
+# Education
+
+- Bachelor Admin Réseau & Secops - IPSSI Lyon (2024 - 2026)
+- Licence Cybersécurité - IPNET Institute of Technology (2022 - 2024)
+
 # Certifications
 
 **Prolabs Hackthebox**
