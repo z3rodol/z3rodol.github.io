@@ -5,7 +5,7 @@ date: 2025-12-11 09:33:27
 
 # Qui suis-je ?
 
-Salut! Moi c'est **Délalom Wilfried TELLI** (aka *z3rodol*), étudiant en Bachelor admin réseau & secops à l'IPSSI de Lyon. Grand passionné de cybersécurité, je passe pas mal de mon temps libre sur des forums cyber ainsi que des CTF dans l'optique d'en apprendre toujours plus.
+Salut! Moi c'est **Délalom Wilfried TELLI** (aka *z3rodol*), étudiant en Bachelor admin réseau & secops à l'IPSSI de Lyon. Grand passionné de cybersécurité, je passe mon temps libre sur des forums cyber ainsi que des CTF dans l'optique d'en apprendre toujours plus.
 
 # Certifications
 
