@@ -1,0 +1,132 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+        <title>Linux - Tag - z3rodol</title>
+        <link>http://localhost:1313/tags/linux/</link>
+        <description>Linux - Tag - z3rodol</description>
+        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Fri, 12 Dec 2025 10:28:41 &#43;0000</lastBuildDate><atom:link href="http://localhost:1313/tags/linux/" rel="self" type="application/rss+xml" /><item>
+    <title>Forgotten</title>
+    <link>http://localhost:1313/forgotten/</link>
+    <pubDate>Fri, 12 Dec 2025 10:28:41 &#43;0000</pubDate>
+    <author>z3rodol</author>
+    <guid>http://localhost:1313/forgotten/</guid>
+    <description><![CDATA[<p></p>
+<p><strong>Forgotten</strong> est une <strong>box Linux de difficulté Easy</strong> centrée sur une application web <strong>LimeSurvey</strong> exposée sur le port 80. Après énumération, on trouve une installation <strong>LimeSurvey</strong> nécessitant une configuration, ce qui permet de <strong>déployer un plugin contenant un reverse shell PHP</strong> pour obtenir un accès initial sur le conteneur Docker qui héberge l’application. À l’intérieur du conteneur, une <strong>variable d’environnement exposent le mot de passe de l’utilisateur LimeSurvey</strong>, ce qui permet de <strong>se connecter via SSH directement à l’hôte avec ces identifiants</strong>. Pour l’<strong>escalade de privilèges</strong>, j&rsquo;abuse <strong>du partage entre le conteneur et l’hôte</strong> est utilisée afin d’obtenir un accès root sur la machine.</p>]]></description>
+</item>
+<item>
+    <title>SolidState</title>
+    <link>http://localhost:1313/solidstate/</link>
+    <pubDate>Fri, 12 Dec 2025 10:28:41 &#43;0000</pubDate>
+    <author>z3rodol</author>
+    <guid>http://localhost:1313/solidstate/</guid>
+    <description><![CDATA[<p></p>
+<p>SolidState repose essentiellement sur l’exploitation du serveur mail <strong>Apache James</strong>. Après énumération, on découvre que l’accès admin au service James est protégé par les identifiants par défaut. Cela permet de manipuler les boîtes mail des utilisateurs et de <strong>récupérer des identifiants SSH</strong> contenus dans leurs messages. La connexion SSH initiale donne un shell restreint, qu’il est possible de contourner. Pour finir, une <strong>escalade root</strong> est possible grâce à un <strong>script Python exécuté par un cron</strong>, permettant l’obtention d’un shell root.</p>]]></description>
+</item>
+<item>
+    <title>Eureka</title>
+    <link>http://localhost:1313/eureka/</link>
+    <pubDate>Thu, 11 Dec 2025 13:49:31 &#43;0000</pubDate>
+    <author>z3rodol</author>
+    <guid>http://localhost:1313/eureka/</guid>
+    <description><![CDATA[<p></p>
+<p><code>Eureka</code> est une machine Linux de difficulté Hard qui commence avec un site web <strong>Spring Boot</strong>. J&rsquo;exploite un point de terminaison <code>heapdump</code> exposé pour récupérer les identifiants de la mémoire et l&rsquo;accès SSH. Ensuite, j&rsquo;empoisonne la configuration de Spring Cloud Gateway pour récupérer les identifiants de connexion d&rsquo;un autre utilisateur. Pour obtenir l&rsquo;accès root, j&rsquo;exploite une injection arithmétique Bash pour obtenir l&rsquo;exécution d&rsquo;un script analysant les journaux sur un cron.</p>]]></description>
+</item>
+<item>
+    <title>Down</title>
+    <link>http://localhost:1313/down/</link>
+    <pubDate>Thu, 11 Dec 2025 13:49:22 &#43;0000</pubDate>
+    <author>z3rodol</author>
+    <guid>http://localhost:1313/down/</guid>
+    <description><![CDATA[<p></p>
+<p><code>Down</code> possède un site web conçu pour vérifier si un site web est en ligne. Cela présente une <code>SSRF</code> évidente, mais pour contourner les filtres et l&rsquo;exploiter, je vais abuser de la fonctionnalité de <code>curl</code> qui accepte plusieurs URLs et passer une seconde URL avec le wrapper LFI <code>file</code> pour lire des fichiers depuis l&rsquo;hôte. J&rsquo;obtiens l&rsquo;accès au code source de la page, et je vois qu&rsquo;il existe un <code>mode expert</code> qui établie une connexion TCP brute avec <code>netcat</code>. J&rsquo;utilise l&rsquo;injection de paramètres à cet endroit pour obtenir un shell. De là, je fouille dans une instance <code>pswm</code> pour obtenir le mot de passe de l&rsquo;utilisateur suivant, et celui-ci dispose des privilèges sudo pour devenir root.</p>]]></description>
+</item>
+<item>
+    <title>Build</title>
+    <link>http://localhost:1313/build/</link>
+    <pubDate>Thu, 11 Dec 2025 10:28:41 &#43;0000</pubDate>
+    <author>z3rodol</author>
+    <guid>http://localhost:1313/build/</guid>
+    <description><![CDATA[<p></p>
+<p><strong>Build</strong> est une machine Linux classée comme facile. Elle implique la lecture de fichiers sensibles depuis des partages <strong>rsync</strong> non authentifiés, ce qui mène à l&rsquo;exposition d&rsquo;un mot de passe Jenkins chiffré. Je parvient à déchiffrer ce mot de passe, ce qui me permet d&rsquo;accéder à <strong>Gitea</strong>. Le dépôt appartenant à l&rsquo;administrateur sur <strong>Gitea</strong> dispose d&rsquo;un <code>webhook</code> configuré, permettant d&rsquo;obtenir une exécution de code arbitraire et un shell dans le conteneur Docker. Ce conteneur Docker a accès à <strong>MySQL</strong> et <code>PowerDNS</code>, qui s&rsquo;exécutent tous deux dans un autre conteneur sur le même réseau Docker. Le conteneur a également un fichier monté nommé <strong>.rhosts</strong>, qui est aussi monté dans le répertoire racine de la machine hôte. <strong>MySQL</strong> est mal configuré et n&rsquo;a pas de mot de passe pour le compte root, ce qui permet à un attaquant de prendre le contrôle total de la base de données. Une fois le hash de l&rsquo;administrateur craqué et connecter à <code>PowerDNS</code>, je modifie l&rsquo;enregistrement DNS <strong>intern/admin</strong> pour le rediriger vers ma propre machine. En supposant que le même fichier <strong>.rhosts</strong> est également monté sur la machine hôte, cela me permet d&rsquo;obtenir une session root via le protocole <strong>Remote Shell Protocol (RSH)</strong>.</p>]]></description>
+</item>
+<item>
+    <title>Meta</title>
+    <link>http://localhost:1313/meta/</link>
+    <pubDate>Thu, 11 Dec 2025 10:28:41 &#43;0000</pubDate>
+    <author>z3rodol</author>
+    <guid>http://localhost:1313/meta/</guid>
+    <description><![CDATA[<p></p>
+<p>Meta est une machine Linux de difficulté moyenne axée sur deux CVE différentes (<code>CVE-2021-22204</code> et <code>CVE-2020-29599</code>) dans <code>ExifTool</code> et <code>ImageMagick</code>, exploitables à différentes étapes. L&rsquo;accès initial est obtenu en téléchargeant un fichier malveillant vers une application web qui lit les métadonnées d&rsquo;image, déclenchant une exécution de commande à distance dans ExifTool. Une injection de commande dans ImageMagick est ensuite exploitée pour pivoter vers un second utilisateur. Enfin, l&rsquo;escalade de privilèges est possible grâce à un paramètre <code>env_keep</code> dans <code>sudo</code> permettant aux attaquants d&rsquo;exécuter des commandes arbitraires en tant que root en définissant un répertoire de configuration personnalisé via une variable d&rsquo;environnement.</p>]]></description>
+</item>
+<item>
+    <title>OutBound</title>
+    <link>http://localhost:1313/outbound/</link>
+    <pubDate>Thu, 11 Dec 2025 10:28:41 &#43;0000</pubDate>
+    <author>z3rodol</author>
+    <guid>http://localhost:1313/outbound/</guid>
+    <description><![CDATA[<p></p>
+<p>Outbound est une machine Linux de difficulté facile avec des identifiants de compromission initiale fournis. Ces identifiants donnent accès à une instance <code>Roundcube</code>, où l&rsquo;utilisateur peut énumérer la version et exploiter <code>CVE-2025-49113</code>, permettant l&rsquo;exécution de code à distance via la désérialisation d&rsquo;objets PHP. Après l&rsquo;accès initial, nous énumérons la base de données et trouvons une session pour l&rsquo;utilisateur <code>Jacob</code> contenant un mot de passe chiffré en base64. En utilisant un outil interne appelé <code>decrypt.sh</code>, nous extrayons le mot de passe en clair, permettant l&rsquo;accès à Roundcube en tant que Jacob. Jacob a deux messages : l&rsquo;un contient son nouveau mot de passe système, l&rsquo;autre l&rsquo;informe de ses privilèges sudo pour surveiller les ressources avec l&rsquo;utilitaire <code>below</code>, vulnérable à <code>CVE-2025-27591</code>. Cette faille crée des logs dans <code>/var/log/below</code> avec des permissions excessives permettant des attaques par liens symboliques. Nous créons un lien symbolique de <code>/etc/passwd</code> vers <code>error_root.log</code> et injectons notre payload via injection de paramètres, créant ainsi un nouvel utilisateur avec l&rsquo;UID root.</p>]]></description>
+</item>
+<item>
+    <title>Reset</title>
+    <link>http://localhost:1313/reset/</link>
+    <pubDate>Thu, 11 Dec 2025 10:28:41 &#43;0000</pubDate>
+    <author>z3rodol</author>
+    <guid>http://localhost:1313/reset/</guid>
+    <description><![CDATA[<p></p>
+<p>Reset est une machine Linux de difficulté facile qui illustre l&rsquo;exploitation d&rsquo;une fonctionnalité de réinitialisation de mot de passe dans une application web suite à une attaque par <code>empoisonnement de logs</code>, permettant d&rsquo;obtenir l&rsquo;exécution de code à distance. Pour l&rsquo;escalade de privilèges, les <code>Rservices</code> sont exploités, puis une session <code>tmux</code> détachée est utilisée pour abuser des privilèges sudo sur l&rsquo;éditeur de texte <code>nano</code> et exécuter des commandes en tant qu&rsquo;utilisateur root.</p>]]></description>
+</item>
+<item>
+    <title>Shocker</title>
+    <link>http://localhost:1313/shocker/</link>
+    <pubDate>Thu, 11 Dec 2025 10:28:41 &#43;0000</pubDate>
+    <author>z3rodol</author>
+    <guid>http://localhost:1313/shocker/</guid>
+    <description><![CDATA[<p></p>
+<p>Shocker, bien que relativement simple dans l&rsquo;ensemble, démontre la gravité de la célèbre exploit Shellshock, qui a affecté des millions de serveurs exposés publiquement.</p>
+<h2 id="énumération">Énumération</h2>
+<h3 id="nmap">Nmap</h3>
+<p>Il a 2 ports ouverts : <code>HTTP</code>, <code>SSH</code>.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-shell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">nmap 10.129.178.143 -T4 --min-rate <span class="m">1000</span> -sV -sC -vv -p-</span></span></code></pre></div></div>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-shell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">PORT     STATE SERVICE REASON         VERSION
+</span></span><span class="line"><span class="cl">80/tcp   open  http    syn-ack ttl <span class="m">63</span> Apache httpd 2.4.18 <span class="o">((</span>Ubuntu<span class="o">))</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span> http-methods:
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_  Supported Methods: GET HEAD POST OPTIONS
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_http-server-header: Apache/2.4.18 <span class="o">(</span>Ubuntu<span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_http-title: Site doesn<span class="err">&#39;</span>t have a title <span class="o">(</span>text/html<span class="o">)</span>.
+</span></span><span class="line"><span class="cl">2222/tcp open  ssh     syn-ack ttl <span class="m">63</span> OpenSSH 7.2p2 Ubuntu 4ubuntu2.2 <span class="o">(</span>Ubuntu Linux<span class="p">;</span> protocol 2.0<span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span> ssh-hostkey:
+</span></span><span class="line"><span class="cl"><span class="p">|</span>   <span class="m">2048</span> c4f8ade8f80477decf150d630a187e49 <span class="o">(</span>RSA<span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span> ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQD8ArTOHWzqhwcyAZWc2CmxfLmVVTwfLZf0zhCBREGCpS2WC3NhAKQ2zefCHCU8XTC8hY9ta5ocU+p7S52OGHlaG7HuA5Xlnihl1INNsMX7gpNcfQEYnyby+hjHWPLo4++fAyO/lB8NammyA13MzvJy8pxvB9gmCJhVPaFzG5yX6Ly8OIsvVDk+qVa5eLCIua1E7WGACUlmkEGljDvzOaBdogMQZ8TGBTqNZbShnFH1WsUxBtJNRtYfeeGjztKTQqqj4WD5atU8dqV/iwmTylpE7wdHZ+38ckuYL9dmUPLh4Li2ZgdY6XniVOBGthY5a2uJ2OFp2xe1WS9KvbYjJ/tH
+</span></span><span class="line"><span class="cl"><span class="p">|</span>   <span class="m">256</span> 228fb197bf0f1708fc7e2c8fe9773a48 <span class="o">(</span>ECDSA<span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span> ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBPiFJd2F35NPKIQxKMHrgPzVzoNHOJtTtM+zlwVfxzvcXPFFuQrOL7X6Mi9YQF9QRVJpwtmV9KAtWltmk3qm4oc<span class="o">=</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span>   <span class="m">256</span> e6ac27a3b5a9f1123c34a55d5beb3de9 <span class="o">(</span>ED25519<span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIC/RjKhT/2YPlCgFQLx+gOXhC6W3A3raTzjlXQMT8Msk
+</span></span><span class="line"><span class="cl">Service Info: OS: Linux<span class="p">;</span> CPE: cpe:/o:linux:linux_kernel</span></span></code></pre></div></div>
+<h3 id="http---tcp-80">HTTP - TCP 80</h3>
+<h4 id="énumération-des-répertoires">Énumération des répertoires</h4>
+<p>Je trouve des répertoires avec le code 403.</p>]]></description>
+</item>
+<item>
+    <title>Trick</title>
+    <link>http://localhost:1313/trick/</link>
+    <pubDate>Thu, 11 Dec 2025 10:28:41 &#43;0000</pubDate>
+    <author>z3rodol</author>
+    <guid>http://localhost:1313/trick/</guid>
+    <description><![CDATA[<p></p>
+<p>Trick commence par une énumération pour trouver un hôte virtuel. Une injection SQL permet de contourner l&rsquo;authentification et de lire des fichiers depuis le système. Cette lecture mène à un autre sous-domaine, qui est vulnérable à une LFI. A partir de cette LFI je récupère une clé privée SSH. Pour escalader au root, j&rsquo;abuserai de <code>fail2ban</code>.</p>
+<h2 id="enumeration">Enumeration</h2>
+<h3 id="nmap">Nmap</h3>
+<p>Le scan révèle 4 ports ouverts.</p>]]></description>
+</item>
+</channel>
+</rss>

@@ -1,0 +1,28 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+        <title>LFI - Tag - z3rodol</title>
+        <link>http://localhost:1313/tags/lfi/</link>
+        <description>LFI - Tag - z3rodol</description>
+        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Thu, 11 Dec 2025 10:28:41 &#43;0000</lastBuildDate><atom:link href="http://localhost:1313/tags/lfi/" rel="self" type="application/rss+xml" /><item>
+    <title>Reset</title>
+    <link>http://localhost:1313/reset/</link>
+    <pubDate>Thu, 11 Dec 2025 10:28:41 &#43;0000</pubDate>
+    <author>z3rodol</author>
+    <guid>http://localhost:1313/reset/</guid>
+    <description><![CDATA[<p></p>
+<p>Reset est une machine Linux de difficulté facile qui illustre l&rsquo;exploitation d&rsquo;une fonctionnalité de réinitialisation de mot de passe dans une application web suite à une attaque par <code>empoisonnement de logs</code>, permettant d&rsquo;obtenir l&rsquo;exécution de code à distance. Pour l&rsquo;escalade de privilèges, les <code>Rservices</code> sont exploités, puis une session <code>tmux</code> détachée est utilisée pour abuser des privilèges sudo sur l&rsquo;éditeur de texte <code>nano</code> et exécuter des commandes en tant qu&rsquo;utilisateur root.</p>]]></description>
+</item>
+<item>
+    <title>Trick</title>
+    <link>http://localhost:1313/trick/</link>
+    <pubDate>Thu, 11 Dec 2025 10:28:41 &#43;0000</pubDate>
+    <author>z3rodol</author>
+    <guid>http://localhost:1313/trick/</guid>
+    <description><![CDATA[<p></p>
+<p>Trick commence par une énumération pour trouver un hôte virtuel. Une injection SQL permet de contourner l&rsquo;authentification et de lire des fichiers depuis le système. Cette lecture mène à un autre sous-domaine, qui est vulnérable à une LFI. A partir de cette LFI je récupère une clé privée SSH. Pour escalader au root, j&rsquo;abuserai de <code>fail2ban</code>.</p>
+<h2 id="enumeration">Enumeration</h2>
+<h3 id="nmap">Nmap</h3>
+<p>Le scan révèle 4 ports ouverts.</p>]]></description>
+</item>
+</channel>
+</rss>

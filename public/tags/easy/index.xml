@@ -1,0 +1,100 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+        <title>Easy - Tag - z3rodol</title>
+        <link>http://localhost:1313/tags/easy/</link>
+        <description>Easy - Tag - z3rodol</description>
+        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Sat, 14 Mar 2026 17:28:41 &#43;0000</lastBuildDate><atom:link href="http://localhost:1313/tags/easy/" rel="self" type="application/rss+xml" /><item>
+    <title>VulnEscape</title>
+    <link>http://localhost:1313/vulnescape/</link>
+    <pubDate>Sat, 14 Mar 2026 17:28:41 &#43;0000</pubDate>
+    <author>z3rodol</author>
+    <guid>http://localhost:1313/vulnescape/</guid>
+    <description><![CDATA[<p></p>
+<p>VulnEscape est une machine Windows de difficulté Facile qui propose le service Bureau à distance (Remote Desktop Server) fonctionnant sur son port par défaut. Les utilisateurs peuvent se connecter à la machine via RDP et se connecter en tant que <strong>KioskUser0</strong> sans mot de passe. L&rsquo;environnement cible est restreint, cependant, en exploitant le schéma <code>file://</code> dans <strong>Microsoft Edge</strong>, les utilisateurs peuvent naviguer dans le système de fichiers. Une exploitation plus poussée permet de contourner les restrictions du système et d&rsquo;ouvrir une fenêtre PowerShell. L&rsquo;énumération du système de fichiers révèle un dossier contenant un profil pour une application appelée Remote Desktop Plus. Ce profil peut être chargé dans l&rsquo;application et le mot de passe qu&rsquo;il contient peut être extrait. Le mot de passe extrait peut ensuite être utilisé pour démarrer une session en tant qu&rsquo;utilisateur admin, et un contournement supplémentaire du Contrôle de Compte Utilisateur (UAC) permet de lire le flag racine.</p>]]></description>
+</item>
+<item>
+    <title>Forgotten</title>
+    <link>http://localhost:1313/forgotten/</link>
+    <pubDate>Fri, 12 Dec 2025 10:28:41 &#43;0000</pubDate>
+    <author>z3rodol</author>
+    <guid>http://localhost:1313/forgotten/</guid>
+    <description><![CDATA[<p></p>
+<p><strong>Forgotten</strong> est une <strong>box Linux de difficulté Easy</strong> centrée sur une application web <strong>LimeSurvey</strong> exposée sur le port 80. Après énumération, on trouve une installation <strong>LimeSurvey</strong> nécessitant une configuration, ce qui permet de <strong>déployer un plugin contenant un reverse shell PHP</strong> pour obtenir un accès initial sur le conteneur Docker qui héberge l’application. À l’intérieur du conteneur, une <strong>variable d’environnement exposent le mot de passe de l’utilisateur LimeSurvey</strong>, ce qui permet de <strong>se connecter via SSH directement à l’hôte avec ces identifiants</strong>. Pour l’<strong>escalade de privilèges</strong>, j&rsquo;abuse <strong>du partage entre le conteneur et l’hôte</strong> est utilisée afin d’obtenir un accès root sur la machine.</p>]]></description>
+</item>
+<item>
+    <title>Down</title>
+    <link>http://localhost:1313/down/</link>
+    <pubDate>Thu, 11 Dec 2025 13:49:22 &#43;0000</pubDate>
+    <author>z3rodol</author>
+    <guid>http://localhost:1313/down/</guid>
+    <description><![CDATA[<p></p>
+<p><code>Down</code> possède un site web conçu pour vérifier si un site web est en ligne. Cela présente une <code>SSRF</code> évidente, mais pour contourner les filtres et l&rsquo;exploiter, je vais abuser de la fonctionnalité de <code>curl</code> qui accepte plusieurs URLs et passer une seconde URL avec le wrapper LFI <code>file</code> pour lire des fichiers depuis l&rsquo;hôte. J&rsquo;obtiens l&rsquo;accès au code source de la page, et je vois qu&rsquo;il existe un <code>mode expert</code> qui établie une connexion TCP brute avec <code>netcat</code>. J&rsquo;utilise l&rsquo;injection de paramètres à cet endroit pour obtenir un shell. De là, je fouille dans une instance <code>pswm</code> pour obtenir le mot de passe de l&rsquo;utilisateur suivant, et celui-ci dispose des privilèges sudo pour devenir root.</p>]]></description>
+</item>
+<item>
+    <title>Baby</title>
+    <link>http://localhost:1313/baby/</link>
+    <pubDate>Thu, 11 Dec 2025 10:28:41 &#43;0000</pubDate>
+    <author>z3rodol</author>
+    <guid>http://localhost:1313/baby/</guid>
+    <description><![CDATA[<p></p>
+<p>Baby est une machine Windows facile à utiliser, dotée de l&rsquo;énumération LDAP, de la dispersion de mots de passe et de l&rsquo;exposition des identifiants. Pour l&rsquo;élévation des privilèges, la faille <code>SeBackupPrivilege</code> est exploitée pour extraire le registre SYSTEM et le fichier <code>NTDS.dit</code>. Une attaque <code>Pass-the-Hash</code> peut être réalisée en utilisant les hachages de domaine non couverts, obtenant ainsi un accès Administrateur.</p>]]></description>
+</item>
+<item>
+    <title>Fluffy</title>
+    <link>http://localhost:1313/fluffy/</link>
+    <pubDate>Thu, 11 Dec 2025 10:28:41 &#43;0000</pubDate>
+    <author>z3rodol</author>
+    <guid>http://localhost:1313/fluffy/</guid>
+    <description><![CDATA[<p></p>
+<p>Fluffy est une machine Windows Active Directory de type <code>assume-breach</code>. Nous avons donc les identifiants <code>j.fleischman:J0elTHEM4n1990!</code>. Je commencerai par exploiter les vulnérabilités <code>CVE-2025-24071</code>, liées à la façon dont Windows gère les fichiers <code>library-ms</code> dans des archives zip, ce qui provoque des tentatives d’authentification vers l’attaquant. J’obtiendrai un NetNTLMv2 et le craquerai. Ensuite, les données <code>BloodHound</code> montrent que cet utilisateur dispose du droit <code>GenericWrite</code> sur certains comptes de service. J’abuserai de cela pour obtenir un shell <code>WinRM</code> avec l’un d’eux. À partir de cet utilisateur, j’exploiterai <code>ESC16</code> dans l’environnement <code>ADCS</code> pour obtenir un shell en tant qu’Administrateur.</p>]]></description>
+</item>
+<item>
+    <title>Lock</title>
+    <link>http://localhost:1313/lock/</link>
+    <pubDate>Thu, 11 Dec 2025 10:28:41 &#43;0000</pubDate>
+    <author>z3rodol</author>
+    <guid>http://localhost:1313/lock/</guid>
+    <description><![CDATA[<p></p>
+<p>Lock est une machine Windows de difficulté facile qui consiste à parcourir un dépôt <strong>Gitea</strong> pour trouver un jeton d&rsquo;accès personnel. Ce jeton est ensuite utilisé pour déployer un <strong>webshell ASPX</strong> sur le serveur, ce qui permet d&rsquo;établir un premier point d&rsquo;entrée. Un mot de passe est ensuite déchiffré à partir d&rsquo;un fichier de configuration <strong>mRemoteNG</strong>, donnant accès à un nouveau compte utilisateur. Enfin, une vulnérabilité d&rsquo;élévation de privilèges locale dans l&rsquo;application <strong><code>PDF24</code></strong> est exploitée pour obtenir un shell avec les privilèges SYSTEM.</p>]]></description>
+</item>
+<item>
+    <title>Nibbles</title>
+    <link>http://localhost:1313/nibbles/</link>
+    <pubDate>Thu, 11 Dec 2025 10:28:41 &#43;0000</pubDate>
+    <author>z3rodol</author>
+    <guid>http://localhost:1313/nibbles/</guid>
+    <description><![CDATA[<p></p>
+<p><code>Nibbles</code> est l&rsquo;une des machines les plus faciles à exploiter sur HTB. Elle héberge une instance vulnérable de <strong>Nibbleblog</strong>. Il existe une faille exploitable avec <code>Metasploit</code>, mais il est également possible de l&rsquo;exploiter sans MSF ; je vais donc vous montrer la méthode avec un POC GitHub. L&rsquo;élévation de privilèges consiste à utiliser abusivement la commande <code>sudo</code> sur un fichier accessible en écriture à tous.</p>]]></description>
+</item>
+<item>
+    <title>OutBound</title>
+    <link>http://localhost:1313/outbound/</link>
+    <pubDate>Thu, 11 Dec 2025 10:28:41 &#43;0000</pubDate>
+    <author>z3rodol</author>
+    <guid>http://localhost:1313/outbound/</guid>
+    <description><![CDATA[<p></p>
+<p>Outbound est une machine Linux de difficulté facile avec des identifiants de compromission initiale fournis. Ces identifiants donnent accès à une instance <code>Roundcube</code>, où l&rsquo;utilisateur peut énumérer la version et exploiter <code>CVE-2025-49113</code>, permettant l&rsquo;exécution de code à distance via la désérialisation d&rsquo;objets PHP. Après l&rsquo;accès initial, nous énumérons la base de données et trouvons une session pour l&rsquo;utilisateur <code>Jacob</code> contenant un mot de passe chiffré en base64. En utilisant un outil interne appelé <code>decrypt.sh</code>, nous extrayons le mot de passe en clair, permettant l&rsquo;accès à Roundcube en tant que Jacob. Jacob a deux messages : l&rsquo;un contient son nouveau mot de passe système, l&rsquo;autre l&rsquo;informe de ses privilèges sudo pour surveiller les ressources avec l&rsquo;utilitaire <code>below</code>, vulnérable à <code>CVE-2025-27591</code>. Cette faille crée des logs dans <code>/var/log/below</code> avec des permissions excessives permettant des attaques par liens symboliques. Nous créons un lien symbolique de <code>/etc/passwd</code> vers <code>error_root.log</code> et injectons notre payload via injection de paramètres, créant ainsi un nouvel utilisateur avec l&rsquo;UID root.</p>]]></description>
+</item>
+<item>
+    <title>Reset</title>
+    <link>http://localhost:1313/reset/</link>
+    <pubDate>Thu, 11 Dec 2025 10:28:41 &#43;0000</pubDate>
+    <author>z3rodol</author>
+    <guid>http://localhost:1313/reset/</guid>
+    <description><![CDATA[<p></p>
+<p>Reset est une machine Linux de difficulté facile qui illustre l&rsquo;exploitation d&rsquo;une fonctionnalité de réinitialisation de mot de passe dans une application web suite à une attaque par <code>empoisonnement de logs</code>, permettant d&rsquo;obtenir l&rsquo;exécution de code à distance. Pour l&rsquo;escalade de privilèges, les <code>Rservices</code> sont exploités, puis une session <code>tmux</code> détachée est utilisée pour abuser des privilèges sudo sur l&rsquo;éditeur de texte <code>nano</code> et exécuter des commandes en tant qu&rsquo;utilisateur root.</p>]]></description>
+</item>
+<item>
+    <title>Retro</title>
+    <link>http://localhost:1313/retro/</link>
+    <pubDate>Thu, 11 Dec 2025 10:28:41 &#43;0000</pubDate>
+    <author>z3rodol</author>
+    <guid>http://localhost:1313/retro/</guid>
+    <description><![CDATA[<p></p>
+<p>Retro est une machine Windows de difficulté facile présentant un contrôleur de domaine Active Directory. Grâce à l&rsquo;énumération SMB et à l&rsquo;exploitation d&rsquo;un compte machine pré-créé, nous obtenons l&rsquo;accès au système. L&rsquo;escalade de privilèges est réalisée via l&rsquo;exploitation d&rsquo;Active Directory Certificate Service, en utilisant spécifiquement l&rsquo;attaque <code>ESC1</code>, qui exploite les modèles de certificats pour usurper l&rsquo;identité de l&rsquo;utilisateur Administrateur.</p>
+<h2 id="enumération">Enumération</h2>
+<h3 id="nmap">Nmap</h3>
+<p>J&rsquo;effectue premièrement un simple scan <code>nmap</code> pour avoir tous les ports ouverts. Il y en a plusieurs :</p>]]></description>
+</item>
+</channel>
+</rss>

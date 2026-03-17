@@ -1,0 +1,25 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+        <title>GenericWrite - Tag - z3rodol</title>
+        <link>http://localhost:1313/tags/genericwrite/</link>
+        <description>GenericWrite - Tag - z3rodol</description>
+        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Thu, 11 Dec 2025 10:28:41 &#43;0000</lastBuildDate><atom:link href="http://localhost:1313/tags/genericwrite/" rel="self" type="application/rss+xml" /><item>
+    <title>Fluffy</title>
+    <link>http://localhost:1313/fluffy/</link>
+    <pubDate>Thu, 11 Dec 2025 10:28:41 &#43;0000</pubDate>
+    <author>z3rodol</author>
+    <guid>http://localhost:1313/fluffy/</guid>
+    <description><![CDATA[<p></p>
+<p>Fluffy est une machine Windows Active Directory de type <code>assume-breach</code>. Nous avons donc les identifiants <code>j.fleischman:J0elTHEM4n1990!</code>. Je commencerai par exploiter les vulnérabilités <code>CVE-2025-24071</code>, liées à la façon dont Windows gère les fichiers <code>library-ms</code> dans des archives zip, ce qui provoque des tentatives d’authentification vers l’attaquant. J’obtiendrai un NetNTLMv2 et le craquerai. Ensuite, les données <code>BloodHound</code> montrent que cet utilisateur dispose du droit <code>GenericWrite</code> sur certains comptes de service. J’abuserai de cela pour obtenir un shell <code>WinRM</code> avec l’un d’eux. À partir de cet utilisateur, j’exploiterai <code>ESC16</code> dans l’environnement <code>ADCS</code> pour obtenir un shell en tant qu’Administrateur.</p>]]></description>
+</item>
+<item>
+    <title>Puppy</title>
+    <link>http://localhost:1313/puppy/</link>
+    <pubDate>Thu, 11 Dec 2025 10:28:41 &#43;0000</pubDate>
+    <author>z3rodol</author>
+    <guid>http://localhost:1313/puppy/</guid>
+    <description><![CDATA[<p></p>
+<p><code>Puppy</code> est une machine Windows Active Directory de type assume-breach. Nous commençons donc avec les identifiants <code>levi.james:KingofAkron2025!</code>. Je commencerai par énumérer les partages, <code>Levi.James</code> n’ayant pas accès au partage <code>DEV</code>. Puis une récolte des relation entre les objets du domaine révèle qu’étant membre du groupe <code>HR</code>, il possède des privilèges <code>GenericWrite</code> sur le groupe <code>Developers</code>. En abusant de ces droits, je parviens à accéder au partage <code>DEV</code> dans lequel se trouve un fichier chiffré contenant des identifiants <code>KeepassXC</code>. Je trouverai alors des identifiants valides de <code>Ant.Edwards</code>. Ce dernier a les privilèges <code>GenericAll</code> sur <code>Adam.Silver</code> qui est désactivé. Après activation du compte <code>Adam.Silver</code>, j’abuse alors du privilège <code>GenericAll</code> ce qui me permet d’obtenir un shell en tant que ce dernier. Je trouve ensuite une sauvegarde LDAP contenant des identifiants de <code>Steph.Cooper</code>. Une fois connecté en tant que <code>Steph.Cooper</code>, je réalise une <code>DPAPI</code> qui me permet d’obtenir les identifiants de <code>Steph.Cooper_adm</code> membre du groupe <code>Administrators</code> et d’avoir une shell.</p>]]></description>
+</item>
+</channel>
+</rss>

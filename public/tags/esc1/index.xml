@@ -1,0 +1,19 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+        <title>ESC1 - Tag - z3rodol</title>
+        <link>http://localhost:1313/tags/esc1/</link>
+        <description>ESC1 - Tag - z3rodol</description>
+        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Thu, 11 Dec 2025 10:28:41 &#43;0000</lastBuildDate><atom:link href="http://localhost:1313/tags/esc1/" rel="self" type="application/rss+xml" /><item>
+    <title>Retro</title>
+    <link>http://localhost:1313/retro/</link>
+    <pubDate>Thu, 11 Dec 2025 10:28:41 &#43;0000</pubDate>
+    <author>z3rodol</author>
+    <guid>http://localhost:1313/retro/</guid>
+    <description><![CDATA[<p></p>
+<p>Retro est une machine Windows de difficulté facile présentant un contrôleur de domaine Active Directory. Grâce à l&rsquo;énumération SMB et à l&rsquo;exploitation d&rsquo;un compte machine pré-créé, nous obtenons l&rsquo;accès au système. L&rsquo;escalade de privilèges est réalisée via l&rsquo;exploitation d&rsquo;Active Directory Certificate Service, en utilisant spécifiquement l&rsquo;attaque <code>ESC1</code>, qui exploite les modèles de certificats pour usurper l&rsquo;identité de l&rsquo;utilisateur Administrateur.</p>
+<h2 id="enumération">Enumération</h2>
+<h3 id="nmap">Nmap</h3>
+<p>J&rsquo;effectue premièrement un simple scan <code>nmap</code> pour avoir tous les ports ouverts. Il y en a plusieurs :</p>]]></description>
+</item>
+</channel>
+</rss>

@@ -1,11 +1,40 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Categories on My New Hugo Project</title>
+    <title>Categories on z3rodol</title>
     <link>http://localhost:1313/categories/</link>
-    <description>Recent content in Categories on My New Hugo Project</description>
+    <description>Recent content in Categories on z3rodol</description>
     <generator>Hugo</generator>
-    <language>en-us</language>
+    <language>en</language>
+    <lastBuildDate>Sat, 14 Mar 2026 17:28:41 +0000</lastBuildDate>
     <atom:link href="http://localhost:1313/categories/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Hackthebox</title>
+      <link>http://localhost:1313/categories/hackthebox/</link>
+      <pubDate>Sat, 14 Mar 2026 17:28:41 +0000</pubDate>
+      <guid>http://localhost:1313/categories/hackthebox/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Machines</title>
+      <link>http://localhost:1313/categories/machines/</link>
+      <pubDate>Sat, 14 Mar 2026 17:28:41 +0000</pubDate>
+      <guid>http://localhost:1313/categories/machines/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Mini-Prolabs</title>
+      <link>http://localhost:1313/categories/mini-prolabs/</link>
+      <pubDate>Sat, 14 Mar 2026 10:28:41 +0000</pubDate>
+      <guid>http://localhost:1313/categories/mini-prolabs/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Challenges</title>
+      <link>http://localhost:1313/categories/challenges/</link>
+      <pubDate>Thu, 11 Dec 2025 10:28:41 +0000</pubDate>
+      <guid>http://localhost:1313/categories/challenges/</guid>
+      <description></description>
+    </item>
   </channel>
 </rss>

@@ -1,0 +1,34 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+        <title>MSSQL - Tag - z3rodol</title>
+        <link>http://localhost:1313/tags/mssql/</link>
+        <description>MSSQL - Tag - z3rodol</description>
+        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Thu, 11 Dec 2025 10:28:41 &#43;0000</lastBuildDate><atom:link href="http://localhost:1313/tags/mssql/" rel="self" type="application/rss+xml" /><item>
+    <title>Manager</title>
+    <link>http://localhost:1313/manager/</link>
+    <pubDate>Thu, 11 Dec 2025 10:28:41 &#43;0000</pubDate>
+    <author>z3rodol</author>
+    <guid>http://localhost:1313/manager/</guid>
+    <description><![CDATA[<p></p>
+<p>Manager est une machine Windows de difficulté moyenne hébergeant un environnement Active Directory avec ADCS (Active Directory Certificate Services), un serveur web et un serveur SQL. L&rsquo;accès initial implique l&rsquo;énumération des utilisateurs via <code>RID cycling</code> et une attaque par pulvérisation de mots de passe pour accéder au service MSSQL. La commande <code>xp_dirtree</code> est utilisée pour explorer le système de fichiers, révélant une sauvegarde du site web. L&rsquo;extraction de cette sauvegarde dévoile des identifiants réutilisés pour se connecter via <code>WinRM</code> au serveur. Enfin, l&rsquo;escalade de privilèges s&rsquo;effectue via ADCS en exploitant la vulnérabilité <code>ESC7</code>.</p>]]></description>
+</item>
+<item>
+    <title>Querier</title>
+    <link>http://localhost:1313/querier/</link>
+    <pubDate>Thu, 11 Dec 2025 10:28:41 &#43;0000</pubDate>
+    <author>z3rodol</author>
+    <guid>http://localhost:1313/querier/</guid>
+    <description><![CDATA[<p></p>
+<p>Querier est une machine Windows de difficulté moyenne possédant une feuille de calcul Excel dans un partage de fichiers accessible à tous. La feuille de calcul contient des macros qui se connectent à un serveur MSSQL fonctionnant sur la machine. Le serveur SQL peut être utilisé pour demander un fichier permettant de capturer et craquer des hashes NetNTLMv2 afin de récupérer le mot de passe en clair. Après connexion, <code>PowerUp</code> peut être utilisé pour trouver les identifiants Administrateur dans un fichier de stratégie de groupe mis en cache localement.</p>]]></description>
+</item>
+<item>
+    <title>Scrambled</title>
+    <link>http://localhost:1313/scrambled/</link>
+    <pubDate>Thu, 11 Dec 2025 10:28:41 &#43;0000</pubDate>
+    <author>z3rodol</author>
+    <guid>http://localhost:1313/scrambled/</guid>
+    <description><![CDATA[<p></p>
+<p>Scrambled est une machine Windows Active Directory de difficulté moyenne. En énumérant le site web hébergé sur la machine distante, on peut déduire les identifiants de l&rsquo;utilisateur <code>ksimpson</code>. Sur le site web, il est également indiqué que l&rsquo;authentification NTLM est désactivée, ce qui signifie que l&rsquo;authentification Kerberos doit être utilisée. En accédant au partage <code>Public</code> avec les identifiants de ksimpson, un fichier PDF indique qu&rsquo;un attaquant a récupéré les identifiants d&rsquo;une base de données SQL. Ceci est un indice qu&rsquo;un service SQL fonctionne sur la machine distante. En énumérant les comptes utilisateurs normaux, on découvre que le compte <code>SqlSvc</code> a un<code> Service Principal Name</code> (SPN) qui lui est associé. J&rsquo;utilise cette information pour effectuer une attaque connue sous le nom de <code>kerberoasting</code> et obtenir le hash de <code>SqlSvc</code>. Après avoir craqué le hash et acquis les identifiants du compte <code>SqlSvc</code>, un je peux effectuer une attaque <code>silver ticket</code> pour forger un ticket et usurper l&rsquo;identité de l&rsquo;utilisateur <code>Administrator</code> sur le service MSSQL distant. L&rsquo;énumération de la base de données révèle les identifiants de l&rsquo;utilisateur <code>MiscSvc</code>, qui peuvent être utilisés pour exécuter du code sur la machine distante via PowerShell remoting. L&rsquo;énumération système en tant que nouvel utilisateur révèle une application <code>.NET</code> écoutant sur le port <code>4411</code>. La rétro-ingénierie de l&rsquo;application révèle qu&rsquo;elle utilise la classe non sécurisée Binary Formatter pour transmettre des données, permettant à l&rsquo;attaquant de télécharger sa propre payload et d&rsquo;obtenir l&rsquo;exécution de code en tant que <code>nt authority\system</code>.</p>]]></description>
+</item>
+</channel>
+</rss>

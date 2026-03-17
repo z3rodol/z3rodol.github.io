@@ -1,0 +1,16 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+        <title>ESC14 - Tag - z3rodol</title>
+        <link>http://localhost:1313/tags/esc14/</link>
+        <description>ESC14 - Tag - z3rodol</description>
+        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Thu, 11 Dec 2025 10:28:41 &#43;0000</lastBuildDate><atom:link href="http://localhost:1313/tags/esc14/" rel="self" type="application/rss+xml" /><item>
+    <title>Scepter</title>
+    <link>http://localhost:1313/scepter/</link>
+    <pubDate>Thu, 11 Dec 2025 10:28:41 &#43;0000</pubDate>
+    <author>z3rodol</author>
+    <guid>http://localhost:1313/scepter/</guid>
+    <description><![CDATA[<p></p>
+<p>Scepter est une machine Windows de difficulté élevée qui commence par un partage NFS non authentifié, permettant à l&rsquo;attaquant de télécharger un fichier de certificat PFX sensible. L&rsquo;attaquant découvre ensuite que l&rsquo;utilisateur compromis possède l&rsquo;ACL <code>UserForceChangePassword</code>, permettant de changer le mot de passe du compte utilisateur <code>A.CARTER</code>. Ce compte utilisateur est membre du groupe IT SUPPORT, donnant aux membres du groupe l&rsquo;ACL GenericAll sur l&rsquo;unité organisationnelle (OU) <code>STAFF ACCESS CERTIFICATE</code>. L&rsquo;attaquant peut alors contrôler entièrement tous les comptes utilisateurs sous cette OU. De plus, l&rsquo;attaquant découvre que l&rsquo;autorité de certification est vulnérable à <code>ESC14</code>, un mappage faible explicite. L&rsquo;attaquant parvient à compromettre <code>H.BROWN</code> en modifiant l&rsquo;attribut LDAP mail et en demandant le modèle de certificat <code>StaffAccessCertificate</code>. Le compte utilisateur <code>H.BROWN</code> est membre du groupe CMS, ayant les privilèges de modifier l&rsquo;attribut LDAP <code>altSecurityIdentities</code> de tout objet AD sous l&rsquo;OU <code>Helpdesk Enrollment Certificate</code>. Comme la CA est vulnérable à <code>ESC14</code>, l&rsquo;attaquant peut modifier l&rsquo;attribut LDAP (mappage fort, c&rsquo;est-à-dire <code>X509IssuerSerialNumber</code>) et demander un certificat en tant que Domain Computer pour compromettre le compte utilisateur <code>P.ADAMS</code>, qui possède les privilèges <code>DCSync</code>, permettant à l&rsquo;attaquant de compromettre le domaine. Une approche alternative consiste à exploiter le mappage faible <code>X509RFC822</code>, puis à s&rsquo;inscrire au modèle de certificat en tant que compte utilisateur <code>D.BAKER</code> et à compromettre le compte utilisateur <code>P.ADAMS</code>.</p>]]></description>
+</item>
+</channel>
+</rss>

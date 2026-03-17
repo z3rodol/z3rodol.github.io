@@ -1,0 +1,16 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+        <title>ESC9 - Tag - z3rodol</title>
+        <link>http://localhost:1313/tags/esc9/</link>
+        <description>ESC9 - Tag - z3rodol</description>
+        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Thu, 11 Dec 2025 13:48:56 &#43;0000</lastBuildDate><atom:link href="http://localhost:1313/tags/esc9/" rel="self" type="application/rss+xml" /><item>
+    <title>Certified</title>
+    <link>http://localhost:1313/certified/</link>
+    <pubDate>Thu, 11 Dec 2025 13:48:56 &#43;0000</pubDate>
+    <author>z3rodol</author>
+    <guid>http://localhost:1313/certified/</guid>
+    <description><![CDATA[<p></p>
+<p><code>Certified</code> est une machine Windows de difficulté moyenne conçue pour un scénario de violation présumé, où les identifiants d&rsquo;un utilisateur à faibles privilèges sont fournis. Pour accéder au compte <code>management_svc</code>, les listes de contrôle d&rsquo;accès (ACL) des objets privilégiés sont énumérées, ce qui nous amène à découvrir que <code>judith.mader</code>, qui dispose de l&rsquo;ACL <code>write owner</code> sur le groupe <code>management</code>, dispose de <code>GenericWrite</code> sur le compte  <code>management_svc</code>, ce dernier permettant ainsi l&rsquo;authentification auprès de la cible via <code>WinRM</code> et l&rsquo;obtention du flag user. L&rsquo;exploitation du service de certificats Active Directory (ADCS) est nécessaire pour accéder au compte <code>Administrator</code> en abusant du <code>shadow credentials</code> et de <code>ESC9</code>.</p>]]></description>
+</item>
+</channel>
+</rss>

@@ -1,0 +1,103 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+        <title>Medium - Tag - z3rodol</title>
+        <link>http://localhost:1313/tags/medium/</link>
+        <description>Medium - Tag - z3rodol</description>
+        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Sat, 27 Dec 2025 10:28:41 &#43;0000</lastBuildDate><atom:link href="http://localhost:1313/tags/medium/" rel="self" type="application/rss+xml" /><item>
+    <title>BabyTwo</title>
+    <link>http://localhost:1313/babytwo/</link>
+    <pubDate>Sat, 27 Dec 2025 10:28:41 &#43;0000</pubDate>
+    <author>z3rodol</author>
+    <guid>http://localhost:1313/babytwo/</guid>
+    <description><![CDATA[<p></p>
+<p><strong>BabyTwo</strong> est une machine Windows de difficulté intermédiaire évoluant dans un environnement <strong>Active Directory</strong>.  L’accès initial est obtenu par <strong>devinette de mots de passe</strong> et par l’<strong>exploitation des scripts de connexion Windows</strong>.  L’élévation de privilèges est réalisée en abusant de <strong>listes de contrôle d’accès (ACL) mal configurées</strong> et de <strong>stratégies de groupe (GPO)</strong>.</p>
+<h1 id="énumération">Énumération</h1>
+<h2 id="nmap">Nmap</h2>
+<p>Le scan révèle des ports semblant appartenir à un contrôleur de domaine : DNS (<code>53</code>), Kerberos (<code>88</code>), LDAP (<code>389</code> et <code>636</code>), ainsi que d&rsquo;autres ports Windows : SMB (<code>445</code>), RDP (<code>3389</code>).</p>]]></description>
+</item>
+<item>
+    <title>Breach</title>
+    <link>http://localhost:1313/breach/</link>
+    <pubDate>Sat, 27 Dec 2025 10:28:41 &#43;0000</pubDate>
+    <author>z3rodol</author>
+    <guid>http://localhost:1313/breach/</guid>
+    <description><![CDATA[<p></p>
+<p><strong>Breach</strong> est une machine Windows de difficulté intermédiaire où l’accès invité à un partage SMB permet de capturer des hashes NTLMv2 et d’obtenir des identifiants valides. L’exploitation d’un compte de service kerberoastable, suivie d’une attaque <strong>Silver Ticket</strong>, permet l’exécution de commandes via <strong>MSSQL</strong> et une élévation de privilèges finale grâce au <code>SeImpersonatePrivilege</code>.</p>
+<h1 id="énumération">Énumération</h1>
+<h2 id="nmap">Nmap</h2>
+<p>Le scan révèle des ports semblant appartenir à un <strong>contrôleur de domaine</strong> : DNS (<code>53</code>), Kerberos (<code>88</code>), LDAP (<code>389</code> et <code>636</code>), ainsi que d&rsquo;autres ports Windows : SMB (<code>445</code>), RDP (<code>3389</code>).</p>]]></description>
+</item>
+<item>
+    <title>SolidState</title>
+    <link>http://localhost:1313/solidstate/</link>
+    <pubDate>Fri, 12 Dec 2025 10:28:41 &#43;0000</pubDate>
+    <author>z3rodol</author>
+    <guid>http://localhost:1313/solidstate/</guid>
+    <description><![CDATA[<p></p>
+<p>SolidState repose essentiellement sur l’exploitation du serveur mail <strong>Apache James</strong>. Après énumération, on découvre que l’accès admin au service James est protégé par les identifiants par défaut. Cela permet de manipuler les boîtes mail des utilisateurs et de <strong>récupérer des identifiants SSH</strong> contenus dans leurs messages. La connexion SSH initiale donne un shell restreint, qu’il est possible de contourner. Pour finir, une <strong>escalade root</strong> est possible grâce à un <strong>script Python exécuté par un cron</strong>, permettant l’obtention d’un shell root.</p>]]></description>
+</item>
+<item>
+    <title>Certified</title>
+    <link>http://localhost:1313/certified/</link>
+    <pubDate>Thu, 11 Dec 2025 13:48:56 &#43;0000</pubDate>
+    <author>z3rodol</author>
+    <guid>http://localhost:1313/certified/</guid>
+    <description><![CDATA[<p></p>
+<p><code>Certified</code> est une machine Windows de difficulté moyenne conçue pour un scénario de violation présumé, où les identifiants d&rsquo;un utilisateur à faibles privilèges sont fournis. Pour accéder au compte <code>management_svc</code>, les listes de contrôle d&rsquo;accès (ACL) des objets privilégiés sont énumérées, ce qui nous amène à découvrir que <code>judith.mader</code>, qui dispose de l&rsquo;ACL <code>write owner</code> sur le groupe <code>management</code>, dispose de <code>GenericWrite</code> sur le compte  <code>management_svc</code>, ce dernier permettant ainsi l&rsquo;authentification auprès de la cible via <code>WinRM</code> et l&rsquo;obtention du flag user. L&rsquo;exploitation du service de certificats Active Directory (ADCS) est nécessaire pour accéder au compte <code>Administrator</code> en abusant du <code>shadow credentials</code> et de <code>ESC9</code>.</p>]]></description>
+</item>
+<item>
+    <title>Build</title>
+    <link>http://localhost:1313/build/</link>
+    <pubDate>Thu, 11 Dec 2025 10:28:41 &#43;0000</pubDate>
+    <author>z3rodol</author>
+    <guid>http://localhost:1313/build/</guid>
+    <description><![CDATA[<p></p>
+<p><strong>Build</strong> est une machine Linux classée comme facile. Elle implique la lecture de fichiers sensibles depuis des partages <strong>rsync</strong> non authentifiés, ce qui mène à l&rsquo;exposition d&rsquo;un mot de passe Jenkins chiffré. Je parvient à déchiffrer ce mot de passe, ce qui me permet d&rsquo;accéder à <strong>Gitea</strong>. Le dépôt appartenant à l&rsquo;administrateur sur <strong>Gitea</strong> dispose d&rsquo;un <code>webhook</code> configuré, permettant d&rsquo;obtenir une exécution de code arbitraire et un shell dans le conteneur Docker. Ce conteneur Docker a accès à <strong>MySQL</strong> et <code>PowerDNS</code>, qui s&rsquo;exécutent tous deux dans un autre conteneur sur le même réseau Docker. Le conteneur a également un fichier monté nommé <strong>.rhosts</strong>, qui est aussi monté dans le répertoire racine de la machine hôte. <strong>MySQL</strong> est mal configuré et n&rsquo;a pas de mot de passe pour le compte root, ce qui permet à un attaquant de prendre le contrôle total de la base de données. Une fois le hash de l&rsquo;administrateur craqué et connecter à <code>PowerDNS</code>, je modifie l&rsquo;enregistrement DNS <strong>intern/admin</strong> pour le rediriger vers ma propre machine. En supposant que le même fichier <strong>.rhosts</strong> est également monté sur la machine hôte, cela me permet d&rsquo;obtenir une session root via le protocole <strong>Remote Shell Protocol (RSH)</strong>.</p>]]></description>
+</item>
+<item>
+    <title>Manager</title>
+    <link>http://localhost:1313/manager/</link>
+    <pubDate>Thu, 11 Dec 2025 10:28:41 &#43;0000</pubDate>
+    <author>z3rodol</author>
+    <guid>http://localhost:1313/manager/</guid>
+    <description><![CDATA[<p></p>
+<p>Manager est une machine Windows de difficulté moyenne hébergeant un environnement Active Directory avec ADCS (Active Directory Certificate Services), un serveur web et un serveur SQL. L&rsquo;accès initial implique l&rsquo;énumération des utilisateurs via <code>RID cycling</code> et une attaque par pulvérisation de mots de passe pour accéder au service MSSQL. La commande <code>xp_dirtree</code> est utilisée pour explorer le système de fichiers, révélant une sauvegarde du site web. L&rsquo;extraction de cette sauvegarde dévoile des identifiants réutilisés pour se connecter via <code>WinRM</code> au serveur. Enfin, l&rsquo;escalade de privilèges s&rsquo;effectue via ADCS en exploitant la vulnérabilité <code>ESC7</code>.</p>]]></description>
+</item>
+<item>
+    <title>Meta</title>
+    <link>http://localhost:1313/meta/</link>
+    <pubDate>Thu, 11 Dec 2025 10:28:41 &#43;0000</pubDate>
+    <author>z3rodol</author>
+    <guid>http://localhost:1313/meta/</guid>
+    <description><![CDATA[<p></p>
+<p>Meta est une machine Linux de difficulté moyenne axée sur deux CVE différentes (<code>CVE-2021-22204</code> et <code>CVE-2020-29599</code>) dans <code>ExifTool</code> et <code>ImageMagick</code>, exploitables à différentes étapes. L&rsquo;accès initial est obtenu en téléchargeant un fichier malveillant vers une application web qui lit les métadonnées d&rsquo;image, déclenchant une exécution de commande à distance dans ExifTool. Une injection de commande dans ImageMagick est ensuite exploitée pour pivoter vers un second utilisateur. Enfin, l&rsquo;escalade de privilèges est possible grâce à un paramètre <code>env_keep</code> dans <code>sudo</code> permettant aux attaquants d&rsquo;exécuter des commandes arbitraires en tant que root en définissant un répertoire de configuration personnalisé via une variable d&rsquo;environnement.</p>]]></description>
+</item>
+<item>
+    <title>Puppy</title>
+    <link>http://localhost:1313/puppy/</link>
+    <pubDate>Thu, 11 Dec 2025 10:28:41 &#43;0000</pubDate>
+    <author>z3rodol</author>
+    <guid>http://localhost:1313/puppy/</guid>
+    <description><![CDATA[<p></p>
+<p><code>Puppy</code> est une machine Windows Active Directory de type assume-breach. Nous commençons donc avec les identifiants <code>levi.james:KingofAkron2025!</code>. Je commencerai par énumérer les partages, <code>Levi.James</code> n’ayant pas accès au partage <code>DEV</code>. Puis une récolte des relation entre les objets du domaine révèle qu’étant membre du groupe <code>HR</code>, il possède des privilèges <code>GenericWrite</code> sur le groupe <code>Developers</code>. En abusant de ces droits, je parviens à accéder au partage <code>DEV</code> dans lequel se trouve un fichier chiffré contenant des identifiants <code>KeepassXC</code>. Je trouverai alors des identifiants valides de <code>Ant.Edwards</code>. Ce dernier a les privilèges <code>GenericAll</code> sur <code>Adam.Silver</code> qui est désactivé. Après activation du compte <code>Adam.Silver</code>, j’abuse alors du privilège <code>GenericAll</code> ce qui me permet d’obtenir un shell en tant que ce dernier. Je trouve ensuite une sauvegarde LDAP contenant des identifiants de <code>Steph.Cooper</code>. Une fois connecté en tant que <code>Steph.Cooper</code>, je réalise une <code>DPAPI</code> qui me permet d’obtenir les identifiants de <code>Steph.Cooper_adm</code> membre du groupe <code>Administrators</code> et d’avoir une shell.</p>]]></description>
+</item>
+<item>
+    <title>Querier</title>
+    <link>http://localhost:1313/querier/</link>
+    <pubDate>Thu, 11 Dec 2025 10:28:41 &#43;0000</pubDate>
+    <author>z3rodol</author>
+    <guid>http://localhost:1313/querier/</guid>
+    <description><![CDATA[<p></p>
+<p>Querier est une machine Windows de difficulté moyenne possédant une feuille de calcul Excel dans un partage de fichiers accessible à tous. La feuille de calcul contient des macros qui se connectent à un serveur MSSQL fonctionnant sur la machine. Le serveur SQL peut être utilisé pour demander un fichier permettant de capturer et craquer des hashes NetNTLMv2 afin de récupérer le mot de passe en clair. Après connexion, <code>PowerUp</code> peut être utilisé pour trouver les identifiants Administrateur dans un fichier de stratégie de groupe mis en cache localement.</p>]]></description>
+</item>
+<item>
+    <title>Scrambled</title>
+    <link>http://localhost:1313/scrambled/</link>
+    <pubDate>Thu, 11 Dec 2025 10:28:41 &#43;0000</pubDate>
+    <author>z3rodol</author>
+    <guid>http://localhost:1313/scrambled/</guid>
+    <description><![CDATA[<p></p>
+<p>Scrambled est une machine Windows Active Directory de difficulté moyenne. En énumérant le site web hébergé sur la machine distante, on peut déduire les identifiants de l&rsquo;utilisateur <code>ksimpson</code>. Sur le site web, il est également indiqué que l&rsquo;authentification NTLM est désactivée, ce qui signifie que l&rsquo;authentification Kerberos doit être utilisée. En accédant au partage <code>Public</code> avec les identifiants de ksimpson, un fichier PDF indique qu&rsquo;un attaquant a récupéré les identifiants d&rsquo;une base de données SQL. Ceci est un indice qu&rsquo;un service SQL fonctionne sur la machine distante. En énumérant les comptes utilisateurs normaux, on découvre que le compte <code>SqlSvc</code> a un<code> Service Principal Name</code> (SPN) qui lui est associé. J&rsquo;utilise cette information pour effectuer une attaque connue sous le nom de <code>kerberoasting</code> et obtenir le hash de <code>SqlSvc</code>. Après avoir craqué le hash et acquis les identifiants du compte <code>SqlSvc</code>, un je peux effectuer une attaque <code>silver ticket</code> pour forger un ticket et usurper l&rsquo;identité de l&rsquo;utilisateur <code>Administrator</code> sur le service MSSQL distant. L&rsquo;énumération de la base de données révèle les identifiants de l&rsquo;utilisateur <code>MiscSvc</code>, qui peuvent être utilisés pour exécuter du code sur la machine distante via PowerShell remoting. L&rsquo;énumération système en tant que nouvel utilisateur révèle une application <code>.NET</code> écoutant sur le port <code>4411</code>. La rétro-ingénierie de l&rsquo;application révèle qu&rsquo;elle utilise la classe non sécurisée Binary Formatter pour transmettre des données, permettant à l&rsquo;attaquant de télécharger sa propre payload et d&rsquo;obtenir l&rsquo;exécution de code en tant que <code>nt authority\system</code>.</p>]]></description>
+</item>
+</channel>
+</rss>

@@ -1,0 +1,82 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+        <title>ADCS - Tag - z3rodol</title>
+        <link>http://localhost:1313/tags/adcs/</link>
+        <description>ADCS - Tag - z3rodol</description>
+        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Thu, 11 Dec 2025 13:48:56 &#43;0000</lastBuildDate><atom:link href="http://localhost:1313/tags/adcs/" rel="self" type="application/rss+xml" /><item>
+    <title>Certified</title>
+    <link>http://localhost:1313/certified/</link>
+    <pubDate>Thu, 11 Dec 2025 13:48:56 &#43;0000</pubDate>
+    <author>z3rodol</author>
+    <guid>http://localhost:1313/certified/</guid>
+    <description><![CDATA[<p></p>
+<p><code>Certified</code> est une machine Windows de difficulté moyenne conçue pour un scénario de violation présumé, où les identifiants d&rsquo;un utilisateur à faibles privilèges sont fournis. Pour accéder au compte <code>management_svc</code>, les listes de contrôle d&rsquo;accès (ACL) des objets privilégiés sont énumérées, ce qui nous amène à découvrir que <code>judith.mader</code>, qui dispose de l&rsquo;ACL <code>write owner</code> sur le groupe <code>management</code>, dispose de <code>GenericWrite</code> sur le compte  <code>management_svc</code>, ce dernier permettant ainsi l&rsquo;authentification auprès de la cible via <code>WinRM</code> et l&rsquo;obtention du flag user. L&rsquo;exploitation du service de certificats Active Directory (ADCS) est nécessaire pour accéder au compte <code>Administrator</code> en abusant du <code>shadow credentials</code> et de <code>ESC9</code>.</p>]]></description>
+</item>
+<item>
+    <title>Baby</title>
+    <link>http://localhost:1313/baby/</link>
+    <pubDate>Thu, 11 Dec 2025 10:28:41 &#43;0000</pubDate>
+    <author>z3rodol</author>
+    <guid>http://localhost:1313/baby/</guid>
+    <description><![CDATA[<p></p>
+<p>Baby est une machine Windows facile à utiliser, dotée de l&rsquo;énumération LDAP, de la dispersion de mots de passe et de l&rsquo;exposition des identifiants. Pour l&rsquo;élévation des privilèges, la faille <code>SeBackupPrivilege</code> est exploitée pour extraire le registre SYSTEM et le fichier <code>NTDS.dit</code>. Une attaque <code>Pass-the-Hash</code> peut être réalisée en utilisant les hachages de domaine non couverts, obtenant ainsi un accès Administrateur.</p>]]></description>
+</item>
+<item>
+    <title>Certificate</title>
+    <link>http://localhost:1313/certificate/</link>
+    <pubDate>Thu, 11 Dec 2025 10:28:41 &#43;0000</pubDate>
+    <author>z3rodol</author>
+    <guid>http://localhost:1313/certificate/</guid>
+    <description><![CDATA[<p></p>
+<p><strong>Certificate</strong> est une machine Windows Active Directory de difficulté élevée qui commence par une plateforme d’E-learning. L’application web est vulnérable à une <strong>injection de byte nul (Null-Byte Injection)</strong> dans sa fonctionnalité de téléchargement de fichiers. Cela permet d’exécuter un <strong>reverse shell PHP</strong> pour obtenir un accès initial en tant qu’utilisateur <code>xamppuser</code>. Les identifiants de la base de données sont ensuite récupérés, ce qui permet un <strong>mouvement latéral</strong> vers l’utilisateur <strong>Sara.B</strong>. Une énumération plus poussée révèle un fichier de capture réseau qui fuite les identifiants de <strong>Lion.SK</strong>. Grâce à ceux-ci, les <strong>Active Directory Certificate Services (ADCS)</strong> sont énumérés, et un modèle vulnérable est exploité pour demander des certificats au nom d’autres utilisateurs. Un certificat pour l’utilisateur <strong>Ryan.K</strong> est alors obtenu. Son privilège <strong>SeManageVolumePrivilege</strong> est utilisé pour obtenir un shell en tant que <strong>NT AUTHORITY\NETWORK SERVICE</strong>. Enfin, le privilège <strong>SeImpersonatePrivilege</strong> permet d’escalader vers <strong>NT AUTHORITY\SYSTEM</strong>, de dumper les fichiers <strong>ntds.dit</strong> et les ruches de <strong>registre</strong>, et d’extraire le hash <strong>NTLM</strong> de l’Administrateur, offrant ainsi un accès complet en tant qu’<strong>Administrateur</strong>.</p>]]></description>
+</item>
+<item>
+    <title>Fluffy</title>
+    <link>http://localhost:1313/fluffy/</link>
+    <pubDate>Thu, 11 Dec 2025 10:28:41 &#43;0000</pubDate>
+    <author>z3rodol</author>
+    <guid>http://localhost:1313/fluffy/</guid>
+    <description><![CDATA[<p></p>
+<p>Fluffy est une machine Windows Active Directory de type <code>assume-breach</code>. Nous avons donc les identifiants <code>j.fleischman:J0elTHEM4n1990!</code>. Je commencerai par exploiter les vulnérabilités <code>CVE-2025-24071</code>, liées à la façon dont Windows gère les fichiers <code>library-ms</code> dans des archives zip, ce qui provoque des tentatives d’authentification vers l’attaquant. J’obtiendrai un NetNTLMv2 et le craquerai. Ensuite, les données <code>BloodHound</code> montrent que cet utilisateur dispose du droit <code>GenericWrite</code> sur certains comptes de service. J’abuserai de cela pour obtenir un shell <code>WinRM</code> avec l’un d’eux. À partir de cet utilisateur, j’exploiterai <code>ESC16</code> dans l’environnement <code>ADCS</code> pour obtenir un shell en tant qu’Administrateur.</p>]]></description>
+</item>
+<item>
+    <title>Manager</title>
+    <link>http://localhost:1313/manager/</link>
+    <pubDate>Thu, 11 Dec 2025 10:28:41 &#43;0000</pubDate>
+    <author>z3rodol</author>
+    <guid>http://localhost:1313/manager/</guid>
+    <description><![CDATA[<p></p>
+<p>Manager est une machine Windows de difficulté moyenne hébergeant un environnement Active Directory avec ADCS (Active Directory Certificate Services), un serveur web et un serveur SQL. L&rsquo;accès initial implique l&rsquo;énumération des utilisateurs via <code>RID cycling</code> et une attaque par pulvérisation de mots de passe pour accéder au service MSSQL. La commande <code>xp_dirtree</code> est utilisée pour explorer le système de fichiers, révélant une sauvegarde du site web. L&rsquo;extraction de cette sauvegarde dévoile des identifiants réutilisés pour se connecter via <code>WinRM</code> au serveur. Enfin, l&rsquo;escalade de privilèges s&rsquo;effectue via ADCS en exploitant la vulnérabilité <code>ESC7</code>.</p>]]></description>
+</item>
+<item>
+    <title>Retro</title>
+    <link>http://localhost:1313/retro/</link>
+    <pubDate>Thu, 11 Dec 2025 10:28:41 &#43;0000</pubDate>
+    <author>z3rodol</author>
+    <guid>http://localhost:1313/retro/</guid>
+    <description><![CDATA[<p></p>
+<p>Retro est une machine Windows de difficulté facile présentant un contrôleur de domaine Active Directory. Grâce à l&rsquo;énumération SMB et à l&rsquo;exploitation d&rsquo;un compte machine pré-créé, nous obtenons l&rsquo;accès au système. L&rsquo;escalade de privilèges est réalisée via l&rsquo;exploitation d&rsquo;Active Directory Certificate Service, en utilisant spécifiquement l&rsquo;attaque <code>ESC1</code>, qui exploite les modèles de certificats pour usurper l&rsquo;identité de l&rsquo;utilisateur Administrateur.</p>
+<h2 id="enumération">Enumération</h2>
+<h3 id="nmap">Nmap</h3>
+<p>J&rsquo;effectue premièrement un simple scan <code>nmap</code> pour avoir tous les ports ouverts. Il y en a plusieurs :</p>]]></description>
+</item>
+<item>
+    <title>Scepter</title>
+    <link>http://localhost:1313/scepter/</link>
+    <pubDate>Thu, 11 Dec 2025 10:28:41 &#43;0000</pubDate>
+    <author>z3rodol</author>
+    <guid>http://localhost:1313/scepter/</guid>
+    <description><![CDATA[<p></p>
+<p>Scepter est une machine Windows de difficulté élevée qui commence par un partage NFS non authentifié, permettant à l&rsquo;attaquant de télécharger un fichier de certificat PFX sensible. L&rsquo;attaquant découvre ensuite que l&rsquo;utilisateur compromis possède l&rsquo;ACL <code>UserForceChangePassword</code>, permettant de changer le mot de passe du compte utilisateur <code>A.CARTER</code>. Ce compte utilisateur est membre du groupe IT SUPPORT, donnant aux membres du groupe l&rsquo;ACL GenericAll sur l&rsquo;unité organisationnelle (OU) <code>STAFF ACCESS CERTIFICATE</code>. L&rsquo;attaquant peut alors contrôler entièrement tous les comptes utilisateurs sous cette OU. De plus, l&rsquo;attaquant découvre que l&rsquo;autorité de certification est vulnérable à <code>ESC14</code>, un mappage faible explicite. L&rsquo;attaquant parvient à compromettre <code>H.BROWN</code> en modifiant l&rsquo;attribut LDAP mail et en demandant le modèle de certificat <code>StaffAccessCertificate</code>. Le compte utilisateur <code>H.BROWN</code> est membre du groupe CMS, ayant les privilèges de modifier l&rsquo;attribut LDAP <code>altSecurityIdentities</code> de tout objet AD sous l&rsquo;OU <code>Helpdesk Enrollment Certificate</code>. Comme la CA est vulnérable à <code>ESC14</code>, l&rsquo;attaquant peut modifier l&rsquo;attribut LDAP (mappage fort, c&rsquo;est-à-dire <code>X509IssuerSerialNumber</code>) et demander un certificat en tant que Domain Computer pour compromettre le compte utilisateur <code>P.ADAMS</code>, qui possède les privilèges <code>DCSync</code>, permettant à l&rsquo;attaquant de compromettre le domaine. Une approche alternative consiste à exploiter le mappage faible <code>X509RFC822</code>, puis à s&rsquo;inscrire au modèle de certificat en tant que compte utilisateur <code>D.BAKER</code> et à compromettre le compte utilisateur <code>P.ADAMS</code>.</p>]]></description>
+</item>
+<item>
+    <title>TombWatcher</title>
+    <link>http://localhost:1313/tombwatcher/</link>
+    <pubDate>Thu, 11 Dec 2025 10:28:41 &#43;0000</pubDate>
+    <author>z3rodol</author>
+    <guid>http://localhost:1313/tombwatcher/</guid>
+    <description><![CDATA[<p></p>
+<p><code>TombWatcher</code> est une machine Active Directory de difficulté medium de type <code>assumed breach</code>.  Je commencerai donc avec les identifiants <code>henry:H3nry_987TGV!</code>. L’énumération avec <code>BloodHound</code> révèle que <strong>Henry</strong> dispose des privilèges <code>WriteSPN</code> sur <strong>Alfred</strong>, qui dispose des privilèges <code>AddSelf</code> sur le groupe <strong>Infrastructure</strong>. Les membres de ce groupe disposent des privilèges <code>ReadGMSAPassword</code> sur le compte <strong>ansible_dev</strong>. Ce dernier dispose des privilèges <code>ForceChangePassword</code> sur l&rsquo;utilisateur <strong>Sam</strong>, qui dispose des privilèges <code>WriteOwner</code> sur <strong>John</strong> ce qui nous permet d&rsquo;avoir un shell. Une fois connecté, nous remarquons qu&rsquo;il y a des objets supprimés avec le même nom de compte <strong>cert_admin</strong>. À partir de cet utilisateur, j’exploiterai le scénario B de <code>ESC15</code> dans l’environnement <code>ADCS</code> pour obtenir un shell en tant qu’Administrateur.</p>]]></description>
+</item>
+</channel>
+</rss>

@@ -1,0 +1,16 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+        <title>Rbash - Tag - z3rodol</title>
+        <link>http://localhost:1313/tags/rbash/</link>
+        <description>Rbash - Tag - z3rodol</description>
+        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Fri, 12 Dec 2025 10:28:41 &#43;0000</lastBuildDate><atom:link href="http://localhost:1313/tags/rbash/" rel="self" type="application/rss+xml" /><item>
+    <title>SolidState</title>
+    <link>http://localhost:1313/solidstate/</link>
+    <pubDate>Fri, 12 Dec 2025 10:28:41 &#43;0000</pubDate>
+    <author>z3rodol</author>
+    <guid>http://localhost:1313/solidstate/</guid>
+    <description><![CDATA[<p></p>
+<p>SolidState repose essentiellement sur l’exploitation du serveur mail <strong>Apache James</strong>. Après énumération, on découvre que l’accès admin au service James est protégé par les identifiants par défaut. Cela permet de manipuler les boîtes mail des utilisateurs et de <strong>récupérer des identifiants SSH</strong> contenus dans leurs messages. La connexion SSH initiale donne un shell restreint, qu’il est possible de contourner. Pour finir, une <strong>escalade root</strong> est possible grâce à un <strong>script Python exécuté par un cron</strong>, permettant l’obtention d’un shell root.</p>]]></description>
+</item>
+</channel>
+</rss>

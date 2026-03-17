@@ -1,0 +1,103 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+        <title>Hard - Tag - z3rodol</title>
+        <link>http://localhost:1313/tags/hard/</link>
+        <description>Hard - Tag - z3rodol</description>
+        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Sat, 14 Mar 2026 10:28:41 &#43;0000</lastBuildDate><atom:link href="http://localhost:1313/tags/hard/" rel="self" type="application/rss+xml" /><item>
+    <title>Intercept</title>
+    <link>http://localhost:1313/intercept/</link>
+    <pubDate>Sat, 14 Mar 2026 10:28:41 &#43;0000</pubDate>
+    <author>z3rodol</author>
+    <guid>http://localhost:1313/intercept/</guid>
+    <description><![CDATA[<p></p>
+<p>Intercept est un laboratoire avancé axé sur Active Directory. Ce scénario guide les utilisateurs à travers une énumération réaliste d&rsquo;AD, des attaques par coercition, l&rsquo;exploitation de <strong>relais NTLM</strong>, ainsi que l&rsquo;abus des ADCS mal sécurisés. Intercept s&rsquo;articule autour de 2 machines et 2 flags.</p>
+<h1 id="recon">Recon</h1>
+<h2 id="tcp-scan">TCP Scan</h2>
+<p>Je commence l&rsquo;énumération avec un scan TCP complet des deux machines.</p>
+<ul>
+<li>Sur le <strong>DC01 (10.13.38.49)</strong>, les ports suivants sont ouverts : DNS, KERBEROS, SMB, LDAP ainsi que d&rsquo;autres ports par défaut.</li>
+<li>Sur le <strong>WS01 (10.13.38.50)</strong> les ports SMB, RDP et WinRM sont ouverts.</li>
+</ul>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-js">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-js" data-lang="js"><span class="line"><span class="cl"><span class="err">#</span> <span class="nx">Scan</span> <span class="nx">on</span> <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.49</span> <span class="o">-</span> <span class="nx">dc01</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="nx">root</span><span class="err">@</span><span class="nx">exegol</span><span class="o">-</span><span class="nx">intercept</span><span class="p">]</span> <span class="o">/</span><span class="nx">workspace</span>
+</span></span><span class="line"><span class="cl"><span class="err">❯</span> <span class="nx">rustscan</span> <span class="o">-</span><span class="nx">a</span> <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.49</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nx">Open</span> <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.49</span><span class="o">:</span><span class="mi">53</span>
+</span></span><span class="line"><span class="cl"><span class="nx">Open</span> <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.49</span><span class="o">:</span><span class="mi">88</span>
+</span></span><span class="line"><span class="cl"><span class="nx">Open</span> <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.49</span><span class="o">:</span><span class="mi">135</span>
+</span></span><span class="line"><span class="cl"><span class="nx">Open</span> <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.49</span><span class="o">:</span><span class="mi">139</span>
+</span></span><span class="line"><span class="cl"><span class="nx">Open</span> <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.49</span><span class="o">:</span><span class="mi">389</span>
+</span></span><span class="line"><span class="cl"><span class="nx">Open</span> <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.49</span><span class="o">:</span><span class="mi">9389</span>
+</span></span><span class="line"><span class="cl"><span class="nx">Open</span> <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.49</span><span class="o">:</span><span class="mi">49664</span>
+</span></span><span class="line"><span class="cl"><span class="nx">Open</span> <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.49</span><span class="o">:</span><span class="mi">49667</span>
+</span></span><span class="line"><span class="cl"><span class="nx">Open</span> <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.49</span><span class="o">:</span><span class="mi">49668</span>
+</span></span><span class="line"><span class="cl"><span class="nx">Open</span> <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.49</span><span class="o">:</span><span class="mi">56279</span>
+</span></span><span class="line"><span class="cl"><span class="nx">Open</span> <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.49</span><span class="o">:</span><span class="mi">56308</span>
+</span></span><span class="line"><span class="cl"><span class="nx">Open</span> <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.49</span><span class="o">:</span><span class="mi">56797</span>
+</span></span><span class="line"><span class="cl"><span class="nx">Open</span> <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.49</span><span class="o">:</span><span class="mi">56798</span>
+</span></span><span class="line"><span class="cl"><span class="nx">Open</span> <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.49</span><span class="o">:</span><span class="mi">56807</span>
+</span></span><span class="line"><span class="cl"><span class="nx">Open</span> <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.49</span><span class="o">:</span><span class="mi">56880</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="err">#</span> <span class="nx">Scan</span> <span class="nx">on</span> <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.50</span> <span class="o">-</span> <span class="nx">ws01</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="nx">root</span><span class="err">@</span><span class="nx">exegol</span><span class="o">-</span><span class="nx">intercept</span><span class="p">]</span> <span class="o">/</span><span class="nx">workspace</span>
+</span></span><span class="line"><span class="cl"><span class="err">❯</span> <span class="nx">rustscan</span> <span class="o">-</span><span class="nx">a</span> <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.50</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nx">Open</span> <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.50</span><span class="o">:</span><span class="mi">135</span>
+</span></span><span class="line"><span class="cl"><span class="nx">Open</span> <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.50</span><span class="o">:</span><span class="mi">139</span>
+</span></span><span class="line"><span class="cl"><span class="nx">Open</span> <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.50</span><span class="o">:</span><span class="mi">445</span>
+</span></span><span class="line"><span class="cl"><span class="nx">Open</span> <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.50</span><span class="o">:</span><span class="mi">3389</span>
+</span></span><span class="line"><span class="cl"><span class="nx">Open</span> <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.50</span><span class="o">:</span><span class="mi">5985</span></span></span></code></pre></div></div>
+<p>Avec <strong>netexec</strong>, j&rsquo;ajoute le nom de domaine ainsi que le FQDN des machines dans le fichier <code>/etc/hosts</code>.</p>]]></description>
+</item>
+<item>
+    <title>Eureka</title>
+    <link>http://localhost:1313/eureka/</link>
+    <pubDate>Thu, 11 Dec 2025 13:49:31 &#43;0000</pubDate>
+    <author>z3rodol</author>
+    <guid>http://localhost:1313/eureka/</guid>
+    <description><![CDATA[<p></p>
+<p><code>Eureka</code> est une machine Linux de difficulté Hard qui commence avec un site web <strong>Spring Boot</strong>. J&rsquo;exploite un point de terminaison <code>heapdump</code> exposé pour récupérer les identifiants de la mémoire et l&rsquo;accès SSH. Ensuite, j&rsquo;empoisonne la configuration de Spring Cloud Gateway pour récupérer les identifiants de connexion d&rsquo;un autre utilisateur. Pour obtenir l&rsquo;accès root, j&rsquo;exploite une injection arithmétique Bash pour obtenir l&rsquo;exécution d&rsquo;un script analysant les journaux sur un cron.</p>]]></description>
+</item>
+<item>
+    <title>Certificate</title>
+    <link>http://localhost:1313/certificate/</link>
+    <pubDate>Thu, 11 Dec 2025 10:28:41 &#43;0000</pubDate>
+    <author>z3rodol</author>
+    <guid>http://localhost:1313/certificate/</guid>
+    <description><![CDATA[<p></p>
+<p><strong>Certificate</strong> est une machine Windows Active Directory de difficulté élevée qui commence par une plateforme d’E-learning. L’application web est vulnérable à une <strong>injection de byte nul (Null-Byte Injection)</strong> dans sa fonctionnalité de téléchargement de fichiers. Cela permet d’exécuter un <strong>reverse shell PHP</strong> pour obtenir un accès initial en tant qu’utilisateur <code>xamppuser</code>. Les identifiants de la base de données sont ensuite récupérés, ce qui permet un <strong>mouvement latéral</strong> vers l’utilisateur <strong>Sara.B</strong>. Une énumération plus poussée révèle un fichier de capture réseau qui fuite les identifiants de <strong>Lion.SK</strong>. Grâce à ceux-ci, les <strong>Active Directory Certificate Services (ADCS)</strong> sont énumérés, et un modèle vulnérable est exploité pour demander des certificats au nom d’autres utilisateurs. Un certificat pour l’utilisateur <strong>Ryan.K</strong> est alors obtenu. Son privilège <strong>SeManageVolumePrivilege</strong> est utilisé pour obtenir un shell en tant que <strong>NT AUTHORITY\NETWORK SERVICE</strong>. Enfin, le privilège <strong>SeImpersonatePrivilege</strong> permet d’escalader vers <strong>NT AUTHORITY\SYSTEM</strong>, de dumper les fichiers <strong>ntds.dit</strong> et les ruches de <strong>registre</strong>, et d’extraire le hash <strong>NTLM</strong> de l’Administrateur, offrant ainsi un accès complet en tant qu’<strong>Administrateur</strong>.</p>]]></description>
+</item>
+<item>
+    <title>Haze</title>
+    <link>http://localhost:1313/haze/</link>
+    <pubDate>Thu, 11 Dec 2025 10:28:41 &#43;0000</pubDate>
+    <author>z3rodol</author>
+    <guid>http://localhost:1313/haze/</guid>
+    <description><![CDATA[<p></p>
+<p>Haze est une machine Windows difficile centrée sur Splunk Enterprise. J&rsquo;exploite une vulnérabilité de lecture de fichiers dans <code>Splunk</code> pour extraire et déchiffrer des mots de passe de configuration. Je trouve un mot de passe réutilisé par plusieurs utilisateurs via password spraying. L&rsquo;un d&rsquo;eux peut abuser des ACL Windows pour récupérer le <code>mot de passe gMSA</code> d&rsquo;un compte de service, puis obtenir un <code>Shadow Credential</code> pour un autre utilisateur. J&rsquo;accède ensuite à une sauvegarde Splunk contenant d&rsquo;anciens mots de passe administrateur. Je télécharge une application Splunk malveillante pour obtenir un shell avec le privilège <code>SeImpersonatePrivilege</code>, que j&rsquo;exploite avec <code>GodPotato</code> pour devenir SYSTEM.</p>]]></description>
+</item>
+<item>
+    <title>Scepter</title>
+    <link>http://localhost:1313/scepter/</link>
+    <pubDate>Thu, 11 Dec 2025 10:28:41 &#43;0000</pubDate>
+    <author>z3rodol</author>
+    <guid>http://localhost:1313/scepter/</guid>
+    <description><![CDATA[<p></p>
+<p>Scepter est une machine Windows de difficulté élevée qui commence par un partage NFS non authentifié, permettant à l&rsquo;attaquant de télécharger un fichier de certificat PFX sensible. L&rsquo;attaquant découvre ensuite que l&rsquo;utilisateur compromis possède l&rsquo;ACL <code>UserForceChangePassword</code>, permettant de changer le mot de passe du compte utilisateur <code>A.CARTER</code>. Ce compte utilisateur est membre du groupe IT SUPPORT, donnant aux membres du groupe l&rsquo;ACL GenericAll sur l&rsquo;unité organisationnelle (OU) <code>STAFF ACCESS CERTIFICATE</code>. L&rsquo;attaquant peut alors contrôler entièrement tous les comptes utilisateurs sous cette OU. De plus, l&rsquo;attaquant découvre que l&rsquo;autorité de certification est vulnérable à <code>ESC14</code>, un mappage faible explicite. L&rsquo;attaquant parvient à compromettre <code>H.BROWN</code> en modifiant l&rsquo;attribut LDAP mail et en demandant le modèle de certificat <code>StaffAccessCertificate</code>. Le compte utilisateur <code>H.BROWN</code> est membre du groupe CMS, ayant les privilèges de modifier l&rsquo;attribut LDAP <code>altSecurityIdentities</code> de tout objet AD sous l&rsquo;OU <code>Helpdesk Enrollment Certificate</code>. Comme la CA est vulnérable à <code>ESC14</code>, l&rsquo;attaquant peut modifier l&rsquo;attribut LDAP (mappage fort, c&rsquo;est-à-dire <code>X509IssuerSerialNumber</code>) et demander un certificat en tant que Domain Computer pour compromettre le compte utilisateur <code>P.ADAMS</code>, qui possède les privilèges <code>DCSync</code>, permettant à l&rsquo;attaquant de compromettre le domaine. Une approche alternative consiste à exploiter le mappage faible <code>X509RFC822</code>, puis à s&rsquo;inscrire au modèle de certificat en tant que compte utilisateur <code>D.BAKER</code> et à compromettre le compte utilisateur <code>P.ADAMS</code>.</p>]]></description>
+</item>
+<item>
+    <title>Vintage</title>
+    <link>http://localhost:1313/vintage/</link>
+    <pubDate>Thu, 11 Dec 2025 10:28:41 &#43;0000</pubDate>
+    <author>z3rodol</author>
+    <guid>http://localhost:1313/vintage/</guid>
+    <description><![CDATA[<p></p>
+<p>Vintage est une machine Windows de difficulté élevée conçue autour d&rsquo;un scénario de compromission initiale, où l&rsquo;attaquant reçoit des identifiants utilisateur à faibles privilèges. La machine présente un environnement Active Directory sans ADCS installé, et l&rsquo;authentification NTLM est désactivée. Il existe un <code>compte machine pré-créé</code>, signifiant que le mot de passe est identique au <code>sAMAccountName</code> du compte machine. L&rsquo;unité organisationnelle (OU) <code>Domain Computer</code> a une configuration permettant aux attaquants de lire le mot de passe du compte de service, qui a gMSA configuré. Après avoir obtenu le mot de passe, le compte de service peut s&rsquo;ajouter à un groupe privilégié. Ce groupe a un contrôle total sur un utilisateur désactivé. L&rsquo;attaquant doit restaurer l&rsquo;utilisateur désactivé et définir un <code>Service Principal Name</code> (SPN) pour effectuer du <code>Kerberoasting</code>. Après récupération du mot de passe, le compte utilisateur a réutilisé le même mot de passe. L&rsquo;utilisateur nouvellement compromis a un mot de passe stocké dans le Gestionnaire d&rsquo;identifiants. L&rsquo;utilisateur peut s&rsquo;ajouter à un autre groupe privilégié configuré pour la <code>Délégation Contrainte Basée sur les Ressources</code> (RBCD) sur le contrôleur de domaine, permettant à l&rsquo;attaquant de le compromettre.</p>]]></description>
+</item>
+</channel>
+</rss>

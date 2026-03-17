@@ -1,0 +1,103 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+        <title>Machines - Category - z3rodol</title>
+        <link>http://localhost:1313/categories/machines/</link>
+        <description>Machines - Category - z3rodol</description>
+        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Sat, 14 Mar 2026 17:28:41 &#43;0000</lastBuildDate><atom:link href="http://localhost:1313/categories/machines/" rel="self" type="application/rss+xml" /><item>
+    <title>VulnEscape</title>
+    <link>http://localhost:1313/vulnescape/</link>
+    <pubDate>Sat, 14 Mar 2026 17:28:41 &#43;0000</pubDate>
+    <author>z3rodol</author>
+    <guid>http://localhost:1313/vulnescape/</guid>
+    <description><![CDATA[<p></p>
+<p>VulnEscape est une machine Windows de difficulté Facile qui propose le service Bureau à distance (Remote Desktop Server) fonctionnant sur son port par défaut. Les utilisateurs peuvent se connecter à la machine via RDP et se connecter en tant que <strong>KioskUser0</strong> sans mot de passe. L&rsquo;environnement cible est restreint, cependant, en exploitant le schéma <code>file://</code> dans <strong>Microsoft Edge</strong>, les utilisateurs peuvent naviguer dans le système de fichiers. Une exploitation plus poussée permet de contourner les restrictions du système et d&rsquo;ouvrir une fenêtre PowerShell. L&rsquo;énumération du système de fichiers révèle un dossier contenant un profil pour une application appelée Remote Desktop Plus. Ce profil peut être chargé dans l&rsquo;application et le mot de passe qu&rsquo;il contient peut être extrait. Le mot de passe extrait peut ensuite être utilisé pour démarrer une session en tant qu&rsquo;utilisateur admin, et un contournement supplémentaire du Contrôle de Compte Utilisateur (UAC) permet de lire le flag racine.</p>]]></description>
+</item>
+<item>
+    <title>BabyTwo</title>
+    <link>http://localhost:1313/babytwo/</link>
+    <pubDate>Sat, 27 Dec 2025 10:28:41 &#43;0000</pubDate>
+    <author>z3rodol</author>
+    <guid>http://localhost:1313/babytwo/</guid>
+    <description><![CDATA[<p></p>
+<p><strong>BabyTwo</strong> est une machine Windows de difficulté intermédiaire évoluant dans un environnement <strong>Active Directory</strong>.  L’accès initial est obtenu par <strong>devinette de mots de passe</strong> et par l’<strong>exploitation des scripts de connexion Windows</strong>.  L’élévation de privilèges est réalisée en abusant de <strong>listes de contrôle d’accès (ACL) mal configurées</strong> et de <strong>stratégies de groupe (GPO)</strong>.</p>
+<h1 id="énumération">Énumération</h1>
+<h2 id="nmap">Nmap</h2>
+<p>Le scan révèle des ports semblant appartenir à un contrôleur de domaine : DNS (<code>53</code>), Kerberos (<code>88</code>), LDAP (<code>389</code> et <code>636</code>), ainsi que d&rsquo;autres ports Windows : SMB (<code>445</code>), RDP (<code>3389</code>).</p>]]></description>
+</item>
+<item>
+    <title>Breach</title>
+    <link>http://localhost:1313/breach/</link>
+    <pubDate>Sat, 27 Dec 2025 10:28:41 &#43;0000</pubDate>
+    <author>z3rodol</author>
+    <guid>http://localhost:1313/breach/</guid>
+    <description><![CDATA[<p></p>
+<p><strong>Breach</strong> est une machine Windows de difficulté intermédiaire où l’accès invité à un partage SMB permet de capturer des hashes NTLMv2 et d’obtenir des identifiants valides. L’exploitation d’un compte de service kerberoastable, suivie d’une attaque <strong>Silver Ticket</strong>, permet l’exécution de commandes via <strong>MSSQL</strong> et une élévation de privilèges finale grâce au <code>SeImpersonatePrivilege</code>.</p>
+<h1 id="énumération">Énumération</h1>
+<h2 id="nmap">Nmap</h2>
+<p>Le scan révèle des ports semblant appartenir à un <strong>contrôleur de domaine</strong> : DNS (<code>53</code>), Kerberos (<code>88</code>), LDAP (<code>389</code> et <code>636</code>), ainsi que d&rsquo;autres ports Windows : SMB (<code>445</code>), RDP (<code>3389</code>).</p>]]></description>
+</item>
+<item>
+    <title>Forgotten</title>
+    <link>http://localhost:1313/forgotten/</link>
+    <pubDate>Fri, 12 Dec 2025 10:28:41 &#43;0000</pubDate>
+    <author>z3rodol</author>
+    <guid>http://localhost:1313/forgotten/</guid>
+    <description><![CDATA[<p></p>
+<p><strong>Forgotten</strong> est une <strong>box Linux de difficulté Easy</strong> centrée sur une application web <strong>LimeSurvey</strong> exposée sur le port 80. Après énumération, on trouve une installation <strong>LimeSurvey</strong> nécessitant une configuration, ce qui permet de <strong>déployer un plugin contenant un reverse shell PHP</strong> pour obtenir un accès initial sur le conteneur Docker qui héberge l’application. À l’intérieur du conteneur, une <strong>variable d’environnement exposent le mot de passe de l’utilisateur LimeSurvey</strong>, ce qui permet de <strong>se connecter via SSH directement à l’hôte avec ces identifiants</strong>. Pour l’<strong>escalade de privilèges</strong>, j&rsquo;abuse <strong>du partage entre le conteneur et l’hôte</strong> est utilisée afin d’obtenir un accès root sur la machine.</p>]]></description>
+</item>
+<item>
+    <title>SolidState</title>
+    <link>http://localhost:1313/solidstate/</link>
+    <pubDate>Fri, 12 Dec 2025 10:28:41 &#43;0000</pubDate>
+    <author>z3rodol</author>
+    <guid>http://localhost:1313/solidstate/</guid>
+    <description><![CDATA[<p></p>
+<p>SolidState repose essentiellement sur l’exploitation du serveur mail <strong>Apache James</strong>. Après énumération, on découvre que l’accès admin au service James est protégé par les identifiants par défaut. Cela permet de manipuler les boîtes mail des utilisateurs et de <strong>récupérer des identifiants SSH</strong> contenus dans leurs messages. La connexion SSH initiale donne un shell restreint, qu’il est possible de contourner. Pour finir, une <strong>escalade root</strong> est possible grâce à un <strong>script Python exécuté par un cron</strong>, permettant l’obtention d’un shell root.</p>]]></description>
+</item>
+<item>
+    <title>Eureka</title>
+    <link>http://localhost:1313/eureka/</link>
+    <pubDate>Thu, 11 Dec 2025 13:49:31 &#43;0000</pubDate>
+    <author>z3rodol</author>
+    <guid>http://localhost:1313/eureka/</guid>
+    <description><![CDATA[<p></p>
+<p><code>Eureka</code> est une machine Linux de difficulté Hard qui commence avec un site web <strong>Spring Boot</strong>. J&rsquo;exploite un point de terminaison <code>heapdump</code> exposé pour récupérer les identifiants de la mémoire et l&rsquo;accès SSH. Ensuite, j&rsquo;empoisonne la configuration de Spring Cloud Gateway pour récupérer les identifiants de connexion d&rsquo;un autre utilisateur. Pour obtenir l&rsquo;accès root, j&rsquo;exploite une injection arithmétique Bash pour obtenir l&rsquo;exécution d&rsquo;un script analysant les journaux sur un cron.</p>]]></description>
+</item>
+<item>
+    <title>Down</title>
+    <link>http://localhost:1313/down/</link>
+    <pubDate>Thu, 11 Dec 2025 13:49:22 &#43;0000</pubDate>
+    <author>z3rodol</author>
+    <guid>http://localhost:1313/down/</guid>
+    <description><![CDATA[<p></p>
+<p><code>Down</code> possède un site web conçu pour vérifier si un site web est en ligne. Cela présente une <code>SSRF</code> évidente, mais pour contourner les filtres et l&rsquo;exploiter, je vais abuser de la fonctionnalité de <code>curl</code> qui accepte plusieurs URLs et passer une seconde URL avec le wrapper LFI <code>file</code> pour lire des fichiers depuis l&rsquo;hôte. J&rsquo;obtiens l&rsquo;accès au code source de la page, et je vois qu&rsquo;il existe un <code>mode expert</code> qui établie une connexion TCP brute avec <code>netcat</code>. J&rsquo;utilise l&rsquo;injection de paramètres à cet endroit pour obtenir un shell. De là, je fouille dans une instance <code>pswm</code> pour obtenir le mot de passe de l&rsquo;utilisateur suivant, et celui-ci dispose des privilèges sudo pour devenir root.</p>]]></description>
+</item>
+<item>
+    <title>Certified</title>
+    <link>http://localhost:1313/certified/</link>
+    <pubDate>Thu, 11 Dec 2025 13:48:56 &#43;0000</pubDate>
+    <author>z3rodol</author>
+    <guid>http://localhost:1313/certified/</guid>
+    <description><![CDATA[<p></p>
+<p><code>Certified</code> est une machine Windows de difficulté moyenne conçue pour un scénario de violation présumé, où les identifiants d&rsquo;un utilisateur à faibles privilèges sont fournis. Pour accéder au compte <code>management_svc</code>, les listes de contrôle d&rsquo;accès (ACL) des objets privilégiés sont énumérées, ce qui nous amène à découvrir que <code>judith.mader</code>, qui dispose de l&rsquo;ACL <code>write owner</code> sur le groupe <code>management</code>, dispose de <code>GenericWrite</code> sur le compte  <code>management_svc</code>, ce dernier permettant ainsi l&rsquo;authentification auprès de la cible via <code>WinRM</code> et l&rsquo;obtention du flag user. L&rsquo;exploitation du service de certificats Active Directory (ADCS) est nécessaire pour accéder au compte <code>Administrator</code> en abusant du <code>shadow credentials</code> et de <code>ESC9</code>.</p>]]></description>
+</item>
+<item>
+    <title>Baby</title>
+    <link>http://localhost:1313/baby/</link>
+    <pubDate>Thu, 11 Dec 2025 10:28:41 &#43;0000</pubDate>
+    <author>z3rodol</author>
+    <guid>http://localhost:1313/baby/</guid>
+    <description><![CDATA[<p></p>
+<p>Baby est une machine Windows facile à utiliser, dotée de l&rsquo;énumération LDAP, de la dispersion de mots de passe et de l&rsquo;exposition des identifiants. Pour l&rsquo;élévation des privilèges, la faille <code>SeBackupPrivilege</code> est exploitée pour extraire le registre SYSTEM et le fichier <code>NTDS.dit</code>. Une attaque <code>Pass-the-Hash</code> peut être réalisée en utilisant les hachages de domaine non couverts, obtenant ainsi un accès Administrateur.</p>]]></description>
+</item>
+<item>
+    <title>Build</title>
+    <link>http://localhost:1313/build/</link>
+    <pubDate>Thu, 11 Dec 2025 10:28:41 &#43;0000</pubDate>
+    <author>z3rodol</author>
+    <guid>http://localhost:1313/build/</guid>
+    <description><![CDATA[<p></p>
+<p><strong>Build</strong> est une machine Linux classée comme facile. Elle implique la lecture de fichiers sensibles depuis des partages <strong>rsync</strong> non authentifiés, ce qui mène à l&rsquo;exposition d&rsquo;un mot de passe Jenkins chiffré. Je parvient à déchiffrer ce mot de passe, ce qui me permet d&rsquo;accéder à <strong>Gitea</strong>. Le dépôt appartenant à l&rsquo;administrateur sur <strong>Gitea</strong> dispose d&rsquo;un <code>webhook</code> configuré, permettant d&rsquo;obtenir une exécution de code arbitraire et un shell dans le conteneur Docker. Ce conteneur Docker a accès à <strong>MySQL</strong> et <code>PowerDNS</code>, qui s&rsquo;exécutent tous deux dans un autre conteneur sur le même réseau Docker. Le conteneur a également un fichier monté nommé <strong>.rhosts</strong>, qui est aussi monté dans le répertoire racine de la machine hôte. <strong>MySQL</strong> est mal configuré et n&rsquo;a pas de mot de passe pour le compte root, ce qui permet à un attaquant de prendre le contrôle total de la base de données. Une fois le hash de l&rsquo;administrateur craqué et connecter à <code>PowerDNS</code>, je modifie l&rsquo;enregistrement DNS <strong>intern/admin</strong> pour le rediriger vers ma propre machine. En supposant que le même fichier <strong>.rhosts</strong> est également monté sur la machine hôte, cela me permet d&rsquo;obtenir une session root via le protocole <strong>Remote Shell Protocol (RSH)</strong>.</p>]]></description>
+</item>
+</channel>
+</rss>

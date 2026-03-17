@@ -1,0 +1,25 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+        <title>DPAPI - Tag - z3rodol</title>
+        <link>http://localhost:1313/tags/dpapi/</link>
+        <description>DPAPI - Tag - z3rodol</description>
+        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Thu, 11 Dec 2025 10:28:41 &#43;0000</lastBuildDate><atom:link href="http://localhost:1313/tags/dpapi/" rel="self" type="application/rss+xml" /><item>
+    <title>Puppy</title>
+    <link>http://localhost:1313/puppy/</link>
+    <pubDate>Thu, 11 Dec 2025 10:28:41 &#43;0000</pubDate>
+    <author>z3rodol</author>
+    <guid>http://localhost:1313/puppy/</guid>
+    <description><![CDATA[<p></p>
+<p><code>Puppy</code> est une machine Windows Active Directory de type assume-breach. Nous commençons donc avec les identifiants <code>levi.james:KingofAkron2025!</code>. Je commencerai par énumérer les partages, <code>Levi.James</code> n’ayant pas accès au partage <code>DEV</code>. Puis une récolte des relation entre les objets du domaine révèle qu’étant membre du groupe <code>HR</code>, il possède des privilèges <code>GenericWrite</code> sur le groupe <code>Developers</code>. En abusant de ces droits, je parviens à accéder au partage <code>DEV</code> dans lequel se trouve un fichier chiffré contenant des identifiants <code>KeepassXC</code>. Je trouverai alors des identifiants valides de <code>Ant.Edwards</code>. Ce dernier a les privilèges <code>GenericAll</code> sur <code>Adam.Silver</code> qui est désactivé. Après activation du compte <code>Adam.Silver</code>, j’abuse alors du privilège <code>GenericAll</code> ce qui me permet d’obtenir un shell en tant que ce dernier. Je trouve ensuite une sauvegarde LDAP contenant des identifiants de <code>Steph.Cooper</code>. Une fois connecté en tant que <code>Steph.Cooper</code>, je réalise une <code>DPAPI</code> qui me permet d’obtenir les identifiants de <code>Steph.Cooper_adm</code> membre du groupe <code>Administrators</code> et d’avoir une shell.</p>]]></description>
+</item>
+<item>
+    <title>Voleur</title>
+    <link>http://localhost:1313/voleur/</link>
+    <pubDate>Thu, 11 Dec 2025 10:28:41 &#43;0000</pubDate>
+    <author>z3rodol</author>
+    <guid>http://localhost:1313/voleur/</guid>
+    <description><![CDATA[<p></p>
+<p><code>Voleur</code> est une machine Windows de difficulté moyenne conçue autour d&rsquo;un scénario d&rsquo;atteinte présumée, dans lequel l&rsquo;attaquant dispose d&rsquo;identifiants utilisateur à faibles privilèges. La machine inclut un environnement Active Directory et l&rsquo;authentification <code>NTLM</code> est désactivée. Après la configuration de <code>Kerberos</code> et l&rsquo;énumération réseau, on trouve un fichier Excel protégé par mot de passe sur un partage <code>SMB</code> exposé. Nous extrayons son hash de mot de passe, le cassons pour récupérer le mot de passe, et utilisons ce mot de passe pour accéder au tableur. L&rsquo;énumération révèle un compte de service disposant des droits <code>WriteSPN</code>, ce qui permet une attaque ciblée de type Kerberoasting qui récupère des identifiants et donne un accès distant à l&rsquo;hôte. Un utilisateur de domaine précédemment supprimé est restauré grâce aux privilèges de groupe, et un blob d&rsquo;identifiants protégé par <code>DPAPI</code> est récupéré ; il est déchiffré avec le mot de passe de l&rsquo;utilisateur pour révéler un compte à privilèges supérieurs. Ces identifiants conduisent à la découverte d&rsquo;une clé privée <code>SSH</code> pour un compte de service de sauvegarde, permettant l&rsquo;accès à un sous-système Linux sur un port non standard. À partir de là, les fichiers de sauvegarde <code>NTDS.dit</code>, <code>SYSTEM</code> et <code>SECURITY</code> sont extraits et utilisés pour récupérer le hash NT de l&rsquo;<code>Administrator</code>, permettant finalement d&rsquo;accéder en tant qu&rsquo;<code>Administrator</code>.</p>]]></description>
+</item>
+</channel>
+</rss>

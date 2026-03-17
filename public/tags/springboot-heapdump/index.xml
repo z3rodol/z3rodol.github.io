@@ -1,0 +1,16 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+        <title>Springboot Heapdump - Tag - z3rodol</title>
+        <link>http://localhost:1313/tags/springboot-heapdump/</link>
+        <description>Springboot Heapdump - Tag - z3rodol</description>
+        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Thu, 11 Dec 2025 13:49:31 &#43;0000</lastBuildDate><atom:link href="http://localhost:1313/tags/springboot-heapdump/" rel="self" type="application/rss+xml" /><item>
+    <title>Eureka</title>
+    <link>http://localhost:1313/eureka/</link>
+    <pubDate>Thu, 11 Dec 2025 13:49:31 &#43;0000</pubDate>
+    <author>z3rodol</author>
+    <guid>http://localhost:1313/eureka/</guid>
+    <description><![CDATA[<p></p>
+<p><code>Eureka</code> est une machine Linux de difficulté Hard qui commence avec un site web <strong>Spring Boot</strong>. J&rsquo;exploite un point de terminaison <code>heapdump</code> exposé pour récupérer les identifiants de la mémoire et l&rsquo;accès SSH. Ensuite, j&rsquo;empoisonne la configuration de Spring Cloud Gateway pour récupérer les identifiants de connexion d&rsquo;un autre utilisateur. Pour obtenir l&rsquo;accès root, j&rsquo;exploite une injection arithmétique Bash pour obtenir l&rsquo;exécution d&rsquo;un script analysant les journaux sur un cron.</p>]]></description>
+</item>
+</channel>
+</rss>

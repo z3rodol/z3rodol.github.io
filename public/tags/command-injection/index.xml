@@ -1,0 +1,17 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+        <title>Command Injection - Tag - z3rodol</title>
+        <link>http://localhost:1313/tags/command-injection/</link>
+        <description>Command Injection - Tag - z3rodol</description>
+        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Thu, 11 Dec 2025 10:28:41 &#43;0000</lastBuildDate><atom:link href="http://localhost:1313/tags/command-injection/" rel="self" type="application/rss+xml" /><item>
+    <title>Void Whispers</title>
+    <link>http://localhost:1313/voidwhispers/</link>
+    <pubDate>Thu, 11 Dec 2025 10:28:41 &#43;0000</pubDate>
+    <author>z3rodol</author>
+    <guid>http://localhost:1313/voidwhispers/</guid>
+    <description><![CDATA[<p>Void Whispers repose sur une <code>Blind Command Injection</code> : l’exploitant injecte des commandes système via une entrée non sécurisée, puis utilise des techniques comme le time-based blind (mesure des délais de réponse) ou l’exfiltration des résultats via des requêtes HTTP externes pour récupérer le flag ou des données sensibles.</p>
+<h2 id="command-injection">Command Injection</h2>
+<p>Lorsque j’arrive sur le site je vois que tout ce que je peux faire c’est cliquer sur le bouton <code>Save</code> et qui met à jour la config.</p>]]></description>
+</item>
+</channel>
+</rss>

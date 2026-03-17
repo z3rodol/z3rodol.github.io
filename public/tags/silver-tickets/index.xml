@@ -1,0 +1,19 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+        <title>Silver Tickets - Tag - z3rodol</title>
+        <link>http://localhost:1313/tags/silver-tickets/</link>
+        <description>Silver Tickets - Tag - z3rodol</description>
+        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Sat, 27 Dec 2025 10:28:41 &#43;0000</lastBuildDate><atom:link href="http://localhost:1313/tags/silver-tickets/" rel="self" type="application/rss+xml" /><item>
+    <title>Breach</title>
+    <link>http://localhost:1313/breach/</link>
+    <pubDate>Sat, 27 Dec 2025 10:28:41 &#43;0000</pubDate>
+    <author>z3rodol</author>
+    <guid>http://localhost:1313/breach/</guid>
+    <description><![CDATA[<p></p>
+<p><strong>Breach</strong> est une machine Windows de difficulté intermédiaire où l’accès invité à un partage SMB permet de capturer des hashes NTLMv2 et d’obtenir des identifiants valides. L’exploitation d’un compte de service kerberoastable, suivie d’une attaque <strong>Silver Ticket</strong>, permet l’exécution de commandes via <strong>MSSQL</strong> et une élévation de privilèges finale grâce au <code>SeImpersonatePrivilege</code>.</p>
+<h1 id="énumération">Énumération</h1>
+<h2 id="nmap">Nmap</h2>
+<p>Le scan révèle des ports semblant appartenir à un <strong>contrôleur de domaine</strong> : DNS (<code>53</code>), Kerberos (<code>88</code>), LDAP (<code>389</code> et <code>636</code>), ainsi que d&rsquo;autres ports Windows : SMB (<code>445</code>), RDP (<code>3389</code>).</p>]]></description>
+</item>
+</channel>
+</rss>

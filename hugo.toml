@@ -1,1273 +1,567 @@
-baseURL = "http://example.org/"
+# ==================================================
+# CONFIGURATION PRINCIPALE DU SITE HUGO
+# ==================================================
 
+# URL de base du site (à modifier pour la production)
+baseURL = "https://z3rodol.github.io"
 
-
-# Change the default theme to be use when building the site with Hugo
-
+# Thème utilisé (LoveIt est un thème moderne pour Hugo)
 theme = "LoveIt"
 
-
-
-# website title
-
+# Titre principal du site (affiché dans l'onglet du navigateur)
 title = "z3rodol"
 
+# ==================================================
+# CONFIGURATION LINGUISTIQUE
+# ==================================================
 
-
-# language code ["en", "zh-CN", "fr", "pl", ...]
-
+# Code de la langue principale ["en", "zh-CN", "fr", "pl", ...]
 languageCode = "en"
-
-# language name ["English", "简体中文", "Français", "Polski", ...]
-
+# Nom affiché de la langue ["English", "Français", ...]
 languageName = "English"
-
-# whether to include Chinese/Japanese/Korean
-
+# Active les fonctionnalités spécifiques aux langues CJK (Chinois/Japonais/Coréen)
 hasCJKLanguage = false
 
+# ==================================================
+# CONFIGURATION GÉNÉRALE
+# ==================================================
 
-
-# copyright description used only for seo schema
-
+# Copyright (utilisé pour le SEO)
 copyright = ""
 
-
-
-# whether to use robots.txt
-
+# Génère automatiquement un robots.txt
 enableRobotsTXT = true
-
-# whether to use git commit log
-
+# Active la récupération des infos Git (date, auteur) pour les pages
 enableGitInfo = true
-
-# whether to use emoji code
-
+# Active le support des émojis (ex: :smile:)
 enableEmoji = true
 
-
-
-# ignore some build errors
-
+# Ignore certaines erreurs de build (utile pour les contenus externes)
 ignoreErrors = ["error-remote-getjson", "error-missing-instagram-accesstoken"]
 
-
-
-# Pagination config
+# ==================================================
+# CONFIGURATION DE LA PAGINATION
+# ==================================================
 
 [pagination]
+  disableAliases = false    # Désactive les alias pour les pages de pagination
+  pagerSize = 30            # Nombre d'éléments par page
+  path = "page"             # Chemin URL pour la pagination (ex: /page/2/)
 
-  disableAliases = false
-
-  pagerSize = 10
-
-  path = "page"
-
-
-
-# Menu config
+# ==================================================
+# CONFIGURATION DU MENU PRINCIPAL
+# ==================================================
 
 [menu]
-
   [[menu.main]]
-
     weight = 1
-
     identifier = "posts"
-
-    # you can add extra information before the name (HTML format is supported), such as icons
-
-    pre = ""
-
-    # you can add extra information after the name (HTML format is supported), such as icons
-
-    post = ""
-
-    name = "Posts"
-
-    url = "/posts/"
-
-    # title will be shown when you hover on this menu link
-
-    title = ""
+    pre = ""                # Élément HTML avant le nom (icône, etc.)
+    post = ""               # Élément HTML après le nom
+    name = "Posts"          # Texte affiché dans le menu
+    url = "/posts/"         # Lien URL
+    title = ""              # Texte au survol (tooltip)
 
   [[menu.main]]
-
     weight = 2
-
     identifier = "tags"
-
     pre = ""
-
     post = ""
-
     name = "Tags"
-
     url = "/tags/"
-
     title = ""
 
   [[menu.main]]
-
     weight = 3
-
     identifier = "categories"
-
     pre = ""
-
     post = ""
-
     name = "Categories"
-
     url = "/categories/"
+    title = ""
 
+  [[menu.main]]
+    weight = 4
+    identifier = "about"
+    pre = ""
+    post = ""
+    name = "About"
+    url = "/about/"
     title = ""
 
 
+
+# ==================================================
+# PARAMÈTRES PRINCIPAUX DU THÈME
+# ==================================================
 
 [params]
-
-  # site default theme ["auto", "light", "dark"]
-
+  # Thème par défaut du site ["auto", "light", "dark"]
   defaultTheme = "auto"
-
-  # public git repo url only then enableGitInfo is true
-
+  
+  # URL du dépôt Git public (nécessite enableGitInfo = true)
   gitRepo = ""
-
-  #  which hash function used for SRI, when empty, no SRI is used
-
-  # ["sha256", "sha384", "sha512", "md5"]
-
+  
+  # Algorithme de hash pour SRI (Subresource Integrity)
+  # ["sha256", "sha384", "sha512", "md5"] - vide = désactivé
   fingerprint = ""
-
-  #  date format
-
+  
+  # Format d'affichage des dates
   dateFormat = "2006-01-02"
-
-  # website title for Open Graph and Twitter Cards
-
+  
+  # Titre pour les métadonnées Open Graph et Twitter Cards
   title = "My cool site"
-
-  # website description for RSS, SEO, Open Graph and Twitter Cards
-
+  
+  # Description pour RSS, SEO, Open Graph et Twitter Cards
   description = "This is my cool site"
-
-  # website images for Open Graph and Twitter Cards
-
+  
+  # Images pour Open Graph et Twitter Cards
   images = ["/logo.png"]
 
-
-
-# Author config
+# ==================================================
+# CONFIGURATION DE L'AUTEUR
+# ==================================================
 
   [params.author]
-
-    name = "xxxx"
-
+    name = "z3rodol"
     email = ""
+    link = "https://z3rodol.github.io"
 
-    link = ""
-
-
-
-  # Header config
+# ==================================================
+# CONFIGURATION DE L'EN-TÊTE (HEADER)
+# ==================================================
 
   [params.header]
-
-    # desktop header mode ["fixed", "normal", "auto"]
-
-    desktopMode = "fixed"
-
-    # mobile header mode ["fixed", "normal", "auto"]
-
-    mobileMode = "auto"
-
-    #  Header title config
-
+    desktopMode = "fixed"     # Mode sur desktop ["fixed", "normal", "auto"]
+    mobileMode = "auto"       # Mode sur mobile ["fixed", "normal", "auto"]
+    
     [params.header.title]
+      logo = ""               # URL du logo
+      name = "z3rodol Blog"               # Titre textuel
+      pre = ""                # Élément HTML avant le titre
+      post = ""               # Élément HTML après le titre
+      typeit = false          # Animation de frappe pour le titre
 
-      # URL of the LOGO
-
-      logo = ""
-
-      # title name
-
-      name = ""
-
-      # you can add extra information before the name (HTML format is supported), such as icons
-
-      pre = ""
-
-      # you can add extra information after the name (HTML format is supported), such as icons
-
-      post = ""
-
-      #  whether to use typeit animation for title name
-
-      typeit = false
-
-
-
-  # Footer config
+# ==================================================
+# CONFIGURATION DU PIED DE PAGE (FOOTER)
+# ==================================================
 
   [params.footer]
-
     enable = true
-
-    #  Custom content (HTML format is supported)
-
-    custom = ''
-
-    #  whether to show Hugo and theme info
-
-    hugo = true
-
-    #  whether to show copyright info
-
-    copyright = true
-
-    #  whether to show the author
-
-    author = true
-
-    # Site creation time
-
-    since = 2019
-
-    # ICP info only in China (HTML format is supported)
-
-    icp = ""
-
-    # license info (HTML format is supported)
-
+    custom = ''               # Contenu personnalisé (HTML supporté)
+    hugo = true               # Affiche les infos Hugo et thème
+    copyright = true          # Affiche le copyright
+    author = true             # Affiche l'auteur
+    since = 2025              # Année de création du site
+    icp = ""                  # Licence ICP (Chine uniquement)
     license = '<a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a>'
 
-
-
-  #  Section (all posts) page config
+# ==================================================
+# CONFIGURATION DES PAGES DE SECTION
+# ==================================================
 
   [params.section]
+    paginate = 30             # Nombre d'articles par page
+    dateFormat = "01-02"      # Format des dates (mois-jour)
+    rss = 10                  # Nombre d'articles dans le flux RSS
 
-    # special amount of posts in each section page
-
-    paginate = 20
-
-    # date format (month and day)
-
-    dateFormat = "01-02"
-
-    # amount of RSS pages
-
-    rss = 10
-
-
-
-  #  List (category or tag) page config
+# ==================================================
+# CONFIGURATION DES PAGES DE LISTE (CATÉGORIES/TAGS)
+# ==================================================
 
   [params.list]
-
-    # special amount of posts in each list page
-
-    paginate = 20
-
-    # date format (month and day)
-
+    paginate = 30
     dateFormat = "01-02"
-
-    # amount of RSS pages
-
     rss = 10
 
-
-
-  #  App icon config
+# ==================================================
+# CONFIGURATION DE L'ICÔNE D'APPLICATION
+# ==================================================
 
   [params.app]
+    title = "z3rodol"    # Titre sur mobile (écran d'accueil)
+    noFavicon = false         # Désactive la favicon
+    svgFavicon = ""           # Favicon au format SVG
+    themeColor = "#ffffff"    # Couleur du thème Android
+    iconColor = "#5bbad5"     # Couleur de l'icône Safari
+    tileColor = "#da532c"     # Couleur des tuiles Windows
 
-    # optional site title override for the app when added to an iOS home screen or Android launcher
-
-    title = "My cool site"
-
-    # whether to omit favicon resource links
-
-    noFavicon = false
-
-    # modern SVG favicon to use in place of older style .png and .ico files
-
-    svgFavicon = ""
-
-    # Android browser theme color
-
-    themeColor = "#ffffff"
-
-    # Safari mask icon color
-
-    iconColor = "#5bbad5"
-
-    # Windows v8-10 tile color
-
-    tileColor = "#da532c"
-
-
-
-  #  Search config
+# ==================================================
+# CONFIGURATION DE LA RECHERCHE
+# ==================================================
 
   [params.search]
-
     enable = true
-
-    # type of search engine ["lunr", "algolia"]
-
-    type = "lunr"
-
-    # max index length of the chunked content
-
-    contentLength = 4000
-
-    # placeholder of the search bar
-
-    placeholder = ""
-
-    #  max number of results length
-
-    maxResultLength = 10
-
-    #  snippet length of the result
-
-    snippetLength = 30
-
-    #  HTML tag name of the highlight part in results
-
-    highlightTag = "em"
-
-    #  whether to use the absolute URL based on the baseURL in search index
-
-    absoluteURL = false
-
-    [params.search.algolia]
-
+    type = "lunr"             # Moteur de recherche ["lunr", "algolia"]
+    contentLength = 4000      # Longueur max du contenu indexé
+    placeholder = ""          # Texte indicatif dans la barre
+    maxResultLength = 15      # Nombre max de résultats
+    snippetLength = 30        # Longueur des extraits
+    highlightTag = "em"       # Tag HTML pour surligner les résultats
+    absoluteURL = false       # Utilise des URLs absolues dans l'index
+    
+    [params.search.algolia]   # Configuration Algolia (si type = "algolia")
       index = ""
-
       appID = ""
-
       searchKey = ""
 
-
-
-  # Home page config
+# ==================================================
+# CONFIGURATION DE LA PAGE D'ACCUEIL
+# ==================================================
 
   [params.home]
-
-    #  amount of RSS pages
-
-    rss = 10
-
-    # Home page profile
-
+    rss = 10                  # Nombre d'articles dans le flux RSS
+    
+    # Section profil sur la page d'accueil
     [params.home.profile]
-
       enable = true
-
-      # Gravatar Email for preferred avatar in home page
-
-      gravatarEmail = ""
-
-      # URL of avatar shown in home page
-
-      avatarURL = "/images/avatar.png"
-
-      #  title shown in home page (HTML format is supported)
-
-      title = ""
-
-      # subtitle shown in home page (HTML format is supported)
-
-      subtitle = "This is My New Hugo Site"
-
-      # whether to use typeit animation for subtitle
-
-      typeit = true
-
-      # whether to show social links
-
-      social = true
-
-      #  disclaimer (HTML format is supported)
-
-      disclaimer = ""
-
-    # Home page posts
-
+      gravatarEmail = ""      # Email Gravatar pour l'avatar
+      avatarURL = "images/avatar.jpg"  # URL de l'avatar
+      title = "z3rodol"              # Titre (HTML supporté)
+      subtitle = "Bienvenu sur mon blog"  # Sous-titre
+      typeit = true           # Animation de frappe pour le sous-titre
+      social = true           # Affiche les liens sociaux
+      disclaimer = ""         # Avis de non-responsabilité (HTML supporté)
+    
+    # Section articles sur la page d'accueil
     [params.home.posts]
-
       enable = true
+      paginate = 6            # Nombre d'articles par page
+      defaultHiddenFromHomePage = false  # Cache par défaut des articles
 
-      # special amount of posts in each home posts page
-
-      paginate = 6
-
-      #  replaced with hiddenFromHomePage in params.page
-
-      # default behavior when you don't set "hiddenFromHomePage" in front matter
-
-      defaultHiddenFromHomePage = false
-
-
-
-  # Social config about the author
+# ==================================================
+# CONFIGURATION DES RÉSEAUX SOCIAUX
+# ==================================================
 
   [params.social]
-
-    GitHub = "xxxx"
-
-    Linkedin = ""
-
-    X = "xxxx" # 
-
-    Twitter = "" # 
-
-    Instagram = "xxxx"
-
-    Facebook = "xxxx"
-
-    Telegram = "xxxx"
-
-    Medium = ""
-
-    Gitlab = ""
-
-    Youtubelegacy = ""
-
-    Youtubecustom = ""
-
-    Youtubechannel = ""
-
-    Tumblr = ""
-
-    Quora = ""
-
-    Keybase = ""
-
-    Pinterest = ""
-
-    Reddit = ""
-
-    Codepen = ""
-
-    FreeCodeCamp = ""
-
-    Bitbucket = ""
-
-    Stackoverflow = ""
-
-    Weibo = ""
-
-    Odnoklassniki = ""
-
-    VK = ""
-
-    Flickr = ""
-
-    Xing = ""
-
-    Snapchat = ""
-
-    Soundcloud = ""
-
-    Spotify = ""
-
-    Bandcamp = ""
-
-    Paypal = ""
-
-    Fivehundredpx = ""
-
-    Mix = ""
-
-    Goodreads = ""
-
-    Lastfm = ""
-
-    Foursquare = ""
-
-    Hackernews = ""
-
-    Kickstarter = ""
-
-    Patreon = ""
-
-    Steam = ""
-
-    Twitch = ""
-
-    Strava = ""
-
-    Skype = ""
-
-    Whatsapp = ""
-
-    Zhihu = ""
-
-    Douban = ""
-
-    Angellist = ""
-
-    Slidershare = ""
-
-    Jsfiddle = ""
-
-    Deviantart = ""
-
-    Behance = ""
-
-    Dribbble = ""
-
-    Wordpress = ""
-
-    Vine = ""
-
-    Googlescholar = ""
-
-    Researchgate = ""
-
-    Mastodon = ""
-
-    Thingiverse = ""
-
-    Devto = ""
-
-    Gitea = ""
-
-    XMPP = ""
-
-    Matrix = ""
-
-    Bilibili = ""
-
-    Discord = ""
-
-    DiscordInvite = ""
-
-    Lichess = ""
-
-    ORCID = ""
-
-    Pleroma = ""
-
-    Kaggle = ""
-
-    MediaWiki = ""
-
-    Plume = ""
-
-    HackTheBox = ""
-
-    RootMe = ""
-
-    Malt = "" # 
-
-    TikTok = "" # 
-
-    TryHackMe = "" # 
-
-    Codeberg = "" # 
-
-    HuggingFace = "" # 
-
-    Threads = "" # 
-
-    LeetCode = "" # 
-
-    Phone = ""
-
-    Email = "xxxx@xxxx.com"
-
-    RSS = true # 
-
-
-
-  #  Page global config
+    GitHub = "z3rodol"
+    X = "z3rodol"                # Twitter/X
+    RSS = true                # Affiche le flux RSS
+    Linkedin = "z3rodol"
+    # Medium = ""
+    # Gitlab = ""
+    # ... (autres réseaux disponibles)
+
+# ==================================================
+# CONFIGURATION GLOBALE DES PAGES
+# ==================================================
 
   [params.page]
-
-    #  whether to hide a page from home page
-
-    hiddenFromHomePage = false
-
-    #  whether to hide a page from search results
-
-    hiddenFromSearch = false
-
-    #  whether to enable twemoji
-
-    twemoji = false
-
-    # whether to enable lightgallery
-
-    lightgallery = false
-
-    #  whether to enable the ruby extended syntax
-
-    ruby = true
-
-    #  whether to enable the fraction extended syntax
-
-    fraction = true
-
-    #  whether to enable the fontawesome extended syntax
-
-    fontawesome = true
-
-    # whether to show link to Raw Markdown content of the content
-
-    linkToMarkdown = true
-
-    #  whether to show the full text content in RSS
-
-    rssFullText = false
-
-    #  Table of the contents config
-
+    hiddenFromHomePage = false    # Cache la page de l'accueil
+    hiddenFromSearch = false      # Cache la page des résultats de recherche
+    twemoji = false               # Active Twemoji (émojis Twitter)
+    lightgallery = true          # Active la galerie d'images
+    ruby = true                   # Active la syntaxe Ruby
+    fraction = true               # Active la syntaxe des fractions
+    fontawesome = true            # Active Font Awesome
+    linkToMarkdown = true         # Lien vers le fichier Markdown source
+    rssFullText = false           # Texte complet dans le flux RSS
+    
+    # Table des matières (TOC)
     [params.page.toc]
-
-      # whether to enable the table of the contents
-
       enable = true
-
-      #  whether to keep the static table of the contents in front of the post
-
-      keepStatic = false
-
-      # whether to make the table of the contents in the sidebar automatically collapsed
-
-      auto = true
-
-    #  KaTeX mathematical formulas
-
+      keepStatic = false          # Garde la TOC statique en début d'article
+      auto = false                 # TOC automatiquement repliée
+    
+    # Formules mathématiques KaTeX
     [params.page.math]
-
       enable = true
-
-      #  default inline delimiter is $ ... $ and \( ... \)
-
-      inlineLeftDelimiter = ""
-
-      inlineRightDelimiter = ""
-
-      #  default block delimiter is $$ ... $$, \[ ... \], \begin{equation} ... \end{equation} and some other functions
-
-      blockLeftDelimiter = ""
-
-      blockRightDelimiter = ""
-
-      # KaTeX extension copy_tex
-
-      copyTex = true
-
-      # KaTeX extension mhchem
-
-      mhchem = true
-
-    #  Code config
-
+      inlineLeftDelimiter = ""    # Délimiteur gauche pour les maths inline
+      inlineRightDelimiter = ""   # Délimiteur droit pour les maths inline
+      blockLeftDelimiter = ""     # Délimiteur gauche pour les blocs
+      blockRightDelimiter = ""    # Délimiteur droit pour les blocs
+      copyTex = true              # Extension "copier le code LaTeX"
+      mhchem = true               # Extension pour la chimie
+    
+    # Configuration des blocs de code
     [params.page.code]
-
-      # whether to show the copy button of the code block
-
-      copy = true
-
-      # the maximum number of lines of displayed code by default
-
-      maxShownLines = 50
-
-    #  Mapbox GL JS config
-
+      copy = true                 # Bouton pour copier le code
+      maxShownLines = 10          # Nombre max de lignes affichées
+    
+    # Cartes Mapbox GL
     [params.page.mapbox]
-
-      # access token of Mapbox GL JS
-
-      accessToken = ""
-
-      # style for the light theme
-
+      accessToken = ""            # Token d'accès Mapbox
       lightStyle = "mapbox://styles/mapbox/light-v10?optimize=true"
-
-      # style for the dark theme
-
       darkStyle = "mapbox://styles/mapbox/dark-v10?optimize=true"
-
-      # whether to add NavigationControl
-
-      navigation = true
-
-      # whether to add GeolocateControl
-
-      geolocate = true
-
-      # whether to add ScaleControl
-
-      scale = true
-
-      # whether to add FullscreenControl
-
-      fullscreen = true
-
-    #  social share links in post page
-
+      navigation = true           # Ajoute les contrôles de navigation
+      geolocate = true            # Ajoute le bouton de géolocalisation
+      scale = true                # Ajoute l'échelle
+      fullscreen = true           # Ajoute le mode plein écran
+    
+    # Boutons de partage social
     [params.page.share]
-
       enable = true
-
-      X = true # 
-
-      Twitter = false # 
-
-      Threads = true # 
-
-      Facebook = true
-
-      Linkedin = false
-
-      Whatsapp = false
-
-      Pinterest = false
-
-      Tumblr = false
-
-      HackerNews = true
-
-      Reddit = false
-
-      VK = false
-
-      Buffer = false
-
-      Xing = false
-
-      Line = true
-
-      Instapaper = false
-
-      Pocket = false
-
-      Flipboard = false
-
-      Weibo = true
-
-      Blogger = false
-
-      Baidu = false
-
-      Odnoklassniki = false
-
-      Evernote = false
-
-      Skype = false
-
-      Trello = false
-
-      Diaspora = true # 
-
-      Mix = false
-
-      Telegram = true # 
-
-    #  Comment config
-
+      X = true
+      Threads = false
+      Facebook = false
+      HackerNews = false
+      Line = false
+      Weibo = false
+      Diaspora = false
+      Telegram = false
+      # Twitter = false
+      # Linkedin = false
+      # ... (autres réseaux sociaux)
+    
+    # Configuration des commentaires
     [params.page.comment]
-
-      enable = false
-
-      # Disqus comment config
-
+      enable = false  # Désactivé par défaut
+      
+      # Disqus
       [params.page.comment.disqus]
-
-        # 
-
         enable = false
-
-        # Disqus shortname to use Disqus in posts
-
         shortname = ""
-
-      # Gitalk comment config
-
+      
+      # Gitalk (commentaires basés sur GitHub Issues)
       [params.page.comment.gitalk]
-
-        # 
-
         enable = false
-
         owner = ""
-
         repo = ""
-
         clientId = ""
-
         clientSecret = ""
-
-      # Valine comment config
-
+      
+      # Valine (commentaires basés sur LeanCloud)
       [params.page.comment.valine]
-
         enable = false
-
         appId = ""
-
         appKey = ""
-
         placeholder = ""
-
         avatar = "mp"
-
-        meta= ""
-
+        meta = ""
         pageSize = 10
-
-        # automatically adapt the current theme i18n configuration when empty
-
         lang = ""
-
         visitor = true
-
         recordIP = true
-
         highlight = true
-
         enableQQ = false
-
         serverURLs = ""
-
-        #  emoji data file name, default is "google.yml"
-
-        # ["apple.yml", "google.yml", "facebook.yml", "twitter.yml"]
-
-        # located in "themes/LoveIt/assets/lib/valine/emoji/" directory
-
-        # you can store your own data files in the same path under your project:
-
-        # "assets/lib/valine/emoji/"
-
-        emoji = ""
-
-      # Facebook comment config
-
+        emoji = ""  # Fichier d'émojis ["apple.yml", "google.yml", ...]
+      
+      # Facebook Comments
       [params.page.comment.facebook]
-
         enable = false
-
         width = "100%"
-
         numPosts = 10
-
         appId = ""
-
-        # automatically adapt the current theme i18n configuration when empty
-
         languageCode = ""
-
-      #  Telegram comments config
-
+      
+      # Telegram Comments
       [params.page.comment.telegram]
-
         enable = false
-
         siteID = ""
-
         limit = 5
-
         height = ""
-
         color = ""
-
         colorful = true
-
         dislikes = false
-
         outlined = false
-
-      #  Commento comment config
-
+      
+      # Commento
       [params.page.comment.commento]
-
         enable = false
-
-      #  utterances comment config
-
+      
+      # Utterances (commentaires GitHub)
       [params.page.comment.utterances]
-
         enable = false
-
-        # owner/repo
-
-        repo = ""
-
+        repo = ""           # "proprietaire/repo"
         issueTerm = "pathname"
-
         label = ""
-
         lightTheme = "github-light"
-
         darkTheme = "github-dark"
-
-      # giscus comment config (https://giscus.app/)
-
+      
+      # Giscus (commentaires GitHub Discussions)
       [params.page.comment.giscus]
-
-        # You can refer to the official documentation of giscus to use the following configuration.
-
         enable = false
-
         repo = ""
-
         repoId = ""
-
         category = "Announcements"
-
         categoryId = ""
-
-        # automatically adapt the current theme i18n configuration when empty
-
         lang = ""
-
         mapping = "pathname"
-
         reactionsEnabled = "1"
-
         emitMetadata = "0"
-
         inputPosition = "bottom"
-
         lazyLoading = false
-
         lightTheme = "light"
-
         darkTheme = "dark"
-
-    #  Third-party library config
-
+    
+    # Bibliothèques tierces (CSS/JS)
     [params.page.library]
-
       [params.page.library.css]
-
-        # someCSS = "some.css"
-
-        # located in "assets/"
-
-        # Or
-
-        # someCSS = "https://cdn.example.com/some.css"
-
+        # Exemple: customCSS = "css/custom.css"
       [params.page.library.js]
-
-        # someJavascript = "some.js"
-
-        # located in "assets/"
-
-        # Or
-
-        # someJavascript = "https://cdn.example.com/some.js"
-
-    #  Page SEO config
-
+        # Exemple: customJS = "js/custom.js"
+    
+    # Configuration SEO par page
     [params.page.seo]
-
-      # image URL
-
-      images = []
-
-      # Publisher info
-
+      images = []  # URLs des images
       [params.page.seo.publisher]
-
         name = ""
-
         logoUrl = ""
 
-
-
-  #  TypeIt config
+# ==================================================
+# CONFIGURATION TYPEIT (ANIMATION DE FRAPPE)
+# ==================================================
 
   [params.typeit]
+    speed = 100                 # Vitesse de frappe (ms)
+    cursorSpeed = 1000          # Vitesse de clignotement du curseur (ms)
+    cursorChar = "|"            # Caractère du curseur
+    duration = -1               # Durée après la frappe (-1 = illimité)
 
-    # typing speed between each step (measured in milliseconds)
-
-    speed = 100
-
-    # blinking speed of the cursor (measured in milliseconds)
-
-    cursorSpeed = 1000
-
-    # character used for the cursor (HTML format is supported)
-
-    cursorChar = "|"
-
-    # cursor duration after typing finishing (measured in milliseconds, "-1" means unlimited)
-
-    duration = -1
-
-
-
-  # Site verification code config for Google/Bing/Yandex/Pinterest/Baidu
+# ==================================================
+# CODES DE VÉRIFICATION (SEO)
+# ==================================================
 
   [params.verification]
-
     google = ""
-
     bing = ""
-
     yandex = ""
-
     pinterest = ""
-
     baidu = ""
 
-
-
-  #  Site SEO config
+# ==================================================
+# CONFIGURATION SEO GLOBALE
+# ==================================================
 
   [params.seo]
+    image = ""                  # Image principale
+    thumbnailUrl = ""           # URL de la miniature
 
-    # image URL
-
-    image = ""
-
-    # thumbnail URL
-
-    thumbnailUrl = ""
-
-
-
-  #  Analytics config
+# ==================================================
+# CONFIGURATION DES ANALYTIQUES
+# ==================================================
 
   [params.analytics]
-
-    # 
-
     enable = true
-
+    
     # Google Analytics
-
     [params.analytics.google]
-
       id = ""
-
-      #  whether to anonymize IP
-
-      anonymizeIP = true
-
-      #  whether to respect the browser’s “do not track” setting
-
-      respectDoNotTrack = false
-
+      anonymizeIP = true        # Anonymise les adresses IP
+      respectDoNotTrack = false # Respecte "Do Not Track"
+    
     # Fathom Analytics
-
     [params.analytics.fathom]
-
       id = ""
-
-      # server url for your tracker if you're self hosting
-
-      server = ""
-
+      server = ""               # URL du serveur auto-hébergé
+    
     # Plausible Analytics
-
     [params.analytics.plausible]
-
       dataDomain = ""
-
+    
     # Yandex Metrica
-
     [params.analytics.yandexMetrica]
-
       id = ""
 
-
-
-  #  Cookie consent config
+# ==================================================
+# BANNIÈRE DE CONSENTEMENT DES COOKIES
+# ==================================================
 
   [params.cookieconsent]
-
-    enable = true
-
-    # text strings used for Cookie consent banner
-
+    enable = false
     [params.cookieconsent.content]
+      message = ""              # Message de la bannière
+      dismiss = ""              # Texte du bouton "Accepter"
+      link = ""                 # Lien vers la politique de confidentialité
 
-      message = ""
-
-      dismiss = ""
-
-      link = ""
-
-
-
-  #  CDN config for third-party library files
+# ==================================================
+# CONFIGURATION CDN
+# ==================================================
 
   [params.cdn]
-
-    # CDN data file name, disabled by default
-
-    # ["jsdelivr.yml"]
-
-    # located in "themes/LoveIt/assets/data/cdn/" directory
-
-    # you can store your own data files in the same path under your project:
-
-    # "assets/data/cdn/"
-
+    # Fichier de configuration CDN (ex: "jsdelivr.yml")
     data = ""
 
-
-
-  #  Compatibility config
+# ==================================================
+# CONFIGURATION DE COMPATIBILITÉ
+# ==================================================
 
   [params.compatibility]
+    polyfill = false            # Utilise Polyfill.io pour vieux navigateurs
+    objectFit = false           # Support object-fit pour vieux navigateurs
 
-    # whether to use Polyfill.io to be compatible with older browsers
-
-    polyfill = false
-
-    # whether to use object-fit-images to be compatible with older browsers
-
-    objectFit = false
-
-
-
-# Markup related config in Hugo
+# ==================================================
+# CONFIGURATION DU MARKDOWN
+# ==================================================
 
 [markup]
-
-  # Syntax Highlighting
-
+  # Coloration syntaxique
   [markup.highlight]
-
-    codeFences = true
-
-    guessSyntax = true
-
-    lineNos = true
-
-    lineNumbersInTable = true
-
-    # false is a necessary configuration
-
-    # (https://github.com/dillonzq/LoveIt/issues/158)
-
-    noClasses = false
-
-  # Goldmark is from Hugo 0.60 the default library used for Markdown
-
+    codeFences = true           # Active la coloration dans les blocs de code
+    guessSyntax = true          # Devine la syntaxe si non spécifiée
+    lineNos = true              # Affiche les numéros de ligne
+    lineNumbersInTable = true   # Numéros dans un tableau
+    noClasses = false           # Utilise des classes CSS (ne pas modifier)
+  
+  # Goldmark (moteur Markdown)
   [markup.goldmark]
-
     [markup.goldmark.extensions]
-
-      definitionList = true
-
-      footnote = true
-
-      linkify = true
-
-      strikethrough = true
-
-      table = true
-
-      taskList = true
-
-      typographer = true
-
+      definitionList = true     # Listes de définitions
+      footnote = true           # Notes de bas de page
+      linkify = true            # Transforme les URLs en liens
+      strikethrough = true      # Texte barré ~~texte~~
+      table = true              # Tableaux
+      taskList = true           # Listes de tâches - [x]
+      typographer = true        # Améliorations typographiques
+    
     [markup.goldmark.renderer]
-
-      # whether to use HTML tags directly in the document
-
-      unsafe = true
-
-  # Table Of Contents settings
-
+      unsafe = true             # Autorise le HTML brut dans le Markdown
+  
+  # Configuration de la table des matières
   [markup.tableOfContents]
+    startLevel = 1              # Niveau de titre minimum (h1)
+    endLevel = 6                # Niveau de titre maximum (h6)
 
-    startLevel = 2
-
-    endLevel = 6
-
-
-
-# Sitemap config
+# ==================================================
+# CONFIGURATION DU SITEMAP
+# ==================================================
 
 [sitemap]
+  changefreq = "weekly"         # Fréquence de changement
+  filename = "sitemap.xml"      # Nom du fichier
+  priority = 0.5                # Priorité par défaut (0-1)
 
-  changefreq = "weekly"
-
-  filename = "sitemap.xml"
-
-  priority = 0.5
-
-
-
-# Permalinks config
+# ==================================================
+# CONFIGURATION DES PERMALIENS
+# ==================================================
 
 [Permalinks]
+  # Format des URLs pour les articles
+  # posts = ":year/:month/:filename"  # Ancien format
+  posts = ":contentbasename"    # Nouveau format recommandé (remplace :filename)
 
-  # posts = ":year/:month/:filename"
-
-  posts = ":filename"
-
-
-
-# Privacy config
+# ==================================================
+# CONFIGURATION DE LA VIE PRIVÉE
+# ==================================================
 
 [privacy]
-
-  #  privacy of the Google Analytics (can also be configured in params.analytics.google)
-
   [privacy.googleAnalytics]
-
-    # ...
-
+    # Configuration de confidentialité Google Analytics
   [privacy.twitter]
-
-    # ...
-
+    # Configuration de confidentialité Twitter
   [privacy.youtube]
+    # Configuration de confidentialité YouTube
+    # ... (autres services)
 
-    # ...
+# ==================================================
+# CONFIGURATION DES FICHIERS DE SORTIE
+# ==================================================
 
-
-
-# Options to make output .md files
-
+# Types de médias
 [mediaTypes]
-
   [mediaTypes."text/plain"]
+    suffixes = ["md"]           # Extension .md pour les fichiers texte
 
-    suffixes = ["md"]
-
-
-
-# Options to make output .md files
-
+# Formats de sortie
 [outputFormats.MarkDown]
-
   mediaType = "text/plain"
-
   isPlainText = true
-
   isHTML = false
 
-
-
-# Options to make hugo output files
-
+# Formats de sortie par type de page
 [outputs]
-
-  # 
-
-  home = ["HTML", "RSS", "JSON"]
-
-  page = ["HTML", "MarkDown"]
-
-  section = ["HTML", "RSS"]
-
-  taxonomy = ["HTML", "RSS"]
+  home = ["HTML", "RSS", "JSON"]      # Page d'accueil
+  page = ["HTML", "MarkDown"]         # Pages individuelles
+  section = ["HTML", "RSS"]           # Sections
+  taxonomy = ["HTML", "RSS"]          # Taxonomies (tags, catégories)

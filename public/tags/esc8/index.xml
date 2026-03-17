@@ -1,0 +1,16 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+        <title>ESC8 - Tag - z3rodol</title>
+        <link>http://localhost:1313/tags/esc8/</link>
+        <description>ESC8 - Tag - z3rodol</description>
+        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Thu, 11 Dec 2025 10:28:41 &#43;0000</lastBuildDate><atom:link href="http://localhost:1313/tags/esc8/" rel="self" type="application/rss+xml" /><item>
+    <title>VulnCicada</title>
+    <link>http://localhost:1313/vulncicada/</link>
+    <pubDate>Thu, 11 Dec 2025 10:28:41 &#43;0000</pubDate>
+    <author>z3rodol</author>
+    <guid>http://localhost:1313/vulncicada/</guid>
+    <description><![CDATA[<p></p>
+<p>VulnCicada est une machine Windows Active Directory de difficulté moyenne impliquant la découverte d&rsquo;un mot de passe caché dans une image sur un partage public. Avec ce mot de passe, un attaquant peut découvrir que la machine est vulnérable à <code>ESC8</code> et utiliser le <code>relais Kerberos</code> pour contourner les restrictions d&rsquo;auto-relais afin d&rsquo;obtenir un certificat en tant que compte machine lui-même. Avec ce nouveau certificat, nous pouvons extraire les hashes de l&rsquo;utilisateur Administrator et ainsi compromettre l&rsquo;ensemble du domaine.</p>]]></description>
+</item>
+</channel>
+</rss>

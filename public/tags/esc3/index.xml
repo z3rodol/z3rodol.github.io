@@ -1,0 +1,16 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+        <title>ESC3 - Tag - z3rodol</title>
+        <link>http://localhost:1313/tags/esc3/</link>
+        <description>ESC3 - Tag - z3rodol</description>
+        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Thu, 11 Dec 2025 10:28:41 &#43;0000</lastBuildDate><atom:link href="http://localhost:1313/tags/esc3/" rel="self" type="application/rss+xml" /><item>
+    <title>Certificate</title>
+    <link>http://localhost:1313/certificate/</link>
+    <pubDate>Thu, 11 Dec 2025 10:28:41 &#43;0000</pubDate>
+    <author>z3rodol</author>
+    <guid>http://localhost:1313/certificate/</guid>
+    <description><![CDATA[<p></p>
+<p><strong>Certificate</strong> est une machine Windows Active Directory de difficulté élevée qui commence par une plateforme d’E-learning. L’application web est vulnérable à une <strong>injection de byte nul (Null-Byte Injection)</strong> dans sa fonctionnalité de téléchargement de fichiers. Cela permet d’exécuter un <strong>reverse shell PHP</strong> pour obtenir un accès initial en tant qu’utilisateur <code>xamppuser</code>. Les identifiants de la base de données sont ensuite récupérés, ce qui permet un <strong>mouvement latéral</strong> vers l’utilisateur <strong>Sara.B</strong>. Une énumération plus poussée révèle un fichier de capture réseau qui fuite les identifiants de <strong>Lion.SK</strong>. Grâce à ceux-ci, les <strong>Active Directory Certificate Services (ADCS)</strong> sont énumérés, et un modèle vulnérable est exploité pour demander des certificats au nom d’autres utilisateurs. Un certificat pour l’utilisateur <strong>Ryan.K</strong> est alors obtenu. Son privilège <strong>SeManageVolumePrivilege</strong> est utilisé pour obtenir un shell en tant que <strong>NT AUTHORITY\NETWORK SERVICE</strong>. Enfin, le privilège <strong>SeImpersonatePrivilege</strong> permet d’escalader vers <strong>NT AUTHORITY\SYSTEM</strong>, de dumper les fichiers <strong>ntds.dit</strong> et les ruches de <strong>registre</strong>, et d’extraire le hash <strong>NTLM</strong> de l’Administrateur, offrant ainsi un accès complet en tant qu’<strong>Administrateur</strong>.</p>]]></description>
+</item>
+</channel>
+</rss>

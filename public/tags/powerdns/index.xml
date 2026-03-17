@@ -1,0 +1,16 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+        <title>PowerDNS - Tag - z3rodol</title>
+        <link>http://localhost:1313/tags/powerdns/</link>
+        <description>PowerDNS - Tag - z3rodol</description>
+        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Thu, 11 Dec 2025 10:28:41 &#43;0000</lastBuildDate><atom:link href="http://localhost:1313/tags/powerdns/" rel="self" type="application/rss+xml" /><item>
+    <title>Build</title>
+    <link>http://localhost:1313/build/</link>
+    <pubDate>Thu, 11 Dec 2025 10:28:41 &#43;0000</pubDate>
+    <author>z3rodol</author>
+    <guid>http://localhost:1313/build/</guid>
+    <description><![CDATA[<p></p>
+<p><strong>Build</strong> est une machine Linux classée comme facile. Elle implique la lecture de fichiers sensibles depuis des partages <strong>rsync</strong> non authentifiés, ce qui mène à l&rsquo;exposition d&rsquo;un mot de passe Jenkins chiffré. Je parvient à déchiffrer ce mot de passe, ce qui me permet d&rsquo;accéder à <strong>Gitea</strong>. Le dépôt appartenant à l&rsquo;administrateur sur <strong>Gitea</strong> dispose d&rsquo;un <code>webhook</code> configuré, permettant d&rsquo;obtenir une exécution de code arbitraire et un shell dans le conteneur Docker. Ce conteneur Docker a accès à <strong>MySQL</strong> et <code>PowerDNS</code>, qui s&rsquo;exécutent tous deux dans un autre conteneur sur le même réseau Docker. Le conteneur a également un fichier monté nommé <strong>.rhosts</strong>, qui est aussi monté dans le répertoire racine de la machine hôte. <strong>MySQL</strong> est mal configuré et n&rsquo;a pas de mot de passe pour le compte root, ce qui permet à un attaquant de prendre le contrôle total de la base de données. Une fois le hash de l&rsquo;administrateur craqué et connecter à <code>PowerDNS</code>, je modifie l&rsquo;enregistrement DNS <strong>intern/admin</strong> pour le rediriger vers ma propre machine. En supposant que le même fichier <strong>.rhosts</strong> est également monté sur la machine hôte, cela me permet d&rsquo;obtenir une session root via le protocole <strong>Remote Shell Protocol (RSH)</strong>.</p>]]></description>
+</item>
+</channel>
+</rss>

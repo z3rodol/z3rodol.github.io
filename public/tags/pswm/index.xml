@@ -1,0 +1,16 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+        <title>Pswm - Tag - z3rodol</title>
+        <link>http://localhost:1313/tags/pswm/</link>
+        <description>Pswm - Tag - z3rodol</description>
+        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Thu, 11 Dec 2025 13:49:22 &#43;0000</lastBuildDate><atom:link href="http://localhost:1313/tags/pswm/" rel="self" type="application/rss+xml" /><item>
+    <title>Down</title>
+    <link>http://localhost:1313/down/</link>
+    <pubDate>Thu, 11 Dec 2025 13:49:22 &#43;0000</pubDate>
+    <author>z3rodol</author>
+    <guid>http://localhost:1313/down/</guid>
+    <description><![CDATA[<p></p>
+<p><code>Down</code> possède un site web conçu pour vérifier si un site web est en ligne. Cela présente une <code>SSRF</code> évidente, mais pour contourner les filtres et l&rsquo;exploiter, je vais abuser de la fonctionnalité de <code>curl</code> qui accepte plusieurs URLs et passer une seconde URL avec le wrapper LFI <code>file</code> pour lire des fichiers depuis l&rsquo;hôte. J&rsquo;obtiens l&rsquo;accès au code source de la page, et je vois qu&rsquo;il existe un <code>mode expert</code> qui établie une connexion TCP brute avec <code>netcat</code>. J&rsquo;utilise l&rsquo;injection de paramètres à cet endroit pour obtenir un shell. De là, je fouille dans une instance <code>pswm</code> pour obtenir le mot de passe de l&rsquo;utilisateur suivant, et celui-ci dispose des privilèges sudo pour devenir root.</p>]]></description>
+</item>
+</channel>
+</rss>

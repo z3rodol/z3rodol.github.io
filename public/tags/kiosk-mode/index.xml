@@ -1,0 +1,16 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+        <title>Kiosk Mode - Tag - z3rodol</title>
+        <link>http://localhost:1313/tags/kiosk-mode/</link>
+        <description>Kiosk Mode - Tag - z3rodol</description>
+        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Sat, 14 Mar 2026 17:28:41 &#43;0000</lastBuildDate><atom:link href="http://localhost:1313/tags/kiosk-mode/" rel="self" type="application/rss+xml" /><item>
+    <title>VulnEscape</title>
+    <link>http://localhost:1313/vulnescape/</link>
+    <pubDate>Sat, 14 Mar 2026 17:28:41 &#43;0000</pubDate>
+    <author>z3rodol</author>
+    <guid>http://localhost:1313/vulnescape/</guid>
+    <description><![CDATA[<p></p>
+<p>VulnEscape est une machine Windows de difficulté Facile qui propose le service Bureau à distance (Remote Desktop Server) fonctionnant sur son port par défaut. Les utilisateurs peuvent se connecter à la machine via RDP et se connecter en tant que <strong>KioskUser0</strong> sans mot de passe. L&rsquo;environnement cible est restreint, cependant, en exploitant le schéma <code>file://</code> dans <strong>Microsoft Edge</strong>, les utilisateurs peuvent naviguer dans le système de fichiers. Une exploitation plus poussée permet de contourner les restrictions du système et d&rsquo;ouvrir une fenêtre PowerShell. L&rsquo;énumération du système de fichiers révèle un dossier contenant un profil pour une application appelée Remote Desktop Plus. Ce profil peut être chargé dans l&rsquo;application et le mot de passe qu&rsquo;il contient peut être extrait. Le mot de passe extrait peut ensuite être utilisé pour démarrer une session en tant qu&rsquo;utilisateur admin, et un contournement supplémentaire du Contrôle de Compte Utilisateur (UAC) permet de lire le flag racine.</p>]]></description>
+</item>
+</channel>
+</rss>

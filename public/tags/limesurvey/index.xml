@@ -1,0 +1,16 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+        <title>LimeSurvey - Tag - z3rodol</title>
+        <link>http://localhost:1313/tags/limesurvey/</link>
+        <description>LimeSurvey - Tag - z3rodol</description>
+        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Fri, 12 Dec 2025 10:28:41 &#43;0000</lastBuildDate><atom:link href="http://localhost:1313/tags/limesurvey/" rel="self" type="application/rss+xml" /><item>
+    <title>Forgotten</title>
+    <link>http://localhost:1313/forgotten/</link>
+    <pubDate>Fri, 12 Dec 2025 10:28:41 &#43;0000</pubDate>
+    <author>z3rodol</author>
+    <guid>http://localhost:1313/forgotten/</guid>
+    <description><![CDATA[<p></p>
+<p><strong>Forgotten</strong> est une <strong>box Linux de difficulté Easy</strong> centrée sur une application web <strong>LimeSurvey</strong> exposée sur le port 80. Après énumération, on trouve une installation <strong>LimeSurvey</strong> nécessitant une configuration, ce qui permet de <strong>déployer un plugin contenant un reverse shell PHP</strong> pour obtenir un accès initial sur le conteneur Docker qui héberge l’application. À l’intérieur du conteneur, une <strong>variable d’environnement exposent le mot de passe de l’utilisateur LimeSurvey</strong>, ce qui permet de <strong>se connecter via SSH directement à l’hôte avec ces identifiants</strong>. Pour l’<strong>escalade de privilèges</strong>, j&rsquo;abuse <strong>du partage entre le conteneur et l’hôte</strong> est utilisée afin d’obtenir un accès root sur la machine.</p>]]></description>
+</item>
+</channel>
+</rss>

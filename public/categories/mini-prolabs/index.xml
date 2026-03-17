@@ -1,0 +1,58 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+        <title>Mini-Prolabs - Category - z3rodol</title>
+        <link>http://localhost:1313/categories/mini-prolabs/</link>
+        <description>Mini-Prolabs - Category - z3rodol</description>
+        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Sat, 14 Mar 2026 10:28:41 &#43;0000</lastBuildDate><atom:link href="http://localhost:1313/categories/mini-prolabs/" rel="self" type="application/rss+xml" /><item>
+    <title>Intercept</title>
+    <link>http://localhost:1313/intercept/</link>
+    <pubDate>Sat, 14 Mar 2026 10:28:41 &#43;0000</pubDate>
+    <author>z3rodol</author>
+    <guid>http://localhost:1313/intercept/</guid>
+    <description><![CDATA[<p></p>
+<p>Intercept est un laboratoire avancé axé sur Active Directory. Ce scénario guide les utilisateurs à travers une énumération réaliste d&rsquo;AD, des attaques par coercition, l&rsquo;exploitation de <strong>relais NTLM</strong>, ainsi que l&rsquo;abus des ADCS mal sécurisés. Intercept s&rsquo;articule autour de 2 machines et 2 flags.</p>
+<h1 id="recon">Recon</h1>
+<h2 id="tcp-scan">TCP Scan</h2>
+<p>Je commence l&rsquo;énumération avec un scan TCP complet des deux machines.</p>
+<ul>
+<li>Sur le <strong>DC01 (10.13.38.49)</strong>, les ports suivants sont ouverts : DNS, KERBEROS, SMB, LDAP ainsi que d&rsquo;autres ports par défaut.</li>
+<li>Sur le <strong>WS01 (10.13.38.50)</strong> les ports SMB, RDP et WinRM sont ouverts.</li>
+</ul>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-js">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-js" data-lang="js"><span class="line"><span class="cl"><span class="err">#</span> <span class="nx">Scan</span> <span class="nx">on</span> <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.49</span> <span class="o">-</span> <span class="nx">dc01</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="nx">root</span><span class="err">@</span><span class="nx">exegol</span><span class="o">-</span><span class="nx">intercept</span><span class="p">]</span> <span class="o">/</span><span class="nx">workspace</span>
+</span></span><span class="line"><span class="cl"><span class="err">❯</span> <span class="nx">rustscan</span> <span class="o">-</span><span class="nx">a</span> <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.49</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nx">Open</span> <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.49</span><span class="o">:</span><span class="mi">53</span>
+</span></span><span class="line"><span class="cl"><span class="nx">Open</span> <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.49</span><span class="o">:</span><span class="mi">88</span>
+</span></span><span class="line"><span class="cl"><span class="nx">Open</span> <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.49</span><span class="o">:</span><span class="mi">135</span>
+</span></span><span class="line"><span class="cl"><span class="nx">Open</span> <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.49</span><span class="o">:</span><span class="mi">139</span>
+</span></span><span class="line"><span class="cl"><span class="nx">Open</span> <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.49</span><span class="o">:</span><span class="mi">389</span>
+</span></span><span class="line"><span class="cl"><span class="nx">Open</span> <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.49</span><span class="o">:</span><span class="mi">9389</span>
+</span></span><span class="line"><span class="cl"><span class="nx">Open</span> <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.49</span><span class="o">:</span><span class="mi">49664</span>
+</span></span><span class="line"><span class="cl"><span class="nx">Open</span> <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.49</span><span class="o">:</span><span class="mi">49667</span>
+</span></span><span class="line"><span class="cl"><span class="nx">Open</span> <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.49</span><span class="o">:</span><span class="mi">49668</span>
+</span></span><span class="line"><span class="cl"><span class="nx">Open</span> <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.49</span><span class="o">:</span><span class="mi">56279</span>
+</span></span><span class="line"><span class="cl"><span class="nx">Open</span> <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.49</span><span class="o">:</span><span class="mi">56308</span>
+</span></span><span class="line"><span class="cl"><span class="nx">Open</span> <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.49</span><span class="o">:</span><span class="mi">56797</span>
+</span></span><span class="line"><span class="cl"><span class="nx">Open</span> <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.49</span><span class="o">:</span><span class="mi">56798</span>
+</span></span><span class="line"><span class="cl"><span class="nx">Open</span> <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.49</span><span class="o">:</span><span class="mi">56807</span>
+</span></span><span class="line"><span class="cl"><span class="nx">Open</span> <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.49</span><span class="o">:</span><span class="mi">56880</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="err">#</span> <span class="nx">Scan</span> <span class="nx">on</span> <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.50</span> <span class="o">-</span> <span class="nx">ws01</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="nx">root</span><span class="err">@</span><span class="nx">exegol</span><span class="o">-</span><span class="nx">intercept</span><span class="p">]</span> <span class="o">/</span><span class="nx">workspace</span>
+</span></span><span class="line"><span class="cl"><span class="err">❯</span> <span class="nx">rustscan</span> <span class="o">-</span><span class="nx">a</span> <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.50</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nx">Open</span> <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.50</span><span class="o">:</span><span class="mi">135</span>
+</span></span><span class="line"><span class="cl"><span class="nx">Open</span> <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.50</span><span class="o">:</span><span class="mi">139</span>
+</span></span><span class="line"><span class="cl"><span class="nx">Open</span> <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.50</span><span class="o">:</span><span class="mi">445</span>
+</span></span><span class="line"><span class="cl"><span class="nx">Open</span> <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.50</span><span class="o">:</span><span class="mi">3389</span>
+</span></span><span class="line"><span class="cl"><span class="nx">Open</span> <span class="mf">10.13</span><span class="p">.</span><span class="mf">38.50</span><span class="o">:</span><span class="mi">5985</span></span></span></code></pre></div></div>
+<p>Avec <strong>netexec</strong>, j&rsquo;ajoute le nom de domaine ainsi que le FQDN des machines dans le fichier <code>/etc/hosts</code>.</p>]]></description>
+</item>
+</channel>
+</rss>

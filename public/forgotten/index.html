@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <title>Forgotten - z3rodol</title><meta name="Description" content="This is my cool site"><meta property="og:url" content="http://localhost:1313/forgotten/">
+  <meta property="og:site_name" content="z3rodol">
+  <meta property="og:title" content="Forgotten">
+  <meta property="og:description" content="Forgotten est une box Linux de difficulté Easy centrée sur une application web LimeSurvey exposée sur le port 80. Après énumération, on trouve une installation LimeSurvey nécessitant une configuration, ce qui permet de déployer un plugin contenant un reverse shell PHP pour obtenir un accès initial sur le conteneur Docker qui héberge l’application. À l’intérieur du conteneur, une variable d’environnement exposent le mot de passe de l’utilisateur LimeSurvey, ce qui permet de se connecter via SSH directement à l’hôte avec ces identifiants. Pour l’escalade de privilèges, j’abuse du partage entre le conteneur et l’hôte est utilisée afin d’obtenir un accès root sur la machine.">
+  <meta property="og:locale" content="en">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2025-12-12T10:28:41+00:00">
+    <meta property="article:modified_time" content="2025-12-12T10:28:41+00:00">
+    <meta property="article:tag" content="Easy">
+    <meta property="article:tag" content="Linux">
+    <meta property="article:tag" content="LimeSurvey">
+    <meta property="article:tag" content="Docker">
+    <meta property="article:tag" content="CVE-2021-44967">
+    <meta property="og:image" content="http://localhost:1313/logo.png">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="http://localhost:1313/logo.png">
+  <meta name="twitter:title" content="Forgotten">
+  <meta name="twitter:description" content="Forgotten est une box Linux de difficulté Easy centrée sur une application web LimeSurvey exposée sur le port 80. Après énumération, on trouve une installation LimeSurvey nécessitant une configuration, ce qui permet de déployer un plugin contenant un reverse shell PHP pour obtenir un accès initial sur le conteneur Docker qui héberge l’application. À l’intérieur du conteneur, une variable d’environnement exposent le mot de passe de l’utilisateur LimeSurvey, ce qui permet de se connecter via SSH directement à l’hôte avec ces identifiants. Pour l’escalade de privilèges, j’abuse du partage entre le conteneur et l’hôte est utilisée afin d’obtenir un accès root sur la machine.">
+<meta name="application-name" content="z3rodol">
+<meta name="apple-mobile-web-app-title" content="z3rodol">
+<meta name="referrer" content="no-referrer" /><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="http://localhost:1313/forgotten/" /><link rel="prev" href="http://localhost:1313/solidstate/" /><link rel="next" href="http://localhost:1313/breach/" /><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" href="/lib/fontawesome-free/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link rel="stylesheet" href="/lib/fontawesome-free/css/all.min.css"></noscript><link rel="preload" href="/lib/animate/animate.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link rel="stylesheet" href="/lib/animate/animate.min.css"></noscript><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "Forgotten",
+        "inLanguage": "en",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "http:\/\/localhost:1313\/forgotten\/"
+        },"genre": "posts","keywords": "Easy, Linux, LimeSurvey, Docker, CVE-2021-44967","wordcount":  1048 ,
+        "url": "http:\/\/localhost:1313\/forgotten\/","datePublished": "2025-12-12T10:28:41+00:00","dateModified": "2025-12-12T10:28:41+00:00","publisher": {
+            "@type": "Organization",
+            "name": ""},"author": {
+                "@type": "Person",
+                "name": "z3rodol"
+            },"description": ""
+    }
+    </script></head>
+    <body data-header-desktop="fixed" data-header-mobile="auto"><script>
+          const query = window.matchMedia('(prefers-color-scheme: dark)');
+          function applyTheme() {
+            let theme = window.localStorage?.getItem('theme') || 'auto';
+            let isDark = theme === 'dark' || (theme === 'auto' && query.matches);
+            document.body.setAttribute('theme', isDark? 'dark' : 'light');
+            document.body.setAttribute('cfg-theme', theme);
+          }
+
+          applyTheme();
+          query.addEventListener('change', applyTheme);
+        </script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="z3rodol">z3rodol Blog</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> Posts </a><a class="menu-item" href="/tags/"> Tags </a><a class="menu-item" href="/categories/"> Categories </a><a class="menu-item" href="/about/"> About </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
+                        <input type="text" placeholder="Search titles or contents..." id="search-input-desktop">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="Search">
+                            <i class="fas fa-search" aria-hidden="true"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="Clear">
+                            <i class="fas fa-times-circle" aria-hidden="true"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-desktop">
+                            <i class="fas fa-spinner fa-spin" aria-hidden="true"></i>
+                        </span>
+                    </span><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                    <i class="fas fa-adjust" aria-hidden="true"></i>
+                </a></div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="z3rodol">z3rodol Blog</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><div class="search-wrapper">
+                    <div class="search mobile" id="search-mobile">
+                        <input type="text" placeholder="Search titles or contents..." id="search-input-mobile">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="Search">
+                            <i class="fas fa-search" aria-hidden="true"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="Clear">
+                            <i class="fas fa-times-circle" aria-hidden="true"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-mobile">
+                            <i class="fas fa-spinner fa-spin" aria-hidden="true"></i>
+                        </span>
+                    </div>
+                    <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
+                        Cancel
+                    </a>
+                </div><a class="menu-item" href="/posts/" title="">Posts</a><a class="menu-item" href="/tags/" title="">Tags</a><a class="menu-item" href="/categories/" title="">Categories</a><a class="menu-item" href="/about/" title="">About</a><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                <i class="fas fa-adjust" aria-hidden="true"></i>
+            </a></div>
+    </div>
+</header><div class="search-dropdown desktop">
+        <div id="search-dropdown-desktop"></div>
+    </div>
+    <div class="search-dropdown mobile">
+        <div id="search-dropdown-mobile"></div>
+    </div><main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">Contents</h2>
+            <div class="toc-content always-active" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animate__animated animate__flipInX">Forgotten</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="https://z3rodol.github.io" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle" aria-hidden="true"></i>z3rodol</a></span>&nbsp;<span class="post-category">included in <a href="/categories/machines/"><i class="far fa-folder" aria-hidden="true"></i>Machines</a>&nbsp;<a href="/categories/hackthebox/"><i class="far fa-folder" aria-hidden="true"></i>Hackthebox</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt" aria-hidden="true"></i>&nbsp;<time datetime="2025-12-12">2025-12-12</time>&nbsp;<i class="fas fa-pencil-alt" aria-hidden="true"></i>&nbsp;1048 words&nbsp;
+                <i class="far fa-clock" aria-hidden="true"></i>&nbsp;5 minutes&nbsp;</div>
+        </div><div class="details toc" id="toc-static"  data-kept="">
+                <div class="details-summary toc-title">
+                    <span>Contents</span>
+                    <span><i class="details-icon fas fa-angle-right" aria-hidden="true"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#énumération">Énumération</a>
+      <ul>
+        <li><a href="#nmap">Nmap</a></li>
+        <li><a href="#http---tcp-80">HTTP - TCP 80</a>
+          <ul>
+            <li><a href="#site">Site</a></li>
+            <li><a href="#feroxbuster">feroxbuster</a></li>
+            <li><a href="#limesurvey">LimeSurvey</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#accès-initial">Accès initial</a>
+      <ul>
+        <li><a href="#cve-2021-44967">CVE-2021-44967</a></li>
+        <li><a href="#shell">Shell</a></li>
+      </ul>
+    </li>
+    <li><a href="#mouvement-latéral">Mouvement latéral</a>
+      <ul>
+        <li><a href="#énumération-1">Énumération</a></li>
+        <li><a href="#connexion-root-sur-docker">Connexion root sur docker</a></li>
+        <li><a href="#ssh">SSH</a></li>
+      </ul>
+    </li>
+    <li><a href="#escalade-de-privilèges">Escalade de privilèges</a>
+      <ul>
+        <li><a href="#docker-escape">Docker escape</a></li>
+        <li><a href="#shell-1">Shell</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content"><p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Forgotten/forgotten.png"
+        data-srcset="/images/Forgotten/forgotten.png, /images/Forgotten/forgotten.png 1.5x, /images/Forgotten/forgotten.png 2x"
+        data-sizes="auto"
+        alt="/images/Forgotten/forgotten.png"
+        title="Forgotten" width="702" height="313" /></p>
+<p><strong>Forgotten</strong> est une <strong>box Linux de difficulté Easy</strong> centrée sur une application web <strong>LimeSurvey</strong> exposée sur le port 80. Après énumération, on trouve une installation <strong>LimeSurvey</strong> nécessitant une configuration, ce qui permet de <strong>déployer un plugin contenant un reverse shell PHP</strong> pour obtenir un accès initial sur le conteneur Docker qui héberge l’application. À l’intérieur du conteneur, une <strong>variable d’environnement exposent le mot de passe de l’utilisateur LimeSurvey</strong>, ce qui permet de <strong>se connecter via SSH directement à l’hôte avec ces identifiants</strong>. Pour l’<strong>escalade de privilèges</strong>, j&rsquo;abuse <strong>du partage entre le conteneur et l’hôte</strong> est utilisée afin d’obtenir un accès root sur la machine.</p>
+<h1 id="énumération">Énumération</h1>
+<h2 id="nmap">Nmap</h2>
+<p>Le scan révèle 2 ports ouverts.</p>
+<ul>
+<li>22 pour le service SSH sur une machine Ubuntu</li>
+<li>80 pour le service HTTP faisant tourner un service Apache</li>
+</ul>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">Forgotten ➤ nmap -sT -sVC --min-rate <span class="m">2000</span> -vvv -p- 10.129.146.197
+</span></span><span class="line"><span class="cl">--SNIP--
+</span></span><span class="line"><span class="cl">PORT   STATE SERVICE REASON  VERSION
+</span></span><span class="line"><span class="cl">22/tcp open  ssh     syn-ack OpenSSH 8.9p1 Ubuntu 3ubuntu0.13 <span class="o">(</span>Ubuntu Linux<span class="p">;</span> protocol 2.0<span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span> ssh-hostkey:
+</span></span><span class="line"><span class="cl"><span class="p">|</span>   <span class="m">256</span> 28c7f196f9536411f87055680be53c22 <span class="o">(</span>ECDSA<span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span> ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBMIbLmW6I3vlf8QRrAaFLhH3Ao7CFIvqPPmQG0Z14i0SlPfX9IZobRkjLOB0ncKb5oQ/0SXLnU60rnUe+7Xe6BU<span class="o">=</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span>   <span class="m">256</span> 0243d2ba4e87de7772ce5afa865c0df4 <span class="o">(</span>ED25519<span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICGL/2c6HVh+6F9RbNsZpoYJ2jv4C8SGqtskv0GGuU2P
+</span></span><span class="line"><span class="cl">80/tcp open  http    syn-ack Apache httpd 2.4.56
+</span></span><span class="line"><span class="cl"><span class="p">|</span> http-methods:
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_  Supported Methods: GET POST OPTIONS HEAD
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_http-title: <span class="m">403</span> Forbidden
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_http-server-header: Apache/2.4.56 <span class="o">(</span>Debian<span class="o">)</span>
+</span></span><span class="line"><span class="cl">Service Info: Host: 172.17.0.2<span class="p">;</span> OS: Linux<span class="p">;</span> CPE: cpe:/o:linux:linux_kernel</span></span></code></pre></div></div>
+<h2 id="http---tcp-80">HTTP - TCP 80</h2>
+<h3 id="site">Site</h3>
+<p>Je n&rsquo;ai pas la permission d&rsquo;accéder à la page principale.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Forgotten/Forgotten-1.png"
+        data-srcset="/images/Forgotten/Forgotten-1.png, /images/Forgotten/Forgotten-1.png 1.5x, /images/Forgotten/Forgotten-1.png 2x"
+        data-sizes="auto"
+        alt="/images/Forgotten/Forgotten-1.png"
+        title="/images/Forgotten/Forgotten-1.png" width="690" height="264" /></p>
+<h3 id="feroxbuster">feroxbuster</h3>
+<p>J&rsquo;énumère alors les répertoires.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">Forgotten ➤ feroxbuster -w <span class="sb">`</span>fzf-wordlists<span class="sb">`</span> -u <span class="s2">&#34;http://10.129.146.197&#34;</span>
+</span></span><span class="line"><span class="cl">--SNIP--
+</span></span><span class="line"><span class="cl"><span class="m">404</span>      GET        9l       31w      276c Auto-filtering found 404-like response and created new filter<span class="p">;</span> toggle off with --dont-filter
+</span></span><span class="line"><span class="cl"><span class="m">403</span>      GET        9l       28w      279c Auto-filtering found 404-like response and created new filter<span class="p">;</span> toggle off with --dont-filter
+</span></span><span class="line"><span class="cl"><span class="m">301</span>      GET        9l       28w      317c http://10.129.146.197/survey <span class="o">=</span>&gt; http://10.129.146.197/survey/
+</span></span><span class="line"><span class="cl"><span class="m">302</span>      GET        0l        0w        0c Auto-filtering found 404-like response and created new filter<span class="p">;</span> toggle off with --dont-filter
+</span></span><span class="line"><span class="cl"><span class="m">301</span>      GET        9l       28w      324c http://10.129.146.197/survey/themes <span class="o">=</span>&gt; http://10.129.146.197/survey/themes/
+</span></span><span class="line"><span class="cl"><span class="m">301</span>      GET        9l       28w      325c http://10.129.146.197/survey/modules <span class="o">=</span>&gt; http://10.129.146.197/survey/modules/
+</span></span><span class="line"><span class="cl"><span class="m">301</span>      GET        9l       28w      323c http://10.129.146.197/survey/admin <span class="o">=</span>&gt; http://10.129.146.197/survey/admin/
+</span></span><span class="line"><span class="cl"><span class="m">301</span>      GET        9l       28w      324c http://10.129.146.197/survey/assets <span class="o">=</span>&gt; http://10.129.146.197/survey/assets/
+</span></span><span class="line"><span class="cl"><span class="m">301</span>      GET        9l       28w      324c http://10.129.146.197/survey/upload <span class="o">=</span>&gt; http://10.129.146.197/survey/upload/</span></span></code></pre></div></div>
+<p>J&rsquo;ai accès à un répertoire <code>/survey</code>.</p>
+<h3 id="limesurvey">LimeSurvey</h3>
+<p>Je m&rsquo;y rends et je vois qu&rsquo;il s&rsquo;agit d&rsquo;une application <a href="https://www.limesurvey.org/fr" target="_blank" rel="noopener noreffer ">LimeSurvey</a>, un logiciel d&rsquo;enquête statistiques et d&rsquo;évaluation en ligne.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Forgotten/Forgotten-2.png"
+        data-srcset="/images/Forgotten/Forgotten-2.png, /images/Forgotten/Forgotten-2.png 1.5x, /images/Forgotten/Forgotten-2.png 2x"
+        data-sizes="auto"
+        alt="/images/Forgotten/Forgotten-2.png"
+        title="/images/Forgotten/Forgotten-2.png" width="1368" height="716" />
+Je vois qu&rsquo;il s&rsquo;agit de la page d&rsquo;installation de LimeSurvey. Je clique donc sur <strong>Start Installation</strong> pour continuer le processus d&rsquo;installation.</p>
+<p>Il s&rsquo;agit de <strong>LimeSurvey 6.3.7</strong>. En recherchant sur Google <code>limesurvey 6.3.7 exploit</code>, cette version est vulnerable à un RCE via upload de fichier. Cet article de <a href="https://ine.com/blog/cve-2021-44967-limesurvey-rce" target="_blank" rel="noopener noreffer ">INE</a> en parle.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Forgotten/Forgotten-3.png"
+        data-srcset="/images/Forgotten/Forgotten-3.png, /images/Forgotten/Forgotten-3.png 1.5x, /images/Forgotten/Forgotten-3.png 2x"
+        data-sizes="auto"
+        alt="/images/Forgotten/Forgotten-3.png"
+        title="/images/Forgotten/Forgotten-3.png" width="1120" height="935" />
+Mais il faut que je connecte afin de l&rsquo;exploiter. Je continue alors le processus d&rsquo;installation.</p>
+<p>Là, je dois mettre une configuration MySQL à utilisé. Je vais créer une configuration <strong>MariaDB</strong> sur ma machine et y mettre ses informations sur ce formulaire.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Forgotten/Forgotten-4.png"
+        data-srcset="/images/Forgotten/Forgotten-4.png, /images/Forgotten/Forgotten-4.png 1.5x, /images/Forgotten/Forgotten-4.png 2x"
+        data-sizes="auto"
+        alt="/images/Forgotten/Forgotten-4.png"
+        title="/images/Forgotten/Forgotten-4.png" width="1207" height="917" /></p>
+<p>Premièrement je modifie la ligne suivante dans le fichier <code>/etc/mysql/mariadb.conf.d/50-server.cnf</code> afin de recevoir des connexions depuis n&rsquo;importe qu&rsquo;elle port de ma machine.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">bind-address            <span class="o">=</span> 0.0.0.0</span></span></code></pre></div></div>
+<p>Je fais cela pour que MariaDB puisse utiliser le port <strong>tun0</strong>, port du VPN de Hackthebox.</p>
+<p>Ensuite je démarre le service <strong>mariadb</strong>.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">sudo systemctl <span class="nb">enable</span> mariadb <span class="o">&amp;&amp;</span> sudo systemctl start mariadb </span></span></code></pre></div></div>
+<p>Je me connecte, je crée une base de données <em>forgotten</em>, un utilisateur <em>z3rodol</em> et un mot de passe <em>Password123</em>. Je donne aussi tous les privilèges sur la base de données à <em>z3rodol</em>.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-mysql">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="n">sudo</span><span class="w"> </span><span class="n">mariadb</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="k">CREATE</span><span class="w"> </span><span class="k">DATABASE</span><span class="w"> </span><span class="n">forgotten</span><span class="w"> </span><span class="k">CHARACTER</span><span class="w"> </span><span class="kt">SET</span><span class="w"> </span><span class="n">utf8mb4</span><span class="w"> </span><span class="k">COLLATE</span><span class="w"> </span><span class="n">utf8mb4_unicode_ci</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="k">CREATE</span><span class="w"> </span><span class="k">USER</span><span class="w"> </span><span class="s1">&#39;z3rodol&#39;</span><span class="o">@</span><span class="s1">&#39;%&#39;</span><span class="w"> </span><span class="k">IDENTIFIED</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="s1">&#39;Password123&#39;</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="k">GRANT</span><span class="w"> </span><span class="k">ALL</span><span class="w"> </span><span class="k">PRIVILEGES</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">forgotten</span><span class="p">.</span><span class="o">*</span><span class="w"> </span><span class="k">TO</span><span class="w"> </span><span class="s1">&#39;z3rodol&#39;</span><span class="o">@</span><span class="s1">&#39;%&#39;</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="n">quit</span><span class="p">;</span></span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Forgotten/Forgotten-10.png"
+        data-srcset="/images/Forgotten/Forgotten-10.png, /images/Forgotten/Forgotten-10.png 1.5x, /images/Forgotten/Forgotten-10.png 2x"
+        data-sizes="auto"
+        alt="/images/Forgotten/Forgotten-10.png"
+        title="/images/Forgotten/Forgotten-10.png" width="1412" height="633" /></p>
+<p>Un fois la base de données configurée, je remplis les informations dans le formulaire et je continue.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Forgotten/Forgotten-9.png"
+        data-srcset="/images/Forgotten/Forgotten-9.png, /images/Forgotten/Forgotten-9.png 1.5x, /images/Forgotten/Forgotten-9.png 2x"
+        data-sizes="auto"
+        alt="/images/Forgotten/Forgotten-9.png"
+        title="/images/Forgotten/Forgotten-9.png" width="908" height="871" /></p>
+<p>Ce message indique que la base de données n&rsquo;existe pas et donc sera créée.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Forgotten/Forgotten-8.png"
+        data-srcset="/images/Forgotten/Forgotten-8.png, /images/Forgotten/Forgotten-8.png 1.5x, /images/Forgotten/Forgotten-8.png 2x"
+        data-sizes="auto"
+        alt="/images/Forgotten/Forgotten-8.png"
+        title="/images/Forgotten/Forgotten-8.png" width="1322" height="425" /></p>
+<p>Une fois la créée, j&rsquo;arrive sur la page de paramètres de l&rsquo;administrateur de l&rsquo;application.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Forgotten/Forgotten-11.png"
+        data-srcset="/images/Forgotten/Forgotten-11.png, /images/Forgotten/Forgotten-11.png 1.5x, /images/Forgotten/Forgotten-11.png 2x"
+        data-sizes="auto"
+        alt="/images/Forgotten/Forgotten-11.png"
+        title="/images/Forgotten/Forgotten-11.png" width="1318" height="688" />
+Ne pouvant pas voir le mot de passe, je le modifie alors.</p>
+<p>Je clique alors sur <strong>Administration</strong> pour terminer le processus d&rsquo;installation de LimeSurvey.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Forgotten/Forgotten-12.png"
+        data-srcset="/images/Forgotten/Forgotten-12.png, /images/Forgotten/Forgotten-12.png 1.5x, /images/Forgotten/Forgotten-12.png 2x"
+        data-sizes="auto"
+        alt="/images/Forgotten/Forgotten-12.png"
+        title="/images/Forgotten/Forgotten-12.png" width="1355" height="591" /></p>
+<p>Je suis redirigé alors sur la page de connexion de l&rsquo;application où je me connecte avec les identifiants admin précédemment modifiés.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Forgotten/Forgotten-14.png"
+        data-srcset="/images/Forgotten/Forgotten-14.png, /images/Forgotten/Forgotten-14.png 1.5x, /images/Forgotten/Forgotten-14.png 2x"
+        data-sizes="auto"
+        alt="/images/Forgotten/Forgotten-14.png"
+        title="/images/Forgotten/Forgotten-14.png" width="520" height="478" /></p>
+<p>J&rsquo;arrive alors sur la page d&rsquo;administration de LimeSurvey.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Forgotten/Forgotten-15.png"
+        data-srcset="/images/Forgotten/Forgotten-15.png, /images/Forgotten/Forgotten-15.png 1.5x, /images/Forgotten/Forgotten-15.png 2x"
+        data-sizes="auto"
+        alt="/images/Forgotten/Forgotten-15.png"
+        title="/images/Forgotten/Forgotten-15.png" width="1918" height="705" /></p>
+<h1 id="accès-initial">Accès initial</h1>
+<h2 id="cve-2021-44967">CVE-2021-44967</h2>
+<p>Je peux maintenant exploiter cette vulnérabilité expliquée sur cet article de <a href="https://ine.com/blog/cve-2021-44967-limesurvey-rce" target="_blank" rel="noopener noreffer ">INE</a>. Je trouve ce <a href="https://github.com/Y1LD1R1M-1337/Limesurvey-RCE" target="_blank" rel="noopener noreffer ">POC</a> dont je clone le repo.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Forgotten/Forgotten-33.png"
+        data-srcset="/images/Forgotten/Forgotten-33.png, /images/Forgotten/Forgotten-33.png 1.5x, /images/Forgotten/Forgotten-33.png 2x"
+        data-sizes="auto"
+        alt="/images/Forgotten/Forgotten-33.png"
+        title="/images/Forgotten/Forgotten-33.png" width="778" height="436" /></p>
+<p>Je n&rsquo;aurai besoin ici que des fichiers <code>config.xml</code> et <code>php-rev.php</code> vu que je compte l&rsquo;exploiter manuellement. Premièrement, je modifie un peu le fichier config.xml pour y ajouter des versions compatibles. La version de <code>LimeSurvey</code> ici est la <strong>6.3.7</strong> donc je mettrai une compatibilité jusqu&rsquo;à la version 7.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Forgotten/Forgotten-16.png"
+        data-srcset="/images/Forgotten/Forgotten-16.png, /images/Forgotten/Forgotten-16.png 1.5x, /images/Forgotten/Forgotten-16.png 2x"
+        data-sizes="auto"
+        alt="/images/Forgotten/Forgotten-16.png"
+        title="/images/Forgotten/Forgotten-16.png" width="888" height="786" /></p>
+<p>Ensuite le fichier <code>php-rev.php</code>, je modifie l&rsquo;adresse IP pour qu&rsquo;elle soit celle du VPN de hackthebox ainsi que le port d&rsquo;écoute. Il s&rsquo;agit d&rsquo;un simple reverse shell PHP de <a href="https://github.com/pentestmonkey/php-reverse-shell" target="_blank" rel="noopener noreffer ">pentestmonkey</a>
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Forgotten/Forgotten-17.png"
+        data-srcset="/images/Forgotten/Forgotten-17.png, /images/Forgotten/Forgotten-17.png 1.5x, /images/Forgotten/Forgotten-17.png 2x"
+        data-sizes="auto"
+        alt="/images/Forgotten/Forgotten-17.png"
+        title="/images/Forgotten/Forgotten-17.png" width="492" height="418" /></p>
+<p>Je me rends alors dans <strong>Configuration &gt; Plugins</strong>.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Forgotten/Forgotten-18.png"
+        data-srcset="/images/Forgotten/Forgotten-18.png, /images/Forgotten/Forgotten-18.png 1.5x, /images/Forgotten/Forgotten-18.png 2x"
+        data-sizes="auto"
+        alt="/images/Forgotten/Forgotten-18.png"
+        title="/images/Forgotten/Forgotten-18.png" width="1445" height="580" /></p>
+<p>Puis je clique sur <strong>Upload &amp; Install</strong> afin d&rsquo;uploader mon fichier zip.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Forgotten/Forgotten-19.png"
+        data-srcset="/images/Forgotten/Forgotten-19.png, /images/Forgotten/Forgotten-19.png 1.5x, /images/Forgotten/Forgotten-19.png 2x"
+        data-sizes="auto"
+        alt="/images/Forgotten/Forgotten-19.png"
+        title="/images/Forgotten/Forgotten-19.png" width="780" height="477" /></p>
+<p>Je clique sur <strong>Install</strong> pour terminer l&rsquo;installation du plugin.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Forgotten/Forgotten-20.png"
+        data-srcset="/images/Forgotten/Forgotten-20.png, /images/Forgotten/Forgotten-20.png 1.5x, /images/Forgotten/Forgotten-20.png 2x"
+        data-sizes="auto"
+        alt="/images/Forgotten/Forgotten-20.png"
+        title="/images/Forgotten/Forgotten-20.png" width="1010" height="475" /></p>
+<p>Je vérifie l&rsquo;installation du plugin.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Forgotten/Forgotten-21.png"
+        data-srcset="/images/Forgotten/Forgotten-21.png, /images/Forgotten/Forgotten-21.png 1.5x, /images/Forgotten/Forgotten-21.png 2x"
+        data-sizes="auto"
+        alt="/images/Forgotten/Forgotten-21.png"
+        title="/images/Forgotten/Forgotten-21.png" width="1263" height="642" /></p>
+<h2 id="shell">Shell</h2>
+<p>Ensuite, je démarre mon listener.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">penelope -p <span class="m">9001</span></span></span></code></pre></div></div>
+<p>Puis je me rends sur la page suivante pour déclencher l&rsquo;exécution du reverse shell.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-txt">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-txt" data-lang="txt"><span class="line"><span class="cl">http://10.129.42.192/survey/upload/plugins/Y1LD1R1M/php-rev.php</span></span></code></pre></div></div>
+<p>J&rsquo;obtiens alors un shell dans un docker en tant que l&rsquo;utilisateur <code>limesvc</code>.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Forgotten/Forgotten-22.png"
+        data-srcset="/images/Forgotten/Forgotten-22.png, /images/Forgotten/Forgotten-22.png 1.5x, /images/Forgotten/Forgotten-22.png 2x"
+        data-sizes="auto"
+        alt="/images/Forgotten/Forgotten-22.png"
+        title="/images/Forgotten/Forgotten-22.png" width="1443" height="475" />
+Ce dernier est membre du groupe <code>sudo</code>.</p>
+<h1 id="mouvement-latéral">Mouvement latéral</h1>
+<h2 id="énumération-1">Énumération</h2>
+<p>Il me faut le mot de passe de <code>limesvc</code>.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Forgotten/Forgotten-23.png"
+        data-srcset="/images/Forgotten/Forgotten-23.png, /images/Forgotten/Forgotten-23.png 1.5x, /images/Forgotten/Forgotten-23.png 2x"
+        data-sizes="auto"
+        alt="/images/Forgotten/Forgotten-23.png"
+        title="/images/Forgotten/Forgotten-23.png" width="808" height="462" /></p>
+<p>En regardant les variables d&rsquo;environnement avec la commande <strong>env</strong>, je trouve un mot de passe.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Forgotten/Forgotten-24.png"
+        data-srcset="/images/Forgotten/Forgotten-24.png, /images/Forgotten/Forgotten-24.png 1.5x, /images/Forgotten/Forgotten-24.png 2x"
+        data-sizes="auto"
+        alt="/images/Forgotten/Forgotten-24.png"
+        title="/images/Forgotten/Forgotten-24.png" width="727" height="316" /></p>
+<h2 id="connexion-root-sur-docker">Connexion root sur docker</h2>
+<p>Ce mot de passe est bien valide et me permet d&rsquo;obtenir un shell en tant que root.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Forgotten/Forgotten-25.png"
+        data-srcset="/images/Forgotten/Forgotten-25.png, /images/Forgotten/Forgotten-25.png 1.5x, /images/Forgotten/Forgotten-25.png 2x"
+        data-sizes="auto"
+        alt="/images/Forgotten/Forgotten-25.png"
+        title="/images/Forgotten/Forgotten-25.png" width="838" height="410" /></p>
+<h2 id="ssh">SSH</h2>
+<p>Ce mot de passe permet d&rsquo;obtenir un shell SSH sur la machine en tant que l&rsquo;utilisateur <strong>limesvc</strong>.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Forgotten/Forgotten-26.png"
+        data-srcset="/images/Forgotten/Forgotten-26.png, /images/Forgotten/Forgotten-26.png 1.5x, /images/Forgotten/Forgotten-26.png 2x"
+        data-sizes="auto"
+        alt="/images/Forgotten/Forgotten-26.png"
+        title="/images/Forgotten/Forgotten-26.png" width="917" height="511" /></p>
+<h1 id="escalade-de-privilèges">Escalade de privilèges</h1>
+<h2 id="docker-escape">Docker escape</h2>
+<p>Dans le répertoire <strong>/opt</strong> se trouve un dossier <strong>limesurvey</strong>.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Forgotten/Forgotten-27.png"
+        data-srcset="/images/Forgotten/Forgotten-27.png, /images/Forgotten/Forgotten-27.png 1.5x, /images/Forgotten/Forgotten-27.png 2x"
+        data-sizes="auto"
+        alt="/images/Forgotten/Forgotten-27.png"
+        title="/images/Forgotten/Forgotten-27.png" width="973" height="250" /></p>
+<p>Il contient tous les fichiers de configuration de LimeSurvey.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Forgotten/Forgotten-28.png"
+        data-srcset="/images/Forgotten/Forgotten-28.png, /images/Forgotten/Forgotten-28.png 1.5x, /images/Forgotten/Forgotten-28.png 2x"
+        data-sizes="auto"
+        alt="/images/Forgotten/Forgotten-28.png"
+        title="/images/Forgotten/Forgotten-28.png" width="692" height="761" /></p>
+<p>Je vois dans le répertoire <strong>/var/www/html/survey</strong> du docker se trouve ces mêmes fichiers.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Forgotten/Forgotten-29.png"
+        data-srcset="/images/Forgotten/Forgotten-29.png, /images/Forgotten/Forgotten-29.png 1.5x, /images/Forgotten/Forgotten-29.png 2x"
+        data-sizes="auto"
+        alt="/images/Forgotten/Forgotten-29.png"
+        title="/images/Forgotten/Forgotten-29.png" width="707" height="758" />
+Peut-être que le répertoire <strong>/opt/limesurvey</strong> de la machine est monté sur le docker.</p>
+<p>Je crée un fichier dans le  répertoire <strong>/var/www/html/survey du docker</strong>.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">echo</span> <span class="s2">&#34;Je suis ici&#34;</span> &gt; monfichier.txt</span></span></code></pre></div></div>
+<p>Je vois qu&rsquo;il se trouve aussi dans le répertoire <strong>/opt/limesurvey</strong> de la machine.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Forgotten/Forgotten-30.png"
+        data-srcset="/images/Forgotten/Forgotten-30.png, /images/Forgotten/Forgotten-30.png 1.5x, /images/Forgotten/Forgotten-30.png 2x"
+        data-sizes="auto"
+        alt="/images/Forgotten/Forgotten-30.png"
+        title="/images/Forgotten/Forgotten-30.png" width="683" height="800" />
+Je vois aussi qu&rsquo;il appartient à l&rsquo;utilisateur root. Donc les fichiers créés dans le répertoire <strong>/var/www/html/survey</strong> du docker se retrouvent dans le répertoire <strong>/opt/limesurvey</strong> de la machine avec les permissions root.</p>
+<h2 id="shell-1">Shell</h2>
+<p>Je fais alors une copie du <strong>bash</strong> dans le répertoire <strong>/var/www/html/survey</strong> du docker avec toutes les permissions.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">cp /bin/bash rootme
+</span></span><span class="line"><span class="cl">chmod <span class="m">4777</span> rootme</span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Forgotten/Forgotten-31.png"
+        data-srcset="/images/Forgotten/Forgotten-31.png, /images/Forgotten/Forgotten-31.png 1.5x, /images/Forgotten/Forgotten-31.png 2x"
+        data-sizes="auto"
+        alt="/images/Forgotten/Forgotten-31.png"
+        title="/images/Forgotten/Forgotten-31.png" width="702" height="85" /></p>
+<p>Je l&rsquo;utilise alors sur la machine afin d&rsquo;avoir un shell root.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-bash">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">./rootme -p</span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Forgotten/Forgotten-32.png"
+        data-srcset="/images/Forgotten/Forgotten-32.png, /images/Forgotten/Forgotten-32.png 1.5x, /images/Forgotten/Forgotten-32.png 2x"
+        data-sizes="auto"
+        alt="/images/Forgotten/Forgotten-32.png"
+        title="/images/Forgotten/Forgotten-32.png" width="798" height="727" /></p>
+</div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>Updated on 2025-12-12</span>
+            </div><div id="page-views" class="post-info-mod">
+            </div></div>
+        <div class="post-info-line">
+            <div class="post-info-md"><span>
+                            <a class="link-to-markdown" href="/forgotten/index.md" target="_blank">Read Markdown</a>
+                        </span></div>
+            <div class="post-info-share">
+                <span><a href="javascript:void(0);" title="Share on X" data-sharer="x" data-url="http://localhost:1313/forgotten/" data-title="Forgotten" data-via="z3rodol" data-hashtags="Easy,Linux,LimeSurvey,Docker,CVE-2021-44967"><i class="fab fa-x-twitter" aria-hidden="true"></i></a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"><i class="fas fa-tags" aria-hidden="true"></i>&nbsp;<a href="/tags/easy/">Easy</a>,&nbsp;<a href="/tags/linux/">Linux</a>,&nbsp;<a href="/tags/limesurvey/">LimeSurvey</a>,&nbsp;<a href="/tags/docker/">Docker</a>,&nbsp;<a href="/tags/cve-2021-44967/">CVE-2021-44967</a></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/solidstate/" class="prev" rel="prev" title="SolidState"><i class="fas fa-angle-left" aria-hidden="true"></i>SolidState</a>
+            <a href="/breach/" class="next" rel="next" title="Breach">Breach<i class="fas fa-angle-right" aria-hidden="true"></i></a></div>
+</div>
+</article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.158.0">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 1.0.0"><i class="far fa-kiss-wink-heart" aria-hidden="true"></i> LoveIt</a>
+                </div><div class="footer-line" itemscope itemtype="http://schema.org/CreativeWork"><i class="far fa-copyright" aria-hidden="true"></i><span itemprop="copyrightYear">2025 - 2026</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="https://z3rodol.github.io" target="_blank">z3rodol</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="Back to Top">
+                <i class="fas fa-arrow-up" aria-hidden="true"></i>
+            </a>
+        </div>
+
+        <div id="fixed-buttons-hidden"><a href="#" id="view-comments" class="fixed-button" title="View Comments">
+                <i class="fas fa-comment" aria-hidden="true"></i>
+            </a>
+        </div><link rel="stylesheet" href="/lib/lightgallery/css/lightgallery-bundle.min.css"><link rel="stylesheet" href="/lib/katex/katex.min.css"><script src="/lib/autocomplete/autocomplete.min.js"></script><script src="/lib/lunr/lunr.min.js"></script><script src="/lib/lazysizes/lazysizes.min.js"></script><script src="/lib/lightgallery/lightgallery.min.js"></script><script src="/lib/lightgallery/plugins/thumbnail/lg-thumbnail.min.js"></script><script src="/lib/lightgallery/plugins/zoom/lg-zoom.min.js"></script><script src="/lib/clipboard/clipboard.min.js"></script><script src="/lib/sharer/sharer.min.js"></script><script src="/lib/katex/katex.min.js"></script><script src="/lib/katex/contrib/auto-render.min.js"></script><script src="/lib/katex/contrib/copy-tex.min.js"></script><script src="/lib/katex/contrib/mhchem.min.js"></script><script>window.config={"comment":{},"lightgallery":true,"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":true,"left":"\\begin{equation}","right":"\\end{equation}"},{"display":true,"left":"\\begin{equation*}","right":"\\end{equation*}"},{"display":true,"left":"\\begin{align}","right":"\\end{align}"},{"display":true,"left":"\\begin{align*}","right":"\\end{align*}"},{"display":true,"left":"\\begin{alignat}","right":"\\end{alignat}"},{"display":true,"left":"\\begin{alignat*}","right":"\\end{alignat*}"},{"display":true,"left":"\\begin{gather}","right":"\\end{gather}"},{"display":true,"left":"\\begin{CD}","right":"\\end{CD}"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false},"search":{"highlightTag":"em","lunrIndexURL":"/index.json","maxResultLength":15,"noResultsFound":"No results found","snippetLength":30,"type":"lunr"}};</script><script src="/js/theme.js"></script></body>
+</html>

@@ -1,0 +1,86 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+        <title>Web - Tag - z3rodol</title>
+        <link>http://localhost:1313/tags/web/</link>
+        <description>Web - Tag - z3rodol</description>
+        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Thu, 11 Dec 2025 13:49:22 &#43;0000</lastBuildDate><atom:link href="http://localhost:1313/tags/web/" rel="self" type="application/rss+xml" /><item>
+    <title>Down</title>
+    <link>http://localhost:1313/down/</link>
+    <pubDate>Thu, 11 Dec 2025 13:49:22 &#43;0000</pubDate>
+    <author>z3rodol</author>
+    <guid>http://localhost:1313/down/</guid>
+    <description><![CDATA[<p></p>
+<p><code>Down</code> possède un site web conçu pour vérifier si un site web est en ligne. Cela présente une <code>SSRF</code> évidente, mais pour contourner les filtres et l&rsquo;exploiter, je vais abuser de la fonctionnalité de <code>curl</code> qui accepte plusieurs URLs et passer une seconde URL avec le wrapper LFI <code>file</code> pour lire des fichiers depuis l&rsquo;hôte. J&rsquo;obtiens l&rsquo;accès au code source de la page, et je vois qu&rsquo;il existe un <code>mode expert</code> qui établie une connexion TCP brute avec <code>netcat</code>. J&rsquo;utilise l&rsquo;injection de paramètres à cet endroit pour obtenir un shell. De là, je fouille dans une instance <code>pswm</code> pour obtenir le mot de passe de l&rsquo;utilisateur suivant, et celui-ci dispose des privilèges sudo pour devenir root.</p>]]></description>
+</item>
+<item>
+    <title>Meta</title>
+    <link>http://localhost:1313/meta/</link>
+    <pubDate>Thu, 11 Dec 2025 10:28:41 &#43;0000</pubDate>
+    <author>z3rodol</author>
+    <guid>http://localhost:1313/meta/</guid>
+    <description><![CDATA[<p></p>
+<p>Meta est une machine Linux de difficulté moyenne axée sur deux CVE différentes (<code>CVE-2021-22204</code> et <code>CVE-2020-29599</code>) dans <code>ExifTool</code> et <code>ImageMagick</code>, exploitables à différentes étapes. L&rsquo;accès initial est obtenu en téléchargeant un fichier malveillant vers une application web qui lit les métadonnées d&rsquo;image, déclenchant une exécution de commande à distance dans ExifTool. Une injection de commande dans ImageMagick est ensuite exploitée pour pivoter vers un second utilisateur. Enfin, l&rsquo;escalade de privilèges est possible grâce à un paramètre <code>env_keep</code> dans <code>sudo</code> permettant aux attaquants d&rsquo;exécuter des commandes arbitraires en tant que root en définissant un répertoire de configuration personnalisé via une variable d&rsquo;environnement.</p>]]></description>
+</item>
+<item>
+    <title>Shocker</title>
+    <link>http://localhost:1313/shocker/</link>
+    <pubDate>Thu, 11 Dec 2025 10:28:41 &#43;0000</pubDate>
+    <author>z3rodol</author>
+    <guid>http://localhost:1313/shocker/</guid>
+    <description><![CDATA[<p></p>
+<p>Shocker, bien que relativement simple dans l&rsquo;ensemble, démontre la gravité de la célèbre exploit Shellshock, qui a affecté des millions de serveurs exposés publiquement.</p>
+<h2 id="énumération">Énumération</h2>
+<h3 id="nmap">Nmap</h3>
+<p>Il a 2 ports ouverts : <code>HTTP</code>, <code>SSH</code>.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-shell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">nmap 10.129.178.143 -T4 --min-rate <span class="m">1000</span> -sV -sC -vv -p-</span></span></code></pre></div></div>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-shell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">PORT     STATE SERVICE REASON         VERSION
+</span></span><span class="line"><span class="cl">80/tcp   open  http    syn-ack ttl <span class="m">63</span> Apache httpd 2.4.18 <span class="o">((</span>Ubuntu<span class="o">))</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span> http-methods:
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_  Supported Methods: GET HEAD POST OPTIONS
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_http-server-header: Apache/2.4.18 <span class="o">(</span>Ubuntu<span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_http-title: Site doesn<span class="err">&#39;</span>t have a title <span class="o">(</span>text/html<span class="o">)</span>.
+</span></span><span class="line"><span class="cl">2222/tcp open  ssh     syn-ack ttl <span class="m">63</span> OpenSSH 7.2p2 Ubuntu 4ubuntu2.2 <span class="o">(</span>Ubuntu Linux<span class="p">;</span> protocol 2.0<span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span> ssh-hostkey:
+</span></span><span class="line"><span class="cl"><span class="p">|</span>   <span class="m">2048</span> c4f8ade8f80477decf150d630a187e49 <span class="o">(</span>RSA<span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span> ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQD8ArTOHWzqhwcyAZWc2CmxfLmVVTwfLZf0zhCBREGCpS2WC3NhAKQ2zefCHCU8XTC8hY9ta5ocU+p7S52OGHlaG7HuA5Xlnihl1INNsMX7gpNcfQEYnyby+hjHWPLo4++fAyO/lB8NammyA13MzvJy8pxvB9gmCJhVPaFzG5yX6Ly8OIsvVDk+qVa5eLCIua1E7WGACUlmkEGljDvzOaBdogMQZ8TGBTqNZbShnFH1WsUxBtJNRtYfeeGjztKTQqqj4WD5atU8dqV/iwmTylpE7wdHZ+38ckuYL9dmUPLh4Li2ZgdY6XniVOBGthY5a2uJ2OFp2xe1WS9KvbYjJ/tH
+</span></span><span class="line"><span class="cl"><span class="p">|</span>   <span class="m">256</span> 228fb197bf0f1708fc7e2c8fe9773a48 <span class="o">(</span>ECDSA<span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span> ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBPiFJd2F35NPKIQxKMHrgPzVzoNHOJtTtM+zlwVfxzvcXPFFuQrOL7X6Mi9YQF9QRVJpwtmV9KAtWltmk3qm4oc<span class="o">=</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span>   <span class="m">256</span> e6ac27a3b5a9f1123c34a55d5beb3de9 <span class="o">(</span>ED25519<span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIC/RjKhT/2YPlCgFQLx+gOXhC6W3A3raTzjlXQMT8Msk
+</span></span><span class="line"><span class="cl">Service Info: OS: Linux<span class="p">;</span> CPE: cpe:/o:linux:linux_kernel</span></span></code></pre></div></div>
+<h3 id="http---tcp-80">HTTP - TCP 80</h3>
+<h4 id="énumération-des-répertoires">Énumération des répertoires</h4>
+<p>Je trouve des répertoires avec le code 403.</p>]]></description>
+</item>
+<item>
+    <title>Unholy Union</title>
+    <link>http://localhost:1313/unholyunion/</link>
+    <pubDate>Thu, 11 Dec 2025 10:28:41 &#43;0000</pubDate>
+    <author>z3rodol</author>
+    <guid>http://localhost:1313/unholyunion/</guid>
+    <description><![CDATA[<p>Unholy Union est un challenge web axé sur une <code>UNION SQL Injection</code> : l’exploitant injecte des requêtes SQL malveillantes via une entrée vulnérable, puis utilise <code>UNION SELECT</code> pour fusionner les résultats avec la requête originale et extraire le flag depuis la base de données, en ciblant notamment les tables et colonnes comme <code>information_schema.columns</code></p>
+<h2 id="sql-injection">SQL Injection</h2>
+<p>Dans le code source je vois bien que l’entrée utilisateur représentée par le paramètre query n’est pas filtrée.</p>]]></description>
+</item>
+<item>
+    <title>Void Whispers</title>
+    <link>http://localhost:1313/voidwhispers/</link>
+    <pubDate>Thu, 11 Dec 2025 10:28:41 &#43;0000</pubDate>
+    <author>z3rodol</author>
+    <guid>http://localhost:1313/voidwhispers/</guid>
+    <description><![CDATA[<p>Void Whispers repose sur une <code>Blind Command Injection</code> : l’exploitant injecte des commandes système via une entrée non sécurisée, puis utilise des techniques comme le time-based blind (mesure des délais de réponse) ou l’exfiltration des résultats via des requêtes HTTP externes pour récupérer le flag ou des données sensibles.</p>
+<h2 id="command-injection">Command Injection</h2>
+<p>Lorsque j’arrive sur le site je vois que tout ce que je peux faire c’est cliquer sur le bouton <code>Save</code> et qui met à jour la config.</p>]]></description>
+</item>
+</channel>
+</rss>

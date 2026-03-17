@@ -1,0 +1,19 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+        <title>Login Script Abuse - Tag - z3rodol</title>
+        <link>http://localhost:1313/tags/login-script-abuse/</link>
+        <description>Login Script Abuse - Tag - z3rodol</description>
+        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Sat, 27 Dec 2025 10:28:41 &#43;0000</lastBuildDate><atom:link href="http://localhost:1313/tags/login-script-abuse/" rel="self" type="application/rss+xml" /><item>
+    <title>BabyTwo</title>
+    <link>http://localhost:1313/babytwo/</link>
+    <pubDate>Sat, 27 Dec 2025 10:28:41 &#43;0000</pubDate>
+    <author>z3rodol</author>
+    <guid>http://localhost:1313/babytwo/</guid>
+    <description><![CDATA[<p></p>
+<p><strong>BabyTwo</strong> est une machine Windows de difficulté intermédiaire évoluant dans un environnement <strong>Active Directory</strong>.  L’accès initial est obtenu par <strong>devinette de mots de passe</strong> et par l’<strong>exploitation des scripts de connexion Windows</strong>.  L’élévation de privilèges est réalisée en abusant de <strong>listes de contrôle d’accès (ACL) mal configurées</strong> et de <strong>stratégies de groupe (GPO)</strong>.</p>
+<h1 id="énumération">Énumération</h1>
+<h2 id="nmap">Nmap</h2>
+<p>Le scan révèle des ports semblant appartenir à un contrôleur de domaine : DNS (<code>53</code>), Kerberos (<code>88</code>), LDAP (<code>389</code> et <code>636</code>), ainsi que d&rsquo;autres ports Windows : SMB (<code>445</code>), RDP (<code>3389</code>).</p>]]></description>
+</item>
+</channel>
+</rss>

