@@ -1,3 +1,54 @@
-/*
-    You can add your own custom styles here.
-*/
+/* Two-column layout for archives page */
+@media (min-width: 1024px) {
+  .article-list--compact {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    background: none;
+    box-shadow: none;
+    gap: 1rem;
+
+    article {
+      background: var(--card-background);
+      border: none;
+      box-shadow: var(--shadow-l2);
+      margin-bottom: 8px;
+      border-radius: 16px;
+    }
+  }
+}
+
+// =============================
+// Code Blocks
+// =============================
+/* Custom variable, modify the height here as needed */
+$codeblock-max-height: 25em;
+
+/* ① Set the outermost .highlight as the “only” scrollable container */
+.highlight {
+  max-height: $codeblock-max-height;
+  overflow: auto;                 /* Controls both X and Y directions */
+  -webkit-overflow-scrolling: touch; /* Inertia scrolling on mobile */
+}
+
+/* ② Disable internal pre/code scrollbars (to avoid double scrollbars) */
+.highlight pre,
+.highlight code,
+.highlight .chroma {
+  overflow: visible !important;   /* Override Stack’s overflow-x:auto on pre */
+}
+
+/* ③ Make the line number table auto-expand with content width to enable X scroll on wide blocks */
+.lntable {
+  display: inline-table;          /* Keeps table property, allows content-dependent width */
+  min-width: max-content;
+  border-spacing: 0;
+}
+
+/* ④ Disable auto-wrapping, long lines are handled by horizontal scrolling */
+.lntd:last-child code,
+.highlight code {
+  white-space: pre;               /* No line breaks */
+}
+.lntd:first-child {
+  user-select: none; // Prevent selecting line numbers
+}

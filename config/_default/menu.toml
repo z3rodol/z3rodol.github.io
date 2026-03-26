@@ -10,7 +10,7 @@
 [[social]]
     identifier = "github"
     name       = "GitHub"
-    url        = "https://github.com/CaiJimmy/hugo-theme-stack"
+    url        = "https://github.com/z3rodol"
 
     [social.params]
         icon = "brand-github"
@@ -18,7 +18,23 @@
 [[social]]
     identifier = "twitter"
     name       = "Twitter"
-    url        = "https://twitter.com"
+    url        = "https://x.com/z3rodol"
 
     [social.params]
         icon = "brand-twitter"
+
+[[social]]
+    identifier = "linkedin"
+    name       = "LinkedIn"
+    url        = "https://www.linkedin.com/in/z3rodol"
+
+    [social.params]
+        icon = "brand-linkedin"
+
+[[social]]
+    identifier = "hackthebox"
+    name       = "HacktheBox"
+    url        = "https://app.hackthebox.com/public/users/1587799"
+
+    [social.params]
+        icon = "brand-hackthebox"
