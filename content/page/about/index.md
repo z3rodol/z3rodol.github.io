@@ -20,7 +20,14 @@ Vous trouverez sur ce blog, des articles sur mes différentes expériences, des 
 # 🎓 Mon parcours
 
 ## Expérience professionnelle
-- **Technicien de maintenance informatique** chez MIF Informatique (Stage) - Avril 2024 - Août 2024
+- **Administrateur Systèmes et Réseaux** chez ProSoft-Togo (Stage) - Avril - Juillet 2024
+    - Administration et maintenance des systèmes Windows/Linux
+    - Gestion des utilisateurs, droits d’accès et politiques de sécurité
+    - Configuration et supervision du réseau informatique
+    - Installation, configuration et mise à jour des serveurs et postes clients
+    - Support technique aux utilisateurs et résolution des incidents
+
+- **Technicien de maintenance informatique** chez MIF Informatique (Stage) - Mai - Juillet 2023
     - Diagnostic et résolution de pannes matérielles et logicielles
     - Installation, configuration et maintenance de postes informatique
     - Installation et mise à jour de logiciels
@@ -29,7 +36,7 @@ Vous trouverez sur ce blog, des articles sur mes différentes expériences, des 
 
 # 📜 Certifications
 
-- **Prolabs Hackthebox** : *Dante*, *POO*, *Tengu*, *Tea*, *Heron*, *Intercept*
+- **Prolabs Hackthebox** : *Dante*, *Hades*, *POO*, *Tengu*, *Tea*, *Heron*, *Intercept*
 
 <div class="certifications-container" style="display: flex; flex-wrap: wrap; justify-content: center; gap: 30px; margin: 40px 0;">
 
@@ -47,6 +54,12 @@ Vous trouverez sur ce blog, des articles sur mes différentes expériences, des 
     <img src="img/intercept.png" style="height: 180px; width: 200px;" />
     <img src="img/tea.png" style="height: 180px; width: 200px;" />
     <img src="img/tengu.png" style="height: 180px; width: 200px;" />
+  </div>
+
+   <div style="height: 10px;"></div>
+
+  <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 20px;">
+    <img src="img/hades.png" style="height: 180px; width: 200px;" />
   </div>
 </div>
 
